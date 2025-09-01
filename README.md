@@ -1,13 +1,13 @@
 # Turbo Asset - Enterprise IWMS Platform
 
-[![Phase](https://img.shields.io/badge/Phase-2-blue)](https://github.com/harborgrid-justin/turbo-asset)
+[![Phase](https://img.shields.io/badge/Phase-3-green)](https://github.com/harborgrid-justin/turbo-asset)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.3+-blue)](https://www.typescriptlang.org/)
 [![Node.js](https://img.shields.io/badge/Node.js-18+-green)](https://nodejs.org/)
 [![License](https://img.shields.io/badge/License-MIT-yellow)](LICENSE)
 
 **Turbo Asset** is a comprehensive Enterprise Integrated Workplace Management System (IWMS) designed as a modern alternative to IBM Tririga. Built with cutting-edge technologies, it provides organizations with powerful tools for real estate and facilities management, workflow automation, and enterprise integrations.
 
-## 🚀 Phase 2 Features
+## 🚀 Phase 3 Features
 
 ### ✅ Core IWMS Data Model & Workflows
 - **Comprehensive Real Estate & Facilities Data Model**
@@ -61,6 +61,75 @@
   - Bulk export capabilities
   - Data transformation pipelines
   - Comprehensive error handling and reporting
+
+### ✅ Space Management & Portfolio Tracking
+- **Interactive Floor Plans with CAD Integration**
+  - AutoCAD (DWG/DXF), Revit (RVT), ArchiCAD (PLN) support
+  - IFC (Industry Foundation Classes) compatibility
+  - Vector and raster format support (SVG, PDF, JPG, PNG)
+  - Layer management and coordinate system integration
+
+- **Space Allocation & Occupancy Management**
+  - Hoteling and desk booking system with conflict detection
+  - Outlook/Google Calendar integration for seamless scheduling
+  - Recurring booking patterns and guest management
+  - Real-time check-in/check-out capabilities
+  - Support for 100,000+ employees with scalable architecture
+
+- **Move Management with Cost Tracking**
+  - Comprehensive move request workflow (Internal, External, New Hire, Termination)
+  - Vendor coordination with performance tracking and ratings
+  - Detailed cost breakdown by category (Labor, Materials, Transportation)
+  - Invoice management and payment tracking
+  - Move analytics and cost variance reporting
+
+- **Portfolio Dashboard with Drill-down Capabilities**
+  - Executive-level portfolio overview with key metrics
+  - Property-level drill-down to building, floor, and space details
+  - Real-time occupancy rates and utilization statistics
+  - Financial performance tracking (NOI, Cost per SqFt, ROI)
+  - Interactive visualizations and trend analysis
+
+- **Space Utilization Reporting & Sensor Integration**
+  - IoT sensor data processing (Occupancy, Temperature, CO2, Foot Traffic)
+  - Multiple data sources (Manual, Badge Scan, WiFi, Camera AI)
+  - Utilization analytics with trend analysis and recommendations
+  - Heat maps for peak usage identification
+  - Capacity planning and optimization insights
+
+- **Chargeback & Cost Allocation System**
+  - Flexible allocation methods (Square Footage, Headcount, Usage-based, Fixed %)
+  - Department and business unit cost distribution
+  - Automated monthly allocation processing
+  - Comprehensive cost reporting and analytics
+  - Rate management with effective date controls
+
+- **Space Standards & Planning Templates**
+  - Standardized space configurations by type and capacity
+  - Compliance tracking (Safety, Accessibility, Building Codes)
+  - Cost estimation for space setup and fit-out
+  - Template-based space planning and allocation
+
+- **Emergency Planning & Compliance Reporting**
+  - Building-specific evacuation plans and procedures
+  - Emergency contact management and zone mapping
+  - Evacuation drill tracking and compliance scoring
+  - Capacity management for safety compliance
+  - Regulatory reporting and audit trails
+
+- **Advanced Calendar Integration**
+  - Microsoft Outlook and Google Calendar sync
+  - Free/busy schedule integration for optimal booking
+  - Automated calendar event creation and updates
+  - Bulk synchronization capabilities
+  - Cross-platform compatibility
+
+- **Real-time Analytics & Insights**
+  - Live occupancy monitoring and alerts
+  - Predictive analytics for space planning
+  - Cost optimization recommendations
+  - Usage pattern analysis and forecasting
+  - Automated reporting and notifications
 
 ## 🏗️ Architecture
 
@@ -138,6 +207,33 @@
 ### Notifications
 - `GET /api/notifications` - Get user notifications
 - `PUT /api/notifications/:id/read` - Mark notification as read
+
+### Space Bookings & Hoteling
+- `GET /api/space-bookings` - List space bookings with filtering
+- `POST /api/space-bookings` - Create new space booking
+- `GET /api/space-bookings/:id` - Get booking details
+- `PATCH /api/space-bookings/:id/status` - Update booking status (check-in/out, cancel)
+- `GET /api/space-bookings/availability/check` - Check space availability
+
+### Move Management
+- `GET /api/move-management` - List move requests with filtering
+- `POST /api/move-management` - Create new move request
+- `GET /api/move-management/:id` - Get move request details
+- `PATCH /api/move-management/:id/process` - Approve/reject move request
+- `PATCH /api/move-management/:id/status` - Update move status
+- `POST /api/move-management/:id/vendors` - Add vendor to move
+- `POST /api/move-management/:id/costs` - Add cost to move
+- `GET /api/move-management/analytics/summary` - Move analytics
+
+### Portfolio & Analytics
+- `GET /api/portfolio/dashboard` - Comprehensive portfolio dashboard
+- `GET /api/portfolio/properties/:id/drilldown` - Property drill-down data
+- `GET /api/portfolio/utilization/analytics` - Space utilization analytics
+- `GET /api/portfolio/occupancy/realtime` - Real-time occupancy data
+- `GET /api/portfolio/chargeback/analytics` - Chargeback cost analytics
+- `GET /api/portfolio/chargeback/report` - Generate chargeback reports
+- `POST /api/portfolio/utilization/record` - Record utilization data
+- `POST /api/portfolio/utilization/sensor-data` - Process IoT sensor data
 
 ## 🌐 Multi-language Support
 
@@ -268,7 +364,10 @@ For support, please contact [HarborGrid](mailto:support@harborgrid.com) or open 
 
 ## 🗺️ Roadmap
 
-- **Phase 3**: Advanced Analytics & Reporting
-- **Phase 4**: Mobile Applications
-- **Phase 5**: AI/ML Capabilities
-- **Phase 6**: IoT Integration
+- **✅ Phase 1**: Core IWMS Foundation
+- **✅ Phase 2**: Workflow Engine & Integrations  
+- **✅ Phase 3**: Space Management & Portfolio Tracking (COMPLETED)
+- **Phase 4**: Advanced Analytics & AI-Powered Insights
+- **Phase 5**: Mobile Applications & Field Management
+- **Phase 6**: IoT Integration & Smart Building Management
+- **Phase 7**: Sustainability & ESG Reporting

@@ -40,6 +40,14 @@ model User {
   documents         Document[]
   auditLogs         AuditLog[]
 
+  // Phase 3: Space Management & Portfolio Tracking relationships
+  spaceBookings     SpaceBooking[]  @relation("UserBookings")
+  bookingsFor       SpaceBooking[]  @relation("UserBookingsFor")
+  moveRequests      MoveRequest[]   @relation("MoveRequests")
+  moveApprovals     MoveRequest[]   @relation("MoveApprovals")
+  moveDetails       MoveDetail[]    @relation("UserMoves")
+  cadUploads        CADFile[]       @relation("CADUploads")
+
   @@map("users")
 }
 
@@ -71,6 +79,10 @@ model Organization {
   workflows   WorkflowDefinition[]
   customFields CustomFieldDefinition[]
 
+  // Phase 3: Space Management & Portfolio Tracking relationships
+  chargebackRules   ChargebackRule[]
+  spaceTemplates    SpaceTemplate[]
+
   @@map("organizations")
 }
 
@@ -89,6 +101,9 @@ model Department {
   organizationId String
   users          User[]
   spaces         Space[]
+
+  // Phase 3: Space Management & Portfolio Tracking relationships
+  chargebacks       ChargebackAllocation[]
 
   @@map("departments")
 }
@@ -116,6 +131,9 @@ model Property {
   organizationId String
   buildings      Building[]
   customFields   CustomFieldValue[]
+
+  // Phase 3: Space Management & Portfolio Tracking relationships
+  cadFiles          CADFile[]
 
   @@map("properties")
 }
@@ -152,6 +170,10 @@ model Building {
   assets     Asset[]
   customFields CustomFieldValue[]
 
+  // Phase 3: Space Management & Portfolio Tracking relationships
+  emergencyPlans    EmergencyPlan[]
+  cadFiles          CADFile[]
+
   @@map("buildings")
 }
 
@@ -171,6 +193,9 @@ model Floor {
   buildingId String
   spaces     Space[]
   customFields CustomFieldValue[]
+
+  // Phase 3: Space Management & Portfolio Tracking relationships
+  cadFiles          CADFile[]
 
   @@map("floors")
 }
@@ -197,6 +222,13 @@ model Space {
   departmentId String?
   assets       Asset[]
   customFields CustomFieldValue[]
+
+  // Phase 3: Space Management & Portfolio Tracking relationships
+  bookings          SpaceBooking[]
+  utilization       SpaceUtilization[]
+  moveDetailsFrom   MoveDetail[]    @relation("MoveFromSpace")
+  moveDetailsTo     MoveDetail[]    @relation("MoveToSpace")
+  chargebacks       ChargebackAllocation[]
 
   @@map("spaces")
 }
@@ -247,6 +279,9 @@ model Asset {
   // Maintenance and workflows
   maintenanceRecords MaintenanceRecord[]
   customFields       CustomFieldValue[]
+
+  // Phase 3: Space Management & Portfolio Tracking relationships
+  moveDetails       MoveDetail[]
 
   @@map("assets")
 }
@@ -632,3 +667,407 @@ enum IntegrationStatus {
   FAILED
   PARTIAL
 }
+
+// ========================================
+// PHASE 3: SPACE MANAGEMENT & PORTFOLIO TRACKING
+// ========================================
+
+// Space Booking & Hoteling System
+model SpaceBooking {
+  id            String              @id @default(uuid())
+  bookingType   SpaceBookingType    @default(DESK)
+  startDateTime DateTime
+  endDateTime   DateTime
+  isRecurring   Boolean             @default(false)
+  recurrence    Json?               // Recurrence pattern
+  purpose       String?
+  guestCount    Int?                @default(0)
+  equipment     Json?               // Requested equipment/amenities
+  status        BookingStatus       @default(PENDING)
+  checkInAt     DateTime?
+  checkOutAt    DateTime?
+  noShowAt      DateTime?
+  cancelledAt   DateTime?
+  cancellationReason String?
+  isActive      Boolean             @default(true)
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
+
+  // Relationships
+  space         Space               @relation(fields: [spaceId], references: [id])
+  spaceId       String
+  bookedBy      User                @relation("UserBookings", fields: [bookedById], references: [id])
+  bookedById    String
+  bookedFor     User?               @relation("UserBookingsFor", fields: [bookedForId], references: [id])
+  bookedForId   String?
+
+  @@map("space_bookings")
+}
+
+enum SpaceBookingType {
+  DESK
+  OFFICE
+  CONFERENCE_ROOM
+  PARKING_SPOT
+  LOCKER
+  PHONE_BOOTH
+  COLLABORATION_SPACE
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  CHECKED_IN
+  CHECKED_OUT
+  CANCELLED
+  NO_SHOW
+  EXPIRED
+}
+
+// Space Utilization & Occupancy Tracking
+model SpaceUtilization {
+  id            String            @id @default(uuid())
+  recordDate    DateTime          @default(now())
+  utilizationType UtilizationType @default(OCCUPANCY)
+  value         Float
+  unit          String            // percentage, people, hours, etc.
+  dataSource    DataSourceType    @default(MANUAL)
+  sensorId      String?           // For IoT sensor integration
+  metadata      Json?             // Additional sensor data
+  createdAt     DateTime          @default(now())
+
+  // Relationships
+  space         Space             @relation(fields: [spaceId], references: [id])
+  spaceId       String
+
+  @@map("space_utilization")
+}
+
+enum UtilizationType {
+  OCCUPANCY          // Current occupancy
+  UTILIZATION        // Usage percentage over time
+  PEAK_OCCUPANCY     // Maximum occupancy in period
+  AVERAGE_OCCUPANCY  // Average occupancy in period
+  BOOKING_RATE       // Booking vs available time
+  FOOT_TRAFFIC      // People passing through
+  ENVIRONMENTAL     // Temperature, CO2, etc.
+}
+
+enum DataSourceType {
+  MANUAL
+  SENSOR
+  BADGE_SCAN
+  WIFI_TRACKING
+  BOOKING_SYSTEM
+  CAMERA_AI
+  IMPORTED
+}
+
+// Move Management System
+model MoveRequest {
+  id              String        @id @default(uuid())
+  requestNumber   String        @unique
+  moveType        MoveType      @default(INTERNAL)
+  requestedDate   DateTime
+  scheduledDate   DateTime?
+  completedDate   DateTime?
+  urgency         MovePriority  @default(NORMAL)
+  reason          String?
+  description     String?
+  estimatedCost   Float?
+  actualCost      Float?
+  currency        String        @default("USD")
+  status          MoveStatus    @default(PENDING)
+  approvedAt      DateTime?
+  rejectedAt      DateTime?
+  rejectionReason String?
+  isActive        Boolean       @default(true)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  // Relationships
+  requestedBy     User          @relation("MoveRequests", fields: [requestedById], references: [id])
+  requestedById   String
+  approvedBy      User?         @relation("MoveApprovals", fields: [approvedById], references: [id])
+  approvedById    String?
+  
+  // Move details
+  moveDetails     MoveDetail[]
+  vendors         MoveVendor[]
+  costs           MoveCost[]
+
+  @@map("move_requests")
+}
+
+model MoveDetail {
+  id              String      @id @default(uuid())
+  itemType        String      // person, asset, furniture, etc.
+  itemDescription String
+  quantity        Int         @default(1)
+  
+  // From location
+  fromSpace       Space?      @relation("MoveFromSpace", fields: [fromSpaceId], references: [id])
+  fromSpaceId     String?
+  fromLocation    String?     // Free text if not in system
+  
+  // To location  
+  toSpace         Space?      @relation("MoveToSpace", fields: [toSpaceId], references: [id])
+  toSpaceId       String?
+  toLocation      String?     // Free text if not in system
+  
+  specialInstructions String?
+  isCompleted     Boolean     @default(false)
+  completedAt     DateTime?
+  
+  // Relationships
+  moveRequest     MoveRequest @relation(fields: [moveRequestId], references: [id])
+  moveRequestId   String
+  
+  // Optional asset reference
+  asset           Asset?      @relation(fields: [assetId], references: [id])
+  assetId         String?
+  
+  // Optional user reference for personnel moves
+  user            User?       @relation("UserMoves", fields: [userId], references: [id])
+  userId          String?
+
+  @@map("move_details")
+}
+
+model MoveVendor {
+  id            String      @id @default(uuid())
+  vendorName    String
+  contactInfo   Json        // Phone, email, address
+  serviceType   String      // moving, cleaning, IT setup, etc.
+  quotedCost    Float?
+  actualCost    Float?
+  currency      String      @default("USD")
+  isSelected    Boolean     @default(false)
+  performanceRating Int?     // 1-5 stars
+  notes         String?
+  
+  // Relationships
+  moveRequest   MoveRequest @relation(fields: [moveRequestId], references: [id])
+  moveRequestId String
+
+  @@map("move_vendors")
+}
+
+model MoveCost {
+  id            String      @id @default(uuid())
+  category      String      // labor, materials, transportation, etc.
+  description   String
+  estimatedCost Float?
+  actualCost    Float?
+  currency      String      @default("USD")
+  invoiceNumber String?
+  paidAt        DateTime?
+  
+  // Relationships
+  moveRequest   MoveRequest @relation(fields: [moveRequestId], references: [id])
+  moveRequestId String
+
+  @@map("move_costs")
+}
+
+enum MoveType {
+  INTERNAL      // Within same building/property
+  EXTERNAL      // Between different properties
+  NEW_HIRE      // New employee setup
+  TERMINATION   // Employee departure cleanup
+  RENOVATION    // Temporary relocation
+  EXPANSION     // Department growth
+  CONSOLIDATION // Department merger/reduction
+}
+
+enum MovePriority {
+  LOW
+  NORMAL
+  HIGH
+  URGENT
+}
+
+enum MoveStatus {
+  PENDING
+  APPROVED
+  SCHEDULED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+  REJECTED
+}
+
+// Chargeback & Cost Allocation
+model ChargebackRule {
+  id              String            @id @default(uuid())
+  name            String
+  description     String?
+  entityType      String            // space, asset, service
+  costCategory    String            // rent, utilities, maintenance, etc.
+  allocationMethod AllocationMethod @default(SQUARE_FOOTAGE)
+  rate            Float?            // Cost per unit
+  currency        String            @default("USD")
+  isActive        Boolean           @default(true)
+  effectiveDate   DateTime          @default(now())
+  expiryDate      DateTime?
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+
+  // Relationships
+  organization    Organization      @relation(fields: [organizationId], references: [id])
+  organizationId  String
+  allocations     ChargebackAllocation[]
+
+  @@map("chargeback_rules")
+}
+
+model ChargebackAllocation {
+  id              String        @id @default(uuid())
+  period          String        // YYYY-MM format
+  totalCost       Float
+  allocatedCost   Float
+  allocationBasis Float?        // Square footage, headcount, etc.
+  currency        String        @default("USD")
+  createdAt       DateTime      @default(now())
+
+  // Relationships
+  rule            ChargebackRule @relation(fields: [ruleId], references: [id])
+  ruleId          String
+  department      Department     @relation(fields: [departmentId], references: [id])
+  departmentId    String
+  space           Space?         @relation(fields: [spaceId], references: [id])
+  spaceId         String?
+
+  @@map("chargeback_allocations")
+}
+
+enum AllocationMethod {
+  SQUARE_FOOTAGE
+  HEADCOUNT
+  FIXED_PERCENTAGE
+  USAGE_BASED
+  ASSET_COUNT
+  MANUAL
+}
+
+// Space Templates & Standards
+model SpaceTemplate {
+  id              String        @id @default(uuid())
+  name            String
+  category        String        // office-standards, meeting-rooms, etc.
+  spaceType       SpaceType
+  minArea         Float?
+  maxArea         Float?
+  standardArea    Float?
+  capacity        Int?
+  description     String?
+  requirements    Json?         // Furniture, equipment, technical specs
+  compliance      Json?         // Safety, accessibility, building codes
+  cost            Float?        // Standard setup/fit-out cost
+  currency        String        @default("USD")
+  isActive        Boolean       @default(true)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  // Relationships
+  organization    Organization  @relation(fields: [organizationId], references: [id])
+  organizationId  String
+
+  @@map("space_templates")
+}
+
+// Emergency Planning & Compliance
+model EmergencyPlan {
+  id              String        @id @default(uuid())
+  name            String
+  planType        String        // evacuation, lockdown, medical, fire, etc.
+  description     String?
+  procedures      Json          // Step-by-step procedures
+  contacts        Json          // Emergency contacts
+  zones           Json          // Building zones and routes
+  capacity        Int?          // Maximum occupancy for safety
+  lastReviewed    DateTime?
+  nextReview      DateTime?
+  complianceNotes String?
+  isActive        Boolean       @default(true)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  // Relationships
+  building        Building      @relation(fields: [buildingId], references: [id])
+  buildingId      String
+  drills          EmergencyDrill[]
+
+  @@map("emergency_plans")
+}
+
+model EmergencyDrill {
+  id              String        @id @default(uuid())
+  drillType       String        // fire, evacuation, lockdown, etc.
+  scheduledDate   DateTime
+  completedDate   DateTime?
+  participantCount Int?
+  evacuationTime  Int?          // Seconds to complete
+  issues          Json?         // Problems encountered
+  improvements    Json?         // Recommended improvements  
+  complianceScore Int?          // 1-100 score
+  notes           String?
+  isCompleted     Boolean       @default(false)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  // Relationships
+  plan            EmergencyPlan @relation(fields: [planId], references: [id])
+  planId          String
+
+  @@map("emergency_drills")
+}
+
+// CAD File Integration
+model CADFile {
+  id              String        @id @default(uuid())
+  filename        String
+  originalName    String
+  fileType        CADFileType
+  fileSize        BigInt
+  version         String        @default("1.0")
+  description     String?
+  metadata        Json?         // CAD-specific metadata
+  layers          Json?         // Layer information
+  coordinates     Json?         // Coordinate system info
+  scale           String?       // Drawing scale
+  units           String?       // measurement units
+  uploadedAt      DateTime      @default(now())
+  lastModified    DateTime      @updatedAt
+  isActive        Boolean       @default(true)
+
+  // File storage info
+  storageProvider String        // local, s3, azure, gcp
+  storagePath     String
+  publicUrl       String?
+
+  // Relationships
+  uploadedBy      User          @relation("CADUploads", fields: [uploadedById], references: [id])
+  uploadedById    String
+  property        Property?     @relation(fields: [propertyId], references: [id])
+  propertyId      String?
+  building        Building?     @relation(fields: [buildingId], references: [id])
+  buildingId      String?
+  floor           Floor?        @relation(fields: [floorId], references: [id])
+  floorId         String?
+
+  @@map("cad_files")
+}
+
+enum CADFileType {
+  DWG           // AutoCAD
+  DXF           // AutoCAD Exchange
+  RVT           // Revit
+  PLN           // ArchiCAD
+  IFC           // Industry Foundation Classes
+  PDF           // PDF drawings
+  JPG           // Raster image
+  PNG           // Raster image
+  SVG           // Vector graphics
+}
+
