@@ -408,7 +408,7 @@ export class BusinessIntelligenceService {
         ...kpiConfig,
         calculatedAt: new Date(),
         status: kpiConfig.target && kpiConfig.value 
-          ? (kpiConfig.value >= kpiConfig.target ? 'success' : 'warning')
+          ? (Number(kpiConfig.value) >= kpiConfig.target ? 'success' : 'warning')
           : 'info',
       };
 
@@ -519,7 +519,7 @@ export class BusinessIntelligenceService {
 
       if (chartConfig.yAxis) {
         aggregated[chartConfig.yAxis.field] = this.calculateAggregation(
-          rows.map(row => row[chartConfig.yAxis.field]),
+          (rows as any[]).map(row => row[chartConfig.yAxis.field]),
           chartConfig.yAxis.aggregation || 'sum'
         );
       }
@@ -527,7 +527,7 @@ export class BusinessIntelligenceService {
       if (chartConfig.series) {
         chartConfig.series.forEach(series => {
           aggregated[series.field] = this.calculateAggregation(
-            rows.map(row => row[series.field]),
+            (rows as any[]).map(row => row[series.field]),
             series.aggregation || 'sum'
           );
         });

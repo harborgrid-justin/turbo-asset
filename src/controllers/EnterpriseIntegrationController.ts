@@ -3,6 +3,7 @@ import { EnterpriseServiceBusService } from '../services/EnterpriseServiceBusSer
 import { SalesforceIntegrationService } from '../services/SalesforceIntegrationService';
 import { Microsoft365IntegrationService } from '../services/Microsoft365IntegrationService';
 import { logger } from '../config/logger';
+import { prisma } from '../config/database';
 
 const esbService = new EnterpriseServiceBusService();
 const salesforceService = new SalesforceIntegrationService({

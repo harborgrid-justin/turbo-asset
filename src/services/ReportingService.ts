@@ -620,7 +620,7 @@ export class ReportingService extends EventEmitter {
 
     for (const section of sections) {
       try {
-        let sectionData = { ...section };
+        let sectionData = { ...section } as ReportSection & { data?: any };
 
         if (section.type === 'chart' || section.type === 'table') {
           if (section.reportId) {

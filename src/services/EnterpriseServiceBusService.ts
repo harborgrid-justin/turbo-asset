@@ -4,6 +4,21 @@ import { EventEmitter } from 'events';
 import Bull, { Queue, Job } from 'bull';
 import Redis from 'redis';
 
+export type ESBPatternType = 
+  | 'POINT_TO_POINT'
+  | 'PUBLISH_SUBSCRIBE'
+  | 'REQUEST_REPLY'
+  | 'MESSAGE_FILTER'
+  | 'CONTENT_ROUTER'
+  | 'MESSAGE_TRANSLATOR'
+  | 'MESSAGE_ROUTING'
+  | 'CONTENT_BASED_ROUTING'
+  | 'MESSAGE_TRANSFORMATION'
+  | 'SCATTER_GATHER'
+  | 'AGGREGATOR'
+  | 'SPLITTER'
+  | 'DEAD_LETTER_QUEUE';
+
 export interface ESBMessage {
   id: string;
   source: string;
@@ -236,7 +251,10 @@ export class EnterpriseServiceBusService extends EventEmitter {
       await this.messageQueue.add(jobType, esbMessage, {
         priority: esbMessage.priority,
         attempts: 3,
-        backoff: 'exponential',
+        backoff: {
+          type: 'exponential',
+          delay: 2000,
+        },
         delay: 0,
       });
 
@@ -460,7 +478,10 @@ export class EnterpriseServiceBusService extends EventEmitter {
       await this.deadLetterQueue.add('retry', data.message, {
         delay: 60000, // 1 minute delay
         attempts: 5,
-        backoff: 'exponential',
+        backoff: {
+          type: 'exponential',
+          delay: 2000,
+        },
       });
 
       logger.error('Message processing failed', {
@@ -603,6 +624,9 @@ export class EnterpriseServiceBusService extends EventEmitter {
       'POINT_TO_POINT': 'point-to-point',
       'PUBLISH_SUBSCRIBE': 'publish-subscribe',
       'REQUEST_REPLY': 'request-reply',
+      'MESSAGE_FILTER': 'message-filter',
+      'CONTENT_ROUTER': 'content-router',
+      'MESSAGE_TRANSLATOR': 'message-translator',
       'MESSAGE_ROUTING': 'message-routing',
       'CONTENT_BASED_ROUTING': 'content-routing',
       'MESSAGE_TRANSFORMATION': 'transform',
