@@ -83,6 +83,17 @@ model Organization {
   chargebackRules   ChargebackRule[]
   spaceTemplates    SpaceTemplate[]
 
+  // Phase 6: Enterprise Integrations & Reporting relationships
+  enterpriseIntegrations  EnterpriseIntegration[]
+  dataWarehouses          DataWarehouse[]
+  biReports               BIReport[]
+  dashboards              Dashboard[]
+  dataGovernanceRules     DataGovernanceRule[]
+  masterDataRecords       MasterDataRecord[]
+  apiUsage                APIUsage[]
+  apiQuotas               APIQuota[]
+  whiteLabelConfigs       WhiteLabelConfig[]
+
   @@map("organizations")
 }
 
@@ -2359,38 +2370,6 @@ model Property {
   @@map("properties")
 }
 
-model Organization {
-  id            String  @id @default(uuid())
-  name          String
-  description   String?
-  address       Json? // Flexible address structure
-  defaultCurrency String @default("USD")
-  defaultLanguage String @default("en")
-  defaultTimezone String @default("UTC")
-  isActive      Boolean @default(true)
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-
-  // Relationships
-  users       User[]
-  departments Department[]
-  properties  Property[]
-  workflows   WorkflowDefinition[]
-  customFields CustomFieldDefinition[]
-
-  // Phase 3: Space Management & Portfolio Tracking relationships
-  chargebackRules   ChargebackRule[]
-  spaceTemplates    SpaceTemplate[]
-  
-  // Phase 4: Lease Administration & Financial Management relationships
-  budgets           Budget[]
-  vendors           Vendor[]
-  brokers           Broker[]
-  financialStatements FinancialStatement[]
-
-  @@map("organizations")
-}
-
 // Enums for Phase 4
 enum LeaseType {
   OPERATING
@@ -4330,5 +4309,360 @@ enum SLAStatus {
   EXPIRED
   CANCELLED
   UNDER_REVIEW
+}
+
+// ============================================================================
+// PHASE 6: ENTERPRISE INTEGRATIONS & REPORTING MODELS
+// ============================================================================
+
+model EnterpriseIntegration {
+  id                String              @id @default(uuid())
+  name              String
+  description       String?
+  integrationType   IntegrationType
+  sourceSystem      String
+  targetSystem      String
+  isActive          Boolean             @default(true)
+  configuration     Json
+  lastSyncAt        DateTime?
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  organizationId    String
+  organization      Organization        @relation(fields: [organizationId], references: [id])
+  
+  flows             IntegrationFlow[]
+  
+  @@map("enterprise_integrations")
+}
+
+model IntegrationFlow {
+  id                    String                @id @default(uuid())
+  name                  String
+  description           String?
+  integrationId         String
+  integration           EnterpriseIntegration @relation(fields: [integrationId], references: [id], onDelete: Cascade)
+  sourceEndpoint        String
+  targetEndpoint        String
+  transformationRules   Json
+  isActive              Boolean               @default(true)
+  executionCount        Int                   @default(0)
+  lastExecutedAt        DateTime?
+  averageExecutionTime  Int?                  @default(0) // in milliseconds
+  createdAt             DateTime              @default(now())
+  updatedAt             DateTime              @updatedAt
+  
+  @@map("integration_flows")
+}
+
+model DataWarehouse {
+  id                String        @id @default(uuid())
+  name              String
+  description       String?
+  databaseType      String        // PostgreSQL, BigQuery, Snowflake, etc.
+  connectionString  String
+  isActive          Boolean       @default(true)
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+  organizationId    String
+  organization      Organization  @relation(fields: [organizationId], references: [id])
+  
+  etlProcesses      ETLProcess[]
+  biReports         BIReport[]
+  
+  @@map("data_warehouses")
+}
+
+model ETLProcess {
+  id                String        @id @default(uuid())
+  name              String
+  description       String?
+  warehouseId       String
+  warehouse         DataWarehouse @relation(fields: [warehouseId], references: [id], onDelete: Cascade)
+  sourceConfig      Json
+  targetConfig      Json
+  transformationSQL String        @db.Text
+  schedulePattern   String?       // Cron pattern
+  status            ETLStatus     @default(INACTIVE)
+  lastRunAt         DateTime?
+  nextRunAt         DateTime?
+  executionCount    Int           @default(0)
+  avgExecutionTime  Int?          @default(0) // in seconds
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+  
+  @@map("etl_processes")
+}
+
+model BIReport {
+  id                String         @id @default(uuid())
+  name              String
+  description       String?
+  warehouseId       String
+  warehouse         DataWarehouse  @relation(fields: [warehouseId], references: [id], onDelete: Cascade)
+  reportType        ReportType
+  sqlQuery          String         @db.Text
+  chartConfig       Json
+  filters           Json
+  isPublic          Boolean        @default(false)
+  createdBy         String
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+  organizationId    String
+  organization      Organization   @relation(fields: [organizationId], references: [id])
+  
+  dashboards        Dashboard[]
+  schedules         ReportSchedule[]
+  
+  @@map("bi_reports")
+}
+
+model Dashboard {
+  id                String         @id @default(uuid())
+  name              String
+  description       String?
+  dashboardType     DashboardType
+  layout            Json
+  isPublic          Boolean        @default(false)
+  refreshRate       Int            @default(300) // seconds
+  createdBy         String
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+  organizationId    String
+  organization      Organization   @relation(fields: [organizationId], references: [id])
+  
+  reports           BIReport[]
+  
+  @@map("dashboards")
+}
+
+model ReportSchedule {
+  id                String            @id @default(uuid())
+  name              String
+  reportId          String
+  report            BIReport          @relation(fields: [reportId], references: [id], onDelete: Cascade)
+  frequency         ScheduleFrequency
+  cronPattern       String
+  recipients        Json              // Array of email addresses
+  format            String            @default("PDF") // PDF, Excel, CSV
+  isActive          Boolean           @default(true)
+  lastRunAt         DateTime?
+  nextRunAt         DateTime?
+  createdBy         String
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+  
+  @@map("report_schedules")
+}
+
+model DataGovernanceRule {
+  id                String              @id @default(uuid())
+  name              String
+  description       String?
+  ruleType          String              // VALIDATION, QUALITY, LINEAGE, PRIVACY
+  targetTable       String
+  targetField       String?
+  ruleDefinition    Json
+  severity          String              @default("MEDIUM") // LOW, MEDIUM, HIGH, CRITICAL
+  isActive          Boolean             @default(true)
+  violationCount    Int                 @default(0)
+  lastCheckedAt     DateTime?
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  organizationId    String
+  organization      Organization        @relation(fields: [organizationId], references: [id])
+  
+  masterDataRecords MasterDataRecord[]
+  
+  @@map("data_governance_rules")
+}
+
+model MasterDataRecord {
+  id                    String               @id @default(uuid())
+  entityType            String               // Asset, Property, User, etc.
+  entityId              String
+  masterSystemId        String               // The authoritative system
+  qualityScore          Float                @default(0.0)
+  qualityStatus         DataQualityStatus    @default(UNKNOWN)
+  governanceLevel       GovernanceLevel      @default(BASIC)
+  lastValidatedAt       DateTime?
+  ruleId                String?
+  rule                  DataGovernanceRule?  @relation(fields: [ruleId], references: [id])
+  createdAt             DateTime             @default(now())
+  updatedAt             DateTime             @updatedAt
+  organizationId        String
+  organization          Organization         @relation(fields: [organizationId], references: [id])
+  
+  @@unique([entityType, entityId, organizationId])
+  @@map("master_data_records")
+}
+
+model APIUsage {
+  id                String        @id @default(uuid())
+  apiKey            String
+  endpoint          String
+  method            String
+  responseTime      Int           // milliseconds
+  statusCode        Int
+  requestSize       Int           // bytes
+  responseSize      Int           // bytes
+  userId            String?
+  ipAddress         String?
+  userAgent         String?
+  timestamp         DateTime      @default(now())
+  organizationId    String
+  organization      Organization  @relation(fields: [organizationId], references: [id])
+  
+  @@index([apiKey, timestamp])
+  @@index([endpoint, timestamp])
+  @@map("api_usage")
+}
+
+model APIQuota {
+  id                String        @id @default(uuid())
+  name              String
+  description       String?
+  apiKey            String        @unique
+  accessLevel       APIAccessLevel @default(BASIC)
+  requestsPerMinute Int           @default(60)
+  requestsPerHour   Int           @default(3600)
+  requestsPerDay    Int           @default(86400)
+  currentMinute     Int           @default(0)
+  currentHour       Int           @default(0)
+  currentDay        Int           @default(0)
+  resetTime         DateTime      @default(now())
+  isActive          Boolean       @default(true)
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+  organizationId    String
+  organization      Organization  @relation(fields: [organizationId], references: [id])
+  
+  @@map("api_quotas")
+}
+
+model WhiteLabelConfig {
+  id                String             @id @default(uuid())
+  name              String
+  description       String?
+  brandingScope     BrandingScope      @default(SUBSIDIARY)
+  primaryColor      String             @default("#007bff")
+  secondaryColor    String             @default("#6c757d")
+  logoUrl           String?
+  faviconUrl        String?
+  customDomain      String?
+  customCSS         String?            @db.Text
+  emailTemplates    Json
+  isActive          Boolean            @default(true)
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  organizationId    String
+  organization      Organization       @relation(fields: [organizationId], references: [id])
+  
+  subsidiaries      SubsidiaryBranding[]
+  
+  @@map("white_label_configs")
+}
+
+model SubsidiaryBranding {
+  id                String           @id @default(uuid())
+  name              String
+  configId          String
+  config            WhiteLabelConfig @relation(fields: [configId], references: [id], onDelete: Cascade)
+  subsidiaryId      String           // Reference to Organization
+  customizations    Json
+  isActive          Boolean          @default(true)
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+  
+  @@unique([configId, subsidiaryId])
+  @@map("subsidiary_branding")
+}
+
+// Phase 6 Enums
+enum ESBPatternType {
+  POINT_TO_POINT
+  PUBLISH_SUBSCRIBE
+  REQUEST_REPLY
+  MESSAGE_ROUTING
+  CONTENT_BASED_ROUTING
+  MESSAGE_TRANSFORMATION
+  SCATTER_GATHER
+  AGGREGATOR
+  SPLITTER
+  DEAD_LETTER_QUEUE
+}
+
+enum ETLStatus {
+  INACTIVE
+  ACTIVE
+  RUNNING
+  COMPLETED
+  FAILED
+  PAUSED
+  CANCELLED
+}
+
+enum ReportType {
+  TABLE
+  CHART
+  PIVOT
+  KPI_CARD
+  GAUGE
+  MAP
+  TIMELINE
+  CUSTOM
+}
+
+enum DashboardType {
+  EXECUTIVE
+  OPERATIONAL
+  ANALYTICAL
+  REAL_TIME
+  COMPLIANCE
+  FINANCIAL
+  MAINTENANCE
+  SPACE_UTILIZATION
+  PORTFOLIO
+}
+
+enum ScheduleFrequency {
+  HOURLY
+  DAILY
+  WEEKLY
+  MONTHLY
+  QUARTERLY
+  YEARLY
+  CUSTOM
+}
+
+enum DataQualityStatus {
+  UNKNOWN
+  EXCELLENT
+  GOOD
+  FAIR
+  POOR
+  CRITICAL
+}
+
+enum GovernanceLevel {
+  BASIC
+  INTERMEDIATE
+  ADVANCED
+  ENTERPRISE
+}
+
+enum APIAccessLevel {
+  BASIC
+  STANDARD
+  PREMIUM
+  ENTERPRISE
+  UNLIMITED
+}
+
+enum BrandingScope {
+  GLOBAL
+  REGIONAL
+  SUBSIDIARY
+  DEPARTMENT
+  PROJECT
 }
 
