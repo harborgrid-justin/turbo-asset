@@ -28,7 +28,9 @@ const phase2Services = [
   'src/services/IntegrationService.ts',
   'src/services/CustomFieldService.ts',
   'src/services/NotificationService.ts',
-  'src/services/BulkDataService.ts'
+  'src/services/BulkDataService.ts',
+  'src/services/SDKGeneratorService.ts',
+  'src/services/APIDocumentationService.ts'
 ];
 
 let totalServiceLines = 0;
@@ -135,14 +137,30 @@ typeFiles.forEach(typeFile => {
   console.log(`  ${exists ? '✅' : '❌'} ${typeFile}: ${lines} lines`);
 });
 
+// Check GraphQL schema and resolvers
+console.log('\n🎯 GraphQL Implementation:');
+const graphqlFiles = [
+  'src/graphql/schema.ts',
+  'src/graphql/resolvers.ts'
+];
+
+let totalGraphQLLines = 0;
+graphqlFiles.forEach(graphqlFile => {
+  const lines = countLines(path.join(__dirname, '..', graphqlFile));
+  totalGraphQLLines += lines;
+  const exists = lines > 0;
+  console.log(`  ${exists ? '✅' : '❌'} ${graphqlFile}: ${lines} lines`);
+});
+
 // Calculate totals
-const totalLines = totalServiceLines + totalControllerLines + Math.floor(totalSchemaLines * 0.6) + totalTypeLines;
+const totalLines = totalServiceLines + totalControllerLines + Math.floor(totalSchemaLines * 0.6) + totalTypeLines + totalGraphQLLines;
 
 console.log('\n📈 Phase 2 Implementation Summary:');
 console.log(`  📊 Service Layer: ${totalServiceLines.toLocaleString()} lines`);
 console.log(`  🎮 Controller Layer: ${totalControllerLines.toLocaleString()} lines`);
 console.log(`  🗄️  Database Schema (60%): ${Math.floor(totalSchemaLines * 0.6).toLocaleString()} lines`);
 console.log(`  📋 Type Definitions: ${totalTypeLines.toLocaleString()} lines`);
+console.log(`  🎯 GraphQL Schema & Resolvers: ${totalGraphQLLines.toLocaleString()} lines`);
 console.log(`  📦 Total Phase 2 Core: ${totalLines.toLocaleString()} lines`);
 
 console.log('\n✅ Phase 2 Feature Coverage:');

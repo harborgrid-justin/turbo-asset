@@ -99,7 +99,7 @@ class TurboAssetServer {
     apiRouter.use('/assets', assetRoutes);
     apiRouter.use('/workflows', workflowRoutes);
     apiRouter.use('/documents', documentRoutes);
-    apiRouter.use('/bulk', bulkDataRoutes);
+    apiRouter.use('/bulk-data', bulkDataRoutes);
     apiRouter.use('/custom-fields', customFieldRoutes);
     apiRouter.use('/integrations', integrationRoutes);
     apiRouter.use('/notifications', notificationRoutes);
@@ -268,7 +268,7 @@ class TurboAssetServer {
           assets: '/api/assets',
           workflows: '/api/workflows',
           documents: '/api/documents',
-          bulk: '/api/bulk',
+          bulk: '/api/bulk-data',
           customFields: '/api/custom-fields',
           integrations: '/api/integrations',
           notifications: '/api/notifications',

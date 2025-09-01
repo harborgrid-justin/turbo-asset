@@ -1389,4 +1389,695 @@ export class DocumentService {
       throw error;
     }
   }
+
+  /**
+   * Advanced document analytics and insights
+   */
+  async getDocumentAnalytics(
+    organizationId: string,
+    timeframe: 'WEEK' | 'MONTH' | 'QUARTER' | 'YEAR' = 'MONTH'
+  ): Promise<DocumentAnalytics> {
+    try {
+      const endDate = new Date();
+      const startDate = new Date();
+      
+      switch (timeframe) {
+        case 'WEEK':
+          startDate.setDate(startDate.getDate() - 7);
+          break;
+        case 'MONTH':
+          startDate.setMonth(startDate.getMonth() - 1);
+          break;
+        case 'QUARTER':
+          startDate.setMonth(startDate.getMonth() - 3);
+          break;
+        case 'YEAR':
+          startDate.setFullYear(startDate.getFullYear() - 1);
+          break;
+      }
+
+      // Get document statistics
+      const documents = await prisma.document.findMany({
+        where: {
+          organizationId,
+          createdAt: {
+            gte: startDate,
+            lte: endDate,
+          },
+        },
+        include: {
+          versions: true,
+          accessLogs: true,
+          reviews: true,
+        },
+      });
+
+      const totalDocuments = documents.length;
+      const totalSize = documents.reduce((sum, doc) => sum + doc.fileSize, 0);
+      const avgDocumentSize = totalDocuments > 0 ? totalSize / totalDocuments : 0;
+
+      // Calculate document type distribution
+      const typeDistribution = documents.reduce((acc, doc) => {
+        const mimeType = doc.mimeType;
+        acc[mimeType] = (acc[mimeType] || 0) + 1;
+        return acc;
+      }, {} as Record<string, number>);
+
+      // Calculate version analytics
+      const versionStats = documents.map(doc => ({
+        documentId: doc.id,
+        versionCount: doc.versions?.length || 1,
+        lastModified: doc.updatedAt,
+      }));
+
+      const avgVersions = versionStats.length > 0 
+        ? versionStats.reduce((sum, stat) => sum + stat.versionCount, 0) / versionStats.length
+        : 0;
+
+      // Calculate access patterns
+      const allAccessLogs = documents.flatMap(doc => doc.accessLogs || []);
+      const accessByAction = allAccessLogs.reduce((acc, log) => {
+        acc[log.action] = (acc[log.action] || 0) + 1;
+        return acc;
+      }, {} as Record<string, number>);
+
+      // Most active documents
+      const documentActivity = documents.map(doc => ({
+        id: doc.id,
+        name: doc.name,
+        accessCount: doc.accessLogs?.length || 0,
+        lastAccessed: doc.accessLogs?.reduce((latest, log) => 
+          log.timestamp > latest ? log.timestamp : latest, new Date(0)
+        ),
+      })).sort((a, b) => b.accessCount - a.accessCount).slice(0, 10);
+
+      // Storage analytics
+      const storageByType = Object.entries(typeDistribution).map(([type, count]) => ({
+        type,
+        count,
+        size: documents.filter(doc => doc.mimeType === type)
+          .reduce((sum, doc) => sum + doc.fileSize, 0),
+      }));
+
+      return {
+        period: { start: startDate, end: endDate },
+        summary: {
+          totalDocuments,
+          totalSize,
+          avgDocumentSize,
+          avgVersions,
+          totalAccess: allAccessLogs.length,
+        },
+        typeDistribution,
+        versionStats: versionStats.slice(0, 20),
+        accessPatterns: accessByAction,
+        topDocuments: documentActivity,
+        storageBreakdown: storageByType,
+        trends: await this.calculateDocumentTrends(organizationId, startDate, endDate),
+      };
+    } catch (error) {
+      logger.error('Failed to get document analytics', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Calculate document trends over time
+   */
+  private async calculateDocumentTrends(
+    organizationId: string,
+    startDate: Date,
+    endDate: Date
+  ): Promise<Array<{
+    date: Date;
+    created: number;
+    modified: number;
+    accessed: number;
+    size: number;
+  }>> {
+    try {
+      const trends = [];
+      const current = new Date(startDate);
+      const dayMilliseconds = 24 * 60 * 60 * 1000;
+
+      while (current <= endDate) {
+        const nextDay = new Date(current.getTime() + dayMilliseconds);
+        
+        const [created, modified, accessed] = await Promise.all([
+          prisma.document.count({
+            where: {
+              organizationId,
+              createdAt: {
+                gte: current,
+                lt: nextDay,
+              },
+            },
+          }),
+          prisma.document.count({
+            where: {
+              organizationId,
+              updatedAt: {
+                gte: current,
+                lt: nextDay,
+              },
+            },
+          }),
+          prisma.documentAccessLog.count({
+            where: {
+              timestamp: {
+                gte: current,
+                lt: nextDay,
+              },
+              document: {
+                organizationId,
+              },
+            },
+          }),
+        ]);
+
+        const sizeData = await prisma.document.aggregate({
+          where: {
+            organizationId,
+            createdAt: {
+              gte: current,
+              lt: nextDay,
+            },
+          },
+          _sum: {
+            fileSize: true,
+          },
+        });
+
+        trends.push({
+          date: new Date(current),
+          created,
+          modified,
+          accessed,
+          size: sizeData._sum.fileSize || 0,
+        });
+
+        current.setDate(current.getDate() + 1);
+      }
+
+      return trends;
+    } catch (error) {
+      logger.error('Failed to calculate document trends', error);
+      return [];
+    }
+  }
+
+  /**
+   * Document compliance and governance features
+   */
+  async runComplianceCheck(
+    organizationId: string,
+    rules?: DocumentComplianceRule[]
+  ): Promise<DocumentComplianceReport> {
+    try {
+      const defaultRules: DocumentComplianceRule[] = [
+        {
+          id: 'retention_policy',
+          name: 'Document Retention Policy',
+          description: 'Check for documents that exceed retention period',
+          type: 'RETENTION',
+          severity: 'HIGH',
+          condition: {
+            field: 'createdAt',
+            operator: 'older_than',
+            value: 2555, // 7 years in days
+            unit: 'days',
+          },
+        },
+        {
+          id: 'review_overdue',
+          name: 'Review Overdue',
+          description: 'Documents that need periodic review',
+          type: 'REVIEW',
+          severity: 'MEDIUM',
+          condition: {
+            field: 'reviewDate',
+            operator: 'less_than',
+            value: new Date(),
+          },
+        },
+        {
+          id: 'access_classification',
+          name: 'Access Classification Compliance',
+          description: 'Ensure confidential documents have proper access controls',
+          type: 'ACCESS',
+          severity: 'HIGH',
+          condition: {
+            field: 'confidentiality',
+            operator: 'equals',
+            value: 'CONFIDENTIAL',
+          },
+        },
+      ];
+
+      const complianceRules = rules || defaultRules;
+      const violations: DocumentComplianceViolation[] = [];
+      const documents = await prisma.document.findMany({
+        where: { organizationId },
+        include: {
+          access: true,
+          metadata: true,
+        },
+      });
+
+      for (const rule of complianceRules) {
+        const ruleViolations = await this.checkComplianceRule(documents, rule);
+        violations.push(...ruleViolations);
+      }
+
+      const summary = {
+        totalDocuments: documents.length,
+        totalViolations: violations.length,
+        violationsBySeverity: violations.reduce((acc, v) => {
+          acc[v.severity] = (acc[v.severity] || 0) + 1;
+          return acc;
+        }, {} as Record<string, number>),
+        violationsByType: violations.reduce((acc, v) => {
+          acc[v.ruleType] = (acc[v.ruleType] || 0) + 1;
+          return acc;
+        }, {} as Record<string, number>),
+      };
+
+      return {
+        organizationId,
+        reportDate: new Date(),
+        summary,
+        violations,
+        recommendations: this.generateComplianceRecommendations(violations),
+      };
+    } catch (error) {
+      logger.error('Failed to run compliance check', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Check individual compliance rule against documents
+   */
+  private async checkComplianceRule(
+    documents: any[],
+    rule: DocumentComplianceRule
+  ): Promise<DocumentComplianceViolation[]> {
+    const violations: DocumentComplianceViolation[] = [];
+
+    for (const document of documents) {
+      let isViolation = false;
+      let violationDetails = '';
+
+      switch (rule.type) {
+        case 'RETENTION':
+          const retentionDays = rule.condition.value as number;
+          const createdDate = new Date(document.createdAt);
+          const daysSinceCreation = Math.floor((Date.now() - createdDate.getTime()) / (1000 * 60 * 60 * 24));
+          
+          if (daysSinceCreation > retentionDays) {
+            isViolation = true;
+            violationDetails = `Document is ${daysSinceCreation} days old, exceeding ${retentionDays} day retention policy`;
+          }
+          break;
+
+        case 'REVIEW':
+          if (document.reviewDate && new Date(document.reviewDate) < new Date()) {
+            isViolation = true;
+            violationDetails = `Document review is overdue since ${document.reviewDate}`;
+          }
+          break;
+
+        case 'ACCESS':
+          if (document.confidentiality === 'CONFIDENTIAL' && (!document.access || document.access.length === 0)) {
+            isViolation = true;
+            violationDetails = 'Confidential document lacks proper access controls';
+          }
+          break;
+      }
+
+      if (isViolation) {
+        violations.push({
+          documentId: document.id,
+          documentName: document.name,
+          ruleId: rule.id,
+          ruleName: rule.name,
+          ruleType: rule.type,
+          severity: rule.severity,
+          description: violationDetails,
+          detectedAt: new Date(),
+          isResolved: false,
+        });
+      }
+    }
+
+    return violations;
+  }
+
+  /**
+   * Generate compliance recommendations
+   */
+  private generateComplianceRecommendations(
+    violations: DocumentComplianceViolation[]
+  ): string[] {
+    const recommendations: Set<string> = new Set();
+
+    violations.forEach(violation => {
+      switch (violation.ruleType) {
+        case 'RETENTION':
+          recommendations.add('Implement automated document archival processes');
+          recommendations.add('Set up retention policy alerts for document owners');
+          break;
+        case 'REVIEW':
+          recommendations.add('Enable automated review reminders');
+          recommendations.add('Create review workflows for critical documents');
+          break;
+        case 'ACCESS':
+          recommendations.add('Implement role-based access controls');
+          recommendations.add('Regular access rights audits for confidential documents');
+          break;
+      }
+    });
+
+    return Array.from(recommendations);
+  }
+
+  /**
+   * Advanced document search with AI-powered insights
+   */
+  async intelligentDocumentSearch(
+    organizationId: string,
+    query: string,
+    context?: DocumentSearchContext
+  ): Promise<IntelligentSearchResult> {
+    try {
+      // Perform standard text search
+      const textResults = await this.searchDocuments(organizationId, {
+        query,
+        limit: 50,
+      });
+
+      // Extract semantic meaning and related terms
+      const semanticTerms = this.extractSemanticTerms(query);
+      
+      // Search using semantic terms
+      const semanticResults = await Promise.all(
+        semanticTerms.map(term => 
+          this.searchDocuments(organizationId, {
+            query: term,
+            limit: 10,
+          })
+        )
+      );
+
+      // Combine and rank results
+      const combinedResults = [...textResults];
+      semanticResults.forEach(results => {
+        results.forEach(result => {
+          if (!combinedResults.find(r => r.document.id === result.document.id)) {
+            combinedResults.push({
+              ...result,
+              relevanceScore: result.relevanceScore * 0.8, // Slightly lower score for semantic matches
+            });
+          }
+        });
+      });
+
+      // Sort by relevance
+      combinedResults.sort((a, b) => b.relevanceScore - a.relevanceScore);
+
+      // Generate search insights
+      const insights = this.generateSearchInsights(combinedResults, query, context);
+
+      // Extract faceted filters
+      const facets = this.extractSearchFacets(combinedResults);
+
+      return {
+        query,
+        results: combinedResults.slice(0, 20),
+        totalFound: combinedResults.length,
+        insights,
+        facets,
+        suggestedQueries: this.generateSuggestedQueries(query, combinedResults),
+        searchTime: Date.now(), // In real implementation, track actual search time
+      };
+    } catch (error) {
+      logger.error('Failed to perform intelligent search', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Extract semantic terms from search query
+   */
+  private extractSemanticTerms(query: string): string[] {
+    // In a real implementation, this would use NLP libraries or AI services
+    const terms = query.toLowerCase().split(/\s+/);
+    const semanticMap: Record<string, string[]> = {
+      'contract': ['agreement', 'document', 'legal', 'terms'],
+      'maintenance': ['repair', 'service', 'work order', 'asset'],
+      'lease': ['rental', 'property', 'tenant', 'agreement'],
+      'invoice': ['bill', 'payment', 'finance', 'cost'],
+      'report': ['analysis', 'summary', 'data', 'metrics'],
+    };
+
+    const semanticTerms: string[] = [];
+    terms.forEach(term => {
+      if (semanticMap[term]) {
+        semanticTerms.push(...semanticMap[term]);
+      }
+    });
+
+    return [...new Set(semanticTerms)];
+  }
+
+  /**
+   * Generate search insights
+   */
+  private generateSearchInsights(
+    results: DocumentSearchResult[],
+    query: string,
+    context?: DocumentSearchContext
+  ): SearchInsight[] {
+    const insights: SearchInsight[] = [];
+
+    // Document type insights
+    const typeDistribution = results.reduce((acc, result) => {
+      const type = result.document.mimeType.split('/')[1];
+      acc[type] = (acc[type] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+
+    if (Object.keys(typeDistribution).length > 1) {
+      insights.push({
+        type: 'document_types',
+        title: 'Document Types Found',
+        description: `Found ${Object.keys(typeDistribution).length} different document types`,
+        data: typeDistribution,
+      });
+    }
+
+    // Recency insights
+    const recentDocs = results.filter(r => 
+      (Date.now() - r.document.createdAt.getTime()) < (30 * 24 * 60 * 60 * 1000) // 30 days
+    );
+
+    if (recentDocs.length > 0) {
+      insights.push({
+        type: 'recency',
+        title: 'Recent Documents',
+        description: `${recentDocs.length} documents were created in the last 30 days`,
+        data: { recentCount: recentDocs.length, totalCount: results.length },
+      });
+    }
+
+    return insights;
+  }
+
+  /**
+   * Extract search facets for filtering
+   */
+  private extractSearchFacets(results: DocumentSearchResult[]): SearchFacet[] {
+    const facets: SearchFacet[] = [];
+
+    // Document type facet
+    const types = results.reduce((acc, result) => {
+      const type = result.document.mimeType.split('/')[1];
+      acc[type] = (acc[type] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+
+    facets.push({
+      name: 'Document Type',
+      field: 'type',
+      values: Object.entries(types).map(([value, count]) => ({ value, count })),
+    });
+
+    // Date range facet
+    const now = new Date();
+    const dateRanges = [
+      { label: 'Last Week', days: 7 },
+      { label: 'Last Month', days: 30 },
+      { label: 'Last Quarter', days: 90 },
+      { label: 'Last Year', days: 365 },
+    ];
+
+    const dateDistribution = dateRanges.map(range => {
+      const cutoff = new Date(now.getTime() - (range.days * 24 * 60 * 60 * 1000));
+      const count = results.filter(r => r.document.createdAt >= cutoff).length;
+      return { value: range.label, count };
+    });
+
+    facets.push({
+      name: 'Date Range',
+      field: 'dateRange',
+      values: dateDistribution.filter(d => d.count > 0),
+    });
+
+    return facets;
+  }
+
+  /**
+   * Generate suggested queries based on results
+   */
+  private generateSuggestedQueries(
+    originalQuery: string,
+    results: DocumentSearchResult[]
+  ): string[] {
+    const suggestions: Set<string> = new Set();
+
+    // Extract common terms from document names
+    const commonTerms = results
+      .flatMap(r => r.document.name.toLowerCase().split(/\s+/))
+      .filter(term => term.length > 3 && !originalQuery.toLowerCase().includes(term))
+      .reduce((acc, term) => {
+        acc[term] = (acc[term] || 0) + 1;
+        return acc;
+      }, {} as Record<string, number>);
+
+    // Get top terms
+    const topTerms = Object.entries(commonTerms)
+      .sort(([,a], [,b]) => b - a)
+      .slice(0, 5)
+      .map(([term]) => term);
+
+    // Generate suggestions
+    topTerms.forEach(term => {
+      suggestions.add(`${originalQuery} ${term}`);
+      suggestions.add(`${term} ${originalQuery}`);
+    });
+
+    return Array.from(suggestions).slice(0, 3);
+  }
+}
+
+// Additional types for enhanced document features
+interface DocumentAnalytics {
+  period: {
+    start: Date;
+    end: Date;
+  };
+  summary: {
+    totalDocuments: number;
+    totalSize: number;
+    avgDocumentSize: number;
+    avgVersions: number;
+    totalAccess: number;
+  };
+  typeDistribution: Record<string, number>;
+  versionStats: Array<{
+    documentId: string;
+    versionCount: number;
+    lastModified: Date;
+  }>;
+  accessPatterns: Record<string, number>;
+  topDocuments: Array<{
+    id: string;
+    name: string;
+    accessCount: number;
+    lastAccessed?: Date;
+  }>;
+  storageBreakdown: Array<{
+    type: string;
+    count: number;
+    size: number;
+  }>;
+  trends: Array<{
+    date: Date;
+    created: number;
+    modified: number;
+    accessed: number;
+    size: number;
+  }>;
+}
+
+interface DocumentComplianceRule {
+  id: string;
+  name: string;
+  description: string;
+  type: 'RETENTION' | 'REVIEW' | 'ACCESS' | 'CLASSIFICATION';
+  severity: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+  condition: {
+    field: string;
+    operator: string;
+    value: any;
+    unit?: string;
+  };
+}
+
+interface DocumentComplianceViolation {
+  documentId: string;
+  documentName: string;
+  ruleId: string;
+  ruleName: string;
+  ruleType: string;
+  severity: string;
+  description: string;
+  detectedAt: Date;
+  isResolved: boolean;
+}
+
+interface DocumentComplianceReport {
+  organizationId: string;
+  reportDate: Date;
+  summary: {
+    totalDocuments: number;
+    totalViolations: number;
+    violationsBySeverity: Record<string, number>;
+    violationsByType: Record<string, number>;
+  };
+  violations: DocumentComplianceViolation[];
+  recommendations: string[];
+}
+
+interface DocumentSearchContext {
+  userId?: string;
+  department?: string;
+  project?: string;
+  tags?: string[];
+}
+
+interface IntelligentSearchResult {
+  query: string;
+  results: DocumentSearchResult[];
+  totalFound: number;
+  insights: SearchInsight[];
+  facets: SearchFacet[];
+  suggestedQueries: string[];
+  searchTime: number;
+}
+
+interface SearchInsight {
+  type: string;
+  title: string;
+  description: string;
+  data: Record<string, any>;
+}
+
+interface SearchFacet {
+  name: string;
+  field: string;
+  values: Array<{
+    value: string;
+    count: number;
+  }>;
 }
