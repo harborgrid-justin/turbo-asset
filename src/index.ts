@@ -33,6 +33,14 @@ import { FinancialConsolidationController } from './controllers/FinancialConsoli
 import MaintenanceController from './controllers/MaintenanceController';
 import WorkOrderController from './controllers/WorkOrderController';
 
+// Phase 6: Enterprise Integrations & Reporting routes
+import { EnterpriseIntegrationController } from './controllers/EnterpriseIntegrationController';
+import { DataWarehouseController } from './controllers/DataWarehouseController';
+import { BusinessIntelligenceController } from './controllers/BusinessIntelligenceController';
+import { DataGovernanceController } from './controllers/DataGovernanceController';
+import { APIManagementController } from './controllers/APIManagementController';
+import { WhiteLabelController } from './controllers/WhiteLabelController';
+
 class TurboAssetServer {
   private app: express.Application;
   private server: any;
@@ -111,6 +119,142 @@ class TurboAssetServer {
     apiRouter.use('/maintenance', MaintenanceController);
     apiRouter.use('/work-orders', WorkOrderController);
 
+    // Phase 6: Enterprise Integrations & Reporting routes
+    const enterpriseIntegrationController = new EnterpriseIntegrationController();
+    const dataWarehouseController = new DataWarehouseController();
+    const businessIntelligenceController = new BusinessIntelligenceController();
+    const dataGovernanceController = new DataGovernanceController();
+    const apiManagementController = new APIManagementController();
+    const whiteLabelController = new WhiteLabelController();
+
+    // Enterprise Integration routes
+    apiRouter.get('/enterprise-integrations/:organizationId/integrations', enterpriseIntegrationController.getIntegrations);
+    apiRouter.post('/enterprise-integrations/:organizationId/integrations', enterpriseIntegrationController.createIntegration);
+    apiRouter.put('/enterprise-integrations/:organizationId/integrations/:integrationId', enterpriseIntegrationController.updateIntegration);
+    apiRouter.delete('/enterprise-integrations/:organizationId/integrations/:integrationId', enterpriseIntegrationController.deleteIntegration);
+    apiRouter.post('/enterprise-integrations/:organizationId/integrations/:integrationId/test', enterpriseIntegrationController.testConnection);
+    apiRouter.post('/enterprise-integrations/:organizationId/esb/send', enterpriseIntegrationController.sendMessage);
+    apiRouter.get('/enterprise-integrations/:organizationId/esb/metrics', enterpriseIntegrationController.getESBMetrics);
+    apiRouter.get('/enterprise-integrations/:organizationId/esb/health', enterpriseIntegrationController.getESBHealth);
+    apiRouter.post('/enterprise-integrations/:organizationId/salesforce/sync', enterpriseIntegrationController.syncWithSalesforce);
+    apiRouter.get('/enterprise-integrations/:organizationId/salesforce/reports/:reportId', enterpriseIntegrationController.getSalesforceReports);
+    apiRouter.post('/enterprise-integrations/:organizationId/outlook/sync/:bookingId', enterpriseIntegrationController.syncBookingToOutlook);
+    apiRouter.post('/enterprise-integrations/:organizationId/sharepoint/library', enterpriseIntegrationController.createSharePointLibrary);
+    apiRouter.get('/enterprise-integrations/:organizationId/microsoft365/auth', enterpriseIntegrationController.getAuthorizationUrl);
+    apiRouter.get('/enterprise-integrations/:organizationId/integrations/:integrationId/flows', enterpriseIntegrationController.getIntegrationFlows);
+    apiRouter.post('/enterprise-integrations/:organizationId/integrations/:integrationId/flows', enterpriseIntegrationController.createIntegrationFlow);
+    apiRouter.post('/enterprise-integrations/:organizationId/flows/:flowId/execute', enterpriseIntegrationController.executeFlow);
+    apiRouter.get('/enterprise-integrations/:organizationId/analytics', enterpriseIntegrationController.getIntegrationAnalytics);
+
+    // Data Warehouse routes
+    apiRouter.get('/data-warehouse/:organizationId/warehouses', dataWarehouseController.getWarehouses);
+    apiRouter.post('/data-warehouse/:organizationId/warehouses', dataWarehouseController.createWarehouse);
+    apiRouter.put('/data-warehouse/:organizationId/warehouses/:warehouseId', dataWarehouseController.updateWarehouse);
+    apiRouter.delete('/data-warehouse/:organizationId/warehouses/:warehouseId', dataWarehouseController.deleteWarehouse);
+    apiRouter.get('/data-warehouse/:organizationId/warehouses/:warehouseId/etl', dataWarehouseController.getETLProcesses);
+    apiRouter.post('/data-warehouse/:organizationId/warehouses/:warehouseId/etl', dataWarehouseController.createETLProcess);
+    apiRouter.post('/data-warehouse/:organizationId/etl/:processId/execute', dataWarehouseController.executeETLProcess);
+    apiRouter.get('/data-warehouse/:organizationId/etl/:processId/metrics', dataWarehouseController.getETLMetrics);
+    apiRouter.get('/data-warehouse/:organizationId/warehouses/:warehouseId/data', dataWarehouseController.getHistoricalData);
+    apiRouter.post('/data-warehouse/:organizationId/warehouses/:warehouseId/data-marts', dataWarehouseController.createDataMart);
+    apiRouter.post('/data-warehouse/:organizationId/etl/:processId/schedule', dataWarehouseController.scheduleETLProcess);
+    apiRouter.put('/data-warehouse/:organizationId/etl/:processId', dataWarehouseController.updateETLProcess);
+    apiRouter.delete('/data-warehouse/:organizationId/etl/:processId', dataWarehouseController.deleteETLProcess);
+    apiRouter.get('/data-warehouse/:organizationId/warehouses/:warehouseId/analytics', dataWarehouseController.getWarehouseAnalytics);
+    apiRouter.post('/data-warehouse/:organizationId/warehouses/:warehouseId/test', dataWarehouseController.testConnection);
+    apiRouter.get('/data-warehouse/:organizationId/warehouses/:warehouseId/quality', dataWarehouseController.getDataQualityMetrics);
+    apiRouter.get('/data-warehouse/:organizationId/etl/:processId/history', dataWarehouseController.getExecutionHistory);
+
+    // Business Intelligence routes
+    apiRouter.get('/business-intelligence/:organizationId/reports', businessIntelligenceController.getReports);
+    apiRouter.post('/business-intelligence/:organizationId/reports', businessIntelligenceController.createReport);
+    apiRouter.post('/business-intelligence/:organizationId/reports/:reportId/execute', businessIntelligenceController.executeReport);
+    apiRouter.put('/business-intelligence/:organizationId/reports/:reportId', businessIntelligenceController.updateReport);
+    apiRouter.delete('/business-intelligence/:organizationId/reports/:reportId', businessIntelligenceController.deleteReport);
+    apiRouter.get('/business-intelligence/:organizationId/dashboards', businessIntelligenceController.getDashboards);
+    apiRouter.post('/business-intelligence/:organizationId/dashboards', businessIntelligenceController.createDashboard);
+    apiRouter.get('/business-intelligence/:organizationId/dashboards/:dashboardId/data', businessIntelligenceController.getDashboardData);
+    apiRouter.put('/business-intelligence/:organizationId/dashboards/:dashboardId', businessIntelligenceController.updateDashboard);
+    apiRouter.delete('/business-intelligence/:organizationId/dashboards/:dashboardId', businessIntelligenceController.deleteDashboard);
+    apiRouter.post('/business-intelligence/:organizationId/warehouses/:warehouseId/build', businessIntelligenceController.buildReport);
+    apiRouter.get('/business-intelligence/:organizationId/warehouses/:warehouseId/sources', businessIntelligenceController.getDataSources);
+    apiRouter.post('/business-intelligence/:organizationId/visualizations/suggest', businessIntelligenceController.getSuggestedVisualizations);
+    apiRouter.get('/business-intelligence/:organizationId/reports/:reportId/export', businessIntelligenceController.exportReport);
+    apiRouter.get('/business-intelligence/:organizationId/executive-dashboard', businessIntelligenceController.getExecutiveDashboard);
+    apiRouter.get('/business-intelligence/:organizationId/benchmarking', businessIntelligenceController.getBenchmarkingReport);
+    apiRouter.post('/business-intelligence/:organizationId/reports/:reportId/schedules', businessIntelligenceController.createSchedule);
+    apiRouter.get('/business-intelligence/:organizationId/schedules', businessIntelligenceController.getSchedules);
+    apiRouter.put('/business-intelligence/:organizationId/schedules/:scheduleId', businessIntelligenceController.updateSchedule);
+    apiRouter.delete('/business-intelligence/:organizationId/schedules/:scheduleId', businessIntelligenceController.deleteSchedule);
+    apiRouter.post('/business-intelligence/:organizationId/templates', businessIntelligenceController.createTemplate);
+    apiRouter.post('/business-intelligence/:organizationId/templates/:templateId/generate', businessIntelligenceController.generateFromTemplate);
+    apiRouter.get('/business-intelligence/:organizationId/analytics', businessIntelligenceController.getBIAnalytics);
+
+    // Data Governance routes
+    apiRouter.get('/data-governance/:organizationId/rules', dataGovernanceController.getGovernanceRules);
+    apiRouter.post('/data-governance/:organizationId/rules', dataGovernanceController.createGovernanceRule);
+    apiRouter.put('/data-governance/:organizationId/rules/:ruleId', dataGovernanceController.updateGovernanceRule);
+    apiRouter.delete('/data-governance/:organizationId/rules/:ruleId', dataGovernanceController.deleteGovernanceRule);
+    apiRouter.get('/data-governance/:organizationId/master-data', dataGovernanceController.getMasterDataRecords);
+    apiRouter.post('/data-governance/:organizationId/master-data', dataGovernanceController.createMasterDataRecord);
+    apiRouter.post('/data-governance/:organizationId/lineage', dataGovernanceController.trackDataLineage);
+    apiRouter.get('/data-governance/:organizationId/lineage/:entityType/:entityId', dataGovernanceController.getDataLineage);
+    apiRouter.get('/data-governance/:organizationId/quality', dataGovernanceController.getDataQualityMetrics);
+    apiRouter.post('/data-governance/:organizationId/classify', dataGovernanceController.classifyData);
+    apiRouter.post('/data-governance/:organizationId/stewards', dataGovernanceController.assignDataSteward);
+    apiRouter.post('/data-governance/:organizationId/violations/detect', dataGovernanceController.detectPolicyViolations);
+    apiRouter.post('/data-governance/:organizationId/master-data/manage', dataGovernanceController.manageMasterData);
+    apiRouter.post('/data-governance/:organizationId/access/audit', dataGovernanceController.auditDataAccess);
+    apiRouter.post('/data-governance/:organizationId/retention/monitor', dataGovernanceController.monitorRetentionPolicies);
+    apiRouter.get('/data-governance/:organizationId/reports', dataGovernanceController.generateGovernanceReport);
+    apiRouter.get('/data-governance/:organizationId/analytics', dataGovernanceController.getGovernanceAnalytics);
+    apiRouter.get('/data-governance/:organizationId/stewards', dataGovernanceController.getDataStewards);
+    apiRouter.get('/data-governance/:organizationId/catalog', dataGovernanceController.getDataCatalog);
+    apiRouter.get('/data-governance/:organizationId/privacy-compliance', dataGovernanceController.getPrivacyComplianceReport);
+
+    // API Management routes
+    apiRouter.get('/api-management/:organizationId/keys', apiManagementController.getAPIKeys);
+    apiRouter.post('/api-management/:organizationId/keys', apiManagementController.createAPIKey);
+    apiRouter.put('/api-management/:organizationId/keys/:keyId', apiManagementController.updateAPIKey);
+    apiRouter.delete('/api-management/:organizationId/keys/:keyId/revoke', apiManagementController.revokeAPIKey);
+    apiRouter.get('/api-management/:organizationId/keys/:keyId/usage', apiManagementController.getAPIKeyUsage);
+    apiRouter.get('/api-management/:organizationId/keys/:keyId/limits', apiManagementController.getRateLimitStatus);
+    apiRouter.get('/api-management/:organizationId/analytics', apiManagementController.getUsageAnalytics);
+    apiRouter.get('/api-management/:organizationId/health', apiManagementController.getHealthMetrics);
+    apiRouter.get('/api-management/:organizationId/documentation', apiManagementController.getAPIDocumentation);
+    apiRouter.post('/api-management/:organizationId/endpoints', apiManagementController.registerEndpoint);
+    apiRouter.get('/api-management/:organizationId/endpoints/analytics', apiManagementController.getEndpointAnalytics);
+    apiRouter.get('/api-management/:organizationId/usage/trends', apiManagementController.getUsageTrends);
+    apiRouter.get('/api-management/:organizationId/quotas', apiManagementController.getQuotaStatus);
+    apiRouter.get('/api-management/:organizationId/errors', apiManagementController.getErrorAnalysis);
+    apiRouter.put('/api-management/:organizationId/keys/:keyId/permissions', apiManagementController.updatePermissions);
+    apiRouter.get('/api-management/:organizationId/performance', apiManagementController.getPerformanceMetrics);
+
+    // White Label routes
+    apiRouter.get('/white-label/:organizationId/configurations', whiteLabelController.getConfigurations);
+    apiRouter.post('/white-label/:organizationId/configurations', whiteLabelController.createConfiguration);
+    apiRouter.put('/white-label/:organizationId/branding', whiteLabelController.updateBranding);
+    apiRouter.post('/white-label/:organizationId/themes', whiteLabelController.applyTheme);
+    apiRouter.post('/white-label/:organizationId/domains', whiteLabelController.setupCustomDomain);
+    apiRouter.post('/white-label/:organizationId/domains/verify', whiteLabelController.verifyCustomDomain);
+    apiRouter.get('/white-label/domain/:domain/organization', whiteLabelController.getOrganizationByDomain);
+    apiRouter.get('/white-label/:organizationId/bundles', whiteLabelController.generateBundle);
+    apiRouter.post('/white-label/:organizationId/subsidiaries', whiteLabelController.createSubsidiary);
+    apiRouter.get('/white-label/:organizationId/subsidiaries', whiteLabelController.getSubsidiaries);
+    apiRouter.post('/white-label/:organizationId/email-templates', whiteLabelController.createEmailTemplate);
+    apiRouter.post('/white-label/:organizationId/email-templates/:templateId/render', whiteLabelController.renderEmailTemplate);
+    apiRouter.post('/white-label/:organizationId/features', whiteLabelController.setupFeatureFlags);
+    apiRouter.get('/white-label/:organizationId/features/:featureName', whiteLabelController.checkFeatureFlag);
+    apiRouter.get('/white-label/:organizationId/pwa-manifest', whiteLabelController.generatePWAManifest);
+    apiRouter.get('/white-label/:organizationId/themes', whiteLabelController.getAvailableThemes);
+    apiRouter.get('/white-label/:organizationId/analytics', whiteLabelController.getBrandingAnalytics);
+    apiRouter.put('/white-label/:organizationId/configurations/:configId', whiteLabelController.updateConfiguration);
+    apiRouter.delete('/white-label/:organizationId/configurations/:configId', whiteLabelController.deleteConfiguration);
+    apiRouter.post('/white-label/:organizationId/logo', whiteLabelController.uploadLogo);
+    apiRouter.post('/white-label/:organizationId/themes/preview', whiteLabelController.previewTheme);
+    apiRouter.get('/white-label/:organizationId/configurations/:configId/export', whiteLabelController.exportConfiguration);
+    apiRouter.post('/white-label/:organizationId/configurations/import', whiteLabelController.importConfiguration);
+
     this.app.use('/api', apiRouter);
 
     // API documentation
@@ -146,6 +290,13 @@ class TurboAssetServer {
           energyManagement: '/api/energy-management',
           capitalProjects: '/api/capital-projects',
           iotDevices: '/api/iot-devices',
+          // Phase 6: Enterprise Integrations & Reporting
+          enterpriseIntegrations: '/api/enterprise-integrations',
+          dataWarehouse: '/api/data-warehouse',
+          businessIntelligence: '/api/business-intelligence',
+          dataGovernance: '/api/data-governance',
+          apiManagement: '/api/api-management',
+          whiteLabel: '/api/white-label',
         },
       });
     });
