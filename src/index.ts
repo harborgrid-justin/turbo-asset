@@ -18,6 +18,11 @@ import customFieldRoutes from './controllers/CustomFieldController';
 import integrationRoutes from './controllers/IntegrationController';
 import notificationRoutes from './controllers/NotificationController';
 
+// Phase 3: Space Management & Portfolio Tracking routes
+import spaceBookingRoutes from './controllers/SpaceBookingController';
+import moveManagementRoutes from './controllers/MoveManagementController';
+import portfolioRoutes from './controllers/PortfolioController';
+
 class TurboAssetServer {
   private app: express.Application;
   private server: any;
@@ -81,6 +86,11 @@ class TurboAssetServer {
     apiRouter.use('/integrations', integrationRoutes);
     apiRouter.use('/notifications', notificationRoutes);
 
+    // Phase 3: Space Management & Portfolio Tracking routes
+    apiRouter.use('/space-bookings', spaceBookingRoutes);
+    apiRouter.use('/move-management', moveManagementRoutes);
+    apiRouter.use('/portfolio', portfolioRoutes);
+
     this.app.use('/api', apiRouter);
 
     // API documentation
@@ -98,6 +108,10 @@ class TurboAssetServer {
           customFields: '/api/custom-fields',
           integrations: '/api/integrations',
           notifications: '/api/notifications',
+          // Phase 3: Space Management & Portfolio Tracking
+          spaceBookings: '/api/space-bookings',
+          moveManagement: '/api/move-management',
+          portfolio: '/api/portfolio',
         },
       });
     });

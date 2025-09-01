@@ -462,7 +462,7 @@ export class DocumentService {
       ]);
 
       // Filter by permissions
-      const accessibleDocuments = [];
+      const accessibleDocuments: any[] = [];
       for (const doc of documents) {
         if (await this.checkDocumentPermission(doc.id, userId, 'READ')) {
           accessibleDocuments.push(doc);
