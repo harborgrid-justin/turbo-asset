@@ -404,4 +404,423 @@ export class WorkflowEngine {
       dueDate: instance.dueDate 
     });
   }
+
+  /**
+   * Get workflow metrics and analytics
+   */
+  async getWorkflowMetrics(organizationId: string, timeframe: 'DAY' | 'WEEK' | 'MONTH' | 'QUARTER' = 'MONTH'): Promise<WorkflowMetrics> {
+    try {
+      const endDate = new Date();
+      const startDate = new Date();
+      
+      switch (timeframe) {
+        case 'DAY':
+          startDate.setDate(startDate.getDate() - 1);
+          break;
+        case 'WEEK':
+          startDate.setDate(startDate.getDate() - 7);
+          break;
+        case 'MONTH':
+          startDate.setMonth(startDate.getMonth() - 1);
+          break;
+        case 'QUARTER':
+          startDate.setMonth(startDate.getMonth() - 3);
+          break;
+      }
+
+      // Get workflow instances within timeframe
+      const instances = await prisma.workflowInstance.findMany({
+        where: {
+          organizationId,
+          createdAt: {
+            gte: startDate,
+            lte: endDate,
+          },
+        },
+        include: {
+          definition: true,
+          approvals: true,
+        },
+      });
+
+      // Calculate metrics
+      const totalInstances = instances.length;
+      const completedInstances = instances.filter(i => i.status === 'COMPLETED').length;
+      const pendingInstances = instances.filter(i => i.status === 'PENDING' || i.status === 'IN_PROGRESS').length;
+      const cancelledInstances = instances.filter(i => i.status === 'CANCELLED').length;
+      const expiredInstances = instances.filter(i => i.status === 'EXPIRED').length;
+
+      // Calculate average completion time
+      const completedWithTimes = instances.filter(i => i.status === 'COMPLETED' && i.completedAt);
+      const avgCompletionTime = completedWithTimes.length > 0 
+        ? completedWithTimes.reduce((sum, i) => sum + (i.completedAt!.getTime() - i.createdAt.getTime()), 0) / completedWithTimes.length
+        : 0;
+
+      // Get workflow definitions performance
+      const workflowPerformance = await this.calculateWorkflowPerformance(organizationId, instances);
+
+      // Get approval metrics
+      const approvalMetrics = await this.calculateApprovalMetrics(instances);
+
+      // Get SLA compliance
+      const slaCompliance = await this.calculateSLACompliance(instances);
+
+      return {
+        period: { start: startDate, end: endDate },
+        totalInstances,
+        completedInstances,
+        pendingInstances,
+        cancelledInstances,
+        expiredInstances,
+        completionRate: totalInstances > 0 ? (completedInstances / totalInstances) * 100 : 0,
+        avgCompletionTime: avgCompletionTime / (1000 * 60 * 60), // Convert to hours
+        workflowPerformance,
+        approvalMetrics,
+        slaCompliance,
+      };
+    } catch (error) {
+      logger.error('Failed to get workflow metrics', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Calculate workflow performance by definition
+   */
+  private async calculateWorkflowPerformance(organizationId: string, instances: any[]): Promise<WorkflowPerformance[]> {
+    const performanceMap = new Map<string, {
+      definitionId: string;
+      name: string;
+      total: number;
+      completed: number;
+      avgTime: number;
+      completionTimes: number[];
+    }>();
+
+    instances.forEach(instance => {
+      const key = instance.definitionId;
+      if (!performanceMap.has(key)) {
+        performanceMap.set(key, {
+          definitionId: instance.definitionId,
+          name: instance.definition.name,
+          total: 0,
+          completed: 0,
+          avgTime: 0,
+          completionTimes: [],
+        });
+      }
+
+      const perf = performanceMap.get(key)!;
+      perf.total++;
+
+      if (instance.status === 'COMPLETED' && instance.completedAt) {
+        perf.completed++;
+        const completionTime = instance.completedAt.getTime() - instance.createdAt.getTime();
+        perf.completionTimes.push(completionTime);
+      }
+    });
+
+    return Array.from(performanceMap.values()).map(perf => ({
+      definitionId: perf.definitionId,
+      definitionName: perf.name,
+      totalInstances: perf.total,
+      completedInstances: perf.completed,
+      completionRate: perf.total > 0 ? (perf.completed / perf.total) * 100 : 0,
+      avgCompletionTime: perf.completionTimes.length > 0 
+        ? perf.completionTimes.reduce((sum, time) => sum + time, 0) / perf.completionTimes.length / (1000 * 60 * 60)
+        : 0,
+    }));
+  }
+
+  /**
+   * Calculate approval metrics
+   */
+  private async calculateApprovalMetrics(instances: any[]): Promise<ApprovalMetrics> {
+    const approvals = instances.flatMap(i => i.approvals || []);
+    
+    const totalApprovals = approvals.length;
+    const approvedCount = approvals.filter(a => a.status === 'APPROVED').length;
+    const rejectedCount = approvals.filter(a => a.status === 'REJECTED').length;
+    const pendingCount = approvals.filter(a => a.status === 'PENDING').length;
+    const delegatedCount = approvals.filter(a => a.status === 'DELEGATED').length;
+
+    // Calculate average approval time
+    const approvedWithTimes = approvals.filter(a => a.status === 'APPROVED' && a.approvedAt);
+    const avgApprovalTime = approvedWithTimes.length > 0
+      ? approvedWithTimes.reduce((sum, a) => sum + (a.approvedAt.getTime() - a.createdAt.getTime()), 0) / approvedWithTimes.length
+      : 0;
+
+    return {
+      totalApprovals,
+      approvedCount,
+      rejectedCount,
+      pendingCount,
+      delegatedCount,
+      approvalRate: totalApprovals > 0 ? (approvedCount / totalApprovals) * 100 : 0,
+      rejectionRate: totalApprovals > 0 ? (rejectedCount / totalApprovals) * 100 : 0,
+      avgApprovalTime: avgApprovalTime / (1000 * 60 * 60), // Convert to hours
+    };
+  }
+
+  /**
+   * Calculate SLA compliance
+   */
+  private async calculateSLACompliance(instances: any[]): Promise<SLACompliance> {
+    let totalWithSLA = 0;
+    let withinSLA = 0;
+    let breachedSLA = 0;
+
+    instances.forEach(instance => {
+      if (instance.dueDate) {
+        totalWithSLA++;
+        const completedAt = instance.completedAt || new Date();
+        
+        if (completedAt <= instance.dueDate) {
+          withinSLA++;
+        } else {
+          breachedSLA++;
+        }
+      }
+    });
+
+    return {
+      totalWithSLA,
+      withinSLA,
+      breachedSLA,
+      complianceRate: totalWithSLA > 0 ? (withinSLA / totalWithSLA) * 100 : 0,
+      breachRate: totalWithSLA > 0 ? (breachedSLA / totalWithSLA) * 100 : 0,
+    };
+  }
+
+  /**
+   * Create workflow from template
+   */
+  async createWorkflowFromTemplate(
+    organizationId: string,
+    templateId: string,
+    data: Record<string, any> = {}
+  ): Promise<string> {
+    try {
+      const template = await prisma.workflowTemplate.findUnique({
+        where: { id: templateId },
+        include: { steps: true }
+      });
+
+      if (!template) {
+        throw new Error('Workflow template not found');
+      }
+
+      // Generate workflow definition from template
+      const workflowDefinition: Omit<WorkflowDefinition, 'id'> = {
+        name: template.name,
+        description: template.description,
+        version: '1.0',
+        startStep: template.steps[0]?.id || '',
+        steps: template.steps.map(step => ({
+          id: step.id,
+          name: step.name,
+          type: step.type as any,
+          approvers: step.approvers,
+          roles: step.roles,
+          condition: step.condition,
+          sla: step.slaHours ? {
+            duration: step.slaHours,
+            unit: 'hours' as const,
+          } : undefined,
+          nextSteps: step.nextStepIds,
+        })),
+        variables: data,
+      };
+
+      return await this.createWorkflowDefinition(organizationId, workflowDefinition);
+    } catch (error) {
+      logger.error('Failed to create workflow from template', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Clone workflow definition
+   */
+  async cloneWorkflowDefinition(
+    organizationId: string,
+    sourceDefinitionId: string,
+    newName: string
+  ): Promise<string> {
+    try {
+      const sourceDefinition = await prisma.workflowDefinition.findUnique({
+        where: { id: sourceDefinitionId },
+      });
+
+      if (!sourceDefinition) {
+        throw new Error('Source workflow definition not found');
+      }
+
+      const definition = sourceDefinition.definition as WorkflowDefinition;
+      
+      const clonedDefinition: Omit<WorkflowDefinition, 'id'> = {
+        ...definition,
+        name: newName,
+        version: '1.0',
+      };
+
+      return await this.createWorkflowDefinition(organizationId, clonedDefinition);
+    } catch (error) {
+      logger.error('Failed to clone workflow definition', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Bulk update workflow instances
+   */
+  async bulkUpdateWorkflowInstances(
+    organizationId: string,
+    instanceIds: string[],
+    updates: Partial<WorkflowInstanceData>
+  ): Promise<{ updated: number; failed: string[] }> {
+    const results = { updated: 0, failed: [] as string[] };
+
+    for (const instanceId of instanceIds) {
+      try {
+        await prisma.workflowInstance.update({
+          where: { 
+            id: instanceId,
+            organizationId,
+          },
+          data: updates,
+        });
+        results.updated++;
+      } catch (error) {
+        results.failed.push(instanceId);
+        logger.error('Failed to update workflow instance', { instanceId, error });
+      }
+    }
+
+    return results;
+  }
+
+  /**
+   * Get workflow history for an entity
+   */
+  async getEntityWorkflowHistory(
+    organizationId: string,
+    entityType: string,
+    entityId: string
+  ): Promise<WorkflowHistoryEntry[]> {
+    try {
+      const instances = await prisma.workflowInstance.findMany({
+        where: {
+          organizationId,
+          data: {
+            path: ['entityType'],
+            equals: entityType,
+          },
+        },
+        include: {
+          definition: true,
+          approvals: {
+            include: {
+              user: {
+                select: {
+                  firstName: true,
+                  lastName: true,
+                  email: true,
+                },
+              },
+            },
+          },
+        },
+        orderBy: {
+          createdAt: 'desc',
+        },
+      });
+
+      // Filter by entity ID in the data field
+      const filteredInstances = instances.filter(instance => 
+        (instance.data as any)?.entityId === entityId
+      );
+
+      return filteredInstances.map(instance => ({
+        instanceId: instance.id,
+        definitionName: (instance.definition as any).name,
+        status: instance.status,
+        initiatedBy: instance.initiatedById,
+        startedAt: instance.createdAt,
+        completedAt: instance.completedAt,
+        approvals: instance.approvals.map((approval: any) => ({
+          id: approval.id,
+          approver: approval.user ? `${approval.user.firstName} ${approval.user.lastName}` : 'Unknown',
+          status: approval.status,
+          comments: approval.comments,
+          approvedAt: approval.approvedAt,
+        })),
+      }));
+    } catch (error) {
+      logger.error('Failed to get entity workflow history', error);
+      throw error;
+    }
+  }
+}
+
+// Additional types for enhanced workflow features
+interface WorkflowMetrics {
+  period: {
+    start: Date;
+    end: Date;
+  };
+  totalInstances: number;
+  completedInstances: number;
+  pendingInstances: number;
+  cancelledInstances: number;
+  expiredInstances: number;
+  completionRate: number;
+  avgCompletionTime: number;
+  workflowPerformance: WorkflowPerformance[];
+  approvalMetrics: ApprovalMetrics;
+  slaCompliance: SLACompliance;
+}
+
+interface WorkflowPerformance {
+  definitionId: string;
+  definitionName: string;
+  totalInstances: number;
+  completedInstances: number;
+  completionRate: number;
+  avgCompletionTime: number;
+}
+
+interface ApprovalMetrics {
+  totalApprovals: number;
+  approvedCount: number;
+  rejectedCount: number;
+  pendingCount: number;
+  delegatedCount: number;
+  approvalRate: number;
+  rejectionRate: number;
+  avgApprovalTime: number;
+}
+
+interface SLACompliance {
+  totalWithSLA: number;
+  withinSLA: number;
+  breachedSLA: number;
+  complianceRate: number;
+  breachRate: number;
+}
+
+interface WorkflowHistoryEntry {
+  instanceId: string;
+  definitionName: string;
+  status: string;
+  initiatedBy: string;
+  startedAt: Date;
+  completedAt?: Date;
+  approvals: Array<{
+    id: string;
+    approver: string;
+    status: string;
+    comments?: string;
+    approvedAt?: Date;
+  }>;
 }
