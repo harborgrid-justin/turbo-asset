@@ -158,7 +158,8 @@ const phase6ControllerFiles = [
   'src/controllers/BusinessIntelligenceController.ts',
   'src/controllers/ReportingController.ts',
   'src/controllers/DataGovernanceController.ts',
-  'src/controllers/APIManagementController.ts'
+  'src/controllers/APIManagementController.ts',
+  'src/controllers/WhiteLabelController.ts'
 ];
 
 let totalControllerLines = 0;
