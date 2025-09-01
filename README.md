@@ -191,6 +191,69 @@
   - Advanced analytics and business intelligence dashboards
   - Executive reporting with drill-down capabilities
 
+## 🔧 Phase 5: Maintenance & Asset Management
+
+### ✅ Comprehensive CMMS & Asset Tracking
+- **Enterprise Asset Management for 500,000+ Assets**
+  - Complete asset lifecycle from acquisition to disposal
+  - Multi-category support (HVAC, Electrical, Mechanical, etc.)
+  - Asset criticality classification and risk assessment
+  - Comprehensive condition monitoring and assessment
+  - Asset location tracking with GPS coordinates
+  - Advanced search and filtering capabilities
+
+- **Work Order Management with Mobile Support**
+  - Complete work order lifecycle management
+  - Priority-based scheduling and assignment
+  - Task breakdown with dependencies and progress tracking
+  - Material and labor cost tracking
+  - Technician mobile app with offline capabilities
+  - Photo uploads and digital signatures
+  - Time tracking with GPS location
+
+- **Preventive Maintenance Scheduling**
+  - Calendar-based and usage-based scheduling
+  - Resource optimization algorithms
+  - Skills-based technician assignment
+  - Automated work order generation
+  - Performance metrics and compliance tracking
+  - Critical path analysis and scheduling optimization
+
+### ⚡ Advanced Features
+- **Asset Lifecycle Management**
+  - Multiple depreciation methods (Straight-line, Declining balance, etc.)
+  - Replacement planning with cost-benefit analysis
+  - Asset disposal and retirement tracking
+  - ROI and total cost of ownership calculations
+
+- **Inventory Management with Automation**
+  - Automated reorder points and stock optimization
+  - ABC classification and demand forecasting
+  - Integration with work orders for material tracking
+  - Vendor management and purchase requisitions
+  - Real-time inventory alerts and notifications
+
+- **Energy Management & Sustainability**
+  - Multi-utility monitoring (Electricity, Gas, Water, Steam)
+  - Sustainability metrics and carbon footprint tracking
+  - Energy optimization recommendations
+  - Regulatory compliance reporting (Energy Star, LEED)
+  - Smart meter integration and automated readings
+
+- **Capital Project Management**
+  - Project lifecycle management with budget tracking
+  - Critical path method (CPM) scheduling
+  - Resource allocation and cost control
+  - Earned value management (EVM)
+  - Budget variance analysis and forecasting
+
+- **IoT Integration & Condition Monitoring**
+  - Multi-sensor support (Temperature, Vibration, Pressure, etc.)
+  - Predictive maintenance algorithms
+  - Anomaly detection and alerting
+  - Condition-based maintenance scheduling
+  - Real-time asset health monitoring
+
 ### 💰 Financial Management Capabilities
 - **Revenue Management**: Rent roll generation, payment tracking, percentage rent calculations
 - **Expense Management**: CAM charges, tax assessments, insurance allocations, vendor invoicing
@@ -434,7 +497,7 @@ For support, please contact [HarborGrid](mailto:support@harborgrid.com) or open 
 - **✅ Phase 1**: Core IWMS Foundation
 - **✅ Phase 2**: Workflow Engine & Integrations  
 - **✅ Phase 3**: Space Management & Portfolio Tracking (COMPLETED)
-- **Phase 4**: Advanced Analytics & AI-Powered Insights
-- **Phase 5**: Mobile Applications & Field Management
+- **✅ Phase 4**: Lease Administration & Financial Management (COMPLETED)  
+- **✅ Phase 5**: Maintenance & Asset Management (COMPLETED)
 - **Phase 6**: IoT Integration & Smart Building Management
 - **Phase 7**: Sustainability & ESG Reporting

@@ -870,7 +870,7 @@ export class FinancialConsolidationService {
 
     // Build hierarchy structure
     Object.entries(byLevel).forEach(([level, levelStatements]) => {
-      const entities = levelStatements.map(statement => ({
+      const entities = (levelStatements as any[]).map(statement => ({
         entityId: statement.entityId,
         entityName: this.getEntityDisplayName(statement.entityId, statement.entityType),
         revenue: statement.revenue,

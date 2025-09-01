@@ -74,6 +74,11 @@ export interface LeasePortfolioSummary {
     annualRent: number;
     status: string;
   }>;
+  alerts?: Array<{
+    type: string;
+    message: string;
+    severity: string;
+  }>;
 }
 
 export interface LeaseMetrics {
