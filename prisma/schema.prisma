@@ -2837,3 +2837,1498 @@ enum InvoiceStatus {
   PARTIALLY_PAID
 }
 
+// ================================
+// PHASE 5: MAINTENANCE & ASSET MANAGEMENT
+// ================================
+
+// Asset Management Models
+model MaintenanceAsset {
+  id                String              @id @default(cuid())
+  assetId           String              @unique
+  assetTag          String              @unique
+  assetName         String
+  description       String?
+  category          AssetCategory
+  subcategory       String?
+  manufacturer      String?
+  model             String?
+  serialNumber      String?
+  location          String
+  building          String?
+  floor             String?
+  room              String?
+  status            AssetStatus
+  condition         AssetCondition
+  criticality       AssetCriticality
+  
+  // Financial Information
+  purchasePrice     Float?
+  purchaseDate      DateTime?
+  warrantyExpiry    DateTime?
+  depreciationMethod DepreciationMethod?
+  usefulLife        Int?                // in years
+  salvageValue      Float?
+  currentValue      Float?
+  
+  // Maintenance Information
+  lastMaintenanceDate DateTime?
+  nextMaintenanceDate DateTime?
+  maintenanceInterval Int?              // in days
+  maintenanceCost     Float             @default(0)
+  
+  // Relationships
+  workOrders        WorkOrder[]
+  preventiveMaintenance PreventiveMaintenance[]
+  assetConditions   AssetConditionRecord[]
+  depreciations     AssetDepreciation[]
+  iotDevices        IoTDevice[]
+  energyMeters      EnergyMeter[]
+  
+  organizationId    String
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  createdBy         String
+  
+  @@map("maintenance_assets")
+}
+
+model WorkOrder {
+  id                String              @id @default(cuid())
+  workOrderNumber   String              @unique
+  title             String
+  description       String?
+  priority          WorkOrderPriority
+  status            WorkOrderStatus
+  type              WorkOrderType
+  category          String?
+  
+  // Asset Information
+  assetId           String?
+  asset             MaintenanceAsset?   @relation(fields: [assetId], references: [id])
+  location          String
+  building          String?
+  floor             String?
+  room              String?
+  
+  // Scheduling
+  requestedDate     DateTime
+  scheduledDate     DateTime?
+  startDate         DateTime?
+  completionDate    DateTime?
+  dueDate           DateTime?
+  
+  // Assignment
+  assignedTo        String?
+  assignedTechnician String?
+  assignedTeam      String?
+  estimatedHours    Float?
+  actualHours       Float?
+  
+  // Cost Information
+  estimatedCost     Float?
+  actualCost        Float               @default(0)
+  laborCost         Float               @default(0)
+  materialCost      Float               @default(0)
+  contractorCost    Float               @default(0)
+  
+  // Approval Workflow
+  requiresApproval  Boolean             @default(false)
+  approvalStatus    ApprovalStatus      @default(PENDING)
+  approvedBy        String?
+  approvedDate      DateTime?
+  
+  // Relationships
+  tasks             WorkOrderTask[]
+  materials         WorkOrderMaterial[]
+  timeEntries       WorkOrderTimeEntry[]
+  attachments       WorkOrderAttachment[]
+  parentWorkOrder   WorkOrder?          @relation("WorkOrderHierarchy", fields: [parentWorkOrderId], references: [id])
+  parentWorkOrderId String?
+  subWorkOrders     WorkOrder[]         @relation("WorkOrderHierarchy")
+  
+  // Prevention Maintenance Link
+  preventiveMaintenanceId String?
+  preventiveMaintenance PreventiveMaintenance? @relation(fields: [preventiveMaintenanceId], references: [id])
+  
+  organizationId    String
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  createdBy         String
+  
+  @@map("work_orders")
+}
+
+model WorkOrderTask {
+  id              String              @id @default(cuid())
+  workOrderId     String
+  workOrder       WorkOrder           @relation(fields: [workOrderId], references: [id], onDelete: Cascade)
+  taskNumber      Int
+  title           String
+  description     String?
+  status          TaskStatus
+  priority        TaskPriority
+  
+  // Assignment
+  assignedTo      String?
+  estimatedHours  Float?
+  actualHours     Float?
+  
+  // Scheduling
+  startDate       DateTime?
+  completionDate  DateTime?
+  dueDate         DateTime?
+  
+  // Dependencies
+  dependsOnTaskId String?
+  dependsOnTask   WorkOrderTask?      @relation("TaskDependency", fields: [dependsOnTaskId], references: [id])
+  dependentTasks  WorkOrderTask[]     @relation("TaskDependency")
+  
+  // Instructions and Safety
+  instructions    String?
+  safetyNotes     String?
+  skillsRequired  String[]
+  toolsRequired   String[]
+  
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+  
+  @@map("work_order_tasks")
+}
+
+model WorkOrderMaterial {
+  id              String              @id @default(cuid())
+  workOrderId     String
+  workOrder       WorkOrder           @relation(fields: [workOrderId], references: [id], onDelete: Cascade)
+  
+  inventoryItemId String?
+  inventoryItem   InventoryItem?      @relation(fields: [inventoryItemId], references: [id])
+  
+  itemName        String
+  description     String?
+  quantity        Float
+  unitOfMeasure   String
+  unitCost        Float
+  totalCost       Float
+  
+  status          MaterialStatus
+  requestedDate   DateTime
+  deliveredDate   DateTime?
+  
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+  
+  @@map("work_order_materials")
+}
+
+model WorkOrderTimeEntry {
+  id              String              @id @default(cuid())
+  workOrderId     String
+  workOrder       WorkOrder           @relation(fields: [workOrderId], references: [id], onDelete: Cascade)
+  
+  technicianId    String
+  technicianName  String
+  startTime       DateTime
+  endTime         DateTime?
+  hoursWorked     Float?
+  hourlyRate      Float?
+  totalCost       Float?
+  
+  description     String?
+  workPerformed   String?
+  
+  status          TimeEntryStatus
+  approvedBy      String?
+  approvedDate    DateTime?
+  
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+  
+  @@map("work_order_time_entries")
+}
+
+model WorkOrderAttachment {
+  id              String              @id @default(cuid())
+  workOrderId     String
+  workOrder       WorkOrder           @relation(fields: [workOrderId], references: [id], onDelete: Cascade)
+  
+  fileName        String
+  originalName    String
+  fileSize        Int
+  mimeType        String
+  filePath        String
+  uploadedBy      String
+  uploadedAt      DateTime            @default(now())
+  
+  @@map("work_order_attachments")
+}
+
+model PreventiveMaintenance {
+  id                String              @id @default(cuid())
+  pmNumber          String              @unique
+  title             String
+  description       String?
+  
+  // Asset Association
+  assetId           String
+  asset             MaintenanceAsset    @relation(fields: [assetId], references: [id])
+  
+  // Scheduling
+  frequency         PMFrequency
+  frequencyValue    Int                 // e.g., every 30 days
+  frequencyUnit     FrequencyUnit       // DAYS, WEEKS, MONTHS, YEARS
+  
+  // Calendar-based scheduling
+  startDate         DateTime
+  endDate           DateTime?
+  lastPerformed     DateTime?
+  nextDue           DateTime
+  
+  // Usage-based scheduling
+  usageInterval     Float?              // e.g., every 1000 hours
+  usageUnit         UsageUnit?          // HOURS, MILES, CYCLES
+  currentUsage      Float?
+  lastUsageReading  Float?
+  
+  // Assignment and Resources
+  assignedTo        String?
+  assignedTeam      String?
+  skillsRequired    String[]
+  estimatedHours    Float?
+  
+  // Cost Information
+  estimatedCost     Float?
+  averageCost       Float               @default(0)
+  
+  // Instructions
+  instructions      String?
+  safetyProcedures  String?
+  toolsRequired     String[]
+  partsRequired     String[]
+  
+  // Status and Priority
+  status            PMStatus
+  priority          MaintenancePriority
+  criticality       PMCriticality
+  
+  // Optimization
+  resourceOptimization Boolean           @default(false)
+  autoSchedule      Boolean             @default(true)
+  generateWorkOrder Boolean             @default(true)
+  leadTimeHours     Int?                // advance notice for scheduling
+  
+  // Generated Work Orders
+  workOrders        WorkOrder[]
+  
+  organizationId    String
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  createdBy         String
+  
+  @@map("preventive_maintenance")
+}
+
+model AssetConditionRecord {
+  id                String              @id @default(cuid())
+  assetId           String
+  asset             MaintenanceAsset    @relation(fields: [assetId], references: [id])
+  
+  condition         AssetCondition
+  previousCondition AssetCondition?
+  
+  // Assessment Details
+  assessmentDate    DateTime
+  assessedBy        String
+  assessmentType    AssessmentType      // ROUTINE, INSPECTION, INCIDENT
+  
+  // Condition Scores (0-100)
+  overallScore      Int
+  mechanicalScore   Int?
+  electricalScore   Int?
+  structuralScore   Int?
+  aestheticScore    Int?
+  
+  // Detailed Assessment
+  findings          String?
+  recommendations   String[]
+  urgentIssues      String[]
+  estimatedRepairCost Float?
+  
+  // Risk Assessment
+  riskLevel         RiskLevel
+  failureProbability Float?             // 0.0 to 1.0
+  impactSeverity    ImpactSeverity
+  
+  // Photos and Documentation
+  photoUrls         String[]
+  documentUrls      String[]
+  
+  // IoT Integration
+  sensorReadings    Json?               // Store sensor data at time of assessment
+  
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  
+  @@map("asset_condition_records")
+}
+
+model AssetDepreciation {
+  id                String              @id @default(cuid())
+  assetId           String
+  asset             MaintenanceAsset    @relation(fields: [assetId], references: [id])
+  
+  depreciationYear  Int
+  startingValue     Float
+  depreciationAmount Float
+  accumulatedDepreciation Float
+  endingValue       Float
+  
+  method            DepreciationMethod
+  depreciationRate  Float?              // percentage for declining balance
+  
+  calculatedDate    DateTime
+  
+  @@unique([assetId, depreciationYear])
+  @@map("asset_depreciation")
+}
+
+model InventoryItem {
+  id                String              @id @default(cuid())
+  itemNumber        String              @unique
+  itemName          String
+  description       String?
+  category          InventoryCategory
+  subcategory       String?
+  
+  // Physical Properties
+  manufacturer      String?
+  model             String?
+  partNumber        String?
+  serialized        Boolean             @default(false)
+  
+  // Location and Storage
+  location          String
+  bin               String?
+  warehouse         String?
+  
+  // Inventory Levels
+  quantityOnHand    Float               @default(0)
+  quantityReserved  Float               @default(0)
+  quantityAvailable Float               @default(0)
+  
+  // Reorder Management
+  reorderPoint      Float               @default(0)
+  reorderQuantity   Float               @default(0)
+  minimumStock      Float               @default(0)
+  maximumStock      Float               @default(0)
+  autoReorder       Boolean             @default(false)
+  
+  // Cost Information
+  unitCost          Float
+  averageCost       Float
+  lastCost          Float
+  standardCost      Float?
+  
+  // Unit of Measure
+  unitOfMeasure     String
+  alternateUOM      String?
+  conversionFactor  Float?
+  
+  // Vendor Information
+  preferredVendorId String?
+  vendorPartNumber  String?
+  leadTimeDays     Int?
+  
+  // Status and Dates
+  status            InventoryStatus
+  lastCountDate     DateTime?
+  lastOrderDate     DateTime?
+  lastUsedDate      DateTime?
+  
+  // ABC Classification
+  abcClassification ABCClassification?
+  
+  // Relationships
+  transactions      InventoryTransaction[]
+  workOrderMaterials WorkOrderMaterial[]
+  reorderAlerts     ReorderAlert[]
+  
+  organizationId    String
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  createdBy         String
+  
+  @@map("inventory_items")
+}
+
+model InventoryTransaction {
+  id                String              @id @default(cuid())
+  transactionNumber String              @unique
+  inventoryItemId   String
+  inventoryItem     InventoryItem       @relation(fields: [inventoryItemId], references: [id])
+  
+  transactionType   TransactionType
+  quantity          Float
+  unitCost          Float
+  totalCost         Float
+  
+  // Transaction Details
+  transactionDate   DateTime            @default(now())
+  reference         String?             // PO number, WO number, etc.
+  notes             String?
+  
+  // Before/After Quantities
+  quantityBefore    Float
+  quantityAfter     Float
+  
+  // Location
+  fromLocation      String?
+  toLocation        String?
+  
+  // Associated Records
+  workOrderId       String?
+  purchaseOrderId   String?
+  vendorId          String?
+  
+  processedBy       String
+  createdAt         DateTime            @default(now())
+  
+  @@map("inventory_transactions")
+}
+
+model ReorderAlert {
+  id                String              @id @default(cuid())
+  inventoryItemId   String
+  inventoryItem     InventoryItem       @relation(fields: [inventoryItemId], references: [id])
+  
+  alertType         ReorderAlertType
+  currentQuantity   Float
+  reorderPoint      Float
+  reorderQuantity   Float
+  
+  status            AlertStatus
+  triggeredDate     DateTime            @default(now())
+  acknowledgedDate  DateTime?
+  acknowledgedBy    String?
+  
+  purchaseOrderCreated Boolean           @default(false)
+  purchaseOrderId   String?
+  
+  @@map("reorder_alerts")
+}
+
+model EnergyMeter {
+  id                String              @id @default(cuid())
+  meterNumber       String              @unique
+  meterName         String
+  meterType         EnergyMeterType
+  utilityType       UtilityType
+  
+  // Location
+  assetId           String?
+  asset             MaintenanceAsset?   @relation(fields: [assetId], references: [id])
+  building          String
+  floor             String?
+  location          String
+  
+  // Meter Details
+  manufacturer      String?
+  model             String?
+  serialNumber      String?
+  installDate       DateTime?
+  calibrationDate   DateTime?
+  nextCalibrationDate DateTime?
+  
+  // Capacity and Units
+  capacity          Float?
+  units             String              // kWh, therms, gallons, etc.
+  multiplier        Float               @default(1)
+  
+  // Status
+  status            MeterStatus
+  isActive          Boolean             @default(true)
+  
+  // Smart Meter Features
+  isSmartMeter      Boolean             @default(false)
+  remoteReadCapable Boolean             @default(false)
+  readingFrequency  ReadingFrequency?
+  
+  // Relationships
+  readings          EnergyReading[]
+  iotDeviceId       String?
+  iotDevice         IoTDevice?          @relation(fields: [iotDeviceId], references: [id])
+  
+  organizationId    String
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  createdBy         String
+  
+  @@map("energy_meters")
+}
+
+model EnergyReading {
+  id                String              @id @default(cuid())
+  meterId           String
+  meter             EnergyMeter         @relation(fields: [meterId], references: [id])
+  
+  readingDate       DateTime
+  reading           Float
+  previousReading   Float?
+  consumption       Float?              // calculated consumption
+  
+  readingType       ReadingType
+  readingMethod     ReadingMethod       // MANUAL, AUTOMATIC, ESTIMATED
+  
+  // Quality Control
+  isValidated       Boolean             @default(false)
+  validatedBy       String?
+  validatedDate     DateTime?
+  
+  // Anomaly Detection
+  isAnomaly         Boolean             @default(false)
+  anomalyReason     String?
+  
+  // Cost Information
+  rate              Float?
+  cost              Float?
+  demandCharge      Float?
+  
+  readBy            String?
+  notes             String?
+  
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  
+  @@unique([meterId, readingDate])
+  @@map("energy_readings")
+}
+
+model SustainabilityMetric {
+  id                String              @id @default(cuid())
+  metricName        String
+  category          SustainabilityCategory
+  
+  // Time Period
+  reportingPeriod   ReportingPeriod
+  startDate         DateTime
+  endDate           DateTime
+  
+  // Metrics
+  value             Float
+  units             String
+  baseline          Float?              // baseline for comparison
+  target            Float?              // target value
+  
+  // Carbon Footprint
+  co2Equivalent     Float?              // tons of CO2 equivalent
+  emissionFactor    Float?
+  
+  // Benchmarking
+  industryBenchmark Float?
+  previousPeriodValue Float?
+  percentChange     Float?
+  
+  // Data Source
+  dataSource        DataSource
+  calculationMethod String?
+  
+  // Verification
+  isVerified        Boolean             @default(false)
+  verifiedBy        String?
+  verificationDate  DateTime?
+  
+  organizationId    String
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  
+  @@map("sustainability_metrics")
+}
+
+model CapitalProject {
+  id                String              @id @default(cuid())
+  projectNumber     String              @unique
+  projectName       String
+  description       String?
+  category          ProjectCategory
+  
+  // Project Lifecycle
+  status            ProjectStatus
+  phase             ProjectPhase
+  
+  // Dates
+  plannedStartDate  DateTime
+  plannedEndDate    DateTime
+  actualStartDate   DateTime?
+  actualEndDate     DateTime?
+  
+  // Budget Information
+  approvedBudget    Float
+  currentBudget     Float
+  spentToDate       Float               @default(0)
+  commitments       Float               @default(0)
+  remainingBudget   Float
+  
+  // Cost Breakdown
+  designCost        Float               @default(0)
+  constructionCost  Float               @default(0)
+  equipmentCost     Float               @default(0)
+  contingencyCost   Float               @default(0)
+  
+  // Project Team
+  projectManager    String
+  sponsor           String?
+  stakeholders      String[]
+  
+  // Risk and Priority
+  priority          ProjectPriority
+  riskLevel         RiskLevel
+  
+  // Assets
+  affectedAssets    String[]            // asset IDs
+  
+  // Approval
+  approvalRequired  Boolean             @default(true)
+  approvedBy        String?
+  approvedDate      DateTime?
+  
+  // Relationships
+  tasks             ProjectTask[]
+  budgetEntries     ProjectBudget[]
+  
+  organizationId    String
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  createdBy         String
+  
+  @@map("capital_projects")
+}
+
+model ProjectTask {
+  id                String              @id @default(cuid())
+  projectId         String
+  project           CapitalProject      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  
+  taskNumber        String
+  taskName          String
+  description       String?
+  
+  // Scheduling
+  plannedStartDate  DateTime
+  plannedEndDate    DateTime
+  actualStartDate   DateTime?
+  actualEndDate     DateTime?
+  duration          Int                 // in days
+  
+  // Status and Progress
+  status            TaskStatus
+  percentComplete   Int                 @default(0)
+  
+  // Assignment
+  assignedTo        String?
+  assignedTeam      String?
+  
+  // Dependencies
+  predecessorTaskId String?
+  predecessorTask   ProjectTask?        @relation("TaskDependency", fields: [predecessorTaskId], references: [id])
+  successorTasks    ProjectTask[]       @relation("TaskDependency")
+  
+  // Budget
+  budgetAmount      Float?
+  actualCost        Float               @default(0)
+  
+  // Critical Path
+  isCritical        Boolean             @default(false)
+  floatDays         Int?                // schedule float in days
+  
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  
+  @@map("project_tasks")
+}
+
+model ProjectBudget {
+  id                String              @id @default(cuid())
+  projectId         String
+  project           CapitalProject      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  
+  budgetCategory    BudgetCategory
+  description       String?
+  
+  // Budget Amounts
+  originalAmount    Float
+  revisedAmount     Float
+  approvedAmount    Float
+  
+  // Actual Spending
+  commitments       Float               @default(0)
+  actualCost        Float               @default(0)
+  remainingAmount   Float
+  
+  // Dates
+  budgetDate        DateTime
+  lastUpdated       DateTime            @updatedAt
+  
+  // Approval
+  approvedBy        String?
+  approvedDate      DateTime?
+  
+  @@map("project_budget")
+}
+
+model IoTDevice {
+  id                String              @id @default(cuid())
+  deviceId          String              @unique
+  deviceName        String
+  deviceType        IoTDeviceType
+  manufacturer      String?
+  model             String?
+  firmware          String?
+  
+  // Asset Association
+  assetId           String?
+  asset             MaintenanceAsset?   @relation(fields: [assetId], references: [id])
+  
+  // Location
+  location          String
+  building          String?
+  floor             String?
+  coordinates       String?             // lat,lng or x,y
+  
+  // Network Configuration
+  ipAddress         String?
+  macAddress        String?
+  networkType       NetworkType         // WIFI, ETHERNET, CELLULAR, LORA
+  
+  // Device Status
+  status            DeviceStatus
+  isOnline          Boolean             @default(false)
+  lastSeen          DateTime?
+  batteryLevel      Float?              // 0-100 percentage
+  signalStrength    Float?              // dBm
+  
+  // Sensor Configuration
+  sensorTypes       SensorType[]
+  samplingRate      Int?                // seconds
+  reportingInterval Int?                // minutes
+  
+  // Thresholds and Alerts
+  alertThresholds   Json?               // device-specific thresholds
+  alertsEnabled     Boolean             @default(true)
+  
+  // Relationships
+  sensorReadings    IoTSensorReading[]
+  conditionMonitoring ConditionMonitoring[]
+  energyMeters      EnergyMeter[]
+  
+  organizationId    String
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  installedBy       String?
+  
+  @@map("iot_devices")
+}
+
+model IoTSensorReading {
+  id                String              @id @default(cuid())
+  deviceId          String
+  device            IoTDevice           @relation(fields: [deviceId], references: [id])
+  
+  timestamp         DateTime            @default(now())
+  sensorType        SensorType
+  
+  // Reading Values
+  value             Float
+  unit              String
+  rawValue          Float?              // before calibration
+  
+  // Quality Indicators
+  quality           ReadingQuality
+  isValid           Boolean             @default(true)
+  calibrationOffset Float?
+  
+  // Context
+  temperature       Float?              // ambient temperature
+  humidity          Float?              // ambient humidity
+  
+  @@index([deviceId, timestamp])
+  @@index([deviceId, sensorType, timestamp])
+  @@map("iot_sensor_readings")
+}
+
+model ConditionMonitoring {
+  id                String              @id @default(cuid())
+  deviceId          String
+  device            IoTDevice           @relation(fields: [deviceId], references: [id])
+  
+  assetId           String?
+  asset             MaintenanceAsset?   @relation(fields: [assetId], references: [id])
+  
+  monitoringType    MonitoringType
+  
+  // Condition Assessment
+  overallCondition  AssetCondition
+  healthScore       Float               // 0-100
+  riskScore         Float               // 0-100
+  
+  // Trend Analysis
+  trendDirection    TrendDirection      // IMPROVING, STABLE, DECLINING
+  changeRate        Float?              // rate of change per day
+  
+  // Predictions
+  predictedFailureDate DateTime?
+  confidenceLevel   Float?              // 0-100
+  remainingUsefulLife Float?            // in days
+  
+  // Alerts and Actions
+  alertLevel        AlertLevel
+  recommendedAction RecommendedAction
+  urgencyLevel      UrgencyLevel
+  
+  // Analysis Results
+  analysisDate      DateTime            @default(now())
+  analysisMethod    String?             // algorithm/model used
+  dataPoints        Int?                // number of data points analyzed
+  
+  // Relationships
+  anomalies         String[]            // detected anomalies
+  recommendations   String[]            // maintenance recommendations
+  
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  
+  @@map("condition_monitoring")
+}
+
+model ServiceLevelAgreement {
+  id                String              @id @default(cuid())
+  slaNumber         String              @unique
+  slaName           String
+  description       String?
+  
+  // Vendor Information
+  vendorId          String
+  vendorName        String
+  contractNumber    String?
+  
+  // SLA Details
+  serviceType       ServiceType
+  serviceLevel      ServiceLevel
+  
+  // Response Times (in hours)
+  emergencyResponseTime    Float?
+  urgentResponseTime       Float?
+  normalResponseTime       Float?
+  lowResponseTime          Float?
+  
+  // Resolution Times (in hours)
+  emergencyResolutionTime  Float?
+  urgentResolutionTime     Float?
+  normalResolutionTime     Float?
+  lowResolutionTime        Float?
+  
+  // Availability Targets
+  uptimeTarget      Float?              // percentage (e.g., 99.9)
+  downtimeAllowance Float?              // hours per month
+  
+  // Performance Metrics
+  qualityTarget     Float?              // percentage
+  customerSatisfactionTarget Float?     // percentage
+  
+  // Contract Dates
+  startDate         DateTime
+  endDate           DateTime
+  
+  // Status
+  status            SLAStatus
+  
+  // Performance Tracking
+  currentPerformance Json?              // current metrics
+  lastReviewDate    DateTime?
+  nextReviewDate    DateTime?
+  
+  // Penalties and Credits
+  penaltiesEnabled  Boolean             @default(false)
+  creditsEnabled    Boolean             @default(false)
+  penaltyStructure  Json?               // penalty calculation rules
+  creditStructure   Json?               // credit calculation rules
+  
+  // Relationships
+  performanceReports SLAPerformanceReport[]
+  
+  organizationId    String
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  createdBy         String
+  
+  @@map("service_level_agreements")
+}
+
+model SLAPerformanceReport {
+  id                String              @id @default(cuid())
+  slaId             String
+  sla               ServiceLevelAgreement @relation(fields: [slaId], references: [id])
+  
+  reportingPeriod   ReportingPeriod
+  startDate         DateTime
+  endDate           DateTime
+  
+  // Performance Metrics
+  totalIncidents    Int                 @default(0)
+  emergencyIncidents Int                @default(0)
+  urgentIncidents   Int                 @default(0)
+  normalIncidents   Int                 @default(0)
+  lowIncidents      Int                 @default(0)
+  
+  // Response Time Performance
+  avgEmergencyResponseTime Float?
+  avgUrgentResponseTime    Float?
+  avgNormalResponseTime    Float?
+  avgLowResponseTime       Float?
+  
+  // Resolution Time Performance
+  avgEmergencyResolutionTime Float?
+  avgUrgentResolutionTime    Float?
+  avgNormalResolutionTime    Float?
+  avgLowResolutionTime       Float?
+  
+  // SLA Compliance
+  responseTimeSLA   Float?              // percentage compliance
+  resolutionTimeSLA Float?              // percentage compliance
+  uptimeAchieved    Float?              // percentage
+  qualityScore      Float?              // percentage
+  customerSatisfaction Float?           // percentage
+  
+  // Penalties and Credits
+  penaltiesApplied  Float               @default(0)
+  creditsApplied    Float               @default(0)
+  
+  // Overall Score
+  overallScore      Float?              // weighted average
+  
+  generatedDate     DateTime            @default(now())
+  generatedBy       String
+  
+  @@unique([slaId, reportingPeriod, startDate])
+  @@map("sla_performance_reports")
+}
+
+// ================================
+// PHASE 5 ENUMS
+// ================================
+
+enum AssetCategory {
+  HVAC
+  ELECTRICAL
+  PLUMBING
+  MECHANICAL
+  STRUCTURAL
+  SAFETY_SECURITY
+  IT_TELECOM
+  FURNITURE_FIXTURES
+  VEHICLES
+  TOOLS_EQUIPMENT
+  OTHER
+}
+
+enum AssetStatus {
+  ACTIVE
+  INACTIVE
+  UNDER_MAINTENANCE
+  OUT_OF_SERVICE
+  RETIRED
+  DISPOSED
+  TRANSFERRED
+}
+
+enum AssetCondition {
+  EXCELLENT
+  GOOD
+  FAIR
+  POOR
+  CRITICAL
+  UNKNOWN
+}
+
+enum AssetCriticality {
+  CRITICAL
+  HIGH
+  MEDIUM
+  LOW
+  NON_CRITICAL
+}
+
+enum DepreciationMethod {
+  STRAIGHT_LINE
+  DECLINING_BALANCE
+  DOUBLE_DECLINING_BALANCE
+  UNITS_OF_PRODUCTION
+  SUM_OF_YEARS_DIGITS
+}
+
+enum WorkOrderPriority {
+  EMERGENCY
+  URGENT
+  HIGH
+  NORMAL
+  LOW
+  DEFERRED
+}
+
+enum WorkOrderStatus {
+  DRAFT
+  SUBMITTED
+  APPROVED
+  ASSIGNED
+  IN_PROGRESS
+  ON_HOLD
+  COMPLETED
+  CLOSED
+  CANCELLED
+  REJECTED
+}
+
+enum WorkOrderType {
+  PREVENTIVE
+  CORRECTIVE
+  EMERGENCY
+  INSPECTION
+  PROJECT
+  SAFETY
+  COMPLIANCE
+  MODIFICATION
+  INSTALLATION
+  DECOMMISSION
+}
+
+enum TaskStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  ON_HOLD
+  COMPLETED
+  SKIPPED
+  CANCELLED
+}
+
+enum TaskPriority {
+  CRITICAL
+  HIGH
+  MEDIUM
+  LOW
+}
+
+enum MaterialStatus {
+  REQUESTED
+  APPROVED
+  ORDERED
+  RECEIVED
+  ISSUED
+  CANCELLED
+  BACKORDERED
+}
+
+enum TimeEntryStatus {
+  DRAFT
+  SUBMITTED
+  APPROVED
+  REJECTED
+}
+
+enum PMFrequency {
+  TIME_BASED
+  USAGE_BASED
+  CONDITION_BASED
+  CALENDAR_BASED
+}
+
+enum FrequencyUnit {
+  DAYS
+  WEEKS
+  MONTHS
+  QUARTERS
+  YEARS
+}
+
+enum UsageUnit {
+  HOURS
+  CYCLES
+  MILES
+  KILOMETERS
+  UNITS
+}
+
+enum PMStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+  COMPLETED
+  CANCELLED
+}
+
+enum MaintenancePriority {
+  CRITICAL
+  HIGH
+  MEDIUM
+  LOW
+}
+
+enum PMCriticality {
+  MISSION_CRITICAL
+  BUSINESS_CRITICAL
+  IMPORTANT
+  ROUTINE
+}
+
+enum AssessmentType {
+  ROUTINE
+  INSPECTION
+  INCIDENT
+  SCHEDULED
+  CONDITION_BASED
+}
+
+enum RiskLevel {
+  VERY_HIGH
+  HIGH
+  MEDIUM
+  LOW
+  VERY_LOW
+}
+
+enum ImpactSeverity {
+  CATASTROPHIC
+  MAJOR
+  MODERATE
+  MINOR
+  NEGLIGIBLE
+}
+
+enum InventoryCategory {
+  MAINTENANCE_PARTS
+  CONSUMABLES
+  TOOLS
+  SAFETY_EQUIPMENT
+  OFFICE_SUPPLIES
+  CLEANING_SUPPLIES
+  UTILITIES
+  RAW_MATERIALS
+  FINISHED_GOODS
+  OTHER
+}
+
+enum InventoryStatus {
+  ACTIVE
+  INACTIVE
+  OBSOLETE
+  RESTRICTED
+  QUARANTINED
+  DISCONTINUED
+}
+
+enum ABCClassification {
+  A
+  B
+  C
+}
+
+enum TransactionType {
+  RECEIPT
+  ISSUE
+  TRANSFER
+  ADJUSTMENT
+  RETURN
+  CYCLE_COUNT
+  WRITE_OFF
+}
+
+enum ReorderAlertType {
+  BELOW_MINIMUM
+  AT_REORDER_POINT
+  STOCKOUT
+  EXCESS_INVENTORY
+}
+
+enum AlertStatus {
+  OPEN
+  ACKNOWLEDGED
+  IN_PROGRESS
+  RESOLVED
+  CANCELLED
+}
+
+enum EnergyMeterType {
+  ELECTRIC
+  GAS
+  WATER
+  STEAM
+  CHILLED_WATER
+  HOT_WATER
+  COMPRESSED_AIR
+  OTHER
+}
+
+enum UtilityType {
+  ELECTRICITY
+  NATURAL_GAS
+  WATER
+  SEWER
+  STEAM
+  CHILLED_WATER
+  HOT_WATER
+  COMPRESSED_AIR
+  FUEL_OIL
+  PROPANE
+  OTHER
+}
+
+enum MeterStatus {
+  ACTIVE
+  INACTIVE
+  FAULTY
+  NEEDS_CALIBRATION
+  REPLACED
+}
+
+enum ReadingFrequency {
+  CONTINUOUS
+  HOURLY
+  DAILY
+  WEEKLY
+  MONTHLY
+  QUARTERLY
+  ANNUALLY
+}
+
+enum ReadingType {
+  ACTUAL
+  ESTIMATED
+  BILLED
+}
+
+enum ReadingMethod {
+  MANUAL
+  AUTOMATIC
+  ESTIMATED
+  SMART_METER
+  AMI
+}
+
+enum SustainabilityCategory {
+  ENERGY_CONSUMPTION
+  WATER_USAGE
+  WASTE_GENERATION
+  CARBON_EMISSIONS
+  RENEWABLE_ENERGY
+  GREEN_BUILDING
+  TRANSPORTATION
+  PROCUREMENT
+}
+
+enum ReportingPeriod {
+  DAILY
+  WEEKLY
+  MONTHLY
+  QUARTERLY
+  ANNUALLY
+}
+
+enum DataSource {
+  UTILITY_BILLS
+  SMART_METERS
+  IOT_SENSORS
+  MANUAL_ENTRY
+  THIRD_PARTY
+  CALCULATED
+}
+
+enum ProjectCategory {
+  INFRASTRUCTURE
+  EQUIPMENT_REPLACEMENT
+  FACILITY_IMPROVEMENT
+  EXPANSION
+  RENOVATION
+  COMPLIANCE
+  ENERGY_EFFICIENCY
+  SAFETY_SECURITY
+  TECHNOLOGY
+  OTHER
+}
+
+enum ProjectStatus {
+  PLANNING
+  APPROVED
+  IN_PROGRESS
+  ON_HOLD
+  COMPLETED
+  CANCELLED
+  CLOSED
+}
+
+enum ProjectPhase {
+  INITIATION
+  PLANNING
+  EXECUTION
+  MONITORING
+  CLOSING
+}
+
+enum ProjectPriority {
+  CRITICAL
+  HIGH
+  MEDIUM
+  LOW
+}
+
+enum BudgetCategory {
+  DESIGN
+  CONSTRUCTION
+  EQUIPMENT
+  MATERIALS
+  LABOR
+  PERMITS
+  CONTINGENCY
+  OTHER
+}
+
+enum IoTDeviceType {
+  TEMPERATURE_SENSOR
+  HUMIDITY_SENSOR
+  PRESSURE_SENSOR
+  VIBRATION_SENSOR
+  CURRENT_SENSOR
+  VOLTAGE_SENSOR
+  FLOW_SENSOR
+  LEVEL_SENSOR
+  MOTION_SENSOR
+  SMOKE_DETECTOR
+  GAS_DETECTOR
+  SOUND_METER
+  LIGHT_METER
+  AIR_QUALITY
+  ENERGY_METER
+  SMART_THERMOSTAT
+  SMART_SWITCH
+  GATEWAY
+  BEACON
+  OTHER
+}
+
+enum NetworkType {
+  WIFI
+  ETHERNET
+  CELLULAR
+  LORA
+  ZIGBEE
+  BLUETOOTH
+  OTHER
+}
+
+enum DeviceStatus {
+  ACTIVE
+  INACTIVE
+  FAULT
+  MAINTENANCE
+  OFFLINE
+  COMMISSIONING
+  DECOMMISSIONED
+}
+
+enum SensorType {
+  TEMPERATURE
+  HUMIDITY
+  PRESSURE
+  VIBRATION
+  CURRENT
+  VOLTAGE
+  POWER
+  ENERGY
+  FLOW
+  LEVEL
+  MOTION
+  OCCUPANCY
+  LIGHT
+  SOUND
+  AIR_QUALITY
+  CO2
+  GAS
+  SMOKE
+  OTHER
+}
+
+enum ReadingQuality {
+  GOOD
+  QUESTIONABLE
+  BAD
+  SUBSTITUTED
+}
+
+enum MonitoringType {
+  VIBRATION_ANALYSIS
+  THERMAL_IMAGING
+  OIL_ANALYSIS
+  ULTRASONIC
+  ELECTRICAL
+  PERFORMANCE
+  VISUAL_INSPECTION
+  ACOUSTIC
+}
+
+enum TrendDirection {
+  IMPROVING
+  STABLE
+  DECLINING
+  UNKNOWN
+}
+
+enum AlertLevel {
+  CRITICAL
+  WARNING
+  INFORMATIONAL
+  NORMAL
+}
+
+enum RecommendedAction {
+  IMMEDIATE_REPAIR
+  SCHEDULE_MAINTENANCE
+  MONITOR_CLOSELY
+  INVESTIGATE
+  REPLACE_SOON
+  NO_ACTION_REQUIRED
+}
+
+enum UrgencyLevel {
+  IMMEDIATE
+  URGENT
+  HIGH
+  MEDIUM
+  LOW
+}
+
+enum ServiceType {
+  MAINTENANCE
+  REPAIR
+  INSTALLATION
+  INSPECTION
+  CLEANING
+  SECURITY
+  LANDSCAPING
+  CATERING
+  IT_SUPPORT
+  CONSULTING
+  OTHER
+}
+
+enum ServiceLevel {
+  BASIC
+  STANDARD
+  PREMIUM
+  ENTERPRISE
+  CUSTOM
+}
+
+enum SLAStatus {
+  ACTIVE
+  INACTIVE
+  EXPIRED
+  CANCELLED
+  UNDER_REVIEW
+}
+
