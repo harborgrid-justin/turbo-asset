@@ -713,25 +713,25 @@ export class APIManagementService extends EventEmitter {
     }, {} as Record<string, number>);
 
     const topEndpoints = Object.entries(requestsByEndpoint)
-      .sort(([, a], [, b]) => b - a)
+      .sort(([, a], [, b]) => (b as number) - (a as number))
       .slice(0, 10)
       .map(([endpoint, requests]) => ({
         endpoint,
-        requests,
+        requests: requests as number,
         avgResponseTime: this.calculateAverage(
           usageRecords.filter(r => r.endpoint === endpoint).map(r => r.responseTime)
         ),
       }));
 
     const heaviestUsers = Object.entries(requestsByUser)
-      .sort(([, a], [, b]) => b - a)
+      .sort(([, a], [, b]) => (b as number) - (a as number))
       .slice(0, 10)
       .map(([userId, requests]) => {
         const userRecord = usageRecords.find(r => r.userId === userId);
         return {
           userId,
           apiKey: userRecord?.apiKey || 'unknown',
-          requests,
+          requests: requests as number,
         };
       });
 
@@ -804,12 +804,12 @@ export class APIManagementService extends EventEmitter {
     }, {} as Record<string, { requests: number; totalResponseTime: number }>);
 
     return Object.entries(endpointStats)
-      .sort(([, a], [, b]) => b.requests - a.requests)
+      .sort(([, a], [, b]) => (b as any).requests - (a as any).requests)
       .slice(0, limit)
       .map(([endpoint, stats]) => ({
         endpoint,
-        requests: stats.requests,
-        avgResponseTime: stats.totalResponseTime / stats.requests,
+        requests: (stats as any).requests,
+        avgResponseTime: (stats as any).totalResponseTime / (stats as any).requests,
       }));
   }
 
@@ -826,7 +826,7 @@ export class APIManagementService extends EventEmitter {
     }, {} as Record<string, number>);
 
     return Object.entries(errorCounts).reduce((acc, [range, count]) => {
-      acc[range] = (count / total) * 100;
+      acc[range] = ((count as number) / total) * 100;
       return acc;
     }, {} as Record<string, number>);
   }

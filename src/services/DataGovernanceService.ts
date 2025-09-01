@@ -737,7 +737,7 @@ export class DataGovernanceService extends EventEmitter {
         }, {} as Record<string, number>);
 
         const bestValue = Object.entries(valueCounts).reduce((best, [value, count]) => {
-          return count > best.count ? { value, count } : best;
+          return (count as number) > best.count ? { value, count: count as number } : best;
         }, { value: values[0], count: 0 });
 
         goldenRecord[field] = bestValue.value;

@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { DataWarehouseService } from '../services/DataWarehouseService';
 import { logger } from '../config/logger';
+import { prisma } from '../config/database';
 
 const dataWarehouseService = new DataWarehouseService();
 

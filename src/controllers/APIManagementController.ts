@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { APIManagementService } from '../services/APIManagementService';
 import { logger } from '../config/logger';
+import { prisma } from '../config/database';
 
 const apiManagementService = new APIManagementService();
 
@@ -312,7 +313,7 @@ export class APIManagementController {
             }
             return acc;
           }, {} as Record<string, number>)
-        ).sort(([, a], [, b]) => b - a).slice(0, 10),
+        ).sort(([, a], [, b]) => (b as number) - (a as number)).slice(0, 10),
       };
 
       res.json(analytics);
@@ -457,7 +458,7 @@ export class APIManagementController {
             acc[error.endpoint] = (acc[error.endpoint] || 0) + 1;
             return acc;
           }, {} as Record<string, number>)
-        ).sort(([, a], [, b]) => b - a).slice(0, 10),
+        ).sort(([, a], [, b]) => (b as number) - (a as number)).slice(0, 10),
       };
 
       res.json(analysis);
