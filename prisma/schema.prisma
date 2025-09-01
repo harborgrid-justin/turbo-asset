@@ -1,0 +1,634 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Core User Management
+model User {
+  id            String   @id @default(uuid())
+  email         String   @unique
+  username      String   @unique
+  firstName     String
+  lastName      String
+  passwordHash  String
+  role          UserRole @default(USER)
+  language      String   @default("en")
+  timezone      String   @default("UTC")
+  currency      String   @default("USD")
+  isActive      Boolean  @default(true)
+  lastLoginAt   DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Relationships
+  organization   Organization? @relation(fields: [organizationId], references: [id])
+  organizationId String?
+  department     Department?   @relation(fields: [departmentId], references: [id])
+  departmentId   String?
+
+  // Activity tracking
+  workflowInstances WorkflowInstance[]
+  approvals         Approval[]
+  notifications     Notification[]
+  documents         Document[]
+  auditLogs         AuditLog[]
+
+  @@map("users")
+}
+
+enum UserRole {
+  SUPER_ADMIN
+  ADMIN
+  MANAGER
+  USER
+  READONLY
+}
+
+// Organizations and Departments
+model Organization {
+  id            String  @id @default(uuid())
+  name          String
+  description   String?
+  address       Json? // Flexible address structure
+  defaultCurrency String @default("USD")
+  defaultLanguage String @default("en")
+  defaultTimezone String @default("UTC")
+  isActive      Boolean @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Relationships
+  users       User[]
+  departments Department[]
+  properties  Property[]
+  workflows   WorkflowDefinition[]
+  customFields CustomFieldDefinition[]
+
+  @@map("organizations")
+}
+
+model Department {
+  id             String  @id @default(uuid())
+  name           String
+  description    String?
+  costCenter     String?
+  managerId      String?
+  isActive       Boolean @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  // Relationships
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  organizationId String
+  users          User[]
+  spaces         Space[]
+
+  @@map("departments")
+}
+
+// Real Estate and Facilities Models
+model Property {
+  id              String      @id @default(uuid())
+  name            String
+  type            PropertyType
+  address         Json // Structured address data
+  totalArea       Float?
+  usableArea      Float?
+  currency        String      @default("USD")
+  acquisitionCost Float?
+  currentValue    Float?
+  acquisitionDate DateTime?
+  coordinates     Json? // Lat/Long for mapping
+  timezone        String      @default("UTC")
+  isActive        Boolean     @default(true)
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  // Relationships
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  organizationId String
+  buildings      Building[]
+  customFields   CustomFieldValue[]
+
+  @@map("properties")
+}
+
+enum PropertyType {
+  OFFICE
+  WAREHOUSE
+  RETAIL
+  MANUFACTURING
+  MIXED_USE
+  RESIDENTIAL
+  LAND
+  OTHER
+}
+
+model Building {
+  id              String  @id @default(uuid())
+  name            String
+  description     String?
+  buildingCode    String? @unique
+  totalArea       Float?
+  floors          Int?
+  constructionYear Int?
+  renovationYear  Int?
+  energyRating    String?
+  isActive        Boolean @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relationships
+  property   Property @relation(fields: [propertyId], references: [id])
+  propertyId String
+  floors     Floor[]
+  assets     Asset[]
+  customFields CustomFieldValue[]
+
+  @@map("buildings")
+}
+
+model Floor {
+  id          String  @id @default(uuid())
+  name        String
+  floorNumber Int
+  totalArea   Float?
+  usableArea  Float?
+  description String?
+  isActive    Boolean @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relationships
+  building   Building @relation(fields: [buildingId], references: [id])
+  buildingId String
+  spaces     Space[]
+  customFields CustomFieldValue[]
+
+  @@map("floors")
+}
+
+model Space {
+  id            String    @id @default(uuid())
+  name          String
+  spaceCode     String?   @unique
+  type          SpaceType
+  area          Float?
+  capacity      Int?
+  description   String?
+  rentableArea  Float?
+  assignedDate  DateTime?
+  vacatedDate   DateTime?
+  isActive      Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relationships
+  floor        Floor       @relation(fields: [floorId], references: [id])
+  floorId      String
+  department   Department? @relation(fields: [departmentId], references: [id])
+  departmentId String?
+  assets       Asset[]
+  customFields CustomFieldValue[]
+
+  @@map("spaces")
+}
+
+enum SpaceType {
+  OFFICE
+  CONFERENCE_ROOM
+  COMMON_AREA
+  STORAGE
+  RESTROOM
+  KITCHEN
+  SERVER_ROOM
+  LOBBY
+  PARKING
+  OTHER
+}
+
+// Asset Management
+model Asset {
+  id              String      @id @default(uuid())
+  name            String
+  assetTag        String      @unique
+  type            AssetType
+  category        String?
+  manufacturer    String?
+  model           String?
+  serialNumber    String?
+  purchaseDate    DateTime?
+  purchasePrice   Float?
+  currency        String      @default("USD")
+  warrantyExpiry  DateTime?
+  condition       AssetCondition @default(GOOD)
+  status          AssetStatus @default(ACTIVE)
+  description     String?
+  isActive        Boolean     @default(true)
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  // Relationships
+  building     Building? @relation(fields: [buildingId], references: [id])
+  buildingId   String?
+  space        Space?    @relation(fields: [spaceId], references: [id])
+  spaceId      String?
+  parentAsset  Asset?    @relation("AssetHierarchy", fields: [parentAssetId], references: [id])
+  parentAssetId String?
+  subAssets    Asset[]   @relation("AssetHierarchy")
+  
+  // Maintenance and workflows
+  maintenanceRecords MaintenanceRecord[]
+  customFields       CustomFieldValue[]
+
+  @@map("assets")
+}
+
+enum AssetType {
+  FURNITURE
+  EQUIPMENT
+  TECHNOLOGY
+  VEHICLE
+  INFRASTRUCTURE
+  OTHER
+}
+
+enum AssetCondition {
+  EXCELLENT
+  GOOD
+  FAIR
+  POOR
+  OUT_OF_SERVICE
+}
+
+enum AssetStatus {
+  ACTIVE
+  INACTIVE
+  MAINTENANCE
+  DISPOSED
+  LOST
+}
+
+model MaintenanceRecord {
+  id              String            @id @default(uuid())
+  type            MaintenanceType
+  description     String
+  scheduledDate   DateTime?
+  completedDate   DateTime?
+  cost            Float?
+  currency        String            @default("USD")
+  vendor          String?
+  status          MaintenanceStatus @default(SCHEDULED)
+  notes           String?
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+
+  // Relationships
+  asset   Asset  @relation(fields: [assetId], references: [id])
+  assetId String
+
+  @@map("maintenance_records")
+}
+
+enum MaintenanceType {
+  PREVENTIVE
+  CORRECTIVE
+  EMERGENCY
+  INSPECTION
+  UPGRADE
+}
+
+enum MaintenanceStatus {
+  SCHEDULED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+  OVERDUE
+}
+
+// Workflow Engine
+model WorkflowDefinition {
+  id          String      @id @default(uuid())
+  name        String
+  description String?
+  version     String      @default("1.0")
+  definition  Json        // JSON workflow definition
+  isActive    Boolean     @default(true)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  // Relationships
+  organization   Organization       @relation(fields: [organizationId], references: [id])
+  organizationId String
+  instances      WorkflowInstance[]
+
+  @@map("workflow_definitions")
+}
+
+model WorkflowInstance {
+  id               String           @id @default(uuid())
+  status           WorkflowStatus   @default(PENDING)
+  currentStep      String?
+  data             Json             // Instance data
+  startedAt        DateTime         @default(now())
+  completedAt      DateTime?
+  dueDate          DateTime?
+  priority         WorkflowPriority @default(NORMAL)
+  notes            String?
+
+  // Relationships
+  definition       WorkflowDefinition @relation(fields: [definitionId], references: [id])
+  definitionId     String
+  initiatedBy      User               @relation(fields: [initiatedById], references: [id])
+  initiatedById    String
+  approvals        Approval[]
+
+  @@map("workflow_instances")
+}
+
+enum WorkflowStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+  EXPIRED
+}
+
+enum WorkflowPriority {
+  LOW
+  NORMAL
+  HIGH
+  URGENT
+}
+
+model Approval {
+  id         String         @id @default(uuid())
+  status     ApprovalStatus @default(PENDING)
+  comments   String?
+  approvedAt DateTime?
+  createdAt  DateTime       @default(now())
+
+  // Relationships
+  workflow   WorkflowInstance @relation(fields: [workflowId], references: [id])
+  workflowId String
+  approver   User             @relation(fields: [approverId], references: [id])
+  approverId String
+
+  @@map("approvals")
+}
+
+enum ApprovalStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  DELEGATED
+}
+
+// Custom Fields System
+model CustomFieldDefinition {
+  id               String              @id @default(uuid())
+  name             String
+  fieldType        CustomFieldType
+  entityType       String              // Which entity this field applies to
+  isRequired       Boolean             @default(false)
+  isUnique         Boolean             @default(false)
+  defaultValue     String?
+  validationRules  Json?               // Validation configuration
+  options          Json?               // For select fields
+  dependencies     Json?               // Field dependencies
+  displayOrder     Int                 @default(0)
+  isActive         Boolean             @default(true)
+  createdAt        DateTime            @default(now())
+  updatedAt        DateTime            @updatedAt
+
+  // Relationships
+  organization   Organization       @relation(fields: [organizationId], references: [id])
+  organizationId String
+  values         CustomFieldValue[]
+
+  @@map("custom_field_definitions")
+}
+
+enum CustomFieldType {
+  TEXT
+  NUMBER
+  DATE
+  BOOLEAN
+  SELECT
+  MULTI_SELECT
+  EMAIL
+  URL
+  PHONE
+  CURRENCY
+  PERCENTAGE
+  RICH_TEXT
+}
+
+model CustomFieldValue {
+  id        String   @id @default(uuid())
+  value     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relationships
+  fieldDefinition   CustomFieldDefinition @relation(fields: [fieldDefinitionId], references: [id])
+  fieldDefinitionId String
+  entityId          String                // ID of the entity this value belongs to
+  entityType        String                // Type of entity
+
+  // Polymorphic relationships - one will be set based on entityType
+  property Property? @relation(fields: [propertyId], references: [id])
+  propertyId String?
+  building Building? @relation(fields: [buildingId], references: [id])
+  buildingId String?
+  floor    Floor?    @relation(fields: [floorId], references: [id])
+  floorId  String?
+  space    Space?    @relation(fields: [spaceId], references: [id])
+  spaceId  String?
+  asset    Asset?    @relation(fields: [assetId], references: [id])
+  assetId  String?
+
+  @@map("custom_field_values")
+}
+
+// Document Management
+model Document {
+  id          String         @id @default(uuid())
+  name        String
+  description String?
+  fileName    String
+  filePath    String
+  fileSize    Int
+  mimeType    String
+  version     String         @default("1.0")
+  checksum    String
+  metadata    Json?
+  tags        String[]
+  status      DocumentStatus @default(ACTIVE)
+  isActive    Boolean        @default(true)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  // Relationships
+  uploadedBy   User     @relation(fields: [uploadedById], references: [id])
+  uploadedById String
+  versions     DocumentVersion[]
+  permissions  DocumentPermission[]
+
+  @@map("documents")
+}
+
+enum DocumentStatus {
+  DRAFT
+  ACTIVE
+  ARCHIVED
+  DELETED
+}
+
+model DocumentVersion {
+  id          String   @id @default(uuid())
+  version     String
+  fileName    String
+  filePath    String
+  fileSize    Int
+  checksum    String
+  changeNotes String?
+  createdAt   DateTime @default(now())
+
+  // Relationships
+  document   Document @relation(fields: [documentId], references: [id])
+  documentId String
+
+  @@map("document_versions")
+}
+
+model DocumentPermission {
+  id         String           @id @default(uuid())
+  entityType String           // user, role, department
+  entityId   String
+  permission DocumentAccess
+  createdAt  DateTime         @default(now())
+
+  // Relationships
+  document   Document @relation(fields: [documentId], references: [id])
+  documentId String
+
+  @@map("document_permissions")
+}
+
+enum DocumentAccess {
+  READ
+  WRITE
+  DELETE
+  ADMIN
+}
+
+// Notifications and Messaging
+model Notification {
+  id          String             @id @default(uuid())
+  title       String
+  message     String
+  type        NotificationType
+  priority    NotificationPriority @default(NORMAL)
+  isRead      Boolean            @default(false)
+  readAt      DateTime?
+  data        Json?              // Additional data for the notification
+  createdAt   DateTime           @default(now())
+
+  // Relationships
+  recipient   User   @relation(fields: [recipientId], references: [id])
+  recipientId String
+
+  @@map("notifications")
+}
+
+enum NotificationType {
+  INFO
+  WARNING
+  ERROR
+  SUCCESS
+  WORKFLOW
+  SYSTEM
+  MAINTENANCE
+}
+
+enum NotificationPriority {
+  LOW
+  NORMAL
+  HIGH
+  URGENT
+}
+
+// Audit and Logging
+model AuditLog {
+  id          String   @id @default(uuid())
+  action      String
+  entityType  String
+  entityId    String
+  oldValues   Json?
+  newValues   Json?
+  ipAddress   String?
+  userAgent   String?
+  timestamp   DateTime @default(now())
+
+  // Relationships
+  user   User?   @relation(fields: [userId], references: [id])
+  userId String?
+
+  @@map("audit_logs")
+}
+
+// System Configuration
+model SystemConfig {
+  id          String   @id @default(uuid())
+  key         String   @unique
+  value       String
+  description String?
+  isPublic    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("system_config")
+}
+
+// Integration Records
+model IntegrationRecord {
+  id            String            @id @default(uuid())
+  system        IntegrationType
+  externalId    String
+  entityType    String
+  entityId      String
+  syncStatus    IntegrationStatus @default(PENDING)
+  lastSyncAt    DateTime?
+  syncData      Json?
+  errorMessage  String?
+  retryCount    Int               @default(0)
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+
+  @@map("integration_records")
+}
+
+enum IntegrationType {
+  SAP
+  ORACLE
+  WORKDAY
+  SERVICENOW
+  GENERIC_API
+  FILE_IMPORT
+}
+
+enum IntegrationStatus {
+  PENDING
+  IN_PROGRESS
+  SUCCESS
+  FAILED
+  PARTIAL
+}

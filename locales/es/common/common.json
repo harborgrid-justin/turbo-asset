@@ -1,0 +1,43 @@
+{
+  "common": {
+    "loading": "Cargando...",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "create": "Crear",
+    "update": "Actualizar",
+    "search": "Buscar",
+    "filter": "Filtrar",
+    "export": "Exportar",
+    "import": "Importar",
+    "yes": "Sí",
+    "no": "No",
+    "required": "Este campo es obligatorio",
+    "invalidEmail": "Por favor ingrese un email válido",
+    "invalidUrl": "Por favor ingrese una URL válida",
+    "invalidPhone": "Por favor ingrese un número de teléfono válido"
+  },
+  "properties": {
+    "title": "Propiedades",
+    "name": "Nombre",
+    "type": "Tipo",
+    "address": "Dirección",
+    "totalArea": "Área Total",
+    "usableArea": "Área Útil",
+    "acquisitionCost": "Costo de Adquisición",
+    "currentValue": "Valor Actual",
+    "acquisitionDate": "Fecha de Adquisición"
+  },
+  "workflows": {
+    "title": "Flujos de Trabajo",
+    "pending": "Pendiente",
+    "inProgress": "En Progreso",
+    "completed": "Completado",
+    "cancelled": "Cancelado",
+    "expired": "Vencido",
+    "approve": "Aprobar",
+    "reject": "Rechazar",
+    "comment": "Comentario"
+  }
+}
