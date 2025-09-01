@@ -29,6 +29,10 @@ import { ComplianceController } from './controllers/ComplianceController';
 import { CriticalDateController } from './controllers/CriticalDateController';
 import { FinancialConsolidationController } from './controllers/FinancialConsolidationController';
 
+// Phase 5: Maintenance & Asset Management routes
+import MaintenanceController from './controllers/MaintenanceController';
+import WorkOrderController from './controllers/WorkOrderController';
+
 class TurboAssetServer {
   private app: express.Application;
   private server: any;
@@ -103,6 +107,10 @@ class TurboAssetServer {
     apiRouter.use('/critical-dates', CriticalDateController);
     apiRouter.use('/financial-consolidation', FinancialConsolidationController);
 
+    // Phase 5: Maintenance & Asset Management routes
+    apiRouter.use('/maintenance', MaintenanceController);
+    apiRouter.use('/work-orders', WorkOrderController);
+
     this.app.use('/api', apiRouter);
 
     // API documentation
@@ -129,6 +137,15 @@ class TurboAssetServer {
           compliance: '/api/compliance',
           criticalDates: '/api/critical-dates',
           financialConsolidation: '/api/financial-consolidation',
+          // Phase 5: Maintenance & Asset Management
+          maintenance: '/api/maintenance',
+          workOrders: '/api/work-orders',
+          preventiveMaintenance: '/api/preventive-maintenance',
+          assetLifecycle: '/api/asset-lifecycle',
+          inventory: '/api/inventory',
+          energyManagement: '/api/energy-management',
+          capitalProjects: '/api/capital-projects',
+          iotDevices: '/api/iot-devices',
         },
       });
     });
