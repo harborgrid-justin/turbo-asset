@@ -23,6 +23,12 @@ import spaceBookingRoutes from './controllers/SpaceBookingController';
 import moveManagementRoutes from './controllers/MoveManagementController';
 import portfolioRoutes from './controllers/PortfolioController';
 
+// Phase 4: Lease Administration & Financial Management routes
+import { LeaseManagementController } from './controllers/LeaseManagementController';
+import { ComplianceController } from './controllers/ComplianceController';
+import { CriticalDateController } from './controllers/CriticalDateController';
+import { FinancialConsolidationController } from './controllers/FinancialConsolidationController';
+
 class TurboAssetServer {
   private app: express.Application;
   private server: any;
@@ -91,6 +97,12 @@ class TurboAssetServer {
     apiRouter.use('/move-management', moveManagementRoutes);
     apiRouter.use('/portfolio', portfolioRoutes);
 
+    // Phase 4: Lease Administration & Financial Management routes
+    apiRouter.use('/lease-management', LeaseManagementController);
+    apiRouter.use('/compliance', ComplianceController);
+    apiRouter.use('/critical-dates', CriticalDateController);
+    apiRouter.use('/financial-consolidation', FinancialConsolidationController);
+
     this.app.use('/api', apiRouter);
 
     // API documentation
@@ -112,6 +124,11 @@ class TurboAssetServer {
           spaceBookings: '/api/space-bookings',
           moveManagement: '/api/move-management',
           portfolio: '/api/portfolio',
+          // Phase 4: Lease Administration & Financial Management
+          leaseManagement: '/api/lease-management',
+          compliance: '/api/compliance',
+          criticalDates: '/api/critical-dates',
+          financialConsolidation: '/api/financial-consolidation',
         },
       });
     });
