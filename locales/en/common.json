@@ -1,0 +1,64 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "update": "Update",
+    "search": "Search",
+    "filter": "Filter",
+    "export": "Export",
+    "import": "Import",
+    "yes": "Yes",
+    "no": "No",
+    "required": "This field is required",
+    "invalidEmail": "Please enter a valid email address",
+    "invalidUrl": "Please enter a valid URL",
+    "invalidPhone": "Please enter a valid phone number"
+  },
+  "properties": {
+    "title": "Properties",
+    "name": "Name",
+    "type": "Type",
+    "address": "Address",
+    "totalArea": "Total Area",
+    "usableArea": "Usable Area",
+    "acquisitionCost": "Acquisition Cost",
+    "currentValue": "Current Value",
+    "acquisitionDate": "Acquisition Date"
+  },
+  "assets": {
+    "title": "Assets",
+    "name": "Name",
+    "assetTag": "Asset Tag",
+    "type": "Type",
+    "category": "Category",
+    "manufacturer": "Manufacturer",
+    "model": "Model",
+    "serialNumber": "Serial Number",
+    "purchaseDate": "Purchase Date",
+    "purchasePrice": "Purchase Price",
+    "condition": "Condition",
+    "status": "Status"
+  },
+  "workflows": {
+    "title": "Workflows",
+    "pending": "Pending",
+    "inProgress": "In Progress",
+    "completed": "Completed",
+    "cancelled": "Cancelled",
+    "expired": "Expired",
+    "approve": "Approve",
+    "reject": "Reject",
+    "comment": "Comment"
+  },
+  "notifications": {
+    "workflowApprovalRequired": "Approval required for {{workflowName}}",
+    "workflowCompleted": "Workflow {{workflowName}} has been completed",
+    "workflowOverdue": "Workflow {{workflowName}} is overdue",
+    "maintenanceScheduled": "Maintenance scheduled for {{assetName}}",
+    "maintenanceCompleted": "Maintenance completed for {{assetName}}"
+  }
+}
