@@ -1071,3 +1071,1769 @@ enum CADFileType {
   SVG           // Vector graphics
 }
 
+// ========================================
+// PHASE 4: LEASE ADMINISTRATION & FINANCIAL MANAGEMENT
+// ========================================
+
+// Lease Management Models
+model Lease {
+  id              String        @id @default(uuid())
+  leaseNumber     String        @unique
+  leaseName       String
+  leaseType       LeaseType     @default(OPERATING)
+  status          LeaseStatus   @default(ACTIVE)
+  
+  // Lease terms
+  startDate       DateTime
+  endDate         DateTime
+  originalTerm    Int           // months
+  currentTerm     Int?          // remaining months
+  renewalOptions  Json?         // renewal terms and options
+  escalationRules Json?         // rent escalation rules
+  
+  // Financial terms
+  baseLease       Float
+  percentage      Float?        // percentage rent
+  currency        String        @default("USD")
+  securityDeposit Float?
+  
+  // Lease details
+  leasableArea    Float?        // square footage
+  usableArea      Float?        // usable square footage
+  unitType        String?       // office, retail, warehouse, etc.
+  useType         String?       // permitted use
+  exclusiveRights Json?         // exclusive use rights
+  
+  // Critical dates
+  commencement    DateTime?
+  rentCommencement DateTime?
+  expirationDate  DateTime
+  optionDeadline  DateTime?
+  renewalNotice   DateTime?
+  
+  // Additional terms
+  capex           Float?        // capital expenditures
+  personalProperty Float?       // personal property value
+  notes           String?
+  
+  // Status tracking
+  isActive        Boolean       @default(true)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  
+  // Relationships
+  property        Property      @relation(fields: [propertyId], references: [id])
+  propertyId      String
+  tenant          Tenant        @relation(fields: [tenantId], references: [id])
+  tenantId        String
+  
+  // Related records
+  contracts       LeaseContract[]
+  rentRoll        RentRoll[]
+  criticalDates   CriticalDate[]
+  accounting      LeaseAccounting[]
+  camCharges      CAMReconciliation[]
+  payments        LeasePayment[]
+  documents       LeaseDocument[]
+  amendments      LeaseAmendment[]
+
+  @@map("leases")
+}
+
+model Tenant {
+  id              String        @id @default(uuid())
+  name            String
+  legalName       String?
+  tenantType      TenantType    @default(COMMERCIAL)
+  industry        String?
+  contactInfo     Json          // phone, email, address
+  creditRating    String?       // AAA, AA, A, BBB, etc.
+  sicCode         String?       // Standard Industrial Classification
+  naicsCode       String?       // North American Industry Classification
+  
+  // Financial info
+  annualRevenue   Float?
+  employeeCount   Int?
+  publicCompany   Boolean       @default(false)
+  parentCompany   String?
+  
+  // Contact details
+  primaryContact  String?
+  billingContact  String?
+  legalContact    String?
+  
+  // Status
+  status          TenantStatus  @default(ACTIVE)
+  isActive        Boolean       @default(true)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  
+  // Relationships
+  leases          Lease[]
+  guarantees      TenantGuarantee[]
+  brokers         TenantBroker[]
+
+  @@map("tenants")
+}
+
+model LeaseContract {
+  id              String          @id @default(uuid())
+  contractNumber  String          @unique
+  contractType    ContractType    @default(LEASE)
+  version         String          @default("1.0")
+  status          ContractStatus  @default(DRAFT)
+  
+  // Contract details
+  executionDate   DateTime?
+  effectiveDate   DateTime?
+  expirationDate  DateTime?
+  autoRenew       Boolean         @default(false)
+  renewalTerms    Json?
+  
+  // Document management
+  originalDocument String?        // file path or URL
+  signedDocument  String?         // signed version
+  documentHash    String?         // for integrity verification
+  
+  // Terms and conditions
+  terms           Json            // contract terms as JSON
+  clauses         Json?           // special clauses
+  amendments      Json?           // amendment history
+  
+  // Parties
+  lessor          Json            // lessor information
+  lessee          Json            // lessee information
+  guarantors      Json?           // guarantor information
+  
+  // Financial terms
+  totalValue      Float?
+  currency        String          @default("USD")
+  paymentTerms    Json?           // payment schedule and terms
+  
+  // Compliance
+  complianceReq   Json?           // compliance requirements
+  insurance       Json?           // insurance requirements
+  
+  // Status tracking
+  isActive        Boolean         @default(true)
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  
+  // Relationships
+  lease           Lease           @relation(fields: [leaseId], references: [id])
+  leaseId         String
+  milestones      ContractMilestone[]
+  vendors         ContractVendor[]
+
+  @@map("lease_contracts")
+}
+
+// ASC 842/IFRS 16 Compliance Models
+model LeaseAccounting {
+  id              String            @id @default(uuid())
+  accountingStandard AccountingStandard @default(ASC842)
+  fiscalYear      Int
+  fiscalPeriod    Int               // 1-12 for monthly, 1-4 for quarterly
+  
+  // ASC 842 / IFRS 16 calculations
+  rightOfUseAsset Float?            // ROU asset value
+  leaseLIABILITY  Float?            // lease liability
+  
+  // Present value calculations
+  presentValue    Float?            // PV of lease payments
+  discountRate    Float?            // incremental borrowing rate
+  
+  // Lease payments breakdown
+  fixedPayments   Float?            // fixed lease payments
+  variablePayments Float?           // variable lease payments
+  residualValue   Float?            // guaranteed residual value
+  
+  // Amortization
+  amortization    Float?            // periodic amortization
+  interestExpense Float?            // periodic interest expense
+  
+  // Journal entry tracking
+  debitAccount    String?           // chart of accounts
+  creditAccount   String?           // chart of accounts
+  journalAmount   Float?
+  
+  // Status
+  status          AccountingStatus  @default(DRAFT)
+  reviewedBy      String?
+  reviewedAt      DateTime?
+  approvedBy      String?
+  approvedAt      DateTime?
+  
+  // Metadata
+  calculations    Json?             // detailed calculation data
+  notes           String?
+  
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  
+  // Relationships
+  lease           Lease             @relation(fields: [leaseId], references: [id])
+  leaseId         String
+  journalEntries  JournalEntry[]
+
+  @@map("lease_accounting")
+}
+
+model JournalEntry {
+  id              String        @id @default(uuid())
+  entryNumber     String        @unique
+  entryType       JournalType   @default(LEASE_LIABILITY)
+  entryDate       DateTime      @default(now())
+  postingDate     DateTime?
+  
+  // Entry details
+  description     String
+  reference       String?       // reference number
+  totalDebit      Float
+  totalCredit     Float
+  
+  // Integration
+  externalId      String?       // ERP system ID
+  syncStatus      IntegrationStatus @default(PENDING)
+  lastSyncAt      DateTime?
+  
+  // Approval workflow
+  status          JournalStatus @default(DRAFT)
+  preparedBy      String?
+  reviewedBy      String?
+  approvedBy      String?
+  postedBy        String?
+  
+  // Dates
+  preparedAt      DateTime      @default(now())
+  reviewedAt      DateTime?
+  approvedAt      DateTime?
+  postedAt        DateTime?
+  
+  // Relationships
+  leaseAccounting LeaseAccounting? @relation(fields: [leaseAccountingId], references: [id])
+  leaseAccountingId String?
+  lineItems       JournalLineItem[]
+  
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  @@map("journal_entries")
+}
+
+model JournalLineItem {
+  id              String        @id @default(uuid())
+  lineNumber      Int
+  accountCode     String        // chart of accounts
+  accountName     String
+  description     String?
+  debitAmount     Float?
+  creditAmount    Float?
+  
+  // Additional details
+  costCenter      String?
+  department      String?
+  project         String?
+  
+  // Relationships
+  journalEntry    JournalEntry  @relation(fields: [journalEntryId], references: [id])
+  journalEntryId  String
+
+  @@map("journal_line_items")
+}
+
+// Critical Date Tracking Models
+model CriticalDate {
+  id              String        @id @default(uuid())
+  dateType        CriticalDateType
+  dateValue       DateTime
+  description     String
+  importance      DateImportance @default(MEDIUM)
+  
+  // Alert settings
+  alertDays       Json          // days before to alert (e.g., [90, 60, 30, 7])
+  alertSent       Json?         // tracking which alerts were sent
+  escalationRules Json?         // escalation workflow rules
+  
+  // Status
+  isCompleted     Boolean       @default(false)
+  completedAt     DateTime?
+  completedBy     String?
+  
+  // Notifications
+  reminderSent    Boolean       @default(false)
+  lastReminderAt  DateTime?
+  
+  // Notes
+  notes           String?
+  actionRequired  String?
+  
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  
+  // Relationships
+  lease           Lease?        @relation(fields: [leaseId], references: [id])
+  leaseId         String?
+  contract        LeaseContract? @relation(fields: [contractId], references: [id])
+  contractId      String?
+  
+  alerts          DateAlert[]
+
+  @@map("critical_dates")
+}
+
+model DateAlert {
+  id              String        @id @default(uuid())
+  alertType       AlertType     @default(REMINDER)
+  alertDate       DateTime      @default(now())
+  scheduledFor    DateTime
+  
+  // Alert details
+  title           String
+  message         String
+  priority        AlertPriority @default(MEDIUM)
+  
+  // Recipients
+  recipients      Json          // array of user IDs, emails, or roles
+  channels        Json          // email, sms, dashboard, etc.
+  
+  // Status
+  status          AlertStatus   @default(PENDING)
+  sentAt          DateTime?
+  acknowledgedAt  DateTime?
+  acknowledgedBy  String?
+  
+  // Escalation
+  escalationLevel Int           @default(0)
+  escalatedAt     DateTime?
+  maxEscalation   Int           @default(3)
+  
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  
+  // Relationships
+  criticalDate    CriticalDate  @relation(fields: [criticalDateId], references: [id])
+  criticalDateId  String
+
+  @@map("date_alerts")
+}
+
+// CAM Reconciliation Models
+model CAMReconciliation {
+  id              String          @id @default(uuid())
+  reconciliationPeriod String      // YYYY format for annual, YYYY-MM for monthly
+  reconciliationType CAMType      @default(ANNUAL)
+  status          ReconciliationStatus @default(DRAFT)
+  
+  // CAM details
+  totalCAMCharges Float           // total common area maintenance charges
+  budgetedCAM     Float           // budgeted CAM for period
+  actualCAM       Float           // actual CAM expenses
+  variance        Float           // difference between budgeted and actual
+  variancePercent Float           // variance as percentage
+  
+  // Tenant share calculation
+  tenantShare     Float           // tenant's share percentage
+  tenantCAM       Float           // tenant's CAM charges
+  priorAdjustment Float?          // adjustment from prior period
+  
+  // Reconciliation amounts
+  totalOwed       Float           // amount owed to/by tenant
+  credits         Float?          // credits applied
+  additionalRent  Float?          // additional rent due
+  refundDue       Float?          // refund due to tenant
+  
+  // Supporting documentation
+  auditTrail      Json?           // detailed calculation trail
+  supportingDocs  Json?           // supporting document references
+  
+  // Dates
+  reconciliationDate DateTime     // date of reconciliation
+  dueDate         DateTime?       // payment due date
+  paidDate        DateTime?       // date payment received/made
+  
+  // Dispute tracking
+  disputeStatus   DisputeStatus   @default(NO_DISPUTE)
+  disputeAmount   Float?          // disputed amount
+  disputeReason   String?         // reason for dispute
+  disputeDate     DateTime?       // date dispute raised
+  resolutionDate  DateTime?       // date dispute resolved
+  
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  
+  // Relationships
+  lease           Lease           @relation(fields: [leaseId], references: [id])
+  leaseId         String
+  expenses        CAMExpense[]
+  variances       CAMVariance[]
+
+  @@map("cam_reconciliations")
+}
+
+model CAMExpense {
+  id              String        @id @default(uuid())
+  expenseCategory String        // utilities, maintenance, security, etc.
+  description     String
+  budgetedAmount  Float
+  actualAmount    Float
+  variance        Float
+  variancePercent Float
+  
+  // Allocation details
+  allocationMethod String?      // square footage, percentage, etc.
+  tenantShare     Float?        // tenant's share of this expense
+  
+  notes           String?
+  
+  // Relationships
+  reconciliation  CAMReconciliation @relation(fields: [reconciliationId], references: [id])
+  reconciliationId String
+
+  @@map("cam_expenses")
+}
+
+model CAMVariance {
+  id              String        @id @default(uuid())
+  varianceType    VarianceType  @default(BUDGET)
+  category        String
+  description     String
+  amount          Float
+  percentage      Float
+  
+  // Analysis
+  reason          String?       // reason for variance
+  impact          String?       // impact assessment
+  actionPlan      String?       // corrective action plan
+  responsible     String?       // responsible party
+  
+  // Status
+  status          VarianceStatus @default(OPEN)
+  resolvedAt      DateTime?
+  resolvedBy      String?
+  
+  // Relationships
+  reconciliation  CAMReconciliation @relation(fields: [reconciliationId], references: [id])
+  reconciliationId String
+
+  @@map("cam_variances")
+}
+
+// Budget Planning and Forecasting Models
+model Budget {
+  id              String        @id @default(uuid())
+  budgetName      String
+  budgetType      BudgetType    @default(OPERATING)
+  budgetPeriod    String        // YYYY for annual, YYYY-QQ for quarterly
+  fiscalYear      Int
+  
+  // Budget amounts
+  totalBudget     Float
+  approvedBudget  Float?
+  revisedBudget   Float?        // revised during the year
+  
+  // Status
+  status          BudgetStatus  @default(DRAFT)
+  version         String        @default("1.0")
+  
+  // Approval workflow
+  preparedBy      String?
+  reviewedBy      String?
+  approvedBy      String?
+  
+  preparedAt      DateTime      @default(now())
+  reviewedAt      DateTime?
+  approvedAt      DateTime?
+  
+  // Dates
+  effectiveFrom   DateTime
+  effectiveTo     DateTime
+  
+  // Notes
+  assumptions     Json?         // budget assumptions
+  notes           String?
+  
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  
+  // Relationships
+  organization    Organization  @relation(fields: [organizationId], references: [id])
+  organizationId  String
+  property        Property?     @relation(fields: [propertyId], references: [id])
+  propertyId      String?
+  
+  lineItems       BudgetLineItem[]
+  variances       BudgetVariance[]
+  forecasts       Forecast[]
+
+  @@map("budgets")
+}
+
+model BudgetLineItem {
+  id              String        @id @default(uuid())
+  lineNumber      Int
+  category        String        // revenue, operating_expense, capex, etc.
+  subCategory     String?       // utilities, maintenance, leasing, etc.
+  description     String
+  
+  // Budget amounts by period
+  annualAmount    Float
+  q1Amount        Float?
+  q2Amount        Float?
+  q3Amount        Float?
+  q4Amount        Float?
+  
+  // Monthly breakdown
+  monthlyAmounts  Json?         // 12-element array for monthly amounts
+  
+  // Calculation details
+  calculationMethod String?     // per_sqft, percentage, fixed, etc.
+  unitRate        Float?        // rate per unit
+  units           Float?        // number of units
+  escalationRate  Float?        // annual escalation percentage
+  
+  // Status
+  isActive        Boolean       @default(true)
+  notes           String?
+  
+  // Relationships
+  budget          Budget        @relation(fields: [budgetId], references: [id])
+  budgetId        String
+
+  @@map("budget_line_items")
+}
+
+model Forecast {
+  id              String        @id @default(uuid())
+  forecastName    String
+  forecastType    ForecastType  @default(REVENUE)
+  forecastPeriod  String        // YYYY-MM or YYYY-QQ format
+  
+  // Forecast amounts
+  forecastAmount  Float
+  confidence      Float?        // confidence level 0-1
+  
+  // Variance from budget
+  budgetAmount    Float?
+  variance        Float?
+  variancePercent Float?
+  
+  // Methodology
+  forecastMethod  ForecastMethod @default(HISTORICAL)
+  dataPoints      Json?          // historical data used
+  assumptions     Json?          // forecast assumptions
+  
+  // Dates
+  forecastDate    DateTime       @default(now())
+  periodStart     DateTime
+  periodEnd       DateTime
+  
+  // Status
+  status          ForecastStatus @default(PRELIMINARY)
+  reviewedBy      String?
+  approvedBy      String?
+  reviewedAt      DateTime?
+  approvedAt      DateTime?
+  
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  
+  // Relationships
+  budget          Budget?        @relation(fields: [budgetId], references: [id])
+  budgetId        String?
+
+  @@map("forecasts")
+}
+
+model BudgetVariance {
+  id              String        @id @default(uuid())
+  variancePeriod  String        // YYYY-MM format
+  category        String
+  description     String
+  
+  // Variance amounts
+  budgetAmount    Float
+  actualAmount    Float
+  variance        Float
+  variancePercent Float
+  
+  // Analysis
+  varianceType    BudgetVarianceType @default(UNFAVORABLE)
+  explanation     String?
+  correctionPlan  String?
+  responsible     String?
+  
+  // Status tracking
+  status          VarianceStatus @default(OPEN)
+  reviewedAt      DateTime?
+  resolvedAt      DateTime?
+  
+  // Relationships
+  budget          Budget        @relation(fields: [budgetId], references: [id])
+  budgetId        String
+
+  @@map("budget_variances")
+}
+
+// Vendor and Broker Management Models
+model Vendor {
+  id              String        @id @default(uuid())
+  vendorCode      String        @unique
+  name            String
+  legalName       String?
+  vendorType      VendorType    @default(SERVICE)
+  
+  // Contact information
+  contactInfo     Json          // address, phone, email, website
+  primaryContact  String?
+  accountManager  String?
+  
+  // Business details
+  businessType    String?       // corporation, LLC, partnership, etc.
+  taxId           String?       // tax identification number
+  dbaName         String?       // doing business as name
+  
+  // Services
+  services        Json          // array of services provided
+  specialties     Json?         // areas of specialty
+  certifications  Json?         // professional certifications
+  
+  // Financial information
+  creditRating    String?
+  annualRevenue   Float?
+  insurance       Json?         // insurance coverage details
+  
+  // Performance tracking
+  overallRating   Float?        // 1-5 star rating
+  totalProjects   Int           @default(0)
+  completedProjects Int         @default(0)
+  activeProjects  Int           @default(0)
+  
+  // Contract terms
+  preferredTerms  Json?         // preferred contract terms
+  standardRates   Json?         // standard rate card
+  
+  // Status
+  status          VendorStatus  @default(ACTIVE)
+  onboardingDate  DateTime?
+  lastContractDate DateTime?
+  
+  // Compliance
+  backgroundCheck Boolean       @default(false)
+  backgroundCheckDate DateTime?
+  complianceNotes String?
+  
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  
+  // Relationships
+  organization    Organization  @relation(fields: [organizationId], references: [id])
+  organizationId  String
+  
+  contracts       ContractVendor[]
+  performance     VendorPerformance[]
+  invoices        VendorInvoice[]
+
+  @@map("vendors")
+}
+
+model Broker {
+  id              String        @id @default(uuid())
+  brokerCode      String        @unique
+  name            String
+  company         String?
+  licenseNumber   String?
+  licenseState    String?
+  
+  // Contact information
+  contactInfo     Json          // address, phone, email
+  assistants      Json?         // assistant/support staff
+  
+  // Specialization
+  specialization  Json          // commercial, retail, industrial, etc.
+  markets         Json          // geographic markets served
+  propertyTypes   Json          // property types handled
+  
+  // Commission structure
+  commissionRates Json          // standard commission rates
+  commissionTerms Json?         // commission payment terms
+  
+  // Performance metrics
+  dealsCompleted  Int           @default(0)
+  totalValue      Float         @default(0)
+  averageCommission Float?
+  clientRetention Float?        // client retention rate
+  
+  // Ratings and reviews
+  overallRating   Float?        // 1-5 star rating
+  communicationRating Float?
+  marketKnowledge Float?
+  negotiationSkills Float?
+  
+  // Status
+  status          BrokerStatus  @default(ACTIVE)
+  startDate       DateTime?
+  endDate         DateTime?
+  
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  
+  // Relationships
+  organization    Organization  @relation(fields: [organizationId], references: [id])
+  organizationId  String
+  
+  tenantBrokers   TenantBroker[]
+  performance     BrokerPerformance[]
+
+  @@map("brokers")
+}
+
+model VendorPerformance {
+  id              String        @id @default(uuid())
+  evaluationPeriod String       // YYYY-QQ format
+  evaluationType  EvaluationType @default(QUARTERLY)
+  
+  // Performance metrics
+  qualityScore    Float?        // 1-5 scale
+  timelinessScore Float?        // 1-5 scale
+  costScore       Float?        // 1-5 scale
+  communicationScore Float?     // 1-5 scale
+  overallScore    Float?        // 1-5 scale
+  
+  // Project metrics
+  projectsCompleted Int         @default(0)
+  onTimeDelivery  Int           @default(0)
+  onBudgetDelivery Int          @default(0)
+  customerSatisfaction Float?   // 1-5 scale
+  
+  // Financial metrics
+  totalContractValue Float?
+  costVariance    Float?        // percentage over/under budget
+  changeOrders    Int           @default(0)
+  changeOrderValue Float        @default(0)
+  
+  // Issues and complaints
+  issuesReported  Int           @default(0)
+  complaintsReceived Int        @default(0)
+  resolutionTime  Float?        // average resolution time in days
+  
+  // Notes and recommendations
+  evaluationNotes String?
+  recommendations Json?         // improvement recommendations
+  recognitions    Json?         // positive recognitions
+  
+  // Dates
+  evaluationDate  DateTime      @default(now())
+  evaluatedBy     String?
+  
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  
+  // Relationships
+  vendor          Vendor        @relation(fields: [vendorId], references: [id])
+  vendorId        String
+
+  @@map("vendor_performance")
+}
+
+model BrokerPerformance {
+  id              String        @id @default(uuid())
+  evaluationPeriod String       // YYYY-QQ format
+  
+  // Transaction metrics
+  transactionsCompleted Int     @default(0)
+  totalVolume     Float         @default(0)
+  averageDealSize Float?
+  averageCommission Float?
+  
+  // Performance metrics
+  marketingScore  Float?        // 1-5 scale
+  negotiationScore Float?       // 1-5 scale
+  documentationScore Float?     // 1-5 scale
+  relationshipScore Float?      // 1-5 scale
+  overallScore    Float?        // 1-5 scale
+  
+  // Client metrics
+  clientSatisfaction Float?     // 1-5 scale
+  referralsReceived Int         @default(0)
+  repeatClients   Int           @default(0)
+  
+  // Timeline metrics
+  averageMarketTime Float?      // days to lease/sell
+  listingToContract Float?      // days from listing to contract
+  contractToClose Float?        // days from contract to close
+  
+  // Notes
+  evaluationNotes String?
+  areasForImprovement Json?
+  strengths       Json?
+  
+  // Dates
+  evaluationDate  DateTime      @default(now())
+  evaluatedBy     String?
+  
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  
+  // Relationships
+  broker          Broker        @relation(fields: [brokerId], references: [id])
+  brokerId        String
+
+  @@map("broker_performance")
+}
+
+// Contract Lifecycle Management Models
+model ContractMilestone {
+  id              String        @id @default(uuid())
+  milestoneName   String
+  milestoneType   MilestoneType @default(DELIVERABLE)
+  dueDate         DateTime
+  completedDate   DateTime?
+  
+  // Details
+  description     String?
+  requirements    Json?         // milestone requirements
+  deliverables    Json?         // expected deliverables
+  
+  // Status
+  status          MilestoneStatus @default(PENDING)
+  completionPercentage Int       @default(0)
+  
+  // Dependencies
+  dependencies    Json?         // dependent milestones
+  
+  // Notifications
+  alertDays       Json?         // days before due date to alert
+  lastAlertSent   DateTime?
+  
+  notes           String?
+  
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  
+  // Relationships
+  contract        LeaseContract @relation(fields: [contractId], references: [id])
+  contractId      String
+
+  @@map("contract_milestones")
+}
+
+model ContractVendor {
+  id              String        @id @default(uuid())
+  role            VendorRole    @default(GENERAL)
+  startDate       DateTime?
+  endDate         DateTime?
+  
+  // Contract terms
+  contractValue   Float?
+  paymentTerms    Json?
+  deliverables    Json?
+  
+  // Performance
+  performanceRating Float?      // 1-5 scale
+  onTimeDelivery  Boolean?
+  onBudget        Boolean?
+  qualityRating   Float?        // 1-5 scale
+  
+  // Status
+  status          ContractVendorStatus @default(ACTIVE)
+  
+  notes           String?
+  
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  
+  // Relationships
+  contract        LeaseContract @relation(fields: [contractId], references: [id])
+  contractId      String
+  vendor          Vendor        @relation(fields: [vendorId], references: [id])
+  vendorId        String
+
+  @@map("contract_vendors")
+}
+
+// Financial Consolidation Models
+model FinancialStatement {
+  id              String        @id @default(uuid())
+  statementType   StatementType @default(INCOME_STATEMENT)
+  period          String        // YYYY-MM or YYYY-QQ format
+  fiscalYear      Int
+  fiscalPeriod    Int           // month or quarter number
+  
+  // Consolidation details
+  consolidationLevel ConsolidationLevel @default(PROPERTY)
+  entityId        String        // property, building, or organization ID
+  entityType      String        // property, building, organization
+  
+  // Statement data
+  revenue         Float         @default(0)
+  operatingExpenses Float       @default(0)
+  netOperatingIncome Float      @default(0)
+  capitalExpenses Float         @default(0)
+  depreciation    Float         @default(0)
+  netIncome       Float         @default(0)
+  
+  // Balance sheet items (if applicable)
+  assets          Float?
+  liabilities     Float?
+  equity          Float?
+  
+  // Cash flow items (if applicable)
+  operatingCashFlow Float?
+  investingCashFlow Float?
+  financingCashFlow Float?
+  netCashFlow     Float?
+  
+  // Status
+  status          StatementStatus @default(DRAFT)
+  preparedBy      String?
+  reviewedBy      String?
+  approvedBy      String?
+  
+  preparedAt      DateTime      @default(now())
+  reviewedAt      DateTime?
+  approvedAt      DateTime?
+  
+  // Version control
+  version         String        @default("1.0")
+  isConsolidated  Boolean       @default(false)
+  parentStatement String?       // ID of parent consolidated statement
+  
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  
+  // Relationships
+  organization    Organization  @relation(fields: [organizationId], references: [id])
+  organizationId  String
+  
+  lineItems       FinancialLineItem[]
+  consolidationRules ConsolidationRule[]
+
+  @@map("financial_statements")
+}
+
+model FinancialLineItem {
+  id              String        @id @default(uuid())
+  lineNumber      Int
+  accountCode     String
+  accountName     String
+  lineType        LineItemType  @default(EXPENSE)
+  
+  // Amounts
+  budgetAmount    Float?
+  actualAmount    Float
+  priorYearAmount Float?
+  variance        Float?
+  variancePercent Float?
+  
+  // Classification
+  category        String        // operating, non-operating, etc.
+  subCategory     String?
+  glAccount       String?       // general ledger account
+  costCenter      String?
+  department      String?
+  
+  // Notes
+  notes           String?
+  
+  // Relationships
+  statement       FinancialStatement @relation(fields: [statementId], references: [id])
+  statementId     String
+
+  @@map("financial_line_items")
+}
+
+model ConsolidationRule {
+  id              String        @id @default(uuid())
+  ruleName        String
+  ruleType        ConsolidationRuleType @default(AGGREGATION)
+  
+  // Rule definition
+  sourceEntities  Json          // entities to consolidate from
+  targetEntity    String        // target entity ID
+  mappingRules    Json          // account mapping rules
+  
+  // Calculation rules
+  calculationMethod String      // SUM, AVERAGE, WEIGHTED_AVERAGE, etc.
+  weights         Json?         // weighting factors if applicable
+  adjustments     Json?         // consolidation adjustments
+  
+  // Elimination rules
+  intercompanyEliminations Json? // intercompany eliminations
+  
+  // Status
+  isActive        Boolean       @default(true)
+  effectiveDate   DateTime      @default(now())
+  expiryDate      DateTime?
+  
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  
+  // Relationships
+  statement       FinancialStatement @relation(fields: [statementId], references: [id])
+  statementId     String
+
+  @@map("consolidation_rules")
+}
+
+// Additional Supporting Models
+model RentRoll {
+  id              String        @id @default(uuid())
+  rollDate        DateTime      @default(now())
+  rollPeriod      String        // YYYY-MM format
+  
+  // Rent details
+  baseRent        Float
+  percentageRent  Float?
+  additionalRent  Float?        // CAM, taxes, insurance
+  totalRent       Float
+  
+  // Occupancy
+  leasableArea    Float?
+  occupiedArea    Float?
+  occupancyRate   Float?
+  
+  // Calculations
+  rentPerSqFt     Float?
+  annualizedRent  Float?
+  
+  // Status
+  status          RentRollStatus @default(CURRENT)
+  
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  
+  // Relationships
+  lease           Lease         @relation(fields: [leaseId], references: [id])
+  leaseId         String
+
+  @@map("rent_roll")
+}
+
+model LeasePayment {
+  id              String        @id @default(uuid())
+  paymentType     PaymentType   @default(BASE_RENT)
+  paymentDate     DateTime
+  dueDate         DateTime
+  amount          Float
+  currency        String        @default("USD")
+  
+  // Payment details
+  paymentMethod   PaymentMethod @default(CHECK)
+  checkNumber     String?
+  reference       String?
+  
+  // Status
+  status          PaymentStatus @default(PENDING)
+  paidDate        DateTime?
+  clearedDate     DateTime?
+  
+  // Late fees
+  lateFeeAmount   Float?
+  daysPastDue     Int?
+  
+  // Reconciliation
+  reconciledDate  DateTime?
+  reconciledBy    String?
+  
+  notes           String?
+  
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  
+  // Relationships
+  lease           Lease         @relation(fields: [leaseId], references: [id])
+  leaseId         String
+
+  @@map("lease_payments")
+}
+
+model LeaseDocument {
+  id              String        @id @default(uuid())
+  documentType    LeaseDocumentType @default(LEASE_AGREEMENT)
+  documentName    String
+  description     String?
+  
+  // File details
+  fileName        String
+  filePath        String
+  fileSize        Int
+  mimeType        String
+  
+  // Version control
+  version         String        @default("1.0")
+  isLatestVersion Boolean       @default(true)
+  
+  // Document management
+  uploadDate      DateTime      @default(now())
+  uploadedBy      String
+  reviewedBy      String?
+  approvedBy      String?
+  reviewDate      DateTime?
+  approvalDate    DateTime?
+  
+  // Status
+  status          DocumentStatus @default(DRAFT)
+  
+  // Security
+  isConfidential  Boolean       @default(false)
+  accessLevel     String?       // public, internal, confidential
+  
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  
+  // Relationships
+  lease           Lease         @relation(fields: [leaseId], references: [id])
+  leaseId         String
+
+  @@map("lease_documents")
+}
+
+model LeaseAmendment {
+  id              String        @id @default(uuid())
+  amendmentNumber String        @unique
+  amendmentType   AmendmentType @default(RENT_CHANGE)
+  effectiveDate   DateTime
+  
+  // Amendment details
+  description     String
+  changes         Json          // detailed changes made
+  previousValues  Json          // original values before amendment
+  newValues       Json          // new values after amendment
+  
+  // Financial impact
+  financialImpact Float?        // net financial impact
+  currency        String        @default("USD")
+  
+  // Approval
+  status          AmendmentStatus @default(PENDING)
+  requestedBy     String
+  approvedBy      String?
+  requestDate     DateTime      @default(now())
+  approvalDate    DateTime?
+  
+  // Documentation
+  documentPath    String?       // path to amendment document
+  signedDate      DateTime?
+  
+  notes           String?
+  
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  
+  // Relationships
+  lease           Lease         @relation(fields: [leaseId], references: [id])
+  leaseId         String
+
+  @@map("lease_amendments")
+}
+
+model TenantGuarantee {
+  id              String        @id @default(uuid())
+  guaranteeType   GuaranteeType @default(PERSONAL)
+  guarantorName   String
+  guarantorInfo   Json          // contact and financial info
+  
+  // Guarantee terms
+  guaranteeAmount Float
+  effectiveDate   DateTime
+  expirationDate  DateTime?
+  
+  // Documentation
+  documentPath    String?
+  signedDate      DateTime?
+  
+  // Status
+  status          GuaranteeStatus @default(ACTIVE)
+  
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  
+  // Relationships
+  tenant          Tenant        @relation(fields: [tenantId], references: [id])
+  tenantId        String
+
+  @@map("tenant_guarantees")
+}
+
+model TenantBroker {
+  id              String        @id @default(uuid())
+  brokerType      BrokerType    @default(TENANT_REP)
+  startDate       DateTime?
+  endDate         DateTime?
+  
+  // Commission
+  commissionRate  Float?
+  commissionAmount Float?
+  commissionPaid  Boolean       @default(false)
+  paymentDate     DateTime?
+  
+  // Relationship details
+  exclusivity     Boolean       @default(false)
+  territory       String?
+  
+  notes           String?
+  
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  
+  // Relationships
+  tenant          Tenant        @relation(fields: [tenantId], references: [id])
+  tenantId        String
+  broker          Broker        @relation(fields: [brokerId], references: [id])
+  brokerId        String
+
+  @@map("tenant_brokers")
+}
+
+model VendorInvoice {
+  id              String        @id @default(uuid())
+  invoiceNumber   String        @unique
+  invoiceDate     DateTime
+  dueDate         DateTime
+  amount          Float
+  currency        String        @default("USD")
+  
+  // Invoice details
+  description     String
+  servicesPeriod  String?       // period services were provided
+  
+  // Payment terms
+  paymentTerms    String?       // NET 30, etc.
+  discountTerms   String?       // 2/10 NET 30, etc.
+  
+  // Status
+  status          InvoiceStatus @default(PENDING)
+  approvedBy      String?
+  approvedDate    DateTime?
+  paidDate        DateTime?
+  paidAmount      Float?
+  
+  // Matching
+  poNumber        String?       // purchase order number
+  receivingNumber String?       // receiving document number
+  
+  notes           String?
+  
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  
+  // Relationships
+  vendor          Vendor        @relation(fields: [vendorId], references: [id])
+  vendorId        String
+
+  @@map("vendor_invoices")
+}
+
+// Extend Organization model for Phase 4 relationships
+model Property {
+  id              String      @id @default(uuid())
+  name            String
+  type            PropertyType
+  address         Json // Structured address data
+  totalArea       Float?
+  usableArea      Float?
+  currency        String      @default("USD")
+  acquisitionCost Float?
+  currentValue    Float?
+  acquisitionDate DateTime?
+  coordinates     Json? // Lat/Long for mapping
+  timezone        String      @default("UTC")
+  isActive        Boolean     @default(true)
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  // Relationships
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  organizationId String
+  buildings      Building[]
+  customFields   CustomFieldValue[]
+
+  // Phase 3: Space Management & Portfolio Tracking relationships
+  cadFiles          CADFile[]
+  
+  // Phase 4: Lease Administration & Financial Management relationships
+  leases            Lease[]
+  budgets           Budget[]
+
+  @@map("properties")
+}
+
+model Organization {
+  id            String  @id @default(uuid())
+  name          String
+  description   String?
+  address       Json? // Flexible address structure
+  defaultCurrency String @default("USD")
+  defaultLanguage String @default("en")
+  defaultTimezone String @default("UTC")
+  isActive      Boolean @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Relationships
+  users       User[]
+  departments Department[]
+  properties  Property[]
+  workflows   WorkflowDefinition[]
+  customFields CustomFieldDefinition[]
+
+  // Phase 3: Space Management & Portfolio Tracking relationships
+  chargebackRules   ChargebackRule[]
+  spaceTemplates    SpaceTemplate[]
+  
+  // Phase 4: Lease Administration & Financial Management relationships
+  budgets           Budget[]
+  vendors           Vendor[]
+  brokers           Broker[]
+  financialStatements FinancialStatement[]
+
+  @@map("organizations")
+}
+
+// Enums for Phase 4
+enum LeaseType {
+  OPERATING
+  FINANCE
+  SHORT_TERM
+  SUBLEASE
+  CONCESSION
+  GROUND_LEASE
+}
+
+enum LeaseStatus {
+  DRAFT
+  ACTIVE
+  EXPIRED
+  TERMINATED
+  HOLDOVER
+  OPTION_PENDING
+  RENEWED
+}
+
+enum TenantType {
+  COMMERCIAL
+  RETAIL
+  INDUSTRIAL
+  OFFICE
+  GOVERNMENT
+  NON_PROFIT
+  INDIVIDUAL
+}
+
+enum TenantStatus {
+  PROSPECT
+  ACTIVE
+  HOLDOVER
+  TERMINATED
+  DEFAULT
+  BANKRUPTCY
+}
+
+enum ContractType {
+  LEASE
+  SERVICE_AGREEMENT
+  MAINTENANCE
+  CONSTRUCTION
+  CONSULTING
+  SUPPLY
+  OTHER
+}
+
+enum ContractStatus {
+  DRAFT
+  UNDER_REVIEW
+  APPROVED
+  EXECUTED
+  ACTIVE
+  COMPLETED
+  TERMINATED
+  EXPIRED
+}
+
+enum AccountingStandard {
+  ASC842
+  IFRS16
+  GAAP
+  OTHER
+}
+
+enum AccountingStatus {
+  DRAFT
+  CALCULATED
+  REVIEWED
+  APPROVED
+  POSTED
+  ADJUSTED
+}
+
+enum JournalType {
+  LEASE_LIABILITY
+  RIGHT_OF_USE_ASSET
+  LEASE_EXPENSE
+  DEPRECIATION
+  INTEREST_EXPENSE
+  LEASE_MODIFICATION
+  TERMINATION
+}
+
+enum JournalStatus {
+  DRAFT
+  REVIEW
+  APPROVED
+  POSTED
+  REVERSED
+}
+
+enum CriticalDateType {
+  LEASE_EXPIRATION
+  OPTION_DEADLINE
+  RENT_ESCALATION
+  RENEWAL_NOTICE
+  CAM_RECONCILIATION
+  INSURANCE_RENEWAL
+  INSPECTION_DUE
+  COMPLIANCE_DEADLINE
+  PAYMENT_DUE
+  CONTRACT_RENEWAL
+  PERMIT_RENEWAL
+  OTHER
+}
+
+enum DateImportance {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum AlertType {
+  REMINDER
+  WARNING
+  DEADLINE
+  OVERDUE
+  ESCALATION
+}
+
+enum AlertPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum AlertStatus {
+  PENDING
+  SENT
+  ACKNOWLEDGED
+  DISMISSED
+  ESCALATED
+}
+
+enum CAMType {
+  ANNUAL
+  MONTHLY
+  QUARTERLY
+  YEAR_END
+}
+
+enum ReconciliationStatus {
+  DRAFT
+  CALCULATED
+  REVIEW
+  TENANT_REVIEW
+  DISPUTED
+  RESOLVED
+  FINALIZED
+  PAID
+}
+
+enum DisputeStatus {
+  NO_DISPUTE
+  DISPUTED
+  UNDER_REVIEW
+  MEDIATION
+  ARBITRATION
+  RESOLVED
+  LEGAL_ACTION
+}
+
+enum VarianceType {
+  BUDGET
+  FORECAST
+  PRIOR_YEAR
+  INDUSTRY_BENCHMARK
+}
+
+enum VarianceStatus {
+  OPEN
+  INVESTIGATING
+  ACTION_PLAN
+  RESOLVED
+  ACCEPTED
+}
+
+enum BudgetType {
+  OPERATING
+  CAPITAL
+  CASH_FLOW
+  REVENUE
+  EXPENSE
+  CONSOLIDATED
+}
+
+enum BudgetStatus {
+  DRAFT
+  REVIEW
+  APPROVED
+  LOCKED
+  REVISED
+  ARCHIVED
+}
+
+enum ForecastType {
+  REVENUE
+  EXPENSE
+  CASH_FLOW
+  OCCUPANCY
+  MARKET_RENT
+}
+
+enum ForecastMethod {
+  HISTORICAL
+  TREND_ANALYSIS
+  REGRESSION
+  MOVING_AVERAGE
+  SEASONAL
+  EXPERT_JUDGMENT
+  MONTE_CARLO
+}
+
+enum ForecastStatus {
+  PRELIMINARY
+  DRAFT
+  REVIEW
+  APPROVED
+  PUBLISHED
+  ARCHIVED
+}
+
+enum BudgetVarianceType {
+  FAVORABLE
+  UNFAVORABLE
+  TIMING
+  PERMANENT
+}
+
+enum VendorType {
+  SERVICE
+  CONTRACTOR
+  SUPPLIER
+  CONSULTANT
+  BROKER
+  LEGAL
+  FINANCIAL
+  TECHNOLOGY
+  OTHER
+}
+
+enum VendorStatus {
+  PROSPECT
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+  TERMINATED
+  BLACKLISTED
+}
+
+enum EvaluationType {
+  PROJECT_BASED
+  QUARTERLY
+  ANNUAL
+  CONTRACT_END
+  INCIDENT_BASED
+}
+
+enum BrokerStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+  TERMINATED
+}
+
+enum BrokerType {
+  LANDLORD_REP
+  TENANT_REP
+  DUAL_AGENCY
+  CONSULTANT
+}
+
+enum MilestoneType {
+  DELIVERABLE
+  PAYMENT
+  APPROVAL
+  INSPECTION
+  COMPLIANCE
+  DEADLINE
+  OTHER
+}
+
+enum MilestoneStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  DELAYED
+  CANCELLED
+}
+
+enum VendorRole {
+  GENERAL
+  SUBCONTRACTOR
+  SUPPLIER
+  CONSULTANT
+  SPECIALIST
+}
+
+enum ContractVendorStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+  TERMINATED
+  COMPLETED
+}
+
+enum StatementType {
+  INCOME_STATEMENT
+  BALANCE_SHEET
+  CASH_FLOW
+  BUDGET_VARIANCE
+  CONSOLIDATED
+}
+
+enum ConsolidationLevel {
+  PROPERTY
+  BUILDING
+  PORTFOLIO
+  REGIONAL
+  GLOBAL
+}
+
+enum StatementStatus {
+  DRAFT
+  CALCULATED
+  REVIEW
+  APPROVED
+  PUBLISHED
+  FINAL
+}
+
+enum LineItemType {
+  REVENUE
+  EXPENSE
+  ASSET
+  LIABILITY
+  EQUITY
+}
+
+enum ConsolidationRuleType {
+  AGGREGATION
+  ELIMINATION
+  ADJUSTMENT
+  MAPPING
+  CALCULATION
+}
+
+enum RentRollStatus {
+  CURRENT
+  PROJECTED
+  HISTORICAL
+  BUDGET
+}
+
+enum PaymentType {
+  BASE_RENT
+  PERCENTAGE_RENT
+  CAM_CHARGES
+  TAX_PAYMENT
+  INSURANCE
+  LATE_FEE
+  SECURITY_DEPOSIT
+  OTHER
+}
+
+enum PaymentMethod {
+  CHECK
+  ACH
+  WIRE_TRANSFER
+  CREDIT_CARD
+  CASH
+  MONEY_ORDER
+  ELECTRONIC
+}
+
+enum PaymentStatus {
+  PENDING
+  PROCESSED
+  CLEARED
+  RETURNED
+  CANCELLED
+  PARTIAL
+}
+
+enum LeaseDocumentType {
+  LEASE_AGREEMENT
+  AMENDMENT
+  ASSIGNMENT
+  SUBLEASE
+  ESTOPPEL
+  SNDA
+  CONSENT
+  NOTICE
+  CORRESPONDENCE
+  OTHER
+}
+
+enum AmendmentType {
+  RENT_CHANGE
+  TERM_EXTENSION
+  SPACE_MODIFICATION
+  USE_CHANGE
+  ASSIGNMENT
+  SUBLETTING
+  OTHER
+}
+
+enum AmendmentStatus {
+  PENDING
+  APPROVED
+  EXECUTED
+  REJECTED
+  CANCELLED
+}
+
+enum GuaranteeType {
+  PERSONAL
+  CORPORATE
+  LETTER_OF_CREDIT
+  SECURITY_DEPOSIT
+  BOND
+}
+
+enum GuaranteeStatus {
+  ACTIVE
+  EXPIRED
+  TERMINATED
+  CALLED
+  RELEASED
+}
+
+enum InvoiceStatus {
+  PENDING
+  APPROVED
+  PAID
+  OVERDUE
+  DISPUTED
+  CANCELLED
+  PARTIALLY_PAID
+}
+
