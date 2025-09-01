@@ -18,21 +18,27 @@ router.get('/', async (req: Request, res: Response) => {
       });
     }
 
-    const notifications = await notificationService.getUserNotifications(
+    const result = await notificationService.getUserNotifications(
       userId as string,
-      Number(limit),
-      Number(offset),
-      unreadOnly === 'true'
+      {
+        limit: Number(limit),
+        offset: Number(offset),
+        unreadOnly: unreadOnly === 'true'
+      }
     );
 
     const unreadCount = await notificationService.getUnreadCount(userId as string);
 
     res.json({
-      notifications,
-      unreadCount,
+      notifications: result.notifications,
+      total: result.total,
+      unreadCount: result.unreadCount,
+      hasMore: result.hasMore,
       pagination: {
         limit: Number(limit),
         offset: Number(offset),
+        currentPage: Math.floor(Number(offset) / Number(limit)) + 1,
+        totalPages: Math.ceil(result.total / Number(limit)),
       },
     });
   } catch (error) {
