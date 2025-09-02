@@ -19,6 +19,19 @@ export { ComplianceManagementOperationsManager } from './compliance-governance/r
 export { ExternalIntegrationSystemsManager } from './external-integration-systems/third-party-connectors/integration-orchestration';
 export { InfrastructureTechnologyOperationsManager } from './infrastructure-technology/smart-systems/infrastructure-operations';
 
+// NEW DOMAIN ORCHESTRATORS - Advanced Operations Domain
+export { AdvancedOperationsManager } from './advanced-operations/workflow-systems/advanced-coordination';
+export * from './advanced-operations/workflow-systems/advanced-coordination/types';
+export * from './advanced-operations/workflow-systems/advanced-coordination/constants';
+
+// NEW DOMAIN ORCHESTRATORS - Service Operations Domain  
+export { ServiceOperationsManager } from './service-operations/communication-systems/service-coordination';
+export * from './service-operations/communication-systems/service-coordination/types';
+export * from './service-operations/communication-systems/service-coordination/constants';
+
+// NEW DOMAIN ORCHESTRATORS - Asset Operations Domain
+export { AssetOperationsManager } from './asset-operations/lifecycle-management/asset-coordination';
+
 // Business Operations Domain - Complete Implementation
 export { BusinessOperationsManager } from './business-operations/project-management/business-coordination';
 export { CapitalProjectService } from './business-operations/project-management/business-coordination/CapitalProjectService';
