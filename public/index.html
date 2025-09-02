@@ -463,7 +463,7 @@
         </div>
         
         <!-- Dashboard Widgets -->
-        <div class="dashboard-widgets">
+        <div class="dashboard-widgets" data-cy="dashboard-widgets">
             <div class="widget" data-cy="asset-summary-widget">
                 <h3>Asset Summary</h3>
                 <p>Total Assets: <span data-cy="total-assets">15,234</span></p>
@@ -708,6 +708,13 @@
             }
             
             window.onclick = function(event) {
+                if (event.target == modal) {
+                    modal.style.display = 'none';
+                }
+            }
+            
+            // Also handle clicks directly on the modal for Cypress testing
+            modal.onclick = function(event) {
                 if (event.target == modal) {
                     modal.style.display = 'none';
                 }
