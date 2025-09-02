@@ -811,7 +811,7 @@ export class ChargebackService {
       const { deliveryMethod = 'EMAIL', approvalRequired = false, consolidateByDepartment = true } = options;
 
       // Get chargeback allocations for period
-      const allocations = await this.getChargebackAllocations(organizationId, period);
+      const allocations = await this.getChargebackAllocations(organizationId, period.toISOString());
       
       // Group allocations by department if consolidation is enabled
       const groupedAllocations = consolidateByDepartment
@@ -881,8 +881,8 @@ export class ChargebackService {
         const currentPeriod = comparisonPeriods[i];
         const previousPeriod = comparisonPeriods[i - 1];
 
-        const currentAllocations = await this.getChargebackAllocations(organizationId, currentPeriod);
-        const previousAllocations = await this.getChargebackAllocations(organizationId, previousPeriod);
+        const currentAllocations = await this.getChargebackAllocations(organizationId, currentPeriod.toISOString());
+        const previousAllocations = await this.getChargebackAllocations(organizationId, previousPeriod.toISOString());
 
         // Calculate variances
         const periodVariance = this.calculatePeriodVariance(currentAllocations, previousAllocations);

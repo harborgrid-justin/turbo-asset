@@ -235,7 +235,7 @@ export class DocumentService {
     changeNotes?: string,
     uploadedBy?: string
   ): Promise<string> {
-    return this.uploadDocumentVersion(documentId, file, changeNotes, uploadedBy || 'system');
+    return this.uploadDocumentVersion(documentId, file, changeNotes);
   }
 
   /**
@@ -365,90 +365,6 @@ export class DocumentService {
       });
     } catch (error) {
       logger.error('Failed to set document permission', error);
-      throw error;
-    }
-  }
-
-  /**
-   * Search documents
-   */
-  async searchDocuments(
-    query: string,
-    userId: string,
-    filters?: {
-      mimeType?: string;
-      tags?: string[];
-      dateFrom?: Date;
-      dateTo?: Date;
-    },
-    limit: number = 50,
-    offset: number = 0
-  ): Promise<{ documents: any[]; total: number }> {
-    try {
-      const whereClause: any = {
-        isActive: true,
-        status: { not: 'DELETED' },
-        OR: [
-          { name: { contains: query, mode: 'insensitive' } },
-          { description: { contains: query, mode: 'insensitive' } },
-          { tags: { has: query } },
-        ],
-      };
-
-      if (filters?.mimeType) {
-        whereClause.mimeType = filters.mimeType;
-      }
-
-      if (filters?.tags && filters.tags.length > 0) {
-        whereClause.tags = { hasSome: filters.tags };
-      }
-
-      if (filters?.dateFrom || filters?.dateTo) {
-        whereClause.createdAt = {};
-        if (filters.dateFrom) {
-          whereClause.createdAt.gte = filters.dateFrom;
-        }
-        if (filters.dateTo) {
-          whereClause.createdAt.lte = filters.dateTo;
-        }
-      }
-
-      const [documents, total] = await Promise.all([
-        prisma.document.findMany({
-          where: whereClause,
-          include: {
-            uploadedBy: {
-              select: {
-                id: true,
-                firstName: true,
-                lastName: true,
-                email: true,
-              },
-            },
-          },
-          orderBy: { createdAt: 'desc' },
-          take: limit,
-          skip: offset,
-        }),
-        prisma.document.count({
-          where: whereClause,
-        }),
-      ]);
-
-      // Filter by permissions
-      const accessibleDocuments: any[] = [];
-      for (const doc of documents) {
-        if (await this.checkDocumentPermission(doc.id, userId, 'READ')) {
-          accessibleDocuments.push(doc);
-        }
-      }
-
-      return {
-        documents: accessibleDocuments,
-        total: accessibleDocuments.length,
-      };
-    } catch (error) {
-      logger.error('Failed to search documents', error);
       throw error;
     }
   }
