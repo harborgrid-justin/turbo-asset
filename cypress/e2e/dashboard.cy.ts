@@ -239,4 +239,173 @@ describe('Dashboard Interactive Elements', () => {
       cy.dataCy('dashboard-widgets').should('be.visible');
     });
   });
+
+  describe('Quick Actions Toolbar', () => {
+    it('should display all quick action buttons', () => {
+      cy.dataCy('quick-actions').should('be.visible');
+      cy.dataCy('recent-items-btn').should('contain', 'Recent').and('be.visible');
+      cy.dataCy('bookmarks-btn').should('contain', 'Bookmarks').and('be.visible');
+      cy.dataCy('shortcuts-btn').should('contain', 'Shortcuts').and('be.visible');
+      cy.dataCy('help-btn').should('contain', 'Help').and('be.visible');
+      cy.dataCy('settings-toggle-btn').should('contain', 'Settings').and('be.visible');
+    });
+
+    it('should toggle active state when quick action buttons are clicked', () => {
+      cy.dataCy('recent-items-btn').click();
+      cy.dataCy('recent-items-btn').should('have.class', 'active');
+      
+      cy.dataCy('bookmarks-btn').click();
+      cy.dataCy('bookmarks-btn').should('have.class', 'active');
+      
+      cy.dataCy('shortcuts-btn').click();
+      cy.dataCy('shortcuts-btn').should('have.class', 'active');
+    });
+
+    it('should open settings panel when settings button is clicked', () => {
+      cy.dataCy('settings-toggle-btn').click();
+      cy.dataCy('settings-panel').should('have.class', 'active');
+      cy.dataCy('settings-overlay').should('have.class', 'active');
+    });
+  });
+
+  describe('Settings Panel', () => {
+    beforeEach(() => {
+      cy.dataCy('settings-toggle-btn').click();
+    });
+
+    it('should display all settings controls', () => {
+      cy.dataCy('theme-light').should('be.visible');
+      cy.dataCy('theme-dark').should('be.visible');
+      cy.dataCy('theme-blue').should('be.visible');
+      cy.dataCy('language-select').should('be.visible');
+      cy.dataCy('notifications-enabled').should('be.visible');
+      cy.dataCy('auto-save-enabled').should('be.visible');
+    });
+
+    it('should change theme when theme options are clicked', () => {
+      cy.dataCy('theme-dark').click();
+      cy.dataCy('theme-dark').should('have.class', 'selected');
+      
+      cy.dataCy('theme-blue').click();
+      cy.dataCy('theme-blue').should('have.class', 'selected');
+    });
+
+    it('should close settings panel when close button is clicked', () => {
+      cy.dataCy('close-settings-btn').click();
+      cy.dataCy('settings-panel').should('not.have.class', 'active');
+      cy.dataCy('settings-overlay').should('not.have.class', 'active');
+    });
+
+    it('should close settings panel when overlay is clicked', () => {
+      cy.dataCy('settings-overlay').click();
+      cy.dataCy('settings-panel').should('not.have.class', 'active');
+      cy.dataCy('settings-overlay').should('not.have.class', 'active');
+    });
+  });
+
+  describe('Advanced Search Panel', () => {
+    it('should toggle advanced search panel', () => {
+      cy.dataCy('advanced-search-btn').click();
+      cy.dataCy('advanced-search-panel').should('have.class', 'active');
+      
+      cy.dataCy('advanced-search-btn').click();
+      cy.dataCy('advanced-search-panel').should('not.have.class', 'active');
+    });
+
+    it('should have all advanced search controls', () => {
+      cy.dataCy('advanced-search-btn').click();
+      
+      cy.dataCy('value-range-min').should('be.visible');
+      cy.dataCy('value-range-max').should('be.visible');
+      cy.dataCy('date-from-input').should('be.visible');
+      cy.dataCy('date-to-input').should('be.visible');
+      cy.dataCy('warranty-filter').should('be.visible');
+      cy.dataCy('critical-filter').should('be.visible');
+      cy.dataCy('apply-advanced-search').should('be.visible');
+      cy.dataCy('reset-advanced-search').should('be.visible');
+    });
+
+    it('should update range slider values', () => {
+      cy.dataCy('advanced-search-btn').click();
+      
+      cy.dataCy('value-range-min').invoke('val', 5000).trigger('input');
+      cy.dataCy('value-min-display').should('contain', '$5,000');
+      
+      cy.dataCy('value-range-max').invoke('val', 50000).trigger('input');
+      cy.dataCy('value-max-display').should('contain', '$50,000');
+    });
+
+    it('should reset advanced search form', () => {
+      cy.dataCy('advanced-search-btn').click();
+      
+      cy.dataCy('warranty-filter').check();
+      cy.dataCy('critical-filter').check();
+      cy.dataCy('date-from-input').type('2023-01-01');
+      
+      cy.dataCy('reset-advanced-search').click();
+      
+      cy.dataCy('warranty-filter').should('not.be.checked');
+      cy.dataCy('critical-filter').should('not.be.checked');
+      cy.dataCy('date-from-input').should('have.value', '');
+    });
+  });
+
+  describe('Expandable Sections', () => {
+    it('should expand and collapse insights section', () => {
+      cy.dataCy('insights-header').click();
+      cy.dataCy('insights-content').should('have.class', 'expanded');
+      cy.dataCy('insights-expand-icon').should('contain', '▲');
+      
+      cy.dataCy('insights-header').click();
+      cy.dataCy('insights-content').should('not.have.class', 'expanded');
+      cy.dataCy('insights-expand-icon').should('contain', '▼');
+    });
+
+    it('should expand and collapse reports section', () => {
+      cy.dataCy('reports-header').click();
+      cy.dataCy('reports-content').should('have.class', 'expanded');
+      cy.dataCy('reports-expand-icon').should('contain', '▲');
+      
+      cy.dataCy('reports-header').click();
+      cy.dataCy('reports-content').should('not.have.class', 'expanded');
+      cy.dataCy('reports-expand-icon').should('contain', '▼');
+    });
+
+    it('should have all report buttons when expanded', () => {
+      cy.dataCy('reports-header').click();
+      
+      cy.dataCy('monthly-report-btn').should('be.visible');
+      cy.dataCy('maintenance-report-btn').should('be.visible');
+      cy.dataCy('financial-report-btn').should('be.visible');
+      cy.dataCy('compliance-report-btn').should('be.visible');
+    });
+
+    it('should have all insight buttons when expanded', () => {
+      cy.dataCy('insights-header').click();
+      
+      cy.dataCy('view-cost-breakdown').should('be.visible');
+      cy.dataCy('view-utilization-details').should('be.visible');
+    });
+  });
+
+  describe('Notification System', () => {
+    it('should show notifications when actions are performed', () => {
+      // Test that notifications appear (they auto-dismiss after 3 seconds)
+      cy.dataCy('advanced-search-btn').click();
+      cy.dataCy('notification-container').children().should('have.length.at.least', 1);
+      
+      cy.dataCy('settings-toggle-btn').click();
+      cy.dataCy('theme-dark').click();
+      cy.dataCy('notification-container').children().should('have.length.at.least', 1);
+    });
+
+    it('should auto-dismiss notifications after timeout', () => {
+      cy.dataCy('advanced-search-btn').click();
+      cy.dataCy('notification-container').children().should('have.length.at.least', 1);
+      
+      // Wait for auto-dismiss (3 seconds + transition time)
+      cy.wait(4000);
+      cy.dataCy('notification-container').children().should('have.length', 0);
+    });
+  });
 });

@@ -232,6 +232,140 @@
         .checkbox-item input[type="checkbox"] {
             width: auto;
         }
+        
+        /* Advanced Form Controls */
+        .multi-select {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            min-height: 40px;
+            padding: 5px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            cursor: text;
+            position: relative;
+        }
+        
+        .multi-select-tag {
+            background: #3498db;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .tag-remove {
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .auto-complete-container {
+            position: relative;
+        }
+        
+        .auto-complete-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #ddd;
+            border-top: none;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 100;
+            display: none;
+        }
+        
+        .auto-complete-item {
+            padding: 10px;
+            cursor: pointer;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .auto-complete-item:hover {
+            background: #f8f9fa;
+        }
+        
+        .auto-complete-item.highlighted {
+            background: #e3f2fd;
+        }
+        
+        /* File Upload Controls */
+        .file-upload-area {
+            border: 2px dashed #ddd;
+            border-radius: 8px;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 20px 0;
+        }
+        
+        .file-upload-area:hover {
+            border-color: #3498db;
+            background-color: #f8f9fa;
+        }
+        
+        .file-upload-area.dragover {
+            border-color: #27ae60;
+            background-color: #e8f5e8;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background-color: #f0f0f0;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background-color: #3498db;
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+        
+        /* Table Enhancements */
+        .sortable-header {
+            position: relative;
+            user-select: none;
+        }
+        
+        .sort-indicator {
+            position: absolute;
+            right: 5px;
+            top: 50%;
+            transform: translateY(-50%);
+            opacity: 0.3;
+        }
+        
+        .sort-indicator.active {
+            opacity: 1;
+        }
+        
+        .resizable-header {
+            position: relative;
+        }
+        
+        .resize-handle {
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 5px;
+            height: 100%;
+            cursor: col-resize;
+            background: transparent;
+        }
+        
+        .resize-handle:hover {
+            background: #3498db;
+        }
     </style>
 </head>
 <body>
@@ -336,6 +470,44 @@
             </form>
         </div>
         
+        <!-- Advanced Form Controls Section -->
+        <div class="form-section">
+            <h2>Advanced Asset Information</h2>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Asset Tags (Multi-select)</label>
+                    <div class="multi-select" data-cy="asset-tags-multiselect">
+                        <input type="text" placeholder="Type to add tags..." data-cy="tags-input" style="border: none; outline: none; flex: 1; min-width: 100px;">
+                    </div>
+                </div>
+                
+                <div class="form-group auto-complete-container">
+                    <label for="vendor-search">Vendor (Auto-complete)</label>
+                    <input type="text" id="vendor-search" data-cy="vendor-autocomplete" placeholder="Search vendors...">
+                    <div class="auto-complete-dropdown" data-cy="vendor-dropdown">
+                        <div class="auto-complete-item" data-value="dell">Dell Technologies</div>
+                        <div class="auto-complete-item" data-value="hp">HP Inc.</div>
+                        <div class="auto-complete-item" data-value="microsoft">Microsoft</div>
+                        <div class="auto-complete-item" data-value="apple">Apple Inc.</div>
+                        <div class="auto-complete-item" data-value="lenovo">Lenovo Group</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- File Upload Area -->
+            <div class="form-group">
+                <label>Asset Images & Documents</label>
+                <div class="file-upload-area" data-cy="file-upload-area">
+                    <p>📁 Drag & drop files here or click to browse</p>
+                    <p style="font-size: 12px; color: #666;">Supported: JPG, PNG, PDF, DOC (Max 10MB)</p>
+                    <input type="file" multiple accept=".jpg,.jpeg,.png,.pdf,.doc,.docx" style="display: none;" data-cy="file-input">
+                </div>
+                <div class="progress-bar" data-cy="upload-progress" style="display: none;">
+                    <div class="progress-fill" data-cy="progress-fill"></div>
+                </div>
+            </div>
+        </div>
+        
         <!-- Search and Filter Section -->
         <div class="filters" data-cy="asset-filters">
             <div class="filter-group">
@@ -392,12 +564,36 @@
                         <th data-cy="table-header-select">
                             <input type="checkbox" data-cy="select-all-checkbox">
                         </th>
-                        <th data-cy="table-header-name">Name</th>
-                        <th data-cy="table-header-category">Category</th>
-                        <th data-cy="table-header-serial">Serial</th>
-                        <th data-cy="table-header-value">Value</th>
-                        <th data-cy="table-header-location">Location</th>
-                        <th data-cy="table-header-status">Status</th>
+                        <th data-cy="table-header-name" class="sortable-header resizable-header" data-sort="name">
+                            Name
+                            <span class="sort-indicator" data-cy="sort-name">↕</span>
+                            <div class="resize-handle" data-cy="resize-name"></div>
+                        </th>
+                        <th data-cy="table-header-category" class="sortable-header resizable-header" data-sort="category">
+                            Category
+                            <span class="sort-indicator" data-cy="sort-category">↕</span>
+                            <div class="resize-handle" data-cy="resize-category"></div>
+                        </th>
+                        <th data-cy="table-header-serial" class="sortable-header resizable-header" data-sort="serial">
+                            Serial
+                            <span class="sort-indicator" data-cy="sort-serial">↕</span>
+                            <div class="resize-handle" data-cy="resize-serial"></div>
+                        </th>
+                        <th data-cy="table-header-value" class="sortable-header resizable-header" data-sort="value">
+                            Value
+                            <span class="sort-indicator" data-cy="sort-value">↕</span>
+                            <div class="resize-handle" data-cy="resize-value"></div>
+                        </th>
+                        <th data-cy="table-header-location" class="sortable-header resizable-header" data-sort="location">
+                            Location
+                            <span class="sort-indicator" data-cy="sort-location">↕</span>
+                            <div class="resize-handle" data-cy="resize-location"></div>
+                        </th>
+                        <th data-cy="table-header-status" class="sortable-header resizable-header" data-sort="status">
+                            Status
+                            <span class="sort-indicator" data-cy="sort-status">↕</span>
+                            <div class="resize-handle" data-cy="resize-status"></div>
+                        </th>
                         <th data-cy="table-header-actions">Actions</th>
                     </tr>
                 </thead>
@@ -565,6 +761,222 @@
             document.querySelector('[data-cy="save-draft-btn"]').onclick = function() {
                 alert('Draft saved!');
             }
+            
+            // Advanced Form Controls
+            
+            // Multi-select tags functionality
+            const tagsInput = document.querySelector('[data-cy="tags-input"]');
+            const multiSelect = document.querySelector('[data-cy="asset-tags-multiselect"]');
+            const tags = ['urgent', 'new', 'critical', 'warranty', 'maintenance', 'portable', 'valuable'];
+            
+            tagsInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter' || e.key === ',') {
+                    e.preventDefault();
+                    const value = this.value.trim();
+                    if (value) {
+                        addTag(value);
+                        this.value = '';
+                    }
+                }
+            });
+            
+            function addTag(text) {
+                const tag = document.createElement('div');
+                tag.className = 'multi-select-tag';
+                tag.innerHTML = `
+                    <span>${text}</span>
+                    <span class="tag-remove" onclick="removeTag(this)">×</span>
+                `;
+                tag.dataset.cy = `tag-${text}`;
+                multiSelect.insertBefore(tag, tagsInput);
+            }
+            
+            window.removeTag = function(element) {
+                element.parentElement.remove();
+            }
+            
+            // Auto-complete functionality
+            const vendorInput = document.querySelector('[data-cy="vendor-autocomplete"]');
+            const vendorDropdown = document.querySelector('[data-cy="vendor-dropdown"]');
+            let highlightedIndex = -1;
+            
+            vendorInput.addEventListener('input', function() {
+                const value = this.value.toLowerCase();
+                const items = vendorDropdown.querySelectorAll('.auto-complete-item');
+                let hasVisibleItems = false;
+                
+                items.forEach((item, index) => {
+                    const text = item.textContent.toLowerCase();
+                    if (text.includes(value)) {
+                        item.style.display = 'block';
+                        hasVisibleItems = true;
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+                
+                vendorDropdown.style.display = hasVisibleItems && value ? 'block' : 'none';
+                highlightedIndex = -1;
+            });
+            
+            vendorInput.addEventListener('keydown', function(e) {
+                const visibleItems = Array.from(vendorDropdown.querySelectorAll('.auto-complete-item')).filter(item => item.style.display !== 'none');
+                
+                if (e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    highlightedIndex = Math.min(highlightedIndex + 1, visibleItems.length - 1);
+                    updateHighlight(visibleItems);
+                } else if (e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    highlightedIndex = Math.max(highlightedIndex - 1, 0);
+                    updateHighlight(visibleItems);
+                } else if (e.key === 'Enter') {
+                    e.preventDefault();
+                    if (highlightedIndex >= 0 && visibleItems[highlightedIndex]) {
+                        selectVendor(visibleItems[highlightedIndex]);
+                    }
+                } else if (e.key === 'Escape') {
+                    vendorDropdown.style.display = 'none';
+                    highlightedIndex = -1;
+                }
+            });
+            
+            function updateHighlight(items) {
+                items.forEach((item, index) => {
+                    item.classList.toggle('highlighted', index === highlightedIndex);
+                });
+            }
+            
+            function selectVendor(item) {
+                vendorInput.value = item.textContent;
+                vendorDropdown.style.display = 'none';
+                highlightedIndex = -1;
+            }
+            
+            // Auto-complete item click handlers
+            document.querySelectorAll('.auto-complete-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    selectVendor(this);
+                });
+            });
+            
+            // File upload functionality
+            const fileUploadArea = document.querySelector('[data-cy="file-upload-area"]');
+            const fileInput = document.querySelector('[data-cy="file-input"]');
+            const progressBar = document.querySelector('[data-cy="upload-progress"]');
+            const progressFill = document.querySelector('[data-cy="progress-fill"]');
+            
+            fileUploadArea.addEventListener('click', function() {
+                fileInput.click();
+            });
+            
+            fileUploadArea.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                this.classList.add('dragover');
+            });
+            
+            fileUploadArea.addEventListener('dragleave', function(e) {
+                e.preventDefault();
+                this.classList.remove('dragover');
+            });
+            
+            fileUploadArea.addEventListener('drop', function(e) {
+                e.preventDefault();
+                this.classList.remove('dragover');
+                const files = e.dataTransfer.files;
+                handleFileUpload(files);
+            });
+            
+            fileInput.addEventListener('change', function() {
+                handleFileUpload(this.files);
+            });
+            
+            function handleFileUpload(files) {
+                if (files.length > 0) {
+                    progressBar.style.display = 'block';
+                    simulateUpload();
+                }
+            }
+            
+            function simulateUpload() {
+                let progress = 0;
+                const interval = setInterval(() => {
+                    progress += Math.random() * 20;
+                    if (progress > 100) {
+                        progress = 100;
+                        clearInterval(interval);
+                        setTimeout(() => {
+                            progressBar.style.display = 'none';
+                            progressFill.style.width = '0%';
+                            alert('Files uploaded successfully!');
+                        }, 500);
+                    }
+                    progressFill.style.width = progress + '%';
+                }, 100);
+            }
+            
+            // Table sorting functionality
+            const sortableHeaders = document.querySelectorAll('.sortable-header');
+            let sortDirection = {};
+            
+            sortableHeaders.forEach(header => {
+                header.addEventListener('click', function(e) {
+                    // Don't sort if clicking on resize handle
+                    if (e.target.classList.contains('resize-handle')) return;
+                    
+                    const sortKey = this.dataset.sort;
+                    const indicator = this.querySelector('.sort-indicator');
+                    
+                    // Reset other indicators
+                    sortableHeaders.forEach(h => {
+                        if (h !== this) {
+                            h.querySelector('.sort-indicator').classList.remove('active');
+                            h.querySelector('.sort-indicator').textContent = '↕';
+                        }
+                    });
+                    
+                    // Toggle sort direction
+                    sortDirection[sortKey] = sortDirection[sortKey] === 'asc' ? 'desc' : 'asc';
+                    
+                    // Update indicator
+                    indicator.classList.add('active');
+                    indicator.textContent = sortDirection[sortKey] === 'asc' ? '↑' : '↓';
+                    
+                    alert(`Sorting by ${sortKey} (${sortDirection[sortKey]})`);
+                });
+            });
+            
+            // Column resizing functionality
+            let isResizing = false;
+            let currentColumn = null;
+            let startX = 0;
+            let startWidth = 0;
+            
+            document.querySelectorAll('.resize-handle').forEach(handle => {
+                handle.addEventListener('mousedown', function(e) {
+                    isResizing = true;
+                    currentColumn = this.parentElement;
+                    startX = e.clientX;
+                    startWidth = currentColumn.offsetWidth;
+                    e.preventDefault();
+                });
+            });
+            
+            document.addEventListener('mousemove', function(e) {
+                if (!isResizing) return;
+                
+                const newWidth = startWidth + (e.clientX - startX);
+                if (newWidth > 50) { // Minimum width
+                    currentColumn.style.width = newWidth + 'px';
+                }
+            });
+            
+            document.addEventListener('mouseup', function() {
+                if (isResizing) {
+                    isResizing = false;
+                    currentColumn = null;
+                }
+            });
         });
     </script>
 </body>

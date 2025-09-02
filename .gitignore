@@ -81,3 +81,7 @@ dump.rdb
 # Prisma
 prisma/migrations/
 !prisma/schema.prisma
+
+# Cypress
+cypress/screenshots/
+cypress/videos/

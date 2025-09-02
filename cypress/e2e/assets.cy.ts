@@ -425,4 +425,107 @@ describe('Asset Management Interactive Elements', () => {
       cy.dataCy('asset-location-select').should('have.value', 'building-a');
     });
   });
+
+  describe('Advanced Form Controls', () => {
+    it('should handle multi-select tags', () => {
+      cy.dataCy('tags-input').type('urgent{enter}');
+      cy.dataCy('tag-urgent').should('be.visible').and('contain', 'urgent');
+      
+      cy.dataCy('tags-input').type('critical{enter}');
+      cy.dataCy('tag-critical').should('be.visible').and('contain', 'critical');
+      
+      // Test tag removal
+      cy.dataCy('tag-urgent').find('.tag-remove').click();
+      cy.dataCy('tag-urgent').should('not.exist');
+    });
+
+    it('should handle auto-complete vendor search', () => {
+      cy.dataCy('vendor-autocomplete').type('dell');
+      cy.dataCy('vendor-dropdown').should('be.visible');
+      cy.dataCy('vendor-dropdown').contains('Dell Technologies').should('be.visible');
+      
+      cy.dataCy('vendor-dropdown').contains('Dell Technologies').click();
+      cy.dataCy('vendor-autocomplete').should('have.value', 'Dell Technologies');
+      cy.dataCy('vendor-dropdown').should('not.be.visible');
+    });
+
+    it('should handle keyboard navigation in auto-complete', () => {
+      cy.dataCy('vendor-autocomplete').type('a');
+      cy.dataCy('vendor-dropdown').should('be.visible');
+      
+      cy.dataCy('vendor-autocomplete').type('{downarrow}');
+      cy.dataCy('vendor-dropdown').find('.highlighted').should('exist');
+      
+      cy.dataCy('vendor-autocomplete').type('{enter}');
+      cy.dataCy('vendor-autocomplete').should('not.have.value', '');
+    });
+
+    it('should handle file upload area interactions', () => {
+      cy.dataCy('file-upload-area').should('be.visible');
+      cy.dataCy('file-upload-area').click();
+      
+      // Test drag and drop styling
+      cy.dataCy('file-upload-area').trigger('dragover');
+      cy.dataCy('file-upload-area').should('have.class', 'dragover');
+      
+      cy.dataCy('file-upload-area').trigger('dragleave');
+      cy.dataCy('file-upload-area').should('not.have.class', 'dragover');
+    });
+  });
+
+  describe('Enhanced Table Features', () => {
+    it('should have sortable column headers', () => {
+      cy.dataCy('table-header-name').should('have.class', 'sortable-header');
+      cy.dataCy('table-header-category').should('have.class', 'sortable-header');
+      cy.dataCy('table-header-value').should('have.class', 'sortable-header');
+      
+      cy.dataCy('sort-name').should('be.visible');
+      cy.dataCy('sort-category').should('be.visible');
+      cy.dataCy('sort-value').should('be.visible');
+    });
+
+    it('should handle column sorting', () => {
+      cy.dataCy('table-header-name').click();
+      cy.dataCy('sort-name').should('have.class', 'active').and('contain', '↑');
+      
+      cy.dataCy('table-header-name').click();
+      cy.dataCy('sort-name').should('have.class', 'active').and('contain', '↓');
+    });
+
+    it('should have resizable column headers', () => {
+      cy.dataCy('table-header-name').should('have.class', 'resizable-header');
+      cy.dataCy('resize-name').should('be.visible');
+      cy.dataCy('resize-category').should('be.visible');
+      cy.dataCy('resize-value').should('be.visible');
+    });
+
+    it('should handle column resizing', () => {
+      cy.dataCy('table-header-name').then($el => {
+        const initialWidth = $el.width();
+        
+        cy.dataCy('resize-name')
+          .trigger('mousedown', { which: 1 })
+          .trigger('mousemove', { clientX: 200 })
+          .trigger('mouseup');
+          
+        cy.dataCy('table-header-name').should(($newEl) => {
+          expect($newEl.width()).to.not.equal(initialWidth);
+        });
+      });
+    });
+
+    it('should maintain sort state when resizing columns', () => {
+      cy.dataCy('table-header-name').click();
+      cy.dataCy('sort-name').should('have.class', 'active');
+      
+      // Click on resize handle, not header
+      cy.dataCy('resize-category')
+        .trigger('mousedown', { which: 1 })
+        .trigger('mousemove', { clientX: 150 })
+        .trigger('mouseup');
+        
+      // Sort state should remain
+      cy.dataCy('sort-name').should('have.class', 'active');
+    });
+  });
 });
