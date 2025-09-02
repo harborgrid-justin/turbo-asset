@@ -9,8 +9,11 @@ export { AssetManagementService } from './asset-management/maintenance-operation
 export { PortfolioReportingManager } from './portfolio-management/space-analytics/portfolio-reporting';
 export { DocumentLifecycleService } from './document-management/content-operations/document-lifecycle';
 export { EnterpriseConnectorsService } from './integration-management/external-systems/enterprise-connectors';
+export { WorkflowEngineService } from './workflow-management/process-orchestration/workflow-engine';
 
 // Legacy flat services (to be gradually refactored)
+// Note: WorkflowEngine is now refactored into WorkflowEngineService domain
+// Keeping for backward compatibility temporarily
 export { WorkflowEngine } from './WorkflowEngine';
 export { InternationalizationService } from './InternationalizationService';
 export { DocumentService } from './DocumentService';
