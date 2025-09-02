@@ -44,8 +44,8 @@
         }
         
         .nav-link:hover {
-            background-color: #3498db;
-            color: white;
+            background-color: #3498db !important;
+            color: white !important;
         }
         
         .dashboard-widgets {
@@ -719,6 +719,13 @@
                     modal.style.display = 'none';
                 }
             }
+
+            // Additional handler for modal background clicks
+            modal.addEventListener('click', function(event) {
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
             
             // Form handling
             const searchForm = document.querySelector('[data-cy="asset-search-form"]');
@@ -734,6 +741,13 @@
             }
             
             // Table row actions
+            document.querySelectorAll('[data-cy^="edit-asset-"]').forEach(btn => {
+                btn.onclick = function(e) {
+                    e.preventDefault();
+                    alert('Edit functionality would be implemented here');
+                }
+            });
+
             document.querySelectorAll('.btn-danger').forEach(btn => {
                 btn.onclick = function(e) {
                     e.preventDefault();
