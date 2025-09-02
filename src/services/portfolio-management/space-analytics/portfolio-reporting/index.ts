@@ -24,6 +24,15 @@ export { PortfolioAlertService } from './PortfolioAlertService';
 export { PortfolioDataExportService } from './PortfolioDataExportService';
 export { PortfolioVisualizationService } from './PortfolioVisualizationService';
 
+// Import services for internal use
+import { PortfolioDashboardService } from './PortfolioDashboardService';
+import { PortfolioFinancialAnalysisService } from './PortfolioFinancialAnalysisService';
+import { PortfolioReportingService } from './PortfolioReportingService';
+import { PortfolioMetricsService } from './PortfolioMetricsService';
+import { PortfolioAlertService } from './PortfolioAlertService';
+import { PortfolioDataExportService } from './PortfolioDataExportService';
+import { PortfolioVisualizationService } from './PortfolioVisualizationService';
+
 // Type definitions and constants
 export * from './types/PortfolioReportingTypes';
 export * from './constants/PortfolioReportingConstants';

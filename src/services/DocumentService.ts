@@ -216,13 +216,13 @@ export class DocumentService {
     file: any;
     uploadedBy: string;
   }): Promise<string> {
-    return this.uploadDocument(data.file, {
+    return this.uploadDocument(data.file, data.uploadedBy, {
       title: data.title,
       description: data.description,
       category: data.category,
       tags: data.tags,
       customFields: data.customFields,
-    }, data.uploadedBy, data.organizationId, data.entityType, data.entityId);
+    });
   }
 
   /**
@@ -235,7 +235,7 @@ export class DocumentService {
     changeNotes?: string,
     uploadedBy?: string
   ): Promise<string> {
-    return this.uploadVersion(documentId, file, changeNotes, uploadedBy || 'system');
+    return this.uploadDocumentVersion(documentId, file, changeNotes, uploadedBy || 'system');
   }
 
   /**
@@ -317,63 +317,6 @@ export class DocumentService {
       }
     } catch (error) {
       logger.error('Failed to download document', error);
-      throw error;
-    }
-  }
-
-  /**
-   * Delete document
-   */
-  async deleteDocument(documentId: string, userId: string): Promise<void> {
-    try {
-      // Check permissions
-      const hasPermission = await this.checkDocumentPermission(documentId, userId, 'DELETE');
-      if (!hasPermission) {
-        throw new Error('Access denied');
-      }
-
-      const document = await prisma.document.findUnique({
-        where: { id: documentId },
-        include: { versions: true },
-      });
-
-      if (!document) {
-        throw new Error('Document not found');
-      }
-
-      // Delete physical files
-      try {
-        await fs.unlink(document.filePath);
-      } catch (error) {
-        logger.warn('Failed to delete main document file', { 
-          filePath: document.filePath, 
-          error 
-        });
-      }
-
-      for (const version of document.versions) {
-        try {
-          await fs.unlink(version.filePath);
-        } catch (error) {
-          logger.warn('Failed to delete version file', { 
-            filePath: version.filePath, 
-            error 
-          });
-        }
-      }
-
-      // Delete from database
-      await prisma.document.update({
-        where: { id: documentId },
-        data: {
-          status: 'DELETED',
-          isActive: false,
-        },
-      });
-
-      logger.info('Document deleted', { documentId, userId });
-    } catch (error) {
-      logger.error('Failed to delete document', error);
       throw error;
     }
   }

@@ -1160,6 +1160,40 @@ export class ChargebackService {
     return [];
   }
 
+  private async getChargebackAllocations(organizationId: string, period: string): Promise<any> {
+    // Implementation would get chargeback allocations for the period
+    try {
+      const allocations = await prisma.chargebackAllocation.findMany({
+        where: {
+          organizationId,
+          period,
+        },
+        include: {
+          rule: true,
+        },
+      });
+
+      return {
+        period,
+        totalAllocated: allocations.reduce((sum, alloc) => sum + alloc.amount, 0),
+        allocations: allocations.map(alloc => ({
+          id: alloc.id,
+          ruleId: alloc.ruleId,
+          entityId: alloc.entityId,
+          amount: alloc.amount,
+          description: alloc.rule.name,
+        })),
+      };
+    } catch (error) {
+      logger.warn('Failed to get chargeback allocations', { organizationId, period, error });
+      return {
+        period,
+        totalAllocated: 0,
+        allocations: [],
+      };
+    }
+  }
+
   private async getPendingApprovals(organizationId: string): Promise<any[]> {
     // Implementation would get pending approvals
     return [];
