@@ -584,7 +584,6 @@ export class ExternalIntegrationSystemsManager extends EventEmitter {
     logger.info('All external integration caches cleared');
   }
 }
-}
 
 // Export the main orchestrator and individual services for flexibility
 export { ExternalIntegrationSystemsManager };
