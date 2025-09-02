@@ -38,13 +38,13 @@ type LayoutConfig<Route extends LayoutRoutes = LayoutRoutes> = {
 
 // Validate ../../src/app/a-p-i-documentation-service/page.tsx
 {
-  const handler = {} as typeof import("../../src/app/api-documentation-service/page.jsx")
+  const handler = {} as typeof import("../../src/app/a-p-i-documentation-service/page.js")
   handler satisfies AppPageConfig<"/a-p-i-documentation-service">
 }
 
 // Validate ../../src/app/a-p-i-management-service/page.tsx
 {
-  const handler = {} as typeof import("../../src/app/api-management-service/page.jsx")
+  const handler = {} as typeof import("../../src/app/a-p-i-management-service/page.js")
   handler satisfies AppPageConfig<"/a-p-i-management-service">
 }
 
@@ -74,13 +74,13 @@ type LayoutConfig<Route extends LayoutRoutes = LayoutRoutes> = {
 
 // Validate ../../src/app/c-a-d-integration-service/page.tsx
 {
-  const handler = {} as typeof import("../../src/app/cad-integration-service/page.jsx")
+  const handler = {} as typeof import("../../src/app/c-a-d-integration-service/page.js")
   handler satisfies AppPageConfig<"/c-a-d-integration-service">
 }
 
 // Validate ../../src/app/c-a-m-reconciliation-service/page.tsx
 {
-  const handler = {} as typeof import("../../src/app/cam-reconciliation-service/page.jsx")
+  const handler = {} as typeof import("../../src/app/c-a-m-reconciliation-service/page.js")
   handler satisfies AppPageConfig<"/c-a-m-reconciliation-service">
 }
 
@@ -188,7 +188,7 @@ type LayoutConfig<Route extends LayoutRoutes = LayoutRoutes> = {
 
 // Validate ../../src/app/io-t-device-service/page.tsx
 {
-  const handler = {} as typeof import("../../src/app/iot-device-service/page.jsx")
+  const handler = {} as typeof import("../../src/app/io-t-device-service/page.js")
   handler satisfies AppPageConfig<"/io-t-device-service">
 }
 
@@ -254,7 +254,7 @@ type LayoutConfig<Route extends LayoutRoutes = LayoutRoutes> = {
 
 // Validate ../../src/app/s-d-k-generator-service/page.tsx
 {
-  const handler = {} as typeof import("../../src/app/sdk-generator-service/page.jsx")
+  const handler = {} as typeof import("../../src/app/s-d-k-generator-service/page.js")
   handler satisfies AppPageConfig<"/s-d-k-generator-service">
 }
 
