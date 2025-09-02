@@ -5,6 +5,7 @@ import fs from 'fs/promises';
 import path from 'path';
 import crypto from 'crypto';
 import multer from 'multer';
+import { DocumentSearchResult } from '../types/document';
 
 export interface DocumentMetadata {
   title?: string;

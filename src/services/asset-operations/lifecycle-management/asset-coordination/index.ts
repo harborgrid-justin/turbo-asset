@@ -84,7 +84,7 @@ export class AssetOperationsManager extends EventEmitter {
     return {
       createAsset: (asset: any) => Promise.resolve({ id: `asset_${Date.now()}` }),
       updateAssetStatus: (assetId: string, status: string) => Promise.resolve({ success: true }),
-      scheduleMainten ance: (assetId: string, schedule: any) => Promise.resolve({ scheduleId: `schedule_${Date.now()}` }),
+      scheduleMaintenance: (assetId: string, schedule: any) => Promise.resolve({ scheduleId: `schedule_${Date.now()}` }),
       getAssetMetrics: () => Promise.resolve({
         totalAssets: 7500,
         activeAssets: 6800,
