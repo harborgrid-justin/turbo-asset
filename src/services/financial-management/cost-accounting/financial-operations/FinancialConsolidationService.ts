@@ -503,7 +503,7 @@ export class FinancialConsolidationService {
    */
   private determineConsolidationLevel(statements: any[]): string {
     const levels = statements.map(s => s.consolidationLevel);
-    const uniqueLevels = [...new Set(levels)];
+    const uniqueLevels = Array.from(new Set(levels));
     
     if (uniqueLevels.length === 1) {
       // If all statements are at the same level, go one level up

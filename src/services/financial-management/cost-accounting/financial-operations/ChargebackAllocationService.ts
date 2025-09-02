@@ -210,7 +210,7 @@ export class ChargebackAllocationService {
         if (!department) continue;
 
         // Group allocations by category
-        const categoryGroups = deptAllocations.reduce((groups, allocation) => {
+        const categoryGroups = (deptAllocations as any[]).reduce((groups, allocation) => {
           const category = allocation.costCategory;
           if (!groups[category]) {
             groups[category] = [];
@@ -220,9 +220,9 @@ export class ChargebackAllocationService {
         }, {} as { [key: string]: any[] });
 
         const categoryAllocations = Object.entries(categoryGroups).map(([category, catAllocations]) => {
-          const totalCost = catAllocations.reduce((sum, a) => sum + (a.totalCost || 0), 0);
-          const allocatedCost = catAllocations.reduce((sum, a) => sum + a.allocatedAmount, 0);
-          const allocationBasis = catAllocations.reduce((sum, a) => sum + a.allocationFactor, 0);
+          const totalCost = (catAllocations as any[]).reduce((sum, a) => sum + (a.totalCost || 0), 0);
+          const allocatedCost = (catAllocations as any[]).reduce((sum, a) => sum + a.allocatedAmount, 0);
+          const allocationBasis = (catAllocations as any[]).reduce((sum, a) => sum + a.allocationFactor, 0);
 
           return {
             category,
@@ -230,7 +230,7 @@ export class ChargebackAllocationService {
             allocatedCost,
             allocationBasis,
             method: catAllocations[0].allocationMethod,
-            spaces: catAllocations.filter(a => a.entityType === 'SPACE')
+            spaces: (catAllocations as any[]).filter(a => a.entityType === 'SPACE')
           };
         });
 

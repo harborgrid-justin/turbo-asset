@@ -10,6 +10,11 @@ export { PortfolioReportingManager } from './portfolio-management/space-analytic
 export { DocumentLifecycleService } from './document-management/content-operations/document-lifecycle';
 export { EnterpriseConnectorsService } from './integration-management/external-systems/enterprise-connectors';
 
+// New Architected Domain Services
+export { FinancialOperationsManager } from './financial-management/cost-accounting/financial-operations';
+export { SpaceOperationsManager } from './space-management/utilization-analytics/space-operations';
+export { MaintenanceOperationsManager } from './maintenance-management/operations-analytics/maintenance-operations';
+
 // Legacy flat services (to be gradually refactored)
 export { WorkflowEngine } from './WorkflowEngine';
 export { InternationalizationService } from './InternationalizationService';
@@ -22,7 +27,13 @@ export { SDKGeneratorService } from './SDKGeneratorService';
 export { APIDocumentationService } from './APIDocumentationService';
 export { APIManagementService } from './APIManagementService';
 
-// Financial Services
-export { BudgetForecastService } from './BudgetForecastService';
-export { ChargebackService } from './ChargebackService';
-export { FinancialConsolidationService } from './FinancialConsolidationService';
+// Legacy services (moved to domain services)
+// BudgetForecastService -> FinancialOperationsManager
+// ChargebackService -> FinancialOperationsManager  
+// FinancialConsolidationService -> FinancialOperationsManager
+// SpaceUtilizationService -> SpaceOperationsManager
+// MoveManagementService -> SpaceOperationsManager
+// SpaceStandardsService -> SpaceOperationsManager
+// MaintenanceService -> MaintenanceOperationsManager
+// WorkOrderService -> MaintenanceOperationsManager
+// PreventiveMaintenanceService -> MaintenanceOperationsManager
