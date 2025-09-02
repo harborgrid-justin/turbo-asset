@@ -18,7 +18,20 @@ export { TenantBrandingOperationsManager } from './tenant-management/branding-op
 export { ComplianceManagementOperationsManager } from './compliance-governance/regulatory-operations/compliance-management';
 export { ExternalIntegrationSystemsManager } from './external-integration-systems/third-party-connectors/integration-orchestration';
 export { InfrastructureTechnologyOperationsManager } from './infrastructure-technology/smart-systems/infrastructure-operations';
+
+// Business Operations Domain - Complete Implementation
 export { BusinessOperationsManager } from './business-operations/project-management/business-coordination';
+export { CapitalProjectService } from './business-operations/project-management/business-coordination/CapitalProjectService';
+export { ContractLifecycleService } from './business-operations/project-management/business-coordination/ContractLifecycleService';
+export { VendorBrokerService } from './business-operations/project-management/business-coordination/VendorBrokerService';
+export { LeaseManagementService } from './business-operations/project-management/business-coordination/LeaseManagementService';
+export { CAMReconciliationService } from './business-operations/project-management/business-coordination/CAMReconciliationService';
+export { CriticalDateService } from './business-operations/project-management/business-coordination/CriticalDateService';
+export { BusinessOperationsReportsService } from './business-operations/project-management/business-coordination/BusinessOperationsReportsService';
+
+// Business Operations Types and Constants
+export * from './business-operations/project-management/business-coordination/types';
+export * from './business-operations/project-management/business-coordination/constants';
 
 // Legacy flat services (to be gradually refactored)
 export { WorkflowEngine } from './WorkflowEngine';
@@ -58,9 +71,15 @@ export { APIManagementService } from './APIManagementService';
 // CADIntegrationService -> InfrastructureTechnologyOperationsManager ✅
 // BusinessIntelligenceService -> InfrastructureTechnologyOperationsManager ✅
 
+// Business Operations Domain Services (NEW - Complete Implementation) ✅
+// CapitalProjectService -> BusinessOperationsManager.capitalProjectService ✅
+// ContractLifecycleService -> BusinessOperationsManager.contractLifecycleService ✅
+// VendorBrokerService -> BusinessOperationsManager.vendorBrokerService ✅
+// LeaseManagementService -> BusinessOperationsManager.leaseManagementService ✅
+// CAMReconciliationService -> BusinessOperationsManager.camReconciliationService ✅
+// CriticalDateService -> BusinessOperationsManager.criticalDateService ✅
+
 // Services still requiring migration to new domains:
-// CapitalProjectService, ContractLifecycleService, VendorBrokerService -> Business Operations domain
-// LeaseManagementService, CAMReconciliationService, CriticalDateService -> Business Operations domain  
 // WorkflowEngine, ReportingService, EnterpriseServiceBusService -> Advanced Operations domain
 // DataWarehouseService, PortfolioService -> Advanced Operations domain
 // NotificationService, IntegrationService, TechnicianMobileService -> Service Operations domain

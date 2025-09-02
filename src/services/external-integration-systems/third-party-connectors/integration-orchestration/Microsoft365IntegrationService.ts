@@ -400,25 +400,6 @@ export class Microsoft365IntegrationService extends EventEmitter {
     return this.token;
   }
 }
-    dateTime: string;
-    timeZone: string;
-  };
-  location?: {
-    displayName: string;
-  };
-  attendees?: Array<{
-    emailAddress: {
-      address: string;
-      name: string;
-    };
-    status: {
-      response: 'none' | 'accepted' | 'declined' | 'tentativelyAccepted' | 'notResponded';
-    };
-  }>;
-  importance?: 'low' | 'normal' | 'high';
-  sensitivity?: 'normal' | 'personal' | 'private' | 'confidential';
-  showAs?: 'free' | 'tentative' | 'busy' | 'oof' | 'workingElsewhere' | 'unknown';
-}
 
 export interface TeamsChannel {
   id: string;

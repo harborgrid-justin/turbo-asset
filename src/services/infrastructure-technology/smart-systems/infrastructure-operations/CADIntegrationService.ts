@@ -457,9 +457,6 @@ export class CADIntegrationService extends EventEmitter {
     logger.info('Space mapping event processed', eventData);
   }
 }
-  includeMeasurements: boolean;
-  qualityLevel: 'draft' | 'standard' | 'high' | 'presentation';
-}
 
 export interface SpaceDetectionResult {
   spaces: Array<{
