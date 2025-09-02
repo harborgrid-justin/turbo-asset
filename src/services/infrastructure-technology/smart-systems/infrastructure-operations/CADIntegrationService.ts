@@ -23,6 +23,51 @@ import {
   ERROR_CODES
 } from './constants/InfrastructureConstants';
 
+export interface CADFileUpload {
+  fileName: string;
+  fileType: 'DWG' | 'DXF' | 'RVT' | 'PLN' | 'IFC' | 'SVG' | 'PDF';
+  fileSize: number;
+  fileBuffer: Buffer;
+  spaceId?: string;
+  floorId?: string;
+  buildingId: string;
+  organizationId: string;
+  uploadedBy: string;
+  version?: string;
+  description?: string;
+  tags?: string[];
+}
+
+export interface CADProcessingOptions {
+  extractLayers?: boolean;
+  extractDimensions?: boolean;
+  extractText?: boolean;
+  generateThumbnail?: boolean;
+  generatePreviews?: boolean;
+  enableVersioning?: boolean;
+  coordinateSystem?: string;
+  units?: 'FEET' | 'METERS' | 'INCHES';
+}
+
+export interface CADLayerInfo {
+  layerName: string;
+  layerType: 'ARCHITECTURAL' | 'STRUCTURAL' | 'MEP' | 'FURNITURE' | 'ANNOTATION' | 'DIMENSIONS';
+  isVisible: boolean;
+  color?: string;
+  lineWeight?: number;
+  elementCount: number;
+}
+
+export interface SpaceMapping {
+  spaceId: string;
+  cadBoundary: { x: number; y: number }[];
+  area: number;
+  spaceType: string;
+  spaceName?: string;
+  department?: string;
+  capacity?: number;
+}
+
 export interface CADImportOptions {
   organizationId: string;
   buildingId: string;
@@ -48,6 +93,370 @@ export interface CADExportOptions {
   paperSize: string;
   orientation: 'portrait' | 'landscape';
   includeAnnotations: boolean;
+}
+
+export class CADIntegrationService extends EventEmitter {
+  private processingQueue: Map<string, any> = new Map();
+  private versionHistory: Map<string, any[]> = new Map();
+  private context?: InfrastructureContext;
+
+  constructor(context?: InfrastructureContext) {
+    super();
+    this.context = context;
+    this.setupEventHandlers();
+  }
+
+  /**
+   * Setup event handlers
+   */
+  private setupEventHandlers(): void {
+    this.on('cad:uploaded', this.handleCADUploaded.bind(this));
+    this.on('cad:processed', this.handleCADProcessed.bind(this));
+    this.on('cad:version:created', this.handleVersionCreated.bind(this));
+    this.on('space:mapped', this.handleSpaceMapped.bind(this));
+  }
+
+  /**
+   * Upload and process CAD file
+   */
+  async uploadCADFile(uploadData: CADFileUpload, options: CADProcessingOptions = {}): Promise<{
+    cadFile: any;
+    processingId: string;
+    estimatedProcessingTime: number;
+  }> {
+    try {
+      // Validate file type and size
+      this.validateCADFile(uploadData);
+
+      // Create CAD file record
+      const cadFile = await prisma.cADFile.create({
+        data: {
+          fileName: uploadData.fileName,
+          fileType: uploadData.fileType,
+          fileSize: uploadData.fileSize,
+          buildingId: uploadData.buildingId,
+          floorId: uploadData.floorId,
+          spaceId: uploadData.spaceId,
+          organizationId: uploadData.organizationId,
+          uploadedBy: uploadData.uploadedBy,
+          version: uploadData.version || '1.0',
+          description: uploadData.description,
+          tags: uploadData.tags || [],
+          status: 'UPLOADED',
+          processingOptions: options,
+          createdAt: new Date()
+        }
+      });
+
+      // Start async processing
+      const processingId = `cad-proc-${Date.now()}`;
+      this.processingQueue.set(processingId, {
+        cadFileId: cadFile.id,
+        uploadData,
+        options,
+        status: 'QUEUED',
+        startedAt: new Date()
+      });
+
+      // Emit upload event
+      this.emit('cad:uploaded', {
+        cadFileId: cadFile.id,
+        fileName: uploadData.fileName,
+        organizationId: uploadData.organizationId
+      });
+
+      // Start processing asynchronously
+      this.processCADFileAsync(processingId, cadFile, uploadData, options);
+
+      logger.info('CAD file uploaded and queued for processing', {
+        cadFileId: cadFile.id,
+        fileName: uploadData.fileName,
+        fileType: uploadData.fileType,
+        processingId
+      });
+
+      return {
+        cadFile,
+        processingId,
+        estimatedProcessingTime: this.estimateProcessingTime(uploadData.fileSize, uploadData.fileType)
+      };
+    } catch (error) {
+      logger.error('CAD file upload failed', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Process CAD file asynchronously
+   */
+  private async processCADFileAsync(
+    processingId: string,
+    cadFile: any,
+    uploadData: CADFileUpload,
+    options: CADProcessingOptions
+  ): Promise<void> {
+    try {
+      const processing = this.processingQueue.get(processingId);
+      if (!processing) return;
+
+      processing.status = 'PROCESSING';
+      processing.progress = 0;
+
+      // Extract layers if requested
+      let layers: CADLayerInfo[] = [];
+      if (options.extractLayers) {
+        layers = await this.extractLayers(uploadData.fileBuffer, uploadData.fileType);
+        processing.progress = 25;
+      }
+
+      // Extract dimensions if requested  
+      let dimensions: any[] = [];
+      if (options.extractDimensions) {
+        dimensions = await this.extractDimensions(uploadData.fileBuffer, uploadData.fileType);
+        processing.progress = 50;
+      }
+
+      // Generate thumbnail if requested
+      let thumbnailUrl: string | undefined;
+      if (options.generateThumbnail) {
+        thumbnailUrl = await this.generateThumbnail(cadFile.id, uploadData.fileBuffer);
+        processing.progress = 75;
+      }
+
+      // Detect and map spaces
+      let spaceMappings: SpaceMapping[] = [];
+      if (uploadData.floorId) {
+        spaceMappings = await this.detectSpaces(uploadData.fileBuffer, uploadData.floorId);
+        processing.progress = 90;
+      }
+
+      // Update CAD file with processing results
+      await prisma.cADFile.update({
+        where: { id: cadFile.id },
+        data: {
+          status: 'PROCESSED',
+          layers: layers,
+          dimensions: dimensions,
+          thumbnailUrl: thumbnailUrl,
+          spaceMappings: spaceMappings,
+          processedAt: new Date(),
+          processingDuration: Date.now() - processing.startedAt.getTime()
+        }
+      });
+
+      processing.status = 'COMPLETED';
+      processing.progress = 100;
+      processing.completedAt = new Date();
+
+      this.emit('cad:processed', {
+        processingId,
+        cadFileId: cadFile.id,
+        layersCount: layers.length,
+        spacesDetected: spaceMappings.length,
+        organizationId: uploadData.organizationId
+      });
+
+      logger.info('CAD file processing completed', {
+        processingId,
+        cadFileId: cadFile.id,
+        duration: processing.completedAt - processing.startedAt
+      });
+
+    } catch (error) {
+      const processing = this.processingQueue.get(processingId);
+      if (processing) {
+        processing.status = 'FAILED';
+        processing.error = error instanceof Error ? error.message : 'Unknown error';
+      }
+
+      logger.error('CAD file processing failed', {
+        processingId,
+        cadFileId: cadFile.id,
+        error
+      });
+
+      // Update database status
+      await prisma.cADFile.update({
+        where: { id: cadFile.id },
+        data: {
+          status: 'FAILED',
+          error: error instanceof Error ? error.message : 'Processing failed'
+        }
+      });
+    }
+  }
+
+  /**
+   * Get processing status
+   */
+  async getProcessingStatus(processingId: string): Promise<any> {
+    const processing = this.processingQueue.get(processingId);
+    if (!processing) {
+      throw new Error('Processing ID not found');
+    }
+
+    return {
+      processingId,
+      status: processing.status,
+      progress: processing.progress || 0,
+      startedAt: processing.startedAt,
+      completedAt: processing.completedAt,
+      error: processing.error,
+      cadFileId: processing.cadFileId
+    };
+  }
+
+  /**
+   * Export CAD file in different format
+   */
+  async exportCADFile(exportOptions: CADExportOptions): Promise<{
+    exportId: string;
+    downloadUrl: string;
+    expiresAt: Date;
+  }> {
+    try {
+      const cadFile = await prisma.cADFile.findUnique({
+        where: { id: exportOptions.drawingId }
+      });
+
+      if (!cadFile) {
+        throw new Error('CAD file not found');
+      }
+
+      const exportId = `export-${Date.now()}`;
+      
+      // Generate export (simplified - would use actual CAD processing libraries)
+      const exportUrl = await this.generateExport(cadFile, exportOptions);
+      const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
+
+      logger.info('CAD file export generated', {
+        exportId,
+        cadFileId: cadFile.id,
+        format: exportOptions.format
+      });
+
+      return {
+        exportId,
+        downloadUrl: exportUrl,
+        expiresAt
+      };
+    } catch (error) {
+      logger.error('CAD file export failed', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Private helper methods
+   */
+  private validateCADFile(uploadData: CADFileUpload): void {
+    const maxFileSize = 500 * 1024 * 1024; // 500MB
+    const allowedTypes = ['DWG', 'DXF', 'RVT', 'PLN', 'IFC', 'SVG', 'PDF'];
+
+    if (uploadData.fileSize > maxFileSize) {
+      throw new Error('File size exceeds maximum allowed size of 500MB');
+    }
+
+    if (!allowedTypes.includes(uploadData.fileType)) {
+      throw new Error(`File type ${uploadData.fileType} is not supported`);
+    }
+  }
+
+  private async extractLayers(fileBuffer: Buffer, fileType: string): Promise<CADLayerInfo[]> {
+    // Simplified implementation - would use actual CAD processing libraries
+    return [
+      {
+        layerName: 'WALLS',
+        layerType: 'ARCHITECTURAL',
+        isVisible: true,
+        color: '#000000',
+        lineWeight: 0.5,
+        elementCount: 25
+      },
+      {
+        layerName: 'DOORS',
+        layerType: 'ARCHITECTURAL',
+        isVisible: true,
+        color: '#FF0000',
+        lineWeight: 0.3,
+        elementCount: 8
+      },
+      {
+        layerName: 'WINDOWS',
+        layerType: 'ARCHITECTURAL',
+        isVisible: true,
+        color: '#0000FF',
+        lineWeight: 0.3,
+        elementCount: 12
+      }
+    ];
+  }
+
+  private async extractDimensions(fileBuffer: Buffer, fileType: string): Promise<any[]> {
+    // Simplified implementation
+    return [
+      { type: 'LINEAR', value: 120, unit: 'FEET', coordinates: [[0, 0], [120, 0]] },
+      { type: 'LINEAR', value: 80, unit: 'FEET', coordinates: [[0, 0], [0, 80]] }
+    ];
+  }
+
+  private async generateThumbnail(cadFileId: string, fileBuffer: Buffer): Promise<string> {
+    // Simplified implementation - would generate actual thumbnail
+    return `https://storage.example.com/thumbnails/${cadFileId}.jpg`;
+  }
+
+  private async detectSpaces(fileBuffer: Buffer, floorId: string): Promise<SpaceMapping[]> {
+    // Simplified implementation - would use actual space detection algorithms
+    return [
+      {
+        spaceId: `space-${Date.now()}-1`,
+        cadBoundary: [[0, 0], [20, 0], [20, 15], [0, 15]],
+        area: 300,
+        spaceType: 'OFFICE',
+        spaceName: 'Conference Room A',
+        capacity: 12
+      },
+      {
+        spaceId: `space-${Date.now()}-2`,
+        cadBoundary: [[25, 0], [40, 0], [40, 10], [25, 10]],
+        area: 150,
+        spaceType: 'OFFICE',
+        spaceName: 'Office 101',
+        capacity: 2
+      }
+    ];
+  }
+
+  private async generateExport(cadFile: any, exportOptions: CADExportOptions): Promise<string> {
+    // Simplified implementation - would generate actual export
+    return `https://storage.example.com/exports/${cadFile.id}.${exportOptions.format.toLowerCase()}`;
+  }
+
+  private estimateProcessingTime(fileSize: number, fileType: string): number {
+    // Estimate processing time in seconds based on file size and type
+    const baseTime = 30; // 30 seconds base
+    const sizeMultiplier = Math.ceil(fileSize / (1024 * 1024)); // MB
+    const typeMultiplier = fileType === 'RVT' ? 3 : fileType === 'IFC' ? 2 : 1;
+    
+    return baseTime + (sizeMultiplier * typeMultiplier * 5);
+  }
+
+  private handleCADUploaded(eventData: any): void {
+    logger.info('CAD upload event processed', eventData);
+  }
+
+  private handleCADProcessed(eventData: any): void {
+    logger.info('CAD processing event processed', eventData);
+  }
+
+  private handleVersionCreated(eventData: any): void {
+    logger.info('CAD version created event processed', eventData);
+  }
+
+  private handleSpaceMapped(eventData: any): void {
+    logger.info('Space mapping event processed', eventData);
+  }
+}
   includeMeasurements: boolean;
   qualityLevel: 'draft' | 'standard' | 'high' | 'presentation';
 }
