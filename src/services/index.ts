@@ -17,6 +17,7 @@ export { MaintenanceOperationsManager } from './maintenance-management/operation
 export { TenantBrandingOperationsManager } from './tenant-management/branding-operations/tenant-branding';
 export { ComplianceManagementOperationsManager } from './compliance-governance/regulatory-operations/compliance-management';
 export { ExternalIntegrationSystemsManager } from './external-integration-systems/third-party-connectors/integration-orchestration';
+export { InfrastructureTechnologyOperationsManager } from './infrastructure-technology/smart-systems/infrastructure-operations';
 
 // Legacy flat services (to be gradually refactored)
 export { WorkflowEngine } from './WorkflowEngine';
@@ -51,3 +52,7 @@ export { APIManagementService } from './APIManagementService';
 // CalendarIntegrationService -> ExternalIntegrationSystemsManager (planned)
 // Phase3IntegrationService -> ExternalIntegrationSystemsManager (planned)
 // APIManagementService -> ExternalIntegrationSystemsManager (planned)
+// IoTDeviceService -> InfrastructureTechnologyOperationsManager.iotDeviceService
+// EnergyManagementService -> InfrastructureTechnologyOperationsManager.energyManagementService
+// CADIntegrationService -> InfrastructureTechnologyOperationsManager (planned)
+// BusinessIntelligenceService -> InfrastructureTechnologyOperationsManager (planned)

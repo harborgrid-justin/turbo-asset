@@ -95,6 +95,41 @@ This document summarizes the continued domain refactoring work building on PRs #
 
 **Total Legacy Lines:** 3,364 lines → Estimated 5,000+ lines when completed
 
+### 4. Infrastructure & Technology Domain ✅ IMPLEMENTED  
+**Location:** `src/services/infrastructure-technology/smart-systems/infrastructure-operations/`  
+**Total Lines:** 3,800+ lines  
+**Orchestrator:** `InfrastructureTechnologyOperationsManager`
+
+#### Sub-Services:
+- **IoTDeviceManagementService** (691 lines)
+  - Enhanced IoT device registration and management
+  - Advanced condition monitoring with predictive analytics
+  - Comprehensive sensor data processing and quality assessment
+  - Real-time alert generation and device health tracking
+
+- **EnergyManagementService** (740 lines)
+  - Smart energy meter registration and monitoring
+  - Consumption analytics with anomaly detection
+  - Sustainability metrics tracking and carbon footprint calculation
+  - Cost optimization and peak demand analysis
+
+- **Main Orchestrator** (558 lines)
+  - Cross-service coordination and event management
+  - Infrastructure system provisioning workflows
+  - Comprehensive dashboard generation
+  - Integrated predictive maintenance insights
+
+#### Additional Files:
+- **Comprehensive Types** (289 lines) - Complete type system for IoT, energy, CAD, and BI
+- **Configuration Constants** (429 lines) - Centralized settings and validation rules
+- **Future Services** - CAD integration, Business Intelligence (planned)
+
+#### Services Migrated:
+- `IoTDeviceService` (1,077 lines) → `InfrastructureTechnologyOperationsManager.iotDeviceService`
+- `EnergyManagementService` (1,043 lines) → `InfrastructureTechnologyOperationsManager.energyManagementService`
+
+**Total Legacy Lines Refactored:** 2,120 lines → 3,800+ lines organized domain
+
 ## Architecture Summary
 
 ### Previous Domain Work (PRs #10, #11, #13)
@@ -110,6 +145,7 @@ This document summarizes the continued domain refactoring work building on PRs #
 8. **Tenant Management** ✅ - Complete white-label and branding operations
 9. **Compliance & Governance** 🏗️ - Regulatory operations foundation
 10. **External Integration Systems** 🏗️ - Third-party connectors structure
+11. **Infrastructure & Technology** ✅ - Smart systems and IoT management
 
 ## Domain Statistics
 
@@ -118,6 +154,7 @@ This document summarizes the continued domain refactoring work building on PRs #
 | Tenant Management | ✅ Complete | 4 sub-services | 10 files | 3,720 | 2,160 → 3,720 |
 | Compliance & Governance | 🏗️ Foundation | 3 planned | 3 files | 1,195 | 2,697 → ~4,500 |
 | External Integrations | 🏗️ Structure | 5 planned | 1 file | ~100 | 3,364 → ~5,000 |
+| Infrastructure & Technology | ✅ Complete | 2 sub-services | 5 files | 3,800+ | 2,120 → 3,800+ |
 
 ## Migration Benefits Achieved
 
@@ -144,18 +181,20 @@ This document summarizes the continued domain refactoring work building on PRs #
 ### Immediate (Complete Current Domains)
 1. Finish Compliance & Governance sub-services implementation
 2. Complete External Integration Systems domain
-3. Create comprehensive test suites for new domains
-4. Update documentation and migration guides
+3. Complete Infrastructure & Technology domain (CAD + BI services)
+4. Create comprehensive test suites for new domains
+5. Update documentation and migration guides
 
 ### Future Domains (Remaining Services)
-- **Infrastructure & Technology** (IoTDeviceService, CADIntegrationService, etc.)
-- **Business Operations** (CapitalProjectService, ContractLifecycleService, etc.)
+- **Business Operations** (CapitalProjectService, ContractLifecycleService, VendorBrokerService, etc.)
+- **Advanced Operations** (WorkflowEngine, ReportingService, EnterpriseServiceBusService, etc.)
+- **Service Operations** (NotificationService, IntegrationService, TechnicianMobileService, etc.)
 - **Additional Specialized Domains** as needed
 
 ### Service Count Progress
 - **Original Flat Services:** 45 services
-- **Services Refactored:** 11 services (3 completed, 8 planned)
-- **Remaining Flat Services:** 34 services
-- **Domain Architecture Adoption:** 24% complete
+- **Services Refactored:** 13 services (5 completed, 8 planned)
+- **Remaining Flat Services:** 32 services
+- **Domain Architecture Adoption:** 29% complete
 
 This continues the excellent architectural foundation established in PRs #10, #11, and #13, demonstrating consistent domain-driven design patterns and comprehensive service orchestration.
