@@ -1,45 +1,15 @@
-import React, { useState } from 'react';
-
-interface APIEndpoint {
-  id: number;
-  method: 'GET' | 'POST' | 'PUT' | 'DELETE';
-  path: string;
-  description: string;
-  parameters: string[];
-  response: string;
-}
+import React, { useState, useEffect } from 'react';
+import { apiService, APIEndpoint } from '../../lib/api';
 
 const APIDocumentationServicePage = () => {
-  const [endpoints, setEndpoints] = useState<APIEndpoint[]>([
-    {
-      id: 1,
-      method: 'GET',
-      path: '/api/users',
-      description: 'Retrieve a list of users',
-      parameters: ['limit', 'offset'],
-      response: 'User[]'
-    },
-    {
-      id: 2,
-      method: 'POST',
-      path: '/api/users',
-      description: 'Create a new user',
-      parameters: ['name', 'email'],
-      response: 'User'
-    },
-    {
-      id: 3,
-      method: 'GET',
-      path: '/api/users/{id}',
-      description: 'Get user by ID',
-      parameters: ['id'],
-      response: 'User'
-    }
-  ]);
-
+  const [endpoints, setEndpoints] = useState<APIEndpoint[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedEndpoint, setSelectedEndpoint] = useState<APIEndpoint | null>(null);
   const [showAddForm, setShowAddForm] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+
   const [newEndpoint, setNewEndpoint] = useState({
     method: 'GET' as APIEndpoint['method'],
     path: '',
@@ -47,6 +17,25 @@ const APIDocumentationServicePage = () => {
     parameters: '',
     response: ''
   });
+
+  // Load endpoints on component mount
+  useEffect(() => {
+    loadEndpoints();
+  }, []);
+
+  const loadEndpoints = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const data = await apiService.apiDocs.getAll();
+      setEndpoints(data);
+    } catch (err) {
+      setError('Failed to load API endpoints. Please try again.');
+      console.error('Error loading endpoints:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const filteredEndpoints = endpoints.filter(endpoint =>
     endpoint.path.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -58,17 +47,33 @@ const APIDocumentationServicePage = () => {
     setNewEndpoint(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (newEndpoint.path && newEndpoint.description) {
-      const endpoint: APIEndpoint = {
-        id: Date.now(),
-        ...newEndpoint,
-        parameters: newEndpoint.parameters.split(',').map(p => p.trim()).filter(p => p)
+    if (!newEndpoint.path || !newEndpoint.description) {
+      setError('Please fill in all required fields.');
+      return;
+    }
+
+    try {
+      setSubmitting(true);
+      setError(null);
+      const endpointData = {
+        method: newEndpoint.method,
+        path: newEndpoint.path,
+        description: newEndpoint.description,
+        parameters: newEndpoint.parameters.split(',').map(p => p.trim()).filter(p => p),
+        response: newEndpoint.response
       };
-      setEndpoints(prev => [...prev, endpoint]);
+
+      const createdEndpoint = await apiService.apiDocs.create(endpointData);
+      setEndpoints(prev => [...prev, createdEndpoint]);
       setNewEndpoint({ method: 'GET', path: '', description: '', parameters: '', response: '' });
       setShowAddForm(false);
+    } catch (err) {
+      setError('Failed to create API endpoint. Please try again.');
+      console.error('Error creating endpoint:', err);
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -82,9 +87,31 @@ const APIDocumentationServicePage = () => {
     }
   };
 
+  if (loading) {
+    return (
+      <div className="container mx-auto p-4">
+        <div className="flex justify-center items-center h-64">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-3xl font-bold mb-6">API Documentation Service</h1>
+
+      {error && (
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+          {error}
+          <button
+            onClick={() => setError(null)}
+            className="float-right ml-4 font-bold"
+          >
+            ×
+          </button>
+        </div>
+      )}
 
       <div className="mb-6 flex justify-between items-center">
         <div className="flex-1 max-w-md">
@@ -96,12 +123,22 @@ const APIDocumentationServicePage = () => {
             className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
           />
         </div>
-        <button
-          onClick={() => setShowAddForm(!showAddForm)}
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ml-4"
-        >
-          {showAddForm ? 'Cancel' : 'Add Endpoint'}
-        </button>
+        <div className="flex space-x-2">
+          <button
+            onClick={loadEndpoints}
+            className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded"
+            disabled={loading}
+          >
+            Refresh
+          </button>
+          <button
+            onClick={() => setShowAddForm(!showAddForm)}
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            disabled={submitting}
+          >
+            {showAddForm ? 'Cancel' : 'Add Endpoint'}
+          </button>
+        </div>
       </div>
 
       {showAddForm && (
@@ -116,6 +153,7 @@ const APIDocumentationServicePage = () => {
                   value={newEndpoint.method}
                   onChange={handleInputChange}
                   className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                  disabled={submitting}
                 >
                   <option value="GET">GET</option>
                   <option value="POST">POST</option>
@@ -133,6 +171,7 @@ const APIDocumentationServicePage = () => {
                   placeholder="/api/resource"
                   className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                   required
+                  disabled={submitting}
                 />
               </div>
             </div>
@@ -145,6 +184,7 @@ const APIDocumentationServicePage = () => {
                 onChange={handleInputChange}
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                 required
+                disabled={submitting}
               />
             </div>
             <div>
@@ -156,6 +196,7 @@ const APIDocumentationServicePage = () => {
                 onChange={handleInputChange}
                 placeholder="param1, param2"
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                disabled={submitting}
               />
             </div>
             <div>
@@ -167,13 +208,15 @@ const APIDocumentationServicePage = () => {
                 onChange={handleInputChange}
                 placeholder="ResponseType"
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                disabled={submitting}
               />
             </div>
             <button
               type="submit"
-              className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+              className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded disabled:opacity-50"
+              disabled={submitting}
             >
-              Add Endpoint
+              {submitting ? 'Creating...' : 'Add Endpoint'}
             </button>
           </form>
         </div>
@@ -204,7 +247,7 @@ const APIDocumentationServicePage = () => {
                   <div>
                     <h4 className="font-semibold text-sm text-gray-700">Parameters:</h4>
                     <ul className="mt-1 text-sm text-gray-600">
-                      {endpoint.parameters.length > 0 ? (
+                      {endpoint.parameters && endpoint.parameters.length > 0 ? (
                         endpoint.parameters.map((param, index) => (
                           <li key={index} className="flex items-center">
                             <code className="bg-gray-100 px-1 rounded">{param}</code>

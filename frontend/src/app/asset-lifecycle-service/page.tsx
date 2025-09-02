@@ -1,33 +1,12 @@
-import React, { useState } from 'react';
-
-interface Asset {
-  id: number;
-  name: string;
-  type: string;
-  status: 'Active' | 'Inactive' | 'Maintenance' | 'Retired';
-  lifecycleStage: string;
-  createdDate: string;
-}
+import React, { useState, useEffect } from 'react';
+import { apiService, Asset } from '../../lib/api';
 
 const AssetLifecycleServicePage = () => {
-  const [assets, setAssets] = useState<Asset[]>([
-    {
-      id: 1,
-      name: 'Server Rack A1',
-      type: 'Hardware',
-      status: 'Active',
-      lifecycleStage: 'Production',
-      createdDate: '2025-01-15'
-    },
-    {
-      id: 2,
-      name: 'Database Server B2',
-      type: 'Software',
-      status: 'Maintenance',
-      lifecycleStage: 'Upgrade',
-      createdDate: '2024-11-20'
-    }
-  ]);
+  const [assets, setAssets] = useState<Asset[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [showForm, setShowForm] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
   const [newAsset, setNewAsset] = useState({
     name: '',
@@ -36,47 +15,124 @@ const AssetLifecycleServicePage = () => {
     lifecycleStage: ''
   });
 
-  const [showForm, setShowForm] = useState(false);
+  // Load assets on component mount
+  useEffect(() => {
+    loadAssets();
+  }, []);
+
+  const loadAssets = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const data = await apiService.assets.getAll();
+      setAssets(data);
+    } catch (err) {
+      setError('Failed to load assets. Please try again.');
+      console.error('Error loading assets:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setNewAsset(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (newAsset.name && newAsset.type && newAsset.lifecycleStage) {
-      const asset: Asset = {
-        id: Date.now(),
-        ...newAsset,
-        createdDate: new Date().toISOString().split('T')[0]
+    if (!newAsset.name || !newAsset.type || !newAsset.lifecycleStage) {
+      setError('Please fill in all required fields.');
+      return;
+    }
+
+    try {
+      setSubmitting(true);
+      setError(null);
+      const assetData = {
+        name: newAsset.name,
+        type: newAsset.type,
+        status: newAsset.status,
+        lifecycleStage: newAsset.lifecycleStage
       };
-      setAssets(prev => [...prev, asset]);
+
+      const createdAsset = await apiService.assets.create(assetData);
+      setAssets(prev => [...prev, createdAsset]);
       setNewAsset({ name: '', type: '', status: 'Active', lifecycleStage: '' });
       setShowForm(false);
+    } catch (err) {
+      setError('Failed to create asset. Please try again.');
+      console.error('Error creating asset:', err);
+    } finally {
+      setSubmitting(false);
     }
   };
 
-  const updateStatus = (id: number, newStatus: Asset['status']) => {
-    setAssets(prev => prev.map(asset =>
-      asset.id === id ? { ...asset, status: newStatus } : asset
-    ));
+  const updateStatus = async (id: number, newStatus: Asset['status']) => {
+    if (!id) return;
+    try {
+      const updatedAsset = await apiService.assets.updateStatus(id, newStatus);
+      setAssets(prev => prev.map(asset =>
+        asset.id === id ? updatedAsset : asset
+      ));
+    } catch (err) {
+      setError('Failed to update asset status. Please try again.');
+      console.error('Error updating asset status:', err);
+    }
   };
 
-  const deleteAsset = (id: number) => {
-    setAssets(prev => prev.filter(asset => asset.id !== id));
+  const deleteAsset = async (id: number) => {
+    if (!confirm('Are you sure you want to delete this asset?')) return;
+
+    try {
+      await apiService.assets.delete(id);
+      setAssets(prev => prev.filter(asset => asset.id !== id));
+    } catch (err) {
+      setError('Failed to delete asset. Please try again.');
+      console.error('Error deleting asset:', err);
+    }
   };
+
+  if (loading) {
+    return (
+      <div className="container mx-auto p-4">
+        <div className="flex justify-center items-center h-64">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-3xl font-bold mb-6">Asset Lifecycle Service</h1>
 
+      {error && (
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+          {error}
+          <button
+            onClick={() => setError(null)}
+            className="float-right ml-4 font-bold"
+          >
+            ×
+          </button>
+        </div>
+      )}
+
       <div className="mb-6">
         <button
           onClick={() => setShowForm(!showForm)}
           className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          disabled={submitting}
         >
           {showForm ? 'Cancel' : 'Add New Asset'}
+        </button>
+        <button
+          onClick={loadAssets}
+          className="ml-4 bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded"
+          disabled={loading}
+        >
+          Refresh
         </button>
       </div>
 
@@ -93,6 +149,7 @@ const AssetLifecycleServicePage = () => {
                 onChange={handleInputChange}
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                 required
+                disabled={submitting}
               />
             </div>
             <div>
@@ -104,6 +161,7 @@ const AssetLifecycleServicePage = () => {
                 onChange={handleInputChange}
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                 required
+                disabled={submitting}
               />
             </div>
             <div>
@@ -115,6 +173,7 @@ const AssetLifecycleServicePage = () => {
                 onChange={handleInputChange}
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                 required
+                disabled={submitting}
               />
             </div>
             <div>
@@ -124,6 +183,7 @@ const AssetLifecycleServicePage = () => {
                 value={newAsset.status}
                 onChange={handleInputChange}
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                disabled={submitting}
               >
                 <option value="Active">Active</option>
                 <option value="Inactive">Inactive</option>
@@ -133,9 +193,10 @@ const AssetLifecycleServicePage = () => {
             </div>
             <button
               type="submit"
-              className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+              className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded disabled:opacity-50"
+              disabled={submitting}
             >
-              Add Asset
+              {submitting ? 'Creating...' : 'Add Asset'}
             </button>
           </form>
         </div>
@@ -181,8 +242,9 @@ const AssetLifecycleServicePage = () => {
                 <div className="flex space-x-2">
                   <select
                     value={asset.status}
-                    onChange={(e) => updateStatus(asset.id, e.target.value as Asset['status'])}
+                    onChange={(e) => asset.id && updateStatus(asset.id, e.target.value as Asset['status'])}
                     className="text-sm border border-gray-300 rounded px-2 py-1"
+                    disabled={!asset.id}
                   >
                     <option value="Active">Active</option>
                     <option value="Inactive">Inactive</option>
@@ -190,8 +252,9 @@ const AssetLifecycleServicePage = () => {
                     <option value="Retired">Retired</option>
                   </select>
                   <button
-                    onClick={() => deleteAsset(asset.id)}
+                    onClick={() => asset.id && deleteAsset(asset.id)}
                     className="bg-red-500 hover:bg-red-700 text-white text-sm px-3 py-1 rounded"
+                    disabled={!asset.id}
                   >
                     Delete
                   </button>
@@ -200,6 +263,11 @@ const AssetLifecycleServicePage = () => {
             </li>
           ))}
         </ul>
+        {assets.length === 0 && (
+          <div className="px-4 py-8 text-center">
+            <p className="text-gray-500">No assets found. Create your first asset above.</p>
+          </div>
+        )}
       </div>
     </div>
   );
