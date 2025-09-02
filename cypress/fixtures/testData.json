@@ -1,0 +1,248 @@
+{
+  "users": {
+    "admin": {
+      "email": "admin@turboasset.com",
+      "password": "adminPassword123",
+      "role": "admin",
+      "permissions": ["read", "write", "delete", "manage"]
+    },
+    "manager": {
+      "email": "manager@turboasset.com",
+      "password": "managerPassword123",
+      "role": "manager",
+      "permissions": ["read", "write"]
+    },
+    "viewer": {
+      "email": "viewer@turboasset.com",
+      "password": "viewerPassword123",
+      "role": "viewer",
+      "permissions": ["read"]
+    }
+  },
+  "assets": [
+    {
+      "id": "AST-001",
+      "name": "Conference Room Projector",
+      "category": "equipment",
+      "serial": "PROJ-001-2024",
+      "value": 2500.00,
+      "location": "Building A - Room 201",
+      "status": "active",
+      "condition": "excellent",
+      "description": "High-definition projector for conference presentations",
+      "features": ["warranty", "maintenance"]
+    },
+    {
+      "id": "AST-002",
+      "name": "Executive Desk",
+      "category": "furniture",
+      "serial": "DESK-102-2024",
+      "value": 1200.00,
+      "location": "Building B - Room 105",
+      "status": "maintenance",
+      "condition": "good",
+      "description": "Solid wood executive desk with drawers",
+      "features": ["warranty"]
+    },
+    {
+      "id": "AST-003",
+      "name": "Company Van",
+      "category": "vehicle",
+      "serial": "VAN-001-2023",
+      "value": 45000.00,
+      "location": "Parking Lot A",
+      "status": "active",
+      "condition": "excellent",
+      "description": "Delivery van for company operations",
+      "features": ["warranty", "maintenance", "critical"]
+    },
+    {
+      "id": "AST-004",
+      "name": "Laptop Computer",
+      "category": "it",
+      "serial": "LAPTOP-205-2024",
+      "value": 1800.00,
+      "location": "Building C - Workstation 12",
+      "status": "active",
+      "condition": "good",
+      "description": "Business laptop for remote work",
+      "features": ["warranty", "portable"]
+    },
+    {
+      "id": "AST-005",
+      "name": "Warehouse Forklift",
+      "category": "equipment",
+      "serial": "FORK-001-2022",
+      "value": 25000.00,
+      "location": "Warehouse",
+      "status": "retired",
+      "condition": "poor",
+      "description": "Electric forklift for warehouse operations",
+      "features": ["maintenance", "critical"]
+    }
+  ],
+  "locations": [
+    {
+      "id": "building-a",
+      "name": "Building A",
+      "address": "123 Main Street",
+      "type": "office"
+    },
+    {
+      "id": "building-b",
+      "name": "Building B",
+      "address": "456 Oak Avenue",
+      "type": "office"
+    },
+    {
+      "id": "building-c",
+      "name": "Building C",
+      "address": "789 Pine Road",
+      "type": "office"
+    },
+    {
+      "id": "warehouse",
+      "name": "Warehouse",
+      "address": "321 Industrial Blvd",
+      "type": "warehouse"
+    },
+    {
+      "id": "parking",
+      "name": "Parking Lot",
+      "address": "123 Main Street",
+      "type": "parking"
+    }
+  ],
+  "dashboard": {
+    "summary": {
+      "totalAssets": 15234,
+      "activeAssets": 14891,
+      "maintenanceAssets": 343,
+      "retiredAssets": 0,
+      "totalValue": 2450000,
+      "monthlyCosts": 125000,
+      "savings": 18500
+    },
+    "maintenance": {
+      "openTickets": 23,
+      "inProgressTickets": 7,
+      "completedToday": 12,
+      "averageResolutionTime": "2.5 days"
+    },
+    "recentActivity": [
+      {
+        "id": 1,
+        "action": "Asset Created",
+        "asset": "Conference Room Display",
+        "user": "John Smith",
+        "timestamp": "2024-01-15T10:30:00Z"
+      },
+      {
+        "id": 2,
+        "action": "Maintenance Scheduled",
+        "asset": "HVAC Unit B-2",
+        "user": "Sarah Johnson",
+        "timestamp": "2024-01-15T09:15:00Z"
+      },
+      {
+        "id": 3,
+        "action": "Asset Transferred",
+        "asset": "Office Chair",
+        "user": "Mike Davis",
+        "timestamp": "2024-01-15T08:45:00Z"
+      }
+    ]
+  },
+  "searchResults": {
+    "equipment": [
+      "Conference Room Projector",
+      "Warehouse Forklift",
+      "Industrial Printer",
+      "Security Camera System"
+    ],
+    "furniture": [
+      "Executive Desk",
+      "Office Chair",
+      "Meeting Table",
+      "File Cabinet"
+    ],
+    "vehicle": [
+      "Company Van",
+      "Delivery Truck",
+      "Executive Car"
+    ],
+    "it": [
+      "Laptop Computer",
+      "Desktop Workstation",
+      "Network Server",
+      "Tablet Device"
+    ]
+  },
+  "testData": {
+    "validAsset": {
+      "name": "Test Equipment Cypress",
+      "category": "equipment",
+      "value": "1500.00",
+      "serial": "TEST-CY-001",
+      "location": "building-a",
+      "condition": "excellent",
+      "description": "This is a test asset created by Cypress automation",
+      "features": ["warranty", "maintenance", "critical"]
+    },
+    "invalidAsset": {
+      "name": "",
+      "category": "",
+      "value": "invalid",
+      "serial": "",
+      "location": "",
+      "condition": "",
+      "description": ""
+    },
+    "searchQueries": [
+      "projector",
+      "desk",
+      "van",
+      "laptop",
+      "equipment",
+      "building a",
+      "maintenance",
+      "active"
+    ],
+    "filterCombinations": [
+      {
+        "category": "equipment",
+        "status": "active",
+        "location": "building-a"
+      },
+      {
+        "category": "furniture",
+        "status": "maintenance",
+        "location": "building-b"
+      },
+      {
+        "category": "vehicle",
+        "status": "active",
+        "location": "parking"
+      }
+    ]
+  },
+  "apiEndpoints": {
+    "assets": {
+      "list": "/api/v1/assets",
+      "create": "/api/v1/assets",
+      "update": "/api/v1/assets/:id",
+      "delete": "/api/v1/assets/:id",
+      "search": "/api/v1/assets/search"
+    },
+    "dashboard": {
+      "summary": "/api/v1/dashboard/summary",
+      "maintenance": "/api/v1/dashboard/maintenance",
+      "activity": "/api/v1/dashboard/activity"
+    },
+    "auth": {
+      "login": "/api/auth/login",
+      "logout": "/api/auth/logout",
+      "refresh": "/api/auth/refresh"
+    }
+  }
+}

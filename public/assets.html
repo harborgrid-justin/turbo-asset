@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Turbo Asset - Asset Management</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 30px;
+        }
+        
+        .navigation {
+            margin-bottom: 30px;
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .nav-link {
+            display: inline-block;
+            margin-right: 20px;
+            padding: 8px 15px;
+            text-decoration: none;
+            color: #3498db;
+            border: 1px solid #3498db;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+        
+        .nav-link:hover {
+            background-color: #3498db;
+            color: white;
+        }
+        
+        .nav-link.active {
+            background-color: #3498db;
+            color: white;
+        }
+        
+        .form-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background: #f9f9f9;
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #555;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        
+        textarea {
+            height: 80px;
+            resize: vertical;
+        }
+        
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-right: 10px;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: #2980b9;
+        }
+        
+        .btn-secondary {
+            background-color: #95a5a6;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #7f8c8d;
+        }
+        
+        .btn-success {
+            background-color: #27ae60;
+        }
+        
+        .btn-success:hover {
+            background-color: #229954;
+        }
+        
+        .btn-danger {
+            background-color: #e74c3c;
+        }
+        
+        .btn-danger:hover {
+            background-color: #c0392b;
+        }
+        
+        .filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .filter-group {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        
+        .data-table th,
+        .data-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .data-table th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        
+        .data-table th:hover {
+            background-color: #e9ecef;
+        }
+        
+        .data-table tbody tr:hover {
+            background-color: #f5f5f5;
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        
+        .status-active {
+            background-color: #27ae60;
+        }
+        
+        .status-inactive {
+            background-color: #e74c3c;
+        }
+        
+        .status-pending {
+            background-color: #f39c12;
+        }
+        
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+            gap: 10px;
+        }
+        
+        .pagination button {
+            padding: 8px 12px;
+            margin: 0;
+        }
+        
+        .pagination .current {
+            background-color: #2c3e50;
+        }
+        
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .checkbox-item input[type="checkbox"] {
+            width: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 data-cy="page-title">Asset Management</h1>
+        
+        <!-- Navigation -->
+        <div class="navigation" data-cy="navigation">
+            <a href="/index.html" class="nav-link" data-cy="nav-dashboard">Dashboard</a>
+            <a href="/assets.html" class="nav-link active" data-cy="nav-assets">Assets</a>
+            <a href="/reports.html" class="nav-link" data-cy="nav-reports">Reports</a>
+            <a href="/settings.html" class="nav-link" data-cy="nav-settings">Settings</a>
+        </div>
+        
+        <!-- Asset Creation Form -->
+        <div class="form-section">
+            <h2 data-cy="create-asset-title">Create New Asset</h2>
+            <form data-cy="create-asset-form">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="asset-name">Asset Name *</label>
+                        <input type="text" id="asset-name" required data-cy="asset-name-input" placeholder="Enter asset name">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="asset-category">Category *</label>
+                        <select id="asset-category" required data-cy="asset-category-select">
+                            <option value="">Select Category</option>
+                            <option value="equipment">Equipment</option>
+                            <option value="furniture">Furniture</option>
+                            <option value="vehicle">Vehicle</option>
+                            <option value="property">Property</option>
+                            <option value="it">IT Hardware</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="asset-value">Value ($)</label>
+                        <input type="number" id="asset-value" step="0.01" data-cy="asset-value-input" placeholder="0.00">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="asset-serial">Serial Number</label>
+                        <input type="text" id="asset-serial" data-cy="asset-serial-input" placeholder="Enter serial number">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="asset-location">Location *</label>
+                        <select id="asset-location" required data-cy="asset-location-select">
+                            <option value="">Select Location</option>
+                            <option value="building-a">Building A</option>
+                            <option value="building-b">Building B</option>
+                            <option value="building-c">Building C</option>
+                            <option value="warehouse">Warehouse</option>
+                            <option value="parking">Parking Lot</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="asset-condition">Condition</label>
+                        <select id="asset-condition" data-cy="asset-condition-select">
+                            <option value="excellent">Excellent</option>
+                            <option value="good" selected>Good</option>
+                            <option value="fair">Fair</option>
+                            <option value="poor">Poor</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="asset-description">Description</label>
+                    <textarea id="asset-description" data-cy="asset-description-input" placeholder="Enter asset description..."></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label>Features</label>
+                    <div class="checkbox-group" data-cy="asset-features">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="feature-warranty" data-cy="feature-warranty">
+                            <label for="feature-warranty">Under Warranty</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="feature-maintenance" data-cy="feature-maintenance">
+                            <label for="feature-maintenance">Requires Regular Maintenance</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="feature-portable" data-cy="feature-portable">
+                            <label for="feature-portable">Portable</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="feature-critical" data-cy="feature-critical">
+                            <label for="feature-critical">Business Critical</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" data-cy="submit-asset-btn" class="btn-success">Create Asset</button>
+                    <button type="reset" data-cy="reset-form-btn" class="btn-secondary">Reset Form</button>
+                    <button type="button" data-cy="save-draft-btn" class="btn-secondary">Save as Draft</button>
+                </div>
+            </form>
+        </div>
+        
+        <!-- Search and Filter Section -->
+        <div class="filters" data-cy="asset-filters">
+            <div class="filter-group">
+                <label for="filter-search">Search</label>
+                <input type="text" id="filter-search" placeholder="Search assets..." data-cy="filter-search-input">
+            </div>
+            
+            <div class="filter-group">
+                <label for="filter-category">Category</label>
+                <select id="filter-category" data-cy="filter-category-select">
+                    <option value="">All Categories</option>
+                    <option value="equipment">Equipment</option>
+                    <option value="furniture">Furniture</option>
+                    <option value="vehicle">Vehicle</option>
+                    <option value="property">Property</option>
+                    <option value="it">IT Hardware</option>
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label for="filter-status">Status</label>
+                <select id="filter-status" data-cy="filter-status-select">
+                    <option value="">All Status</option>
+                    <option value="active">Active</option>
+                    <option value="maintenance">Under Maintenance</option>
+                    <option value="retired">Retired</option>
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label for="filter-location">Location</label>
+                <select id="filter-location" data-cy="filter-location-select">
+                    <option value="">All Locations</option>
+                    <option value="building-a">Building A</option>
+                    <option value="building-b">Building B</option>
+                    <option value="building-c">Building C</option>
+                    <option value="warehouse">Warehouse</option>
+                    <option value="parking">Parking Lot</option>
+                </select>
+            </div>
+            
+            <div class="filter-group" style="display: flex; align-items: end; gap: 10px;">
+                <button data-cy="apply-filters-btn">Apply Filters</button>
+                <button data-cy="clear-filters-btn" class="btn-secondary">Clear</button>
+            </div>
+        </div>
+        
+        <!-- Assets Table -->
+        <div data-cy="assets-table-section">
+            <h2>Assets List</h2>
+            <table class="data-table" data-cy="assets-table">
+                <thead>
+                    <tr>
+                        <th data-cy="table-header-select">
+                            <input type="checkbox" data-cy="select-all-checkbox">
+                        </th>
+                        <th data-cy="table-header-name">Name</th>
+                        <th data-cy="table-header-category">Category</th>
+                        <th data-cy="table-header-serial">Serial</th>
+                        <th data-cy="table-header-value">Value</th>
+                        <th data-cy="table-header-location">Location</th>
+                        <th data-cy="table-header-status">Status</th>
+                        <th data-cy="table-header-actions">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr data-cy="asset-row-1">
+                        <td><input type="checkbox" data-cy="select-asset-1"></td>
+                        <td data-cy="asset-name-1">Conference Room Projector</td>
+                        <td data-cy="asset-category-1">Equipment</td>
+                        <td data-cy="asset-serial-1">PROJ-001-2024</td>
+                        <td data-cy="asset-value-1">$2,500.00</td>
+                        <td data-cy="asset-location-1">Building A - Room 201</td>
+                        <td data-cy="asset-status-1">
+                            <span class="status-indicator status-active"></span>Active
+                        </td>
+                        <td>
+                            <button data-cy="view-asset-1" class="btn-secondary">View</button>
+                            <button data-cy="edit-asset-1" class="btn-secondary">Edit</button>
+                            <button data-cy="delete-asset-1" class="btn-danger">Delete</button>
+                        </td>
+                    </tr>
+                    <tr data-cy="asset-row-2">
+                        <td><input type="checkbox" data-cy="select-asset-2"></td>
+                        <td data-cy="asset-name-2">Executive Desk</td>
+                        <td data-cy="asset-category-2">Furniture</td>
+                        <td data-cy="asset-serial-2">DESK-102-2024</td>
+                        <td data-cy="asset-value-2">$1,200.00</td>
+                        <td data-cy="asset-location-2">Building B - Room 105</td>
+                        <td data-cy="asset-status-2">
+                            <span class="status-indicator status-pending"></span>Maintenance
+                        </td>
+                        <td>
+                            <button data-cy="view-asset-2" class="btn-secondary">View</button>
+                            <button data-cy="edit-asset-2" class="btn-secondary">Edit</button>
+                            <button data-cy="delete-asset-2" class="btn-danger">Delete</button>
+                        </td>
+                    </tr>
+                    <tr data-cy="asset-row-3">
+                        <td><input type="checkbox" data-cy="select-asset-3"></td>
+                        <td data-cy="asset-name-3">Company Van</td>
+                        <td data-cy="asset-category-3">Vehicle</td>
+                        <td data-cy="asset-serial-3">VAN-001-2023</td>
+                        <td data-cy="asset-value-3">$45,000.00</td>
+                        <td data-cy="asset-location-3">Parking Lot A</td>
+                        <td data-cy="asset-status-3">
+                            <span class="status-indicator status-active"></span>Active
+                        </td>
+                        <td>
+                            <button data-cy="view-asset-3" class="btn-secondary">View</button>
+                            <button data-cy="edit-asset-3" class="btn-secondary">Edit</button>
+                            <button data-cy="delete-asset-3" class="btn-danger">Delete</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Bulk Actions -->
+        <div style="margin-top: 20px;" data-cy="bulk-actions">
+            <button data-cy="bulk-edit-btn" class="btn-secondary">Bulk Edit</button>
+            <button data-cy="bulk-delete-btn" class="btn-danger">Bulk Delete</button>
+            <button data-cy="export-selected-btn" class="btn-secondary">Export Selected</button>
+        </div>
+        
+        <!-- Pagination -->
+        <div class="pagination" data-cy="pagination">
+            <button data-cy="prev-page-btn" class="btn-secondary">← Previous</button>
+            <button data-cy="page-1-btn" class="current">1</button>
+            <button data-cy="page-2-btn">2</button>
+            <button data-cy="page-3-btn">3</button>
+            <button data-cy="next-page-btn" class="btn-secondary">Next →</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Form submission
+            const createAssetForm = document.querySelector('[data-cy="create-asset-form"]');
+            createAssetForm.onsubmit = function(e) {
+                e.preventDefault();
+                alert('Asset created successfully!');
+                createAssetForm.reset();
+            }
+            
+            // Filter functionality
+            const applyFiltersBtn = document.querySelector('[data-cy="apply-filters-btn"]');
+            const clearFiltersBtn = document.querySelector('[data-cy="clear-filters-btn"]');
+            
+            applyFiltersBtn.onclick = function() {
+                alert('Filters applied!');
+            }
+            
+            clearFiltersBtn.onclick = function() {
+                document.querySelectorAll('.filters select, .filters input').forEach(el => {
+                    if (el.type === 'text') el.value = '';
+                    if (el.tagName === 'SELECT') el.selectedIndex = 0;
+                });
+                alert('Filters cleared!');
+            }
+            
+            // Select all checkbox
+            const selectAllCheckbox = document.querySelector('[data-cy="select-all-checkbox"]');
+            const assetCheckboxes = document.querySelectorAll('[data-cy^="select-asset-"]');
+            
+            selectAllCheckbox.onchange = function() {
+                assetCheckboxes.forEach(checkbox => {
+                    checkbox.checked = selectAllCheckbox.checked;
+                });
+            }
+            
+            // Individual asset actions
+            document.querySelectorAll('[data-cy^="view-asset-"]').forEach(btn => {
+                btn.onclick = function() {
+                    alert('View asset details');
+                }
+            });
+            
+            document.querySelectorAll('[data-cy^="edit-asset-"]').forEach(btn => {
+                btn.onclick = function() {
+                    alert('Edit asset form would open');
+                }
+            });
+            
+            document.querySelectorAll('[data-cy^="delete-asset-"]').forEach(btn => {
+                btn.onclick = function() {
+                    if (confirm('Are you sure you want to delete this asset?')) {
+                        alert('Asset deleted!');
+                    }
+                }
+            });
+            
+            // Bulk actions
+            document.querySelector('[data-cy="bulk-edit-btn"]').onclick = function() {
+                alert('Bulk edit functionality');
+            }
+            
+            document.querySelector('[data-cy="bulk-delete-btn"]').onclick = function() {
+                if (confirm('Are you sure you want to delete selected assets?')) {
+                    alert('Selected assets deleted!');
+                }
+            }
+            
+            document.querySelector('[data-cy="export-selected-btn"]').onclick = function() {
+                alert('Export functionality');
+            }
+            
+            // Pagination
+            document.querySelectorAll('[data-cy^="page-"]').forEach(btn => {
+                btn.onclick = function() {
+                    document.querySelectorAll('.pagination .current').forEach(el => {
+                        el.classList.remove('current');
+                    });
+                    btn.classList.add('current');
+                }
+            });
+            
+            document.querySelector('[data-cy="prev-page-btn"]').onclick = function() {
+                alert('Previous page');
+            }
+            
+            document.querySelector('[data-cy="next-page-btn"]').onclick = function() {
+                alert('Next page');
+            }
+            
+            // Save draft functionality
+            document.querySelector('[data-cy="save-draft-btn"]').onclick = function() {
+                alert('Draft saved!');
+            }
+        });
+    </script>
+</body>
+</html>

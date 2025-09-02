@@ -134,6 +134,9 @@ class TurboAssetServer {
       limit: '10mb',
     }));
 
+    // Serve static files from public directory
+    this.app.use(express.static('public'));
+
     // Request logging middleware
     this.app.use((req, res, next) => {
       const start = Date.now();
