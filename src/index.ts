@@ -37,6 +37,7 @@ import WorkOrderController from './controllers/WorkOrderController';
 import { EnterpriseIntegrationController } from './controllers/EnterpriseIntegrationController';
 import { DataWarehouseController } from './controllers/DataWarehouseController';
 import { BusinessIntelligenceController } from './controllers/BusinessIntelligenceController';
+import { ReportingController } from './controllers/ReportingController';
 import { DataGovernanceController } from './controllers/DataGovernanceController';
 import { APIManagementController } from './controllers/APIManagementController';
 import { WhiteLabelController } from './controllers/WhiteLabelController';
@@ -118,11 +119,32 @@ class TurboAssetServer {
     // Phase 5: Maintenance & Asset Management routes
     apiRouter.use('/maintenance', MaintenanceController);
     apiRouter.use('/work-orders', WorkOrderController);
+    
+    // Additional Phase 5 routes (placeholders - these would need proper controllers)
+    apiRouter.get('/preventive-maintenance', (req, res) => {
+      res.json({ message: 'Preventive Maintenance API - coming soon' });
+    });
+    apiRouter.get('/asset-lifecycle', (req, res) => {
+      res.json({ message: 'Asset Lifecycle API - coming soon' });
+    });
+    apiRouter.get('/inventory', (req, res) => {
+      res.json({ message: 'Inventory API - coming soon' });
+    });
+    apiRouter.get('/energy-management', (req, res) => {
+      res.json({ message: 'Energy Management API - coming soon' });
+    });
+    apiRouter.get('/capital-projects', (req, res) => {
+      res.json({ message: 'Capital Projects API - coming soon' });
+    });
+    apiRouter.get('/iot-devices', (req, res) => {
+      res.json({ message: 'IoT Devices API - coming soon' });
+    });
 
     // Phase 6: Enterprise Integrations & Reporting routes
     const enterpriseIntegrationController = new EnterpriseIntegrationController();
     const dataWarehouseController = new DataWarehouseController();
     const businessIntelligenceController = new BusinessIntelligenceController();
+    const reportingController = new ReportingController();
     const dataGovernanceController = new DataGovernanceController();
     const apiManagementController = new APIManagementController();
     const whiteLabelController = new WhiteLabelController();
@@ -189,6 +211,18 @@ class TurboAssetServer {
     apiRouter.post('/business-intelligence/:organizationId/templates', businessIntelligenceController.createTemplate);
     apiRouter.post('/business-intelligence/:organizationId/templates/:templateId/generate', businessIntelligenceController.generateFromTemplate);
     apiRouter.get('/business-intelligence/:organizationId/analytics', businessIntelligenceController.getBIAnalytics);
+
+    // Reporting routes
+    apiRouter.post('/reporting/:organizationId/generate', reportingController.generateReport);
+    apiRouter.get('/reporting/:organizationId/scheduled', reportingController.getScheduledReports);
+    apiRouter.post('/reporting/:organizationId/schedule', reportingController.scheduleReport);
+    apiRouter.get('/reporting/:organizationId/export/:reportId', reportingController.exportReport);
+    apiRouter.get('/reporting/:organizationId/templates', reportingController.getReportTemplates);
+    apiRouter.post('/reporting/:organizationId/templates', reportingController.createReportTemplate);
+    apiRouter.get('/reporting/:organizationId/history', reportingController.getReportHistory);
+    apiRouter.get('/reporting/:organizationId/analytics', reportingController.getReportAnalytics);
+    apiRouter.delete('/reporting/:organizationId/scheduled/:scheduleId', reportingController.deleteScheduledReport);
+    apiRouter.put('/reporting/:organizationId/scheduled/:scheduleId', reportingController.updateScheduledReport);
 
     // Data Governance routes
     apiRouter.get('/data-governance/:organizationId/rules', dataGovernanceController.getGovernanceRules);
