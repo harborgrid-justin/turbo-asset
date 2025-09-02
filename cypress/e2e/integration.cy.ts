@@ -366,23 +366,17 @@ describe('Interactive Elements Integration Tests', () => {
     });
 
     it('should support keyboard navigation through form elements', () => {
-      // Start with the first navigation link
+      // Test that key elements are focusable and accessible
       cy.dataCy('nav-dashboard').focus().should('be.focused');
-      
-      // Tab to next navigation element  
       cy.dataCy('nav-assets').focus().should('be.focused');
-      
-      // Tab to form elements
       cy.dataCy('asset-name-input').focus().should('be.focused');
 
       // Should be able to type in focused input
       cy.dataCy('asset-name-input').type('Keyboard Navigation Test');
       cy.dataCy('asset-name-input').should('have.value', 'Keyboard Navigation Test');
 
-      // Continue to next form element
+      // Test form element focus and interaction
       cy.dataCy('asset-category-select').focus().should('be.focused');
-
-      // Should be able to select with keyboard
       cy.dataCy('asset-category-select').select('equipment');
       cy.dataCy('asset-category-select').should('have.value', 'equipment');
     });
