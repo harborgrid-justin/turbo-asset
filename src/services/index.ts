@@ -14,6 +14,7 @@ export { EnterpriseConnectorsService } from './integration-management/external-s
 export { FinancialOperationsManager } from './financial-management/cost-accounting/financial-operations';
 export { SpaceOperationsManager } from './space-management/utilization-analytics/space-operations';
 export { MaintenanceOperationsManager } from './maintenance-management/operations-analytics/maintenance-operations';
+export { TenantBrandingOperationsManager } from './tenant-management/branding-operations/tenant-branding';
 
 // Legacy flat services (to be gradually refactored)
 export { WorkflowEngine } from './WorkflowEngine';
@@ -37,3 +38,6 @@ export { APIManagementService } from './APIManagementService';
 // MaintenanceService -> MaintenanceOperationsManager
 // WorkOrderService -> MaintenanceOperationsManager
 // PreventiveMaintenanceService -> MaintenanceOperationsManager
+// WhiteLabelService -> TenantBrandingOperationsManager
+// InternationalizationService -> TenantBrandingOperationsManager.i18nService
+// CustomFieldService -> TenantBrandingOperationsManager.customFieldService
