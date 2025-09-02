@@ -59,6 +59,358 @@ export interface OutlookEvent {
       address: string;
       name: string;
     };
+  }>;
+}
+
+export interface TeamsChannel {
+  id: string;
+  displayName: string;
+  description?: string;
+  webUrl: string;
+}
+
+export interface IntegrationContext {
+  organizationId: string;
+  userId: string;
+  permissions: string[];
+}
+
+export class Microsoft365IntegrationService extends EventEmitter {
+  private graphClient: AxiosInstance;
+  private token: Microsoft365Token | null = null;
+  private context?: IntegrationContext;
+
+  constructor(private config: Microsoft365Config, context?: IntegrationContext) {
+    super();
+    this.context = context;
+    
+    this.graphClient = axios.create({
+      baseURL: 'https://graph.microsoft.com/v1.0',
+      timeout: 30000,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    // Add request interceptor to include access token
+    this.graphClient.interceptors.request.use(async (config) => {
+      await this.ensureValidToken();
+      if (this.token) {
+        config.headers.Authorization = `${this.token.tokenType} ${this.token.accessToken}`;
+      }
+      return config;
+    });
+  }
+
+  /**
+   * Authenticate with Microsoft 365 using client credentials flow
+   */
+  async authenticate(authCode?: string, refreshToken?: string): Promise<Microsoft365Token> {
+    try {
+      let response;
+
+      if (authCode) {
+        // Authorization code flow
+        response = await axios.post(`https://login.microsoftonline.com/${this.config.tenantId}/oauth2/v2.0/token`, {
+          client_id: this.config.clientId,
+          client_secret: this.config.clientSecret,
+          code: authCode,
+          redirect_uri: this.config.redirectUri,
+          grant_type: 'authorization_code',
+          scope: this.config.scopes.join(' '),
+        }, {
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+        });
+      } else if (refreshToken) {
+        // Refresh token flow
+        response = await axios.post(`https://login.microsoftonline.com/${this.config.tenantId}/oauth2/v2.0/token`, {
+          client_id: this.config.clientId,
+          client_secret: this.config.clientSecret,
+          refresh_token: refreshToken,
+          grant_type: 'refresh_token',
+          scope: this.config.scopes.join(' '),
+        }, {
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+        });
+      } else {
+        // Client credentials flow
+        response = await axios.post(`https://login.microsoftonline.com/${this.config.tenantId}/oauth2/v2.0/token`, {
+          client_id: this.config.clientId,
+          client_secret: this.config.clientSecret,
+          grant_type: 'client_credentials',
+          scope: 'https://graph.microsoft.com/.default',
+        }, {
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+        });
+      }
+
+      this.token = {
+        accessToken: response.data.access_token,
+        refreshToken: response.data.refresh_token,
+        expiresAt: new Date(Date.now() + (response.data.expires_in * 1000)),
+        tokenType: response.data.token_type || 'Bearer',
+      };
+
+      logger.info('Microsoft 365 authentication successful');
+      this.emit('authenticated', { organizationId: this.context?.organizationId });
+      
+      return this.token;
+    } catch (error) {
+      logger.error('Microsoft 365 authentication failed', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Ensure we have a valid access token
+   */
+  private async ensureValidToken(): Promise<void> {
+    if (!this.token || new Date() >= this.token.expiresAt) {
+      if (this.token?.refreshToken) {
+        await this.authenticate(undefined, this.token.refreshToken);
+      } else {
+        await this.authenticate();
+      }
+    }
+  }
+
+  /**
+   * Create calendar event in Outlook
+   */
+  async createCalendarEvent(userId: string, event: OutlookEvent): Promise<OutlookEvent> {
+    try {
+      const response = await this.graphClient.post(`/users/${userId}/events`, event);
+      
+      logger.info('Outlook calendar event created', {
+        userId,
+        eventId: response.data.id,
+        subject: event.subject,
+      });
+
+      this.emit('calendar:eventCreated', {
+        userId,
+        eventId: response.data.id,
+        organizationId: this.context?.organizationId
+      });
+
+      return response.data;
+    } catch (error) {
+      logger.error('Outlook calendar event creation failed', { userId, event, error });
+      throw error;
+    }
+  }
+
+  /**
+   * Get calendar events from Outlook
+   */
+  async getCalendarEvents(userId: string, startDate?: Date, endDate?: Date): Promise<OutlookEvent[]> {
+    try {
+      let url = `/users/${userId}/events`;
+      const params: any = {};
+
+      if (startDate && endDate) {
+        params.$filter = `start/dateTime ge '${startDate.toISOString()}' and end/dateTime le '${endDate.toISOString()}'`;
+      }
+
+      const response = await this.graphClient.get(url, { params });
+      return response.data.value;
+    } catch (error) {
+      logger.error('Outlook calendar events retrieval failed', { userId, error });
+      throw error;
+    }
+  }
+
+  /**
+   * Create SharePoint document library for property documents
+   */
+  async createDocumentLibrary(siteId: string, libraryName: string, description?: string): Promise<any> {
+    try {
+      const library = {
+        name: libraryName,
+        description: description || `Document library for ${libraryName}`,
+        '@odata.type': 'microsoft.graph.list',
+        list: {
+          template: 'documentLibrary',
+        },
+      };
+
+      const response = await this.graphClient.post(`/sites/${siteId}/lists`, library);
+
+      logger.info('SharePoint document library created', {
+        siteId,
+        libraryName,
+        libraryId: response.data.id,
+      });
+
+      this.emit('sharepoint:libraryCreated', {
+        siteId,
+        libraryId: response.data.id,
+        organizationId: this.context?.organizationId
+      });
+
+      return response.data;
+    } catch (error) {
+      logger.error('SharePoint document library creation failed', { siteId, libraryName, error });
+      throw error;
+    }
+  }
+
+  /**
+   * Upload file to SharePoint
+   */
+  async uploadFileToSharePoint(
+    siteId: string,
+    libraryId: string,
+    fileName: string,
+    fileContent: Buffer,
+    folderPath?: string
+  ): Promise<any> {
+    try {
+      const uploadPath = folderPath 
+        ? `/sites/${siteId}/lists/${libraryId}/drive/root:/${folderPath}/${fileName}:/content`
+        : `/sites/${siteId}/lists/${libraryId}/drive/root:/${fileName}:/content`;
+
+      const response = await this.graphClient.put(uploadPath, fileContent, {
+        headers: {
+          'Content-Type': 'application/octet-stream',
+        },
+      });
+
+      logger.info('File uploaded to SharePoint', {
+        siteId,
+        libraryId,
+        fileName,
+        fileId: response.data.id
+      });
+
+      this.emit('sharepoint:fileUploaded', {
+        siteId,
+        libraryId,
+        fileId: response.data.id,
+        fileName,
+        organizationId: this.context?.organizationId
+      });
+
+      return response.data;
+    } catch (error) {
+      logger.error('SharePoint file upload failed', { siteId, libraryId, fileName, error });
+      throw error;
+    }
+  }
+
+  /**
+   * Create Teams channel
+   */
+  async createTeamsChannel(teamId: string, channelName: string, description?: string): Promise<TeamsChannel> {
+    try {
+      const channel = {
+        displayName: channelName,
+        description: description || `Channel for ${channelName}`,
+        membershipType: 'standard'
+      };
+
+      const response = await this.graphClient.post(`/teams/${teamId}/channels`, channel);
+
+      logger.info('Teams channel created', {
+        teamId,
+        channelId: response.data.id,
+        channelName
+      });
+
+      this.emit('teams:channelCreated', {
+        teamId,
+        channelId: response.data.id,
+        organizationId: this.context?.organizationId
+      });
+
+      return response.data;
+    } catch (error) {
+      logger.error('Teams channel creation failed', { teamId, channelName, error });
+      throw error;
+    }
+  }
+
+  /**
+   * Send Teams message
+   */
+  async sendTeamsMessage(teamId: string, channelId: string, message: string): Promise<any> {
+    try {
+      const messageData = {
+        body: {
+          contentType: 'text',
+          content: message
+        }
+      };
+
+      const response = await this.graphClient.post(`/teams/${teamId}/channels/${channelId}/messages`, messageData);
+
+      logger.info('Teams message sent', {
+        teamId,
+        channelId,
+        messageId: response.data.id
+      });
+
+      this.emit('teams:messageSent', {
+        teamId,
+        channelId,
+        messageId: response.data.id,
+        organizationId: this.context?.organizationId
+      });
+
+      return response.data;
+    } catch (error) {
+      logger.error('Teams message sending failed', { teamId, channelId, error });
+      throw error;
+    }
+  }
+
+  /**
+   * Get authorization URL for OAuth2 flow
+   */
+  getAuthorizationUrl(state?: string): string {
+    const params = new URLSearchParams({
+      client_id: this.config.clientId,
+      response_type: 'code',
+      redirect_uri: this.config.redirectUri,
+      scope: this.config.scopes.join(' '),
+      response_mode: 'query',
+      state: state || '',
+    });
+
+    return `https://login.microsoftonline.com/${this.config.tenantId}/oauth2/v2.0/authorize?${params.toString()}`;
+  }
+
+  /**
+   * Test connection to Microsoft 365
+   */
+  async testConnection(): Promise<boolean> {
+    try {
+      await this.graphClient.get('/me');
+      return true;
+    } catch (error) {
+      logger.error('Microsoft 365 connection test failed', error);
+      return false;
+    }
+  }
+
+  /**
+   * Get current token info
+   */
+  getTokenInfo(): Microsoft365Token | null {
+    return this.token;
+  }
+}
+    dateTime: string;
+    timeZone: string;
+  };
+  location?: {
+    displayName: string;
+  };
+  attendees?: Array<{
+    emailAddress: {
+      address: string;
+      name: string;
+    };
     status: {
       response: 'none' | 'accepted' | 'declined' | 'tentativelyAccepted' | 'notResponded';
     };
