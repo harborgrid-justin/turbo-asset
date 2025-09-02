@@ -1,6 +1,8 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import { apiManagementApi } from '../../lib/api-client';
+import { useApi, useApiMutation } from '../../lib/use-api';
 
 interface APIEndpoint {
   id: number;
@@ -39,52 +41,81 @@ interface APIMetrics {
 }
 
 const APIManagementServicePage = () => {
-  const [endpoints, setEndpoints] = useState<APIEndpoint[]>([
+  // Hardcoded organization ID for demo
+  const organizationId = 'demo-org-123';
+
+  // State for filters and forms
+  const [searchTerm, setSearchTerm] = useState('');
+  const [methodFilter, setMethodFilter] = useState('');
+  const [statusFilter, setStatusFilter] = useState('');
+  const [categoryFilter, setCategoryFilter] = useState('');
+  const [showEndpointForm, setShowEndpointForm] = useState(false);
+  const [showKeyForm, setShowKeyForm] = useState(false);
+
+  // API calls for endpoints
+  const { 
+    data: endpointsData, 
+    loading: endpointsLoading, 
+    error: endpointsError,
+    refetch: refetchEndpoints 
+  } = useApi(() => apiManagementApi.getEndpoints(organizationId));
+
+  // API calls for keys
+  const { 
+    data: keysData, 
+    loading: keysLoading, 
+    error: keysError,
+    refetch: refetchKeys 
+  } = useApi(() => apiManagementApi.getApiKeys(organizationId));
+
+  // Fallback to mock data if API fails
+  const endpoints = endpointsData || [
     {
       id: 1,
       name: 'Asset Management API',
-      method: 'GET',
+      method: 'GET' as const,
       path: '/api/v1/assets',
-      status: 'Active',
+      status: 'Active' as const,
       version: 'v1.2.0',
       description: 'Retrieve asset information with filtering capabilities',
       responseTime: 245,
       requestCount: 15420,
       errorRate: 0.02,
       lastUpdated: '2025-01-15 10:30:00',
-      category: 'Asset'
+      category: 'Asset' as const
     },
     {
       id: 2,
       name: 'Financial Data API',
-      method: 'POST',
+      method: 'POST' as const,
       path: '/api/v2/financial/reports',
-      status: 'Active',
+      status: 'Active' as const,
       version: 'v2.1.0',
       description: 'Generate financial reports and analytics',
       responseTime: 850,
       requestCount: 8960,
       errorRate: 0.05,
       lastUpdated: '2025-01-15 09:15:00',
-      category: 'Financial'
+      category: 'Financial' as const
     },
     {
       id: 3,
       name: 'Maintenance Scheduling',
-      method: 'PUT',
+      method: 'PUT' as const,
       path: '/api/v1/maintenance/schedule',
-      status: 'Deprecated',
+      status: 'Deprecated' as const,
       version: 'v1.0.0',
       description: 'Update maintenance schedules (deprecated - use v2)',
       responseTime: 320,
       requestCount: 1240,
       errorRate: 0.12,
       lastUpdated: '2024-12-20 14:22:00',
-      category: 'Maintenance'
+      category: 'Maintenance' as const
     }
-  ]);
+  ];
 
-  const [apiKeys, setApiKeys] = useState<APIKey[]>([
+  // Fallback to mock keys if API fails
+  const apiKeys = keysData || [
     {
       id: 1,
       name: 'Mobile App Key',
@@ -118,14 +149,18 @@ const APIManagementServicePage = () => {
     errorCount: 2764
   });
 
-  const [filteredEndpoints, setFilteredEndpoints] = useState<APIEndpoint[]>(endpoints);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [methodFilter, setMethodFilter] = useState('');
-  const [statusFilter, setStatusFilter] = useState('');
-  const [categoryFilter, setCategoryFilter] = useState('');
   const [selectedEndpoint, setSelectedEndpoint] = useState<APIEndpoint | null>(null);
   const [showCreateForm, setShowCreateForm] = useState(false);
-  const [showKeyForm, setShowKeyForm] = useState(false);
+
+  // Filter endpoints based on search and filters
+  const filteredEndpoints = endpoints.filter(endpoint => {
+    return (
+      (!searchTerm || endpoint.name.toLowerCase().includes(searchTerm.toLowerCase())) &&
+      (!methodFilter || endpoint.method === methodFilter) &&
+      (!statusFilter || endpoint.status === statusFilter) &&
+      (!categoryFilter || endpoint.category === categoryFilter)
+    );
+  });
 
   const [newEndpoint, setNewEndpoint] = useState({
     name: '',
@@ -143,17 +178,6 @@ const APIManagementServicePage = () => {
     expiresAt: ''
   });
 
-  useEffect(() => {
-    const filtered = endpoints.filter(endpoint => {
-      return (
-        endpoint.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
-        (methodFilter === '' || endpoint.method === methodFilter) &&
-        (statusFilter === '' || endpoint.status === statusFilter) &&
-        (categoryFilter === '' || endpoint.category === categoryFilter)
-      );
-    });
-    setFilteredEndpoints(filtered);
-  }, [endpoints, searchTerm, methodFilter, statusFilter, categoryFilter]);
 
   const handleEndpointInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -249,6 +273,30 @@ const APIManagementServicePage = () => {
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-3xl font-bold mb-6">API Management Service</h1>
+
+      {/* Error States */}
+      {(endpointsError || keysError) && (
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+          <strong>Error loading data:</strong> {endpointsError || keysError}
+          <button 
+            onClick={() => {
+              refetchEndpoints();
+              refetchKeys();
+            }}
+            className="ml-4 text-red-800 underline hover:text-red-900"
+          >
+            Retry
+          </button>
+        </div>
+      )}
+
+      {/* Loading State */}
+      {(endpointsLoading || keysLoading) && (
+        <div className="flex justify-center items-center py-8">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+          <span className="ml-2 text-gray-600">Loading API data...</span>
+        </div>
+      )}
 
       {/* Metrics Dashboard */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4 mb-6">

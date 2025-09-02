@@ -1,17 +1,9 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-
-interface Report {
-  id: number;
-  name: string;
-  type: 'Chart' | 'Table' | 'Dashboard' | 'KPI';
-  category: 'Financial' | 'Operational' | 'Strategic' | 'Compliance';
-  lastRun: string;
-  status: 'Ready' | 'Running' | 'Failed' | 'Scheduled';
-  schedule: string;
-  dataPoints: number;
-}
+import React, { useState } from 'react';
+import { businessIntelligenceApi } from '../../lib/api-client';
+import { useApi, useApiMutation } from '../../lib/use-api';
+import type { Report } from '../../lib/api-types';
 
 interface ChartData {
   name: string;
@@ -29,56 +21,67 @@ interface KPIData {
 }
 
 const BusinessIntelligenceServicePage = () => {
-  const [reports, setReports] = useState<Report[]>([
-    {
-      id: 1,
-      name: 'Asset Utilization Dashboard',
-      type: 'Dashboard',
-      category: 'Operational',
-      lastRun: '2025-01-15 09:30:00',
-      status: 'Ready',
-      schedule: 'Daily at 6:00 AM',
-      dataPoints: 15420
-    },
-    {
-      id: 2,
-      name: 'Financial Performance Chart',
-      type: 'Chart',
-      category: 'Financial',
-      lastRun: '2025-01-15 10:15:00',
-      status: 'Ready',
-      schedule: 'Hourly',
-      dataPoints: 8960
-    },
-    {
-      id: 3,
-      name: 'Maintenance Cost Analysis',
-      type: 'Table',
-      category: 'Financial',
-      lastRun: '2025-01-15 08:45:00',
-      status: 'Running',
-      schedule: 'Weekly on Monday',
-      dataPoints: 3240
-    },
-    {
-      id: 4,
-      name: 'Compliance Status KPIs',
-      type: 'KPI',
-      category: 'Compliance',
-      lastRun: '2025-01-14 23:00:00',
-      status: 'Failed',
-      schedule: 'Daily at 11:00 PM',
-      dataPoints: 1850
-    }
-  ]);
-
-  const [filteredReports, setFilteredReports] = useState<Report[]>(reports);
+  // Hardcoded organization ID for demo - in real app this would come from auth context
+  const organizationId = 'demo-org-123';
+  
+  // State for filters
   const [searchTerm, setSearchTerm] = useState('');
   const [typeFilter, setTypeFilter] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
   const [selectedReport, setSelectedReport] = useState<Report | null>(null);
   const [showCreateForm, setShowCreateForm] = useState(false);
+  
+  // State for form data
+  const [newReport, setNewReport] = useState({
+    name: '',
+    type: 'Chart',
+    category: 'Financial',
+    schedule: '',
+    description: ''
+  });
+
+  // API calls
+  const { 
+    data: reportsResponse, 
+    loading: reportsLoading, 
+    error: reportsError,
+    refetch: refetchReports 
+  } = useApi(() => businessIntelligenceApi.getReports(organizationId));
+
+  const { mutate: createReportMutation, loading: createLoading } = useApiMutation<Report, any>();
+
+  // Extract reports from API response or fall back to mock data if API fails
+  const reports = reportsResponse?.data || [
+    {
+      id: 1,
+      name: 'Asset Utilization Dashboard',
+      type: 'Dashboard' as const,
+      category: 'Operational' as const,
+      lastRun: '2025-01-15 09:30:00',
+      status: 'Ready' as const,
+      schedule: 'Daily at 6:00 AM',
+      dataPoints: 15420
+    },
+    {
+      id: 2,
+      name: 'Financial Performance Chart',
+      type: 'Chart' as const,
+      category: 'Financial' as const,
+      lastRun: '2025-01-15 10:15:00',
+      status: 'Ready' as const,
+      schedule: 'Hourly',
+      dataPoints: 8960
+    }
+  ];
+  const filteredReports = reports.filter((report: Report) => {
+    return (
+      (!searchTerm || report.name.toLowerCase().includes(searchTerm.toLowerCase())) &&
+      (!typeFilter || report.type === typeFilter) &&
+      (!categoryFilter || report.category === categoryFilter) &&
+      (!statusFilter || report.status === statusFilter)
+    );
+  });
 
   // Mock data for visualizations
   const [assetData] = useState<ChartData[]>([
@@ -103,71 +106,59 @@ const BusinessIntelligenceServicePage = () => {
     { title: 'Energy Savings', value: 12.4, target: 15, unit: '%', trend: 'up', change: 3.2 }
   ]);
 
-  const [newReport, setNewReport] = useState({
-    name: '',
-    type: 'Chart' as Report['type'],
-    category: 'Operational' as Report['category'],
-    schedule: 'Daily at 6:00 AM'
-  });
-
-  useEffect(() => {
-    const filtered = reports.filter(report => {
-      return (
-        report.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
-        (typeFilter === '' || report.type === typeFilter) &&
-        (categoryFilter === '' || report.category === categoryFilter) &&
-        (statusFilter === '' || report.status === statusFilter)
-      );
-    });
-    setFilteredReports(filtered);
-  }, [reports, searchTerm, typeFilter, categoryFilter, statusFilter]);
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setNewReport(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleCreateReport = (e: React.FormEvent) => {
+  const handleCreateReport = async (e: React.FormEvent) => {
     e.preventDefault();
     if (newReport.name) {
-      const report: Report = {
-        id: Date.now(),
-        ...newReport,
-        lastRun: 'Never',
-        status: 'Ready',
-        dataPoints: Math.floor(Math.random() * 10000) + 1000
+      const reportData = {
+        name: newReport.name,
+        type: newReport.type,
+        category: newReport.category,
+        schedule: newReport.schedule,
+        description: newReport.description,
+        reportType: newReport.type,
+        configuration: {
+          schedule: newReport.schedule,
+          description: newReport.description
+        }
       };
-      setReports(prev => [...prev, report]);
-      setNewReport({ name: '', type: 'Chart', category: 'Operational', schedule: 'Daily at 6:00 AM' });
-      setShowCreateForm(false);
+
+      const result = await createReportMutation(
+        (data) => businessIntelligenceApi.createReport(organizationId, data),
+        reportData
+      );
+
+      if (result) {
+        setNewReport({ name: '', type: 'Chart', category: 'Financial', schedule: '', description: '' });
+        setShowCreateForm(false);
+        refetchReports();
+      }
     }
   };
 
-  const runReport = (id: number) => {
-    setReports(prev => prev.map(report => 
-      report.id === id 
-        ? { 
-            ...report, 
-            status: 'Running',
-            lastRun: new Date().toLocaleString()
-          }
-        : report
-    ));
-
-    // Simulate report completion
-    setTimeout(() => {
-      setReports(prev => prev.map(report => 
-        report.id === id 
-          ? { ...report, status: 'Ready' }
-          : report
-      ));
-    }, 3000);
+  const runReport = async (reportId: number) => {
+    try {
+      await businessIntelligenceApi.executeReport(organizationId, reportId.toString());
+      refetchReports(); // Refresh the reports list
+    } catch (error) {
+      console.error('Failed to run report:', error);
+    }
   };
 
-  const deleteReport = (id: number) => {
-    setReports(prev => prev.filter(report => report.id !== id));
-    if (selectedReport?.id === id) {
-      setSelectedReport(null);
+  const deleteReport = async (id: number) => {
+    try {
+      // Note: This would need a delete endpoint in the API
+      // await businessIntelligenceApi.deleteReport(organizationId, id.toString());
+      refetchReports();
+      if (selectedReport?.id === id) {
+        setSelectedReport(null);
+      }
+    } catch (error) {
+      console.error('Failed to delete report:', error);
     }
   };
 
@@ -203,6 +194,27 @@ const BusinessIntelligenceServicePage = () => {
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-3xl font-bold mb-6">Business Intelligence Service</h1>
+
+      {/* Loading State */}
+      {reportsLoading && (
+        <div className="flex justify-center items-center py-8">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+          <span className="ml-2 text-gray-600">Loading reports...</span>
+        </div>
+      )}
+
+      {/* Error State */}
+      {reportsError && (
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+          <strong>Error loading reports:</strong> {reportsError}
+          <button 
+            onClick={refetchReports}
+            className="ml-4 text-red-800 underline hover:text-red-900"
+          >
+            Retry
+          </button>
+        </div>
+      )}
 
       {/* KPI Dashboard */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
@@ -390,12 +402,24 @@ const BusinessIntelligenceServicePage = () => {
                 />
               </div>
             </div>
+            <div className="mt-4">
+              <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+              <textarea
+                name="description"
+                value={newReport.description}
+                onChange={handleInputChange}
+                rows={3}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Describe what this report analyzes..."
+              />
+            </div>
             <div className="mt-6 flex space-x-3">
               <button
                 type="submit"
-                className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+                disabled={createLoading}
+                className="bg-green-500 hover:bg-green-700 disabled:bg-gray-400 text-white font-bold py-2 px-4 rounded"
               >
-                Create Report
+                {createLoading ? 'Creating...' : 'Create Report'}
               </button>
               <button
                 type="button"
