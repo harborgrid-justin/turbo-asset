@@ -14,6 +14,9 @@ export { EnterpriseConnectorsService } from './integration-management/external-s
 export { FinancialOperationsManager } from './financial-management/cost-accounting/financial-operations';
 export { SpaceOperationsManager } from './space-management/utilization-analytics/space-operations';
 export { MaintenanceOperationsManager } from './maintenance-management/operations-analytics/maintenance-operations';
+export { TenantBrandingOperationsManager } from './tenant-management/branding-operations/tenant-branding';
+export { ComplianceManagementOperationsManager } from './compliance-governance/regulatory-operations/compliance-management';
+export { ExternalIntegrationSystemsManager } from './external-integration-systems/third-party-connectors/integration-orchestration';
 
 // Legacy flat services (to be gradually refactored)
 export { WorkflowEngine } from './WorkflowEngine';
@@ -37,3 +40,14 @@ export { APIManagementService } from './APIManagementService';
 // MaintenanceService -> MaintenanceOperationsManager
 // WorkOrderService -> MaintenanceOperationsManager
 // PreventiveMaintenanceService -> MaintenanceOperationsManager
+// WhiteLabelService -> TenantBrandingOperationsManager
+// InternationalizationService -> TenantBrandingOperationsManager.i18nService
+// CustomFieldService -> TenantBrandingOperationsManager.customFieldService
+// ComplianceService -> ComplianceManagementOperationsManager (planned)
+// DataGovernanceService -> ComplianceManagementOperationsManager (planned)
+// EmergencyPlanningService -> ComplianceManagementOperationsManager (planned)
+// Microsoft365IntegrationService -> ExternalIntegrationSystemsManager (planned)
+// SalesforceIntegrationService -> ExternalIntegrationSystemsManager (planned)
+// CalendarIntegrationService -> ExternalIntegrationSystemsManager (planned)
+// Phase3IntegrationService -> ExternalIntegrationSystemsManager (planned)
+// APIManagementService -> ExternalIntegrationSystemsManager (planned)
