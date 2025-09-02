@@ -83,6 +83,12 @@ model Organization {
   chargebackRules   ChargebackRule[]
   spaceTemplates    SpaceTemplate[]
 
+  // Phase 4: Lease Administration & Financial Management relationships
+  budgets           Budget[]
+  vendors           Vendor[]
+  brokers           Broker[]
+  financialStatements FinancialStatement[]
+
   // Phase 6: Enterprise Integrations & Reporting relationships
   enterpriseIntegrations  EnterpriseIntegration[]
   dataWarehouses          DataWarehouse[]
@@ -146,6 +152,10 @@ model Property {
   // Phase 3: Space Management & Portfolio Tracking relationships
   cadFiles          CADFile[]
 
+  // Phase 4: Lease Administration & Financial Management relationships
+  leases            Lease[]
+  budgets           Budget[]
+
   @@map("properties")
 }
 
@@ -166,7 +176,7 @@ model Building {
   description     String?
   buildingCode    String? @unique
   totalArea       Float?
-  floors          Int?
+  floorCount      Int?
   constructionYear Int?
   renovationYear  Int?
   energyRating    String?
@@ -311,14 +321,20 @@ enum AssetCondition {
   GOOD
   FAIR
   POOR
+  CRITICAL
   OUT_OF_SERVICE
+  UNKNOWN
 }
 
 enum AssetStatus {
   ACTIVE
   INACTIVE
   MAINTENANCE
+  UNDER_MAINTENANCE
+  OUT_OF_SERVICE
+  RETIRED
   DISPOSED
+  TRANSFERRED
   LOST
 }
 
@@ -1235,6 +1251,7 @@ model LeaseContract {
   leaseId         String
   milestones      ContractMilestone[]
   vendors         ContractVendor[]
+  criticalDates   CriticalDate[]
 
   @@map("lease_contracts")
 }
@@ -2336,40 +2353,6 @@ model VendorInvoice {
   @@map("vendor_invoices")
 }
 
-// Extend Organization model for Phase 4 relationships
-model Property {
-  id              String      @id @default(uuid())
-  name            String
-  type            PropertyType
-  address         Json // Structured address data
-  totalArea       Float?
-  usableArea      Float?
-  currency        String      @default("USD")
-  acquisitionCost Float?
-  currentValue    Float?
-  acquisitionDate DateTime?
-  coordinates     Json? // Lat/Long for mapping
-  timezone        String      @default("UTC")
-  isActive        Boolean     @default(true)
-  createdAt       DateTime    @default(now())
-  updatedAt       DateTime    @updatedAt
-
-  // Relationships
-  organization   Organization @relation(fields: [organizationId], references: [id])
-  organizationId String
-  buildings      Building[]
-  customFields   CustomFieldValue[]
-
-  // Phase 3: Space Management & Portfolio Tracking relationships
-  cadFiles          CADFile[]
-  
-  // Phase 4: Lease Administration & Financial Management relationships
-  leases            Lease[]
-  budgets           Budget[]
-
-  @@map("properties")
-}
-
 // Enums for Phase 4
 enum LeaseType {
   OPERATING
@@ -2503,10 +2486,14 @@ enum AlertPriority {
 
 enum AlertStatus {
   PENDING
+  OPEN
   SENT
   ACKNOWLEDGED
+  IN_PROGRESS
   DISMISSED
   ESCALATED
+  RESOLVED
+  CANCELLED
 }
 
 enum CAMType {
@@ -2862,6 +2849,7 @@ model MaintenanceAsset {
   depreciations     AssetDepreciation[]
   iotDevices        IoTDevice[]
   energyMeters      EnergyMeter[]
+  conditionMonitoring ConditionMonitoring[]
   
   organizationId    String
   createdAt         DateTime            @default(now())
@@ -3808,24 +3796,8 @@ enum AssetCategory {
   OTHER
 }
 
-enum AssetStatus {
-  ACTIVE
-  INACTIVE
-  UNDER_MAINTENANCE
-  OUT_OF_SERVICE
-  RETIRED
-  DISPOSED
-  TRANSFERRED
-}
 
-enum AssetCondition {
-  EXCELLENT
-  GOOD
-  FAIR
-  POOR
-  CRITICAL
-  UNKNOWN
-}
+
 
 enum AssetCriticality {
   CRITICAL
@@ -4025,13 +3997,7 @@ enum ReorderAlertType {
   EXCESS_INVENTORY
 }
 
-enum AlertStatus {
-  OPEN
-  ACKNOWLEDGED
-  IN_PROGRESS
-  RESOLVED
-  CANCELLED
-}
+
 
 enum EnergyMeterType {
   ELECTRIC

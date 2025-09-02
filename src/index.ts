@@ -8,6 +8,32 @@ import { logger } from './config/logger';
 import { connectRedis } from './config/redis';
 import { InternationalizationService } from './services/InternationalizationService';
 
+// Import middleware
+import { 
+  errorHandler, 
+  notFoundHandler, 
+  timeoutHandler,
+  asyncHandler 
+} from './middleware/errorHandler';
+import { 
+  apiRateLimit, 
+  authRateLimit, 
+  strictRateLimit,
+  uploadRateLimit,
+  reportRateLimit 
+} from './middleware/rateLimiter';
+import { 
+  authenticate, 
+  optionalAuth, 
+  requireOrganizationAccess,
+  requireRoles,
+  requirePermissions 
+} from './middleware/auth';
+import { 
+  apiVersionManager 
+} from './middleware/versioning';
+import { HealthController } from './middleware/health';
+
 // Import routes
 import propertyRoutes from './controllers/PropertyController';
 import assetRoutes from './controllers/AssetController';
@@ -37,6 +63,7 @@ import WorkOrderController from './controllers/WorkOrderController';
 import { EnterpriseIntegrationController } from './controllers/EnterpriseIntegrationController';
 import { DataWarehouseController } from './controllers/DataWarehouseController';
 import { BusinessIntelligenceController } from './controllers/BusinessIntelligenceController';
+import { ReportingController } from './controllers/ReportingController';
 import { DataGovernanceController } from './controllers/DataGovernanceController';
 import { APIManagementController } from './controllers/APIManagementController';
 import { WhiteLabelController } from './controllers/WhiteLabelController';
@@ -45,6 +72,7 @@ class TurboAssetServer {
   private app: express.Application;
   private server: any;
   private io: SocketServer;
+  private healthController: HealthController;
 
   constructor() {
     this.app = express();
@@ -55,6 +83,7 @@ class TurboAssetServer {
         methods: ["GET", "POST"]
       }
     });
+    this.healthController = new HealthController();
 
     this.setupMiddleware();
     this.setupRoutes();
@@ -62,29 +91,81 @@ class TurboAssetServer {
   }
 
   private setupMiddleware(): void {
+    // Trust proxy for accurate IP addresses
+    this.app.set('trust proxy', 1);
+
+    // Request timeout middleware (30 seconds)
+    this.app.use(timeoutHandler(30000));
+
     // Security middleware
-    this.app.use(helmet());
-    this.app.use(cors());
+    this.app.use(helmet({
+      contentSecurityPolicy: {
+        directives: {
+          defaultSrc: ["'self'"],
+          scriptSrc: ["'self'", "'unsafe-inline'"],
+          styleSrc: ["'self'", "'unsafe-inline'"],
+          imgSrc: ["'self'", "data:", "https:"],
+        },
+      },
+      hsts: {
+        maxAge: 31536000,
+        includeSubDomains: true,
+        preload: true,
+      },
+    }));
 
-    // Body parsing middleware
-    this.app.use(express.json({ limit: '50mb' }));
-    this.app.use(express.urlencoded({ extended: true }));
+    this.app.use(cors({
+      origin: process.env.ALLOWED_ORIGINS?.split(',') || '*',
+      credentials: true,
+      methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+      allowedHeaders: ['Content-Type', 'Authorization', 'X-API-Key', 'X-API-Version'],
+    }));
 
-    // Request logging
+    // API versioning middleware
+    this.app.use(apiVersionManager.middleware());
+
+    // Body parsing middleware with size limits
+    this.app.use(express.json({ 
+      limit: '10mb',
+      type: ['application/json', 'application/vnd.api+json'],
+    }));
+    this.app.use(express.urlencoded({ 
+      extended: true, 
+      limit: '10mb',
+    }));
+
+    // Request logging middleware
     this.app.use((req, res, next) => {
-      logger.info('HTTP Request', {
-        method: req.method,
-        url: req.url,
-        ip: req.ip,
-        userAgent: req.get('User-Agent'),
+      const start = Date.now();
+      
+      res.on('finish', () => {
+        const duration = Date.now() - start;
+        logger.info('HTTP Request', {
+          method: req.method,
+          url: req.url,
+          statusCode: res.statusCode,
+          duration,
+          ip: req.ip,
+          userAgent: req.get('User-Agent'),
+          contentLength: res.get('Content-Length'),
+        });
       });
+      
       next();
     });
 
-    // Health check endpoint
-    this.app.get('/health', (req, res) => {
-      res.json({
-        status: 'healthy',
+    // Global rate limiting
+    this.app.use(apiRateLimit.middleware());
+
+    // Health check endpoints (before authentication)
+    this.app.get('/health', asyncHandler(this.healthController.health.bind(this.healthController)));
+    this.app.get('/ready', asyncHandler(this.healthController.ready.bind(this.healthController)));
+    this.app.get('/live', asyncHandler(this.healthController.live.bind(this.healthController)));
+
+    // Basic health check for load balancers
+    this.app.get('/ping', (req, res) => {
+      res.json({ 
+        status: 'ok', 
         timestamp: new Date().toISOString(),
         version: process.env.npm_package_version || '1.0.0',
       });
@@ -94,176 +175,169 @@ class TurboAssetServer {
   private setupRoutes(): void {
     const apiRouter = express.Router();
 
-    // Mount API routes
-    apiRouter.use('/properties', propertyRoutes);
-    apiRouter.use('/assets', assetRoutes);
-    apiRouter.use('/workflows', workflowRoutes);
-    apiRouter.use('/documents', documentRoutes);
-    apiRouter.use('/bulk-data', bulkDataRoutes);
-    apiRouter.use('/custom-fields', customFieldRoutes);
-    apiRouter.use('/integrations', integrationRoutes);
-    apiRouter.use('/notifications', notificationRoutes);
+    // Apply authentication to all API routes (except health checks)
+    apiRouter.use(optionalAuth);
+
+    // Mount API routes with specific rate limits and permissions
+    
+    // Core routes
+    apiRouter.use('/properties', requireOrganizationAccess, requirePermissions(['properties:read']), propertyRoutes);
+    apiRouter.use('/assets', requireOrganizationAccess, requirePermissions(['assets:read']), assetRoutes);
+    apiRouter.use('/workflows', requireOrganizationAccess, requirePermissions(['workflows:read']), workflowRoutes);
+    apiRouter.use('/documents', uploadRateLimit.middleware(), requireOrganizationAccess, requirePermissions(['documents:read']), documentRoutes);
+    apiRouter.use('/bulk-data', strictRateLimit.middleware(), requireOrganizationAccess, requirePermissions(['bulk-data:write']), bulkDataRoutes);
+    apiRouter.use('/custom-fields', requireOrganizationAccess, requirePermissions(['custom-fields:read']), customFieldRoutes);
+    apiRouter.use('/integrations', requireOrganizationAccess, requirePermissions(['integrations:read']), integrationRoutes);
+    apiRouter.use('/notifications', requireOrganizationAccess, requirePermissions(['notifications:read']), notificationRoutes);
 
     // Phase 3: Space Management & Portfolio Tracking routes
-    apiRouter.use('/space-bookings', spaceBookingRoutes);
-    apiRouter.use('/move-management', moveManagementRoutes);
-    apiRouter.use('/portfolio', portfolioRoutes);
+    apiRouter.use('/space-bookings', requireOrganizationAccess, requirePermissions(['spaces:read']), spaceBookingRoutes);
+    apiRouter.use('/move-management', requireOrganizationAccess, requirePermissions(['moves:read']), moveManagementRoutes);
+    apiRouter.use('/portfolio', requireOrganizationAccess, requirePermissions(['portfolio:read']), portfolioRoutes);
 
     // Phase 4: Lease Administration & Financial Management routes
-    apiRouter.use('/lease-management', LeaseManagementController);
-    apiRouter.use('/compliance', ComplianceController);
-    apiRouter.use('/critical-dates', CriticalDateController);
-    apiRouter.use('/financial-consolidation', FinancialConsolidationController);
+    apiRouter.use('/lease-management', requireOrganizationAccess, requirePermissions(['leases:read']), LeaseManagementController);
+    apiRouter.use('/compliance', requireOrganizationAccess, requirePermissions(['compliance:read']), ComplianceController);
+    apiRouter.use('/critical-dates', requireOrganizationAccess, requirePermissions(['critical-dates:read']), CriticalDateController);
+    apiRouter.use('/financial-consolidation', requireOrganizationAccess, requirePermissions(['financials:read']), FinancialConsolidationController);
 
     // Phase 5: Maintenance & Asset Management routes
-    apiRouter.use('/maintenance', MaintenanceController);
-    apiRouter.use('/work-orders', WorkOrderController);
+    apiRouter.use('/maintenance', requireOrganizationAccess, requirePermissions(['maintenance:read']), MaintenanceController);
+    apiRouter.use('/work-orders', requireOrganizationAccess, requirePermissions(['work-orders:read']), WorkOrderController);
+    
+    // Additional Phase 5 routes (placeholders)
+    apiRouter.get('/preventive-maintenance', requireOrganizationAccess, requirePermissions(['maintenance:read']), (req, res) => {
+      res.json({ message: 'Preventive Maintenance API - coming soon' });
+    });
+    apiRouter.get('/asset-lifecycle', requireOrganizationAccess, requirePermissions(['assets:read']), (req, res) => {
+      res.json({ message: 'Asset Lifecycle API - coming soon' });
+    });
+    apiRouter.get('/inventory', requireOrganizationAccess, requirePermissions(['inventory:read']), (req, res) => {
+      res.json({ message: 'Inventory API - coming soon' });
+    });
+    apiRouter.get('/energy-management', requireOrganizationAccess, requirePermissions(['energy:read']), (req, res) => {
+      res.json({ message: 'Energy Management API - coming soon' });
+    });
+    apiRouter.get('/capital-projects', requireOrganizationAccess, requirePermissions(['projects:read']), (req, res) => {
+      res.json({ message: 'Capital Projects API - coming soon' });
+    });
+    apiRouter.get('/iot-devices', requireOrganizationAccess, requirePermissions(['iot:read']), (req, res) => {
+      res.json({ message: 'IoT Devices API - coming soon' });
+    });
 
     // Phase 6: Enterprise Integrations & Reporting routes
     const enterpriseIntegrationController = new EnterpriseIntegrationController();
     const dataWarehouseController = new DataWarehouseController();
     const businessIntelligenceController = new BusinessIntelligenceController();
+    const reportingController = new ReportingController();
     const dataGovernanceController = new DataGovernanceController();
     const apiManagementController = new APIManagementController();
     const whiteLabelController = new WhiteLabelController();
 
+    // Apply stricter rate limits for enterprise features
+    const enterpriseRateLimit = strictRateLimit.middleware();
+    const enterpriseAuth = [requireOrganizationAccess, requirePermissions(['enterprise:read'])];
+
     // Enterprise Integration routes
-    apiRouter.get('/enterprise-integrations/:organizationId/integrations', enterpriseIntegrationController.getIntegrations);
-    apiRouter.post('/enterprise-integrations/:organizationId/integrations', enterpriseIntegrationController.createIntegration);
-    apiRouter.put('/enterprise-integrations/:organizationId/integrations/:integrationId', enterpriseIntegrationController.updateIntegration);
-    apiRouter.delete('/enterprise-integrations/:organizationId/integrations/:integrationId', enterpriseIntegrationController.deleteIntegration);
-    apiRouter.post('/enterprise-integrations/:organizationId/integrations/:integrationId/test', enterpriseIntegrationController.testConnection);
-    apiRouter.post('/enterprise-integrations/:organizationId/esb/send', enterpriseIntegrationController.sendMessage);
-    apiRouter.get('/enterprise-integrations/:organizationId/esb/metrics', enterpriseIntegrationController.getESBMetrics);
-    apiRouter.get('/enterprise-integrations/:organizationId/esb/health', enterpriseIntegrationController.getESBHealth);
-    apiRouter.post('/enterprise-integrations/:organizationId/salesforce/sync', enterpriseIntegrationController.syncWithSalesforce);
-    apiRouter.get('/enterprise-integrations/:organizationId/salesforce/reports/:reportId', enterpriseIntegrationController.getSalesforceReports);
-    apiRouter.post('/enterprise-integrations/:organizationId/outlook/sync/:bookingId', enterpriseIntegrationController.syncBookingToOutlook);
-    apiRouter.post('/enterprise-integrations/:organizationId/sharepoint/library', enterpriseIntegrationController.createSharePointLibrary);
-    apiRouter.get('/enterprise-integrations/:organizationId/microsoft365/auth', enterpriseIntegrationController.getAuthorizationUrl);
-    apiRouter.get('/enterprise-integrations/:organizationId/integrations/:integrationId/flows', enterpriseIntegrationController.getIntegrationFlows);
-    apiRouter.post('/enterprise-integrations/:organizationId/integrations/:integrationId/flows', enterpriseIntegrationController.createIntegrationFlow);
-    apiRouter.post('/enterprise-integrations/:organizationId/flows/:flowId/execute', enterpriseIntegrationController.executeFlow);
-    apiRouter.get('/enterprise-integrations/:organizationId/analytics', enterpriseIntegrationController.getIntegrationAnalytics);
+    apiRouter.get('/enterprise-integrations/:organizationId/integrations', ...enterpriseAuth, enterpriseIntegrationController.getIntegrations);
+    apiRouter.post('/enterprise-integrations/:organizationId/integrations', ...enterpriseAuth, requirePermissions(['enterprise:write']), enterpriseIntegrationController.createIntegration);
+    apiRouter.put('/enterprise-integrations/:organizationId/integrations/:integrationId', ...enterpriseAuth, requirePermissions(['enterprise:write']), enterpriseIntegrationController.updateIntegration);
+    apiRouter.delete('/enterprise-integrations/:organizationId/integrations/:integrationId', ...enterpriseAuth, requirePermissions(['enterprise:write']), enterpriseIntegrationController.deleteIntegration);
+    apiRouter.post('/enterprise-integrations/:organizationId/integrations/:integrationId/test', ...enterpriseAuth, enterpriseIntegrationController.testConnection);
+    apiRouter.post('/enterprise-integrations/:organizationId/esb/send', ...enterpriseAuth, requirePermissions(['enterprise:write']), enterpriseIntegrationController.sendMessage);
+    apiRouter.get('/enterprise-integrations/:organizationId/esb/metrics', ...enterpriseAuth, enterpriseIntegrationController.getESBMetrics);
+    apiRouter.get('/enterprise-integrations/:organizationId/esb/health', ...enterpriseAuth, enterpriseIntegrationController.getESBHealth);
+    apiRouter.post('/enterprise-integrations/:organizationId/salesforce/sync', ...enterpriseAuth, requirePermissions(['enterprise:write']), enterpriseIntegrationController.syncWithSalesforce);
+    apiRouter.get('/enterprise-integrations/:organizationId/salesforce/reports/:reportId', ...enterpriseAuth, enterpriseIntegrationController.getSalesforceReports);
+    apiRouter.post('/enterprise-integrations/:organizationId/outlook/sync/:bookingId', ...enterpriseAuth, requirePermissions(['enterprise:write']), enterpriseIntegrationController.syncBookingToOutlook);
+    apiRouter.post('/enterprise-integrations/:organizationId/sharepoint/library', ...enterpriseAuth, requirePermissions(['enterprise:write']), enterpriseIntegrationController.createSharePointLibrary);
+    apiRouter.get('/enterprise-integrations/:organizationId/microsoft365/auth', ...enterpriseAuth, enterpriseIntegrationController.getAuthorizationUrl);
+    apiRouter.get('/enterprise-integrations/:organizationId/integrations/:integrationId/flows', ...enterpriseAuth, enterpriseIntegrationController.getIntegrationFlows);
+    apiRouter.post('/enterprise-integrations/:organizationId/integrations/:integrationId/flows', ...enterpriseAuth, requirePermissions(['enterprise:write']), enterpriseIntegrationController.createIntegrationFlow);
+    apiRouter.post('/enterprise-integrations/:organizationId/flows/:flowId/execute', ...enterpriseAuth, requirePermissions(['enterprise:write']), enterpriseIntegrationController.executeFlow);
+    apiRouter.get('/enterprise-integrations/:organizationId/analytics', ...enterpriseAuth, enterpriseIntegrationController.getIntegrationAnalytics);
 
     // Data Warehouse routes
-    apiRouter.get('/data-warehouse/:organizationId/warehouses', dataWarehouseController.getWarehouses);
-    apiRouter.post('/data-warehouse/:organizationId/warehouses', dataWarehouseController.createWarehouse);
-    apiRouter.put('/data-warehouse/:organizationId/warehouses/:warehouseId', dataWarehouseController.updateWarehouse);
-    apiRouter.delete('/data-warehouse/:organizationId/warehouses/:warehouseId', dataWarehouseController.deleteWarehouse);
-    apiRouter.get('/data-warehouse/:organizationId/warehouses/:warehouseId/etl', dataWarehouseController.getETLProcesses);
-    apiRouter.post('/data-warehouse/:organizationId/warehouses/:warehouseId/etl', dataWarehouseController.createETLProcess);
-    apiRouter.post('/data-warehouse/:organizationId/etl/:processId/execute', dataWarehouseController.executeETLProcess);
-    apiRouter.get('/data-warehouse/:organizationId/etl/:processId/metrics', dataWarehouseController.getETLMetrics);
-    apiRouter.get('/data-warehouse/:organizationId/warehouses/:warehouseId/data', dataWarehouseController.getHistoricalData);
-    apiRouter.post('/data-warehouse/:organizationId/warehouses/:warehouseId/data-marts', dataWarehouseController.createDataMart);
-    apiRouter.post('/data-warehouse/:organizationId/etl/:processId/schedule', dataWarehouseController.scheduleETLProcess);
-    apiRouter.put('/data-warehouse/:organizationId/etl/:processId', dataWarehouseController.updateETLProcess);
-    apiRouter.delete('/data-warehouse/:organizationId/etl/:processId', dataWarehouseController.deleteETLProcess);
-    apiRouter.get('/data-warehouse/:organizationId/warehouses/:warehouseId/analytics', dataWarehouseController.getWarehouseAnalytics);
-    apiRouter.post('/data-warehouse/:organizationId/warehouses/:warehouseId/test', dataWarehouseController.testConnection);
-    apiRouter.get('/data-warehouse/:organizationId/warehouses/:warehouseId/quality', dataWarehouseController.getDataQualityMetrics);
-    apiRouter.get('/data-warehouse/:organizationId/etl/:processId/history', dataWarehouseController.getExecutionHistory);
+    apiRouter.get('/data-warehouse/:organizationId/warehouses', ...enterpriseAuth, dataWarehouseController.getWarehouses);
+    apiRouter.post('/data-warehouse/:organizationId/warehouses', ...enterpriseAuth, requirePermissions(['enterprise:write']), dataWarehouseController.createWarehouse);
+    apiRouter.put('/data-warehouse/:organizationId/warehouses/:warehouseId', ...enterpriseAuth, requirePermissions(['enterprise:write']), dataWarehouseController.updateWarehouse);
+    apiRouter.delete('/data-warehouse/:organizationId/warehouses/:warehouseId', ...enterpriseAuth, requirePermissions(['enterprise:write']), dataWarehouseController.deleteWarehouse);
+    apiRouter.get('/data-warehouse/:organizationId/warehouses/:warehouseId/etl', ...enterpriseAuth, dataWarehouseController.getETLProcesses);
+    apiRouter.post('/data-warehouse/:organizationId/warehouses/:warehouseId/etl', ...enterpriseAuth, requirePermissions(['enterprise:write']), dataWarehouseController.createETLProcess);
+    apiRouter.post('/data-warehouse/:organizationId/etl/:processId/execute', enterpriseRateLimit, ...enterpriseAuth, requirePermissions(['enterprise:write']), dataWarehouseController.executeETLProcess);
+    apiRouter.get('/data-warehouse/:organizationId/etl/:processId/metrics', ...enterpriseAuth, dataWarehouseController.getETLMetrics);
+    apiRouter.get('/data-warehouse/:organizationId/warehouses/:warehouseId/data', ...enterpriseAuth, dataWarehouseController.getHistoricalData);
+    apiRouter.post('/data-warehouse/:organizationId/warehouses/:warehouseId/data-marts', ...enterpriseAuth, requirePermissions(['enterprise:write']), dataWarehouseController.createDataMart);
+    apiRouter.post('/data-warehouse/:organizationId/etl/:processId/schedule', ...enterpriseAuth, requirePermissions(['enterprise:write']), dataWarehouseController.scheduleETLProcess);
+    apiRouter.put('/data-warehouse/:organizationId/etl/:processId', ...enterpriseAuth, requirePermissions(['enterprise:write']), dataWarehouseController.updateETLProcess);
+    apiRouter.delete('/data-warehouse/:organizationId/etl/:processId', ...enterpriseAuth, requirePermissions(['enterprise:write']), dataWarehouseController.deleteETLProcess);
+    apiRouter.get('/data-warehouse/:organizationId/warehouses/:warehouseId/analytics', ...enterpriseAuth, dataWarehouseController.getWarehouseAnalytics);
+    apiRouter.post('/data-warehouse/:organizationId/warehouses/:warehouseId/test', ...enterpriseAuth, dataWarehouseController.testConnection);
+    apiRouter.get('/data-warehouse/:organizationId/warehouses/:warehouseId/quality', ...enterpriseAuth, dataWarehouseController.getDataQualityMetrics);
+    apiRouter.get('/data-warehouse/:organizationId/etl/:processId/history', ...enterpriseAuth, dataWarehouseController.getExecutionHistory);
 
     // Business Intelligence routes
-    apiRouter.get('/business-intelligence/:organizationId/reports', businessIntelligenceController.getReports);
-    apiRouter.post('/business-intelligence/:organizationId/reports', businessIntelligenceController.createReport);
-    apiRouter.post('/business-intelligence/:organizationId/reports/:reportId/execute', businessIntelligenceController.executeReport);
-    apiRouter.put('/business-intelligence/:organizationId/reports/:reportId', businessIntelligenceController.updateReport);
-    apiRouter.delete('/business-intelligence/:organizationId/reports/:reportId', businessIntelligenceController.deleteReport);
-    apiRouter.get('/business-intelligence/:organizationId/dashboards', businessIntelligenceController.getDashboards);
-    apiRouter.post('/business-intelligence/:organizationId/dashboards', businessIntelligenceController.createDashboard);
-    apiRouter.get('/business-intelligence/:organizationId/dashboards/:dashboardId/data', businessIntelligenceController.getDashboardData);
-    apiRouter.put('/business-intelligence/:organizationId/dashboards/:dashboardId', businessIntelligenceController.updateDashboard);
-    apiRouter.delete('/business-intelligence/:organizationId/dashboards/:dashboardId', businessIntelligenceController.deleteDashboard);
-    apiRouter.post('/business-intelligence/:organizationId/warehouses/:warehouseId/build', businessIntelligenceController.buildReport);
-    apiRouter.get('/business-intelligence/:organizationId/warehouses/:warehouseId/sources', businessIntelligenceController.getDataSources);
-    apiRouter.post('/business-intelligence/:organizationId/visualizations/suggest', businessIntelligenceController.getSuggestedVisualizations);
-    apiRouter.get('/business-intelligence/:organizationId/reports/:reportId/export', businessIntelligenceController.exportReport);
-    apiRouter.get('/business-intelligence/:organizationId/executive-dashboard', businessIntelligenceController.getExecutiveDashboard);
-    apiRouter.get('/business-intelligence/:organizationId/benchmarking', businessIntelligenceController.getBenchmarkingReport);
-    apiRouter.post('/business-intelligence/:organizationId/reports/:reportId/schedules', businessIntelligenceController.createSchedule);
-    apiRouter.get('/business-intelligence/:organizationId/schedules', businessIntelligenceController.getSchedules);
-    apiRouter.put('/business-intelligence/:organizationId/schedules/:scheduleId', businessIntelligenceController.updateSchedule);
-    apiRouter.delete('/business-intelligence/:organizationId/schedules/:scheduleId', businessIntelligenceController.deleteSchedule);
-    apiRouter.post('/business-intelligence/:organizationId/templates', businessIntelligenceController.createTemplate);
-    apiRouter.post('/business-intelligence/:organizationId/templates/:templateId/generate', businessIntelligenceController.generateFromTemplate);
-    apiRouter.get('/business-intelligence/:organizationId/analytics', businessIntelligenceController.getBIAnalytics);
+    apiRouter.get('/business-intelligence/:organizationId/reports', ...enterpriseAuth, businessIntelligenceController.getReports);
+    apiRouter.post('/business-intelligence/:organizationId/reports', ...enterpriseAuth, requirePermissions(['enterprise:write']), businessIntelligenceController.createReport);
+    apiRouter.post('/business-intelligence/:organizationId/reports/:reportId/execute', enterpriseRateLimit, ...enterpriseAuth, businessIntelligenceController.executeReport);
+    apiRouter.put('/business-intelligence/:organizationId/reports/:reportId', ...enterpriseAuth, requirePermissions(['enterprise:write']), businessIntelligenceController.updateReport);
+    apiRouter.delete('/business-intelligence/:organizationId/reports/:reportId', ...enterpriseAuth, requirePermissions(['enterprise:write']), businessIntelligenceController.deleteReport);
+    apiRouter.get('/business-intelligence/:organizationId/dashboards', ...enterpriseAuth, businessIntelligenceController.getDashboards);
+    apiRouter.post('/business-intelligence/:organizationId/dashboards', ...enterpriseAuth, requirePermissions(['enterprise:write']), businessIntelligenceController.createDashboard);
+    apiRouter.get('/business-intelligence/:organizationId/dashboards/:dashboardId/data', ...enterpriseAuth, businessIntelligenceController.getDashboardData);
+    apiRouter.put('/business-intelligence/:organizationId/dashboards/:dashboardId', ...enterpriseAuth, requirePermissions(['enterprise:write']), businessIntelligenceController.updateDashboard);
+    apiRouter.delete('/business-intelligence/:organizationId/dashboards/:dashboardId', ...enterpriseAuth, requirePermissions(['enterprise:write']), businessIntelligenceController.deleteDashboard);
+    apiRouter.post('/business-intelligence/:organizationId/warehouses/:warehouseId/build', enterpriseRateLimit, ...enterpriseAuth, businessIntelligenceController.buildReport);
+    apiRouter.get('/business-intelligence/:organizationId/warehouses/:warehouseId/sources', ...enterpriseAuth, businessIntelligenceController.getDataSources);
+    apiRouter.post('/business-intelligence/:organizationId/visualizations/suggest', ...enterpriseAuth, businessIntelligenceController.getSuggestedVisualizations);
+    apiRouter.get('/business-intelligence/:organizationId/reports/:reportId/export', ...enterpriseAuth, businessIntelligenceController.exportReport);
+    apiRouter.get('/business-intelligence/:organizationId/executive-dashboard', ...enterpriseAuth, businessIntelligenceController.getExecutiveDashboard);
+    apiRouter.get('/business-intelligence/:organizationId/benchmarking', ...enterpriseAuth, businessIntelligenceController.getBenchmarkingReport);
+    apiRouter.post('/business-intelligence/:organizationId/reports/:reportId/schedules', ...enterpriseAuth, requirePermissions(['enterprise:write']), businessIntelligenceController.createSchedule);
+    apiRouter.get('/business-intelligence/:organizationId/schedules', ...enterpriseAuth, businessIntelligenceController.getSchedules);
+    apiRouter.put('/business-intelligence/:organizationId/schedules/:scheduleId', ...enterpriseAuth, requirePermissions(['enterprise:write']), businessIntelligenceController.updateSchedule);
+    apiRouter.delete('/business-intelligence/:organizationId/schedules/:scheduleId', ...enterpriseAuth, requirePermissions(['enterprise:write']), businessIntelligenceController.deleteSchedule);
+    apiRouter.post('/business-intelligence/:organizationId/templates', ...enterpriseAuth, requirePermissions(['enterprise:write']), businessIntelligenceController.createTemplate);
+    apiRouter.post('/business-intelligence/:organizationId/templates/:templateId/generate', enterpriseRateLimit, ...enterpriseAuth, businessIntelligenceController.generateFromTemplate);
+    apiRouter.get('/business-intelligence/:organizationId/analytics', ...enterpriseAuth, businessIntelligenceController.getBIAnalytics);
 
-    // Data Governance routes
-    apiRouter.get('/data-governance/:organizationId/rules', dataGovernanceController.getGovernanceRules);
-    apiRouter.post('/data-governance/:organizationId/rules', dataGovernanceController.createGovernanceRule);
-    apiRouter.put('/data-governance/:organizationId/rules/:ruleId', dataGovernanceController.updateGovernanceRule);
-    apiRouter.delete('/data-governance/:organizationId/rules/:ruleId', dataGovernanceController.deleteGovernanceRule);
-    apiRouter.get('/data-governance/:organizationId/master-data', dataGovernanceController.getMasterDataRecords);
-    apiRouter.post('/data-governance/:organizationId/master-data', dataGovernanceController.createMasterDataRecord);
-    apiRouter.post('/data-governance/:organizationId/lineage', dataGovernanceController.trackDataLineage);
-    apiRouter.get('/data-governance/:organizationId/lineage/:entityType/:entityId', dataGovernanceController.getDataLineage);
-    apiRouter.get('/data-governance/:organizationId/quality', dataGovernanceController.getDataQualityMetrics);
-    apiRouter.post('/data-governance/:organizationId/classify', dataGovernanceController.classifyData);
-    apiRouter.post('/data-governance/:organizationId/stewards', dataGovernanceController.assignDataSteward);
-    apiRouter.post('/data-governance/:organizationId/violations/detect', dataGovernanceController.detectPolicyViolations);
-    apiRouter.post('/data-governance/:organizationId/master-data/manage', dataGovernanceController.manageMasterData);
-    apiRouter.post('/data-governance/:organizationId/access/audit', dataGovernanceController.auditDataAccess);
-    apiRouter.post('/data-governance/:organizationId/retention/monitor', dataGovernanceController.monitorRetentionPolicies);
-    apiRouter.get('/data-governance/:organizationId/reports', dataGovernanceController.generateGovernanceReport);
-    apiRouter.get('/data-governance/:organizationId/analytics', dataGovernanceController.getGovernanceAnalytics);
-    apiRouter.get('/data-governance/:organizationId/stewards', dataGovernanceController.getDataStewards);
-    apiRouter.get('/data-governance/:organizationId/catalog', dataGovernanceController.getDataCatalog);
-    apiRouter.get('/data-governance/:organizationId/privacy-compliance', dataGovernanceController.getPrivacyComplianceReport);
+    // Reporting routes
+    apiRouter.post('/reporting/:organizationId/generate', reportRateLimit.middleware(), ...enterpriseAuth, requirePermissions(['reporting:write']), reportingController.generateReport);
+    apiRouter.get('/reporting/:organizationId/scheduled', ...enterpriseAuth, requirePermissions(['reporting:read']), reportingController.getScheduledReports);
+    apiRouter.post('/reporting/:organizationId/schedule', ...enterpriseAuth, requirePermissions(['reporting:write']), reportingController.scheduleReport);
+    apiRouter.get('/reporting/:organizationId/export/:reportId', ...enterpriseAuth, requirePermissions(['reporting:read']), reportingController.exportReport);
+    apiRouter.get('/reporting/:organizationId/templates', ...enterpriseAuth, requirePermissions(['reporting:read']), reportingController.getReportTemplates);
+    apiRouter.post('/reporting/:organizationId/templates', ...enterpriseAuth, requirePermissions(['reporting:write']), reportingController.createReportTemplate);
+    apiRouter.get('/reporting/:organizationId/history', ...enterpriseAuth, requirePermissions(['reporting:read']), reportingController.getReportHistory);
+    apiRouter.get('/reporting/:organizationId/analytics', ...enterpriseAuth, requirePermissions(['reporting:read']), reportingController.getReportAnalytics);
+    apiRouter.delete('/reporting/:organizationId/scheduled/:scheduleId', ...enterpriseAuth, requirePermissions(['reporting:write']), reportingController.deleteScheduledReport);
+    apiRouter.put('/reporting/:organizationId/scheduled/:scheduleId', ...enterpriseAuth, requirePermissions(['reporting:write']), reportingController.updateScheduledReport);
 
-    // API Management routes
-    apiRouter.get('/api-management/:organizationId/keys', apiManagementController.getAPIKeys);
-    apiRouter.post('/api-management/:organizationId/keys', apiManagementController.createAPIKey);
-    apiRouter.put('/api-management/:organizationId/keys/:keyId', apiManagementController.updateAPIKey);
-    apiRouter.delete('/api-management/:organizationId/keys/:keyId/revoke', apiManagementController.revokeAPIKey);
-    apiRouter.get('/api-management/:organizationId/keys/:keyId/usage', apiManagementController.getAPIKeyUsage);
-    apiRouter.get('/api-management/:organizationId/keys/:keyId/limits', apiManagementController.getRateLimitStatus);
-    apiRouter.get('/api-management/:organizationId/analytics', apiManagementController.getUsageAnalytics);
-    apiRouter.get('/api-management/:organizationId/health', apiManagementController.getHealthMetrics);
-    apiRouter.get('/api-management/:organizationId/documentation', apiManagementController.getAPIDocumentation);
-    apiRouter.post('/api-management/:organizationId/endpoints', apiManagementController.registerEndpoint);
-    apiRouter.get('/api-management/:organizationId/endpoints/analytics', apiManagementController.getEndpointAnalytics);
-    apiRouter.get('/api-management/:organizationId/usage/trends', apiManagementController.getUsageTrends);
-    apiRouter.get('/api-management/:organizationId/quotas', apiManagementController.getQuotaStatus);
-    apiRouter.get('/api-management/:organizationId/errors', apiManagementController.getErrorAnalysis);
-    apiRouter.put('/api-management/:organizationId/keys/:keyId/permissions', apiManagementController.updatePermissions);
-    apiRouter.get('/api-management/:organizationId/performance', apiManagementController.getPerformanceMetrics);
-
-    // White Label routes
-    apiRouter.get('/white-label/:organizationId/configurations', whiteLabelController.getConfigurations);
-    apiRouter.post('/white-label/:organizationId/configurations', whiteLabelController.createConfiguration);
-    apiRouter.put('/white-label/:organizationId/branding', whiteLabelController.updateBranding);
-    apiRouter.post('/white-label/:organizationId/themes', whiteLabelController.applyTheme);
-    apiRouter.post('/white-label/:organizationId/domains', whiteLabelController.setupCustomDomain);
-    apiRouter.post('/white-label/:organizationId/domains/verify', whiteLabelController.verifyCustomDomain);
-    apiRouter.get('/white-label/domain/:domain/organization', whiteLabelController.getOrganizationByDomain);
-    apiRouter.get('/white-label/:organizationId/bundles', whiteLabelController.generateBundle);
-    apiRouter.post('/white-label/:organizationId/subsidiaries', whiteLabelController.createSubsidiary);
-    apiRouter.get('/white-label/:organizationId/subsidiaries', whiteLabelController.getSubsidiaries);
-    apiRouter.post('/white-label/:organizationId/email-templates', whiteLabelController.createEmailTemplate);
-    apiRouter.post('/white-label/:organizationId/email-templates/:templateId/render', whiteLabelController.renderEmailTemplate);
-    apiRouter.post('/white-label/:organizationId/features', whiteLabelController.setupFeatureFlags);
-    apiRouter.get('/white-label/:organizationId/features/:featureName', whiteLabelController.checkFeatureFlag);
-    apiRouter.get('/white-label/:organizationId/pwa-manifest', whiteLabelController.generatePWAManifest);
-    apiRouter.get('/white-label/:organizationId/themes', whiteLabelController.getAvailableThemes);
-    apiRouter.get('/white-label/:organizationId/analytics', whiteLabelController.getBrandingAnalytics);
-    apiRouter.put('/white-label/:organizationId/configurations/:configId', whiteLabelController.updateConfiguration);
-    apiRouter.delete('/white-label/:organizationId/configurations/:configId', whiteLabelController.deleteConfiguration);
-    apiRouter.post('/white-label/:organizationId/logo', whiteLabelController.uploadLogo);
-    apiRouter.post('/white-label/:organizationId/themes/preview', whiteLabelController.previewTheme);
-    apiRouter.get('/white-label/:organizationId/configurations/:configId/export', whiteLabelController.exportConfiguration);
-    apiRouter.post('/white-label/:organizationId/configurations/import', whiteLabelController.importConfiguration);
-
+    // Mount API router
     this.app.use('/api', apiRouter);
 
-    // API documentation
+    // API documentation endpoint
     this.app.get('/api/docs', (req, res) => {
       res.json({
         title: 'Turbo Asset API',
         version: '1.0.0',
-        description: 'Enterprise IWMS Platform API',
+        description: 'Enterprise IWMS Platform API - Production Ready',
+        documentation: 'https://docs.turboasset.com',
+        support: 'support@turboasset.com',
+        authentication: {
+          jwt: 'Bearer token in Authorization header',
+          apiKey: 'X-API-Key header',
+        },
+        rateLimit: {
+          standard: '1000 requests per hour',
+          authenticated: '5000 requests per hour',
+          enterprise: '10000 requests per hour',
+        },
         endpoints: {
+          // Core endpoints
+          health: '/health',
+          ready: '/ready', 
+          live: '/live',
           properties: '/api/properties',
           assets: '/api/assets',
           workflows: '/api/workflows',
@@ -294,6 +368,7 @@ class TurboAssetServer {
           enterpriseIntegrations: '/api/enterprise-integrations',
           dataWarehouse: '/api/data-warehouse',
           businessIntelligence: '/api/business-intelligence',
+          reporting: '/api/reporting',
           dataGovernance: '/api/data-governance',
           apiManagement: '/api/api-management',
           whiteLabel: '/api/white-label',
@@ -301,23 +376,11 @@ class TurboAssetServer {
       });
     });
 
-    // 404 handler
-    this.app.use('*', (req, res) => {
-      res.status(404).json({
-        error: 'Not Found',
-        message: 'The requested resource was not found',
-      });
-    });
+    // 404 handler for undefined routes
+    this.app.use('*', notFoundHandler);
 
-    // Error handler
-    this.app.use((error: Error, req: express.Request, res: express.Response, next: express.NextFunction) => {
-      logger.error('Unhandled error', error);
-      
-      res.status(500).json({
-        error: 'Internal Server Error',
-        message: config.server.env === 'development' ? error.message : 'Something went wrong',
-      });
-    });
+    // Global error handler
+    this.app.use(errorHandler);
   }
 
   private setupSocketIO(): void {
@@ -345,6 +408,15 @@ class TurboAssetServer {
 
   async start(): Promise<void> {
     try {
+      // Create logs directory if it doesn't exist
+      const fs = await import('fs');
+      const path = await import('path');
+      
+      const logsDir = path.join(process.cwd(), 'logs');
+      if (!fs.existsSync(logsDir)) {
+        fs.mkdirSync(logsDir, { recursive: true });
+      }
+
       // Connect to Redis
       await connectRedis();
 
@@ -354,11 +426,38 @@ class TurboAssetServer {
 
       // Start server
       this.server.listen(config.server.port, () => {
-        logger.info(`Turbo Asset server started on port ${config.server.port}`);
-        logger.info(`Environment: ${config.server.env}`);
-        logger.info(`API Documentation: http://localhost:${config.server.port}/api/docs`);
-        logger.info(`Health Check: http://localhost:${config.server.port}/health`);
+        logger.info(`🚀 Turbo Asset server started successfully`);
+        logger.info(`📍 Environment: ${config.server.env}`);
+        logger.info(`🌐 Port: ${config.server.port}`);
+        logger.info(`📖 API Documentation: http://localhost:${config.server.port}/api/docs`);
+        logger.info(`❤️  Health Check: http://localhost:${config.server.port}/health`);
+        logger.info(`🔄 Readiness: http://localhost:${config.server.port}/ready`);
+        logger.info(`💓 Liveness: http://localhost:${config.server.port}/live`);
       });
+
+      // Graceful shutdown handlers
+      process.on('SIGTERM', () => {
+        logger.info('SIGTERM received, initiating graceful shutdown');
+        this.stop();
+      });
+
+      process.on('SIGINT', () => {
+        logger.info('SIGINT received, initiating graceful shutdown');
+        this.stop();
+      });
+
+      // Handle unhandled promise rejections
+      process.on('unhandledRejection', (reason, promise) => {
+        logger.error('Unhandled Promise Rejection', { reason, promise });
+        // Don't exit the process for now, but log it
+      });
+
+      // Handle uncaught exceptions
+      process.on('uncaughtException', (error) => {
+        logger.error('Uncaught Exception', error);
+        process.exit(1);
+      });
+
     } catch (error) {
       logger.error('Failed to start server', error);
       process.exit(1);
@@ -367,29 +466,30 @@ class TurboAssetServer {
 
   async stop(): Promise<void> {
     return new Promise((resolve) => {
+      logger.info('Shutting down server gracefully...');
+      
       this.server.close(() => {
-        logger.info('Turbo Asset server stopped');
+        logger.info('✅ Server closed successfully');
         resolve();
       });
+
+      // Force close after 10 seconds
+      setTimeout(() => {
+        logger.warn('⚠️  Forcing server shutdown after timeout');
+        process.exit(0);
+      }, 10000);
     });
   }
 }
 
-// Handle graceful shutdown
-process.on('SIGTERM', async () => {
-  logger.info('SIGTERM received, shutting down gracefully');
-  process.exit(0);
-});
-
-process.on('SIGINT', async () => {
-  logger.info('SIGINT received, shutting down gracefully');
-  process.exit(0);
-});
-
 // Start server if this file is run directly
 if (require.main === module) {
   const server = new TurboAssetServer();
-  server.start();
+  server.start().catch((error) => {
+    logger.error('Failed to start application', error);
+    process.exit(1);
+  });
 }
 
 export default TurboAssetServer;
+

@@ -22,6 +22,11 @@ export const config = {
     jwtExpiresIn: process.env.JWT_EXPIRES_IN || '24h',
     bcryptRounds: parseInt(process.env.BCRYPT_ROUNDS || '12'),
   },
+
+  auth: {
+    jwtSecret: process.env.JWT_SECRET || 'your-jwt-secret-key',
+    jwtExpiresIn: process.env.JWT_EXPIRES_IN || '24h',
+  },
   
   storage: {
     type: process.env.STORAGE_TYPE || 'local',
