@@ -10,16 +10,18 @@ export { PortfolioReportingManager } from './portfolio-management/space-analytic
 export { DocumentLifecycleService } from './document-management/content-operations/document-lifecycle';
 export { EnterpriseConnectorsService } from './integration-management/external-systems/enterprise-connectors';
 export { WorkflowEngineService } from './workflow-management/process-orchestration/workflow-engine';
+export { CommunicationPlatformService } from './communication-management/user-engagement/messaging-platform';
 
 // Legacy flat services (to be gradually refactored)
 // Note: WorkflowEngine is now refactored into WorkflowEngineService domain
+// Note: NotificationService and InternationalizationService are now refactored into CommunicationPlatformService domain
 // Keeping for backward compatibility temporarily
 export { WorkflowEngine } from './WorkflowEngine';
 export { InternationalizationService } from './InternationalizationService';
+export { NotificationService } from './NotificationService';
 export { DocumentService } from './DocumentService';
 export { IntegrationService } from './IntegrationService';
 export { CustomFieldService } from './CustomFieldService';
-export { NotificationService } from './NotificationService';
 export { BulkDataService } from './BulkDataService';
 export { SDKGeneratorService } from './SDKGeneratorService';
 export { APIDocumentationService } from './APIDocumentationService';
