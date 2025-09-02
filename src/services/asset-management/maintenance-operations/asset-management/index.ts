@@ -26,6 +26,17 @@ export { AssetDepreciationService } from './AssetDepreciationService';
 export { AssetAuditService } from './AssetAuditService';
 export { AssetImportExportService } from './AssetImportExportService';
 
+// Import services for internal use
+import { AssetCreateService } from './AssetCreateService';
+import { AssetRetrievalService } from './AssetRetrievalService';
+import { AssetUpdateService } from './AssetUpdateService';
+import { AssetValidationService } from './AssetValidationService';
+import { AssetWorkOrderService } from './AssetWorkOrderService';
+import { AssetNotificationService } from './AssetNotificationService';
+import { AssetDepreciationService } from './AssetDepreciationService';
+import { AssetAuditService } from './AssetAuditService';
+import { AssetImportExportService } from './AssetImportExportService';
+
 // Type definitions
 export * from './types/AssetTypes';
 

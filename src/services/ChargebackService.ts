@@ -811,7 +811,7 @@ export class ChargebackService {
       const { deliveryMethod = 'EMAIL', approvalRequired = false, consolidateByDepartment = true } = options;
 
       // Get chargeback allocations for period
-      const allocations = await this.getChargebackAllocations(organizationId, period);
+      const allocations = await this.getChargebackAllocations(organizationId, period.toISOString());
       
       // Group allocations by department if consolidation is enabled
       const groupedAllocations = consolidateByDepartment
@@ -881,8 +881,8 @@ export class ChargebackService {
         const currentPeriod = comparisonPeriods[i];
         const previousPeriod = comparisonPeriods[i - 1];
 
-        const currentAllocations = await this.getChargebackAllocations(organizationId, currentPeriod);
-        const previousAllocations = await this.getChargebackAllocations(organizationId, previousPeriod);
+        const currentAllocations = await this.getChargebackAllocations(organizationId, currentPeriod.toISOString());
+        const previousAllocations = await this.getChargebackAllocations(organizationId, previousPeriod.toISOString());
 
         // Calculate variances
         const periodVariance = this.calculatePeriodVariance(currentAllocations, previousAllocations);
@@ -1158,6 +1158,40 @@ export class ChargebackService {
   private async getChargebackAlerts(organizationId: string): Promise<any[]> {
     // Implementation would get active alerts
     return [];
+  }
+
+  private async getChargebackAllocations(organizationId: string, period: string): Promise<any> {
+    // Implementation would get chargeback allocations for the period
+    try {
+      const allocations = await prisma.chargebackAllocation.findMany({
+        where: {
+          organizationId,
+          period,
+        },
+        include: {
+          rule: true,
+        },
+      });
+
+      return {
+        period,
+        totalAllocated: allocations.reduce((sum, alloc) => sum + alloc.amount, 0),
+        allocations: allocations.map(alloc => ({
+          id: alloc.id,
+          ruleId: alloc.ruleId,
+          entityId: alloc.entityId,
+          amount: alloc.amount,
+          description: alloc.rule.name,
+        })),
+      };
+    } catch (error) {
+      logger.warn('Failed to get chargeback allocations', { organizationId, period, error });
+      return {
+        period,
+        totalAllocated: 0,
+        allocations: [],
+      };
+    }
   }
 
   private async getPendingApprovals(organizationId: string): Promise<any[]> {
