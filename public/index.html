@@ -195,11 +195,264 @@
         .status-pending {
             background-color: #f39c12;
         }
+        
+        /* Advanced Search Panel Styles */
+        .advanced-search-panel {
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            display: none;
+        }
+        
+        .advanced-search-panel.active {
+            display: block;
+            animation: slideDown 0.3s ease-in-out;
+        }
+        
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .search-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .range-slider {
+            width: 100%;
+            margin: 10px 0;
+        }
+        
+        .range-value {
+            font-weight: bold;
+            color: #3498db;
+        }
+        
+        /* Settings Panel Styles */
+        .settings-panel {
+            position: fixed;
+            top: 0;
+            right: -300px;
+            width: 300px;
+            height: 100vh;
+            background: white;
+            box-shadow: -2px 0 10px rgba(0,0,0,0.1);
+            padding: 20px;
+            transition: right 0.3s ease-in-out;
+            z-index: 1001;
+            overflow-y: auto;
+        }
+        
+        .settings-panel.active {
+            right: 0;
+        }
+        
+        .settings-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            z-index: 1000;
+        }
+        
+        .settings-overlay.active {
+            display: block;
+        }
+        
+        .theme-selector {
+            display: flex;
+            gap: 10px;
+            margin: 10px 0;
+        }
+        
+        .theme-option {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: border-color 0.3s;
+        }
+        
+        .theme-option.selected {
+            border-color: #3498db;
+        }
+        
+        .theme-light { background: #ffffff; border: 1px solid #ddd; }
+        .theme-dark { background: #2c3e50; }
+        .theme-blue { background: #3498db; }
+        
+        /* Quick Actions Toolbar */
+        .quick-actions {
+            position: sticky;
+            top: 0;
+            background: white;
+            border-bottom: 1px solid #ddd;
+            padding: 10px 0;
+            margin-bottom: 20px;
+            z-index: 100;
+        }
+        
+        .quick-actions-grid {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .quick-action-btn {
+            padding: 8px 12px;
+            font-size: 12px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .quick-action-btn:hover {
+            background: #f8f9fa;
+        }
+        
+        .quick-action-btn.active {
+            background: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+        
+        /* Notification System */
+        .notification-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1002;
+            max-width: 300px;
+        }
+        
+        .toast {
+            background: white;
+            border-left: 4px solid #3498db;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            transform: translateX(100%);
+            transition: transform 0.3s ease-in-out;
+        }
+        
+        .toast.show {
+            transform: translateX(0);
+        }
+        
+        .toast.success { border-left-color: #27ae60; }
+        .toast.error { border-left-color: #e74c3c; }
+        .toast.warning { border-left-color: #f39c12; }
+        
+        /* Expandable Sections */
+        .expandable-section {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            overflow: hidden;
+        }
+        
+        .section-header {
+            padding: 15px;
+            background: #f8f9fa;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background-color 0.3s;
+        }
+        
+        .section-header:hover {
+            background: #e9ecef;
+        }
+        
+        .section-content {
+            padding: 0 15px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-in-out, padding 0.3s ease-in-out;
+        }
+        
+        .section-content.expanded {
+            max-height: 300px;
+            padding: 15px;
+        }
+        
+        .expand-icon {
+            transition: transform 0.3s;
+        }
+        
+        .expand-icon.rotated {
+            transform: rotate(180deg);
+        }
     </style>
 </head>
 <body>
+    <!-- Notification Container -->
+    <div class="notification-container" data-cy="notification-container"></div>
+    
+    <!-- Settings Overlay -->
+    <div class="settings-overlay" data-cy="settings-overlay"></div>
+    
+    <!-- Settings Panel -->
+    <div class="settings-panel" data-cy="settings-panel">
+        <h3>Settings</h3>
+        <div class="form-section">
+            <label>Theme:</label>
+            <div class="theme-selector">
+                <div class="theme-option theme-light selected" data-cy="theme-light" data-theme="light"></div>
+                <div class="theme-option theme-dark" data-cy="theme-dark" data-theme="dark"></div>
+                <div class="theme-option theme-blue" data-cy="theme-blue" data-theme="blue"></div>
+            </div>
+        </div>
+        <div class="form-section">
+            <label for="language-select">Language:</label>
+            <select id="language-select" data-cy="language-select">
+                <option value="en">English</option>
+                <option value="es">Spanish</option>
+                <option value="fr">French</option>
+                <option value="de">German</option>
+            </select>
+        </div>
+        <div class="form-section">
+            <label>
+                <input type="checkbox" data-cy="notifications-enabled" checked> Enable Notifications
+            </label>
+        </div>
+        <div class="form-section">
+            <label>
+                <input type="checkbox" data-cy="auto-save-enabled"> Auto-save Changes
+            </label>
+        </div>
+        <button data-cy="save-settings-btn">Save Settings</button>
+        <button data-cy="close-settings-btn" class="btn-secondary">Close</button>
+    </div>
+
     <div class="container">
         <h1 data-cy="page-title">Turbo Asset Management Dashboard</h1>
+        
+        <!-- Quick Actions Toolbar -->
+        <div class="quick-actions" data-cy="quick-actions">
+            <div class="quick-actions-grid">
+                <button class="quick-action-btn" data-cy="recent-items-btn">📋 Recent</button>
+                <button class="quick-action-btn" data-cy="bookmarks-btn">⭐ Bookmarks</button>
+                <button class="quick-action-btn" data-cy="shortcuts-btn">⚡ Shortcuts</button>
+                <button class="quick-action-btn" data-cy="help-btn">❓ Help</button>
+                <button class="quick-action-btn" data-cy="settings-toggle-btn">⚙️ Settings</button>
+            </div>
+        </div>
         
         <!-- Navigation -->
         <div class="navigation" data-cy="navigation">
@@ -270,6 +523,87 @@
                 <button type="button" data-cy="clear-btn" class="btn-secondary">Clear</button>
                 <button type="button" data-cy="advanced-search-btn">Advanced Search</button>
             </form>
+            
+            <!-- Advanced Search Panel -->
+            <div class="advanced-search-panel" data-cy="advanced-search-panel">
+                <h3>Advanced Search Options</h3>
+                <div class="search-row">
+                    <div class="form-group">
+                        <label for="asset-value-min">Min Value:</label>
+                        <input type="range" id="asset-value-min" class="range-slider" min="0" max="100000" value="0" data-cy="value-range-min">
+                        <span class="range-value" data-cy="value-min-display">$0</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="asset-value-max">Max Value:</label>
+                        <input type="range" id="asset-value-max" class="range-slider" min="0" max="100000" value="100000" data-cy="value-range-max">
+                        <span class="range-value" data-cy="value-max-display">$100,000</span>
+                    </div>
+                </div>
+                <div class="search-row">
+                    <div class="form-group">
+                        <label for="date-acquired-from">Acquired From:</label>
+                        <input type="date" id="date-acquired-from" data-cy="date-from-input">
+                    </div>
+                    <div class="form-group">
+                        <label for="date-acquired-to">Acquired To:</label>
+                        <input type="date" id="date-acquired-to" data-cy="date-to-input">
+                    </div>
+                </div>
+                <div class="search-row">
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" data-cy="warranty-filter"> Under Warranty
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" data-cy="critical-filter"> Critical Assets Only
+                        </label>
+                    </div>
+                </div>
+                <div class="search-row">
+                    <button data-cy="apply-advanced-search" class="btn">Apply Advanced Search</button>
+                    <button data-cy="reset-advanced-search" class="btn-secondary">Reset</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Expandable Data Insights Section -->
+        <div class="expandable-section" data-cy="insights-section">
+            <div class="section-header" data-cy="insights-header">
+                <h3>Data Insights & Analytics</h3>
+                <span class="expand-icon" data-cy="insights-expand-icon">▼</span>
+            </div>
+            <div class="section-content" data-cy="insights-content">
+                <div class="dashboard-widgets">
+                    <div class="widget">
+                        <h4>Cost Analysis</h4>
+                        <p>Total Asset Value: <span data-cy="total-value">$2.4M</span></p>
+                        <button data-cy="view-cost-breakdown">View Breakdown</button>
+                    </div>
+                    <div class="widget">
+                        <h4>Utilization Metrics</h4>
+                        <p>Average Utilization: <span data-cy="avg-utilization">78%</span></p>
+                        <button data-cy="view-utilization-details">View Details</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Expandable Reports Section -->
+        <div class="expandable-section" data-cy="reports-section">
+            <div class="section-header" data-cy="reports-header">
+                <h3>Quick Reports</h3>
+                <span class="expand-icon" data-cy="reports-expand-icon">▼</span>
+            </div>
+            <div class="section-content" data-cy="reports-content">
+                <div class="quick-actions-grid">
+                    <button class="quick-action-btn" data-cy="monthly-report-btn">📊 Monthly Report</button>
+                    <button class="quick-action-btn" data-cy="maintenance-report-btn">🔧 Maintenance Report</button>
+                    <button class="quick-action-btn" data-cy="financial-report-btn">💰 Financial Report</button>
+                    <button class="quick-action-btn" data-cy="compliance-report-btn">✅ Compliance Report</button>
+                </div>
+            </div>
         </div>
         
         <!-- Data Table -->
@@ -425,6 +759,178 @@
             
             document.querySelector('[data-cy="refresh-data-btn"]').onclick = function() {
                 alert('Data refreshed');
+            }
+            
+            // Advanced Search Panel
+            const advancedSearchBtn = document.querySelector('[data-cy="advanced-search-btn"]');
+            const advancedSearchPanel = document.querySelector('[data-cy="advanced-search-panel"]');
+            
+            advancedSearchBtn.onclick = function() {
+                advancedSearchPanel.classList.toggle('active');
+                showNotification('Advanced search panel toggled', 'info');
+            }
+            
+            // Range Slider Updates
+            const valueMinSlider = document.querySelector('[data-cy="value-range-min"]');
+            const valueMaxSlider = document.querySelector('[data-cy="value-range-max"]');
+            const valueMinDisplay = document.querySelector('[data-cy="value-min-display"]');
+            const valueMaxDisplay = document.querySelector('[data-cy="value-max-display"]');
+            
+            valueMinSlider.oninput = function() {
+                valueMinDisplay.textContent = '$' + parseInt(this.value).toLocaleString();
+            }
+            
+            valueMaxSlider.oninput = function() {
+                valueMaxDisplay.textContent = '$' + parseInt(this.value).toLocaleString();
+            }
+            
+            // Advanced Search Actions
+            document.querySelector('[data-cy="apply-advanced-search"]').onclick = function() {
+                showNotification('Advanced search applied successfully', 'success');
+            }
+            
+            document.querySelector('[data-cy="reset-advanced-search"]').onclick = function() {
+                valueMinSlider.value = 0;
+                valueMaxSlider.value = 100000;
+                valueMinDisplay.textContent = '$0';
+                valueMaxDisplay.textContent = '$100,000';
+                document.querySelector('[data-cy="date-from-input"]').value = '';
+                document.querySelector('[data-cy="date-to-input"]').value = '';
+                document.querySelector('[data-cy="warranty-filter"]').checked = false;
+                document.querySelector('[data-cy="critical-filter"]').checked = false;
+                showNotification('Advanced search reset', 'info');
+            }
+            
+            // Settings Panel
+            const settingsToggleBtn = document.querySelector('[data-cy="settings-toggle-btn"]');
+            const settingsPanel = document.querySelector('[data-cy="settings-panel"]');
+            const settingsOverlay = document.querySelector('[data-cy="settings-overlay"]');
+            const closeSettingsBtn = document.querySelector('[data-cy="close-settings-btn"]');
+            
+            settingsToggleBtn.onclick = function() {
+                settingsPanel.classList.add('active');
+                settingsOverlay.classList.add('active');
+            }
+            
+            closeSettingsBtn.onclick = function() {
+                settingsPanel.classList.remove('active');
+                settingsOverlay.classList.remove('active');
+            }
+            
+            settingsOverlay.onclick = function() {
+                settingsPanel.classList.remove('active');
+                settingsOverlay.classList.remove('active');
+            }
+            
+            // Theme Selector
+            document.querySelectorAll('.theme-option').forEach(option => {
+                option.onclick = function() {
+                    document.querySelectorAll('.theme-option').forEach(opt => opt.classList.remove('selected'));
+                    this.classList.add('selected');
+                    showNotification('Theme changed to ' + this.dataset.theme, 'success');
+                }
+            });
+            
+            // Settings Actions
+            document.querySelector('[data-cy="save-settings-btn"]').onclick = function() {
+                showNotification('Settings saved successfully', 'success');
+            }
+            
+            document.querySelector('[data-cy="notifications-enabled"]').onchange = function() {
+                showNotification('Notifications ' + (this.checked ? 'enabled' : 'disabled'), 'info');
+            }
+            
+            document.querySelector('[data-cy="auto-save-enabled"]').onchange = function() {
+                showNotification('Auto-save ' + (this.checked ? 'enabled' : 'disabled'), 'info');
+            }
+            
+            document.querySelector('[data-cy="language-select"]').onchange = function() {
+                showNotification('Language changed to ' + this.options[this.selectedIndex].text, 'info');
+            }
+            
+            // Quick Actions
+            document.querySelector('[data-cy="recent-items-btn"]').onclick = function() {
+                this.classList.toggle('active');
+                showNotification('Recent items toggled', 'info');
+            }
+            
+            document.querySelector('[data-cy="bookmarks-btn"]').onclick = function() {
+                this.classList.toggle('active');
+                showNotification('Bookmarks toggled', 'info');
+            }
+            
+            document.querySelector('[data-cy="shortcuts-btn"]').onclick = function() {
+                this.classList.toggle('active');
+                showNotification('Shortcuts toggled', 'info');
+            }
+            
+            document.querySelector('[data-cy="help-btn"]').onclick = function() {
+                showNotification('Help panel would open here', 'info');
+            }
+            
+            // Expandable Sections
+            document.querySelector('[data-cy="insights-header"]').onclick = function() {
+                const content = document.querySelector('[data-cy="insights-content"]');
+                const icon = document.querySelector('[data-cy="insights-expand-icon"]');
+                content.classList.toggle('expanded');
+                icon.classList.toggle('rotated');
+                icon.textContent = content.classList.contains('expanded') ? '▲' : '▼';
+            }
+            
+            document.querySelector('[data-cy="reports-header"]').onclick = function() {
+                const content = document.querySelector('[data-cy="reports-content"]');
+                const icon = document.querySelector('[data-cy="reports-expand-icon"]');
+                content.classList.toggle('expanded');
+                icon.classList.toggle('rotated');
+                icon.textContent = content.classList.contains('expanded') ? '▲' : '▼';
+            }
+            
+            // Report Buttons
+            document.querySelector('[data-cy="monthly-report-btn"]').onclick = function() {
+                showNotification('Generating monthly report...', 'info');
+            }
+            
+            document.querySelector('[data-cy="maintenance-report-btn"]').onclick = function() {
+                showNotification('Generating maintenance report...', 'info');
+            }
+            
+            document.querySelector('[data-cy="financial-report-btn"]').onclick = function() {
+                showNotification('Generating financial report...', 'info');
+            }
+            
+            document.querySelector('[data-cy="compliance-report-btn"]').onclick = function() {
+                showNotification('Generating compliance report...', 'info');
+            }
+            
+            // Insights Buttons
+            document.querySelector('[data-cy="view-cost-breakdown"]').onclick = function() {
+                showNotification('Opening cost breakdown analysis...', 'info');
+            }
+            
+            document.querySelector('[data-cy="view-utilization-details"]').onclick = function() {
+                showNotification('Opening utilization details...', 'info');
+            }
+            
+            // Notification System
+            function showNotification(message, type = 'info') {
+                const container = document.querySelector('[data-cy="notification-container"]');
+                const toast = document.createElement('div');
+                toast.className = `toast ${type}`;
+                toast.innerHTML = `
+                    <div style="font-weight: bold;">${type.charAt(0).toUpperCase() + type.slice(1)}</div>
+                    <div>${message}</div>
+                `;
+                
+                container.appendChild(toast);
+                
+                // Trigger animation
+                setTimeout(() => toast.classList.add('show'), 100);
+                
+                // Auto remove after 3 seconds
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                    setTimeout(() => container.removeChild(toast), 300);
+                }, 3000);
             }
         });
     </script>
