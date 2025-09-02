@@ -25,12 +25,12 @@ export const TENANT_BRANDING_CONSTANTS = {
     FONT_SIZE: '14px',
     LINE_HEIGHT: '1.5',
     HEADING_SIZES: {
-      H1: '2.5rem',
-      H2: '2rem',
-      H3: '1.75rem',
-      H4: '1.5rem',
-      H5: '1.25rem',
-      H6: '1rem',
+      h1: '2.5rem',
+      h2: '2rem',
+      h3: '1.75rem',
+      h4: '1.5rem',
+      h5: '1.25rem',
+      h6: '1rem',
     },
   },
 

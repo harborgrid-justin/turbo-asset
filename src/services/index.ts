@@ -35,15 +35,23 @@ export * from './business-operations/project-management/business-coordination/co
 
 // Legacy flat services (to be gradually refactored)
 export { WorkflowEngine } from './WorkflowEngine';
-export { InternationalizationService } from './InternationalizationService';
 export { DocumentService } from './DocumentService';
 export { IntegrationService } from './IntegrationService';
-export { CustomFieldService } from './CustomFieldService';
 export { NotificationService } from './NotificationService';
 export { BulkDataService } from './BulkDataService';
 export { SDKGeneratorService } from './SDKGeneratorService';
 export { APIDocumentationService } from './APIDocumentationService';
+
+// Integration services that have been moved to domains but kept for backward compatibility
+export { Microsoft365IntegrationService } from './Microsoft365IntegrationService';
+export { SalesforceIntegrationService } from './SalesforceIntegrationService';
+export { CalendarIntegrationService } from './CalendarIntegrationService';
+export { Phase3IntegrationService } from './Phase3IntegrationService';
 export { APIManagementService } from './APIManagementService';
+
+// Legacy services that need to be accessed directly (kept for backward compatibility during transition)
+export { InternationalizationService } from './InternationalizationService';
+export { CustomFieldService } from './CustomFieldService';
 
 // Legacy services (moved to domain services)
 // BudgetForecastService -> FinancialOperationsManager ✅
@@ -63,9 +71,9 @@ export { APIManagementService } from './APIManagementService';
 // EmergencyPlanningService -> ComplianceManagementOperationsManager ✅
 // Microsoft365IntegrationService -> ExternalIntegrationSystemsManager ✅
 // SalesforceIntegrationService -> ExternalIntegrationSystemsManager ✅
-// CalendarIntegrationService -> ExternalIntegrationSystemsManager (partial)
-// Phase3IntegrationService -> ExternalIntegrationSystemsManager (partial)
-// APIManagementService -> ExternalIntegrationSystemsManager (partial)
+// CalendarIntegrationService -> ExternalIntegrationSystemsManager ✅
+// Phase3IntegrationService -> ExternalIntegrationSystemsManager ✅
+// APIManagementService -> ExternalIntegrationSystemsManager ✅
 // IoTDeviceService -> InfrastructureTechnologyOperationsManager.iotDeviceService ✅
 // EnergyManagementService -> InfrastructureTechnologyOperationsManager.energyManagementService ✅
 // CADIntegrationService -> InfrastructureTechnologyOperationsManager ✅

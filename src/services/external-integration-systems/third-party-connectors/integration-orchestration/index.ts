@@ -7,7 +7,7 @@
  */
 
 import { EventEmitter } from 'events';
-import { logger } from '../../../../../config/logger';
+import { logger } from '../../../../config/logger';
 
 // Import sub-services
 import { Microsoft365IntegrationService } from './Microsoft365IntegrationService';
