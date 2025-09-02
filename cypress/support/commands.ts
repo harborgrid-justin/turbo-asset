@@ -14,6 +14,7 @@ declare global {
     interface Chainable {
       login(email: string, password: string): Chainable<void>
       dataCy(value: string): Chainable<JQuery<HTMLElement>>
+      tab(): Chainable<JQuery<HTMLElement>>
     }
   }
 }
@@ -33,6 +34,19 @@ Cypress.Commands.add('login', (email: string, password: string) => {
 
 Cypress.Commands.add('dataCy', (value: string) => {
   return cy.get(`[data-cy=${value}]`)
+})
+
+Cypress.Commands.add('tab', { prevSubject: 'optional' }, (subject) => {
+  return cy.wrap(subject).trigger('keydown', { keyCode: 9, key: 'Tab' }).then(() => {
+    // Move focus to next focusable element
+    cy.focused().then($el => {
+      const focusableElements = Cypress.$(':focusable:visible');
+      const currentIndex = focusableElements.index($el);
+      if (currentIndex >= 0 && currentIndex < focusableElements.length - 1) {
+        focusableElements.eq(currentIndex + 1).focus();
+      }
+    });
+  });
 })
 
 export {}

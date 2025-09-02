@@ -40,9 +40,15 @@ describe('Asset Management Interactive Elements', () => {
 
     it('should validate required fields', () => {
       cy.dataCy('submit-asset-btn').click();
-      cy.dataCy('asset-name-input').should('be.invalid');
-      cy.dataCy('asset-category-select').should('be.invalid');
-      cy.dataCy('asset-location-select').should('be.invalid');
+      cy.dataCy('asset-name-input').then($el => {
+        expect($el[0].validity.valid).to.be.false;
+      });
+      cy.dataCy('asset-category-select').then($el => {
+        expect($el[0].validity.valid).to.be.false;
+      });
+      cy.dataCy('asset-location-select').then($el => {
+        expect($el[0].validity.valid).to.be.false;
+      });
     });
 
     it('should populate and submit form correctly', () => {
@@ -391,7 +397,7 @@ describe('Asset Management Interactive Elements', () => {
 
     it('should support keyboard navigation', () => {
       cy.dataCy('asset-name-input').focus().should('be.focused');
-      cy.dataCy('asset-name-input').tab();
+      cy.dataCy('asset-name-input').type('{tab}');
       cy.dataCy('asset-category-select').should('be.focused');
     });
   });
