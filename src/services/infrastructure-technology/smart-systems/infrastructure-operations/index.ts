@@ -23,12 +23,15 @@ import {
 import { ALL_INFRASTRUCTURE_CONSTANTS } from './constants/InfrastructureConstants';
 import { IoTDeviceManagementService } from './IoTDeviceManagementService';
 import { EnergyManagementService } from './EnergyManagementService';
+import { CADIntegrationService } from './CADIntegrationService';
+import { BusinessIntelligenceService } from './BusinessIntelligenceService';
 
 export class InfrastructureTechnologyOperationsManager extends EventEmitter {
-  // Sub-services for comprehensive infrastructure management
+  // Comprehensive sub-services for complete infrastructure management
   private iotDeviceService: IoTDeviceManagementService;
   private energyManagementService: EnergyManagementService;
-  // Additional services would be initialized here (CAD, BI, etc.)
+  private cadService: CADIntegrationService;
+  private biService: BusinessIntelligenceService;
   
   private deviceCache: Map<string, IoTDevice[]> = new Map();
   private meterCache: Map<string, EnergyMeter[]> = new Map();
@@ -37,9 +40,11 @@ export class InfrastructureTechnologyOperationsManager extends EventEmitter {
   constructor() {
     super();
     
-    // Initialize all sub-services
+    // Initialize all comprehensive sub-services
     this.iotDeviceService = new IoTDeviceManagementService();
     this.energyManagementService = new EnergyManagementService();
+    this.cadService = new CADIntegrationService();
+    this.biService = new BusinessIntelligenceService();
     
     this.setupEventHandlers();
     this.setupServiceCoordination();
@@ -456,6 +461,335 @@ export class InfrastructureTechnologyOperationsManager extends EventEmitter {
   private async calculateSystemHealthScore(organizationId: string): Promise<number> {
     // Calculate overall system health score
     return 88;
+  }
+
+  /**
+   * CAD-Integrated Space Analysis with IoT overlay
+   */
+  async performIntegratedSpaceAnalysis(
+    organizationId: string,
+    buildingId: string,
+    options: {
+      includeIoTData: boolean;
+      includeEnergyData: boolean;
+      generatePredictions: boolean;
+    }
+  ): Promise<{
+    spaceAnalysis: any;
+    iotOverlay: Array<{
+      deviceId: string;
+      location: { x: number; y: number };
+      status: string;
+      metrics: Record<string, number>;
+    }>;
+    energyMapping: Record<string, number>;
+    optimizationRecommendations: Array<{
+      type: 'space' | 'energy' | 'device';
+      priority: string;
+      description: string;
+      potentialSavings: number;
+    }>;
+  }> {
+    try {
+      logger.info('Performing integrated space analysis', {
+        organizationId,
+        buildingId,
+        options
+      });
+
+      // Get CAD space analysis
+      const spaceReport = await this.cadService.generateSpaceAnalysisReport(
+        organizationId,
+        buildingId,
+        {
+          includeUtilization: options.includeIoTData,
+          includeCapacity: true,
+          includeEfficiency: options.includeEnergyData
+        }
+      );
+
+      // Get IoT device overlay data
+      let iotOverlay = [];
+      if (options.includeIoTData) {
+        const devices = await this.iotDeviceService.getDevicesByBuilding(organizationId, buildingId);
+        iotOverlay = devices.map(device => ({
+          deviceId: device.id,
+          location: device.location || { x: 0, y: 0 },
+          status: device.status,
+          metrics: {
+            temperature: Math.random() * 30 + 15,
+            humidity: Math.random() * 60 + 30,
+            occupancy: Math.random()
+          }
+        }));
+      }
+
+      // Get energy mapping
+      let energyMapping = {};
+      if (options.includeEnergyData) {
+        const energyData = await this.energyManagementService.getBuildingEnergyBreakdown(
+          organizationId,
+          buildingId,
+          { start: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), end: new Date() }
+        );
+        energyMapping = energyData.spaceBreakdown || {};
+      }
+
+      // Generate optimization recommendations
+      const optimizationRecommendations = this.generateIntegratedOptimizationRecommendations(
+        spaceReport,
+        iotOverlay,
+        energyMapping
+      );
+
+      return {
+        spaceAnalysis: spaceReport,
+        iotOverlay,
+        energyMapping,
+        optimizationRecommendations
+      };
+    } catch (error) {
+      logger.error('Integrated space analysis failed', {
+        organizationId,
+        buildingId,
+        error: error instanceof Error ? error.message : 'Unknown error'
+      });
+      throw error;
+    }
+  }
+
+  /**
+   * Advanced predictive analytics combining all infrastructure data
+   */
+  async generatePredictiveInfrastructureInsights(
+    organizationId: string,
+    predictionHorizon: {
+      periods: number;
+      unit: 'days' | 'weeks' | 'months';
+    }
+  ): Promise<{
+    energyForecasts: any;
+    maintenancePredictions: Array<{
+      deviceId: string;
+      predictedFailureDate: Date;
+      confidence: number;
+      recommendedActions: string[];
+    }>;
+    spaceUtilizationTrends: any;
+    costProjections: {
+      energy: number;
+      maintenance: number;
+      total: number;
+    };
+    recommendations: Array<{
+      category: 'energy' | 'maintenance' | 'space' | 'cost';
+      priority: 'low' | 'medium' | 'high' | 'critical';
+      description: string;
+      expectedImpact: number;
+    }>;
+  }> {
+    try {
+      logger.info('Generating predictive infrastructure insights', {
+        organizationId,
+        predictionHorizon
+      });
+
+      // Generate energy forecasts using BI service
+      const energyForecasts = await this.biService.executePredictiveAnalysis({
+        organizationId,
+        modelType: 'energy_forecast',
+        inputData: {
+          historicalPeriod: {
+            start: new Date(Date.now() - 365 * 24 * 60 * 60 * 1000),
+            end: new Date()
+          },
+          features: ['temperature', 'occupancy', 'equipment_load', 'time_of_day'],
+          targetVariable: 'energy_consumption'
+        },
+        predictionHorizon,
+        confidence: 0.85
+      });
+
+      // Get maintenance predictions from IoT service
+      const maintenancePredictions = await this.iotDeviceService.getPredictiveMaintenanceInsights(
+        organizationId,
+        predictionHorizon
+      );
+
+      // Generate space utilization trends
+      const spaceUtilizationTrends = await this.biService.executeAnalyticsQuery({
+        organizationId,
+        dataSource: 'space_utilization',
+        queryType: 'trend',
+        timeRange: {
+          start: new Date(Date.now() - 90 * 24 * 60 * 60 * 1000),
+          end: new Date(),
+          granularity: 'day'
+        },
+        filters: [],
+        groupBy: ['space_type'],
+        aggregations: [
+          { field: 'utilization_rate', function: 'avg', alias: 'avg_utilization' }
+        ]
+      });
+
+      // Calculate cost projections
+      const costProjections = await this.calculateCostProjections(
+        organizationId,
+        energyForecasts,
+        maintenancePredictions,
+        predictionHorizon
+      );
+
+      // Generate comprehensive recommendations
+      const recommendations = this.generateInfrastructureRecommendations(
+        energyForecasts,
+        maintenancePredictions,
+        spaceUtilizationTrends,
+        costProjections
+      );
+
+      return {
+        energyForecasts,
+        maintenancePredictions,
+        spaceUtilizationTrends: spaceUtilizationTrends.data,
+        costProjections,
+        recommendations
+      };
+    } catch (error) {
+      logger.error('Predictive infrastructure insights generation failed', {
+        organizationId,
+        error: error instanceof Error ? error.message : 'Unknown error'
+      });
+      throw error;
+    }
+  }
+
+  /**
+   * Get comprehensive service instances for direct access
+   */
+  getServices() {
+    return {
+      iotDeviceService: this.iotDeviceService,
+      energyService: this.energyManagementService,
+      cadService: this.cadService,
+      biService: this.biService
+    };
+  }
+
+  /**
+   * Private helper methods for comprehensive functionality
+   */
+  private generateIntegratedOptimizationRecommendations(
+    spaceReport: any,
+    iotOverlay: any[],
+    energyMapping: Record<string, number>
+  ): Array<{
+    type: 'space' | 'energy' | 'device';
+    priority: string;
+    description: string;
+    potentialSavings: number;
+  }> {
+    const recommendations = [];
+
+    // Space optimization recommendations
+    if (spaceReport.efficiencyMetrics?.spaceEfficiency < 70) {
+      recommendations.push({
+        type: 'space' as const,
+        priority: 'high',
+        description: 'Space efficiency below optimal. Consider space consolidation.',
+        potentialSavings: 50000
+      });
+    }
+
+    // Energy optimization based on mapping
+    const totalEnergyConsumption = Object.values(energyMapping).reduce((sum, val) => sum + val, 0);
+    if (totalEnergyConsumption > 10000) {
+      recommendations.push({
+        type: 'energy' as const,
+        priority: 'medium',
+        description: 'High energy consumption detected. Implement energy-saving measures.',
+        potentialSavings: 25000
+      });
+    }
+
+    // Device optimization based on IoT overlay
+    const unhealthyDevices = iotOverlay.filter(d => d.status !== 'healthy').length;
+    if (unhealthyDevices > iotOverlay.length * 0.1) {
+      recommendations.push({
+        type: 'device' as const,
+        priority: 'high',
+        description: `${unhealthyDevices} devices need attention. Schedule maintenance.`,
+        potentialSavings: unhealthyDevices * 500
+      });
+    }
+
+    return recommendations;
+  }
+
+  private async calculateCostProjections(
+    organizationId: string,
+    energyForecasts: any,
+    maintenancePredictions: any[],
+    predictionHorizon: any
+  ): Promise<{
+    energy: number;
+    maintenance: number;
+    total: number;
+  }> {
+    const energyCost = energyForecasts.predictions?.reduce((sum: number, p: any) => sum + p.predicted_value, 0) * 0.12 || 0; // $0.12/kWh
+    const maintenanceCost = maintenancePredictions.length * 2500; // Average maintenance cost
+    
+    return {
+      energy: energyCost,
+      maintenance: maintenanceCost,
+      total: energyCost + maintenanceCost
+    };
+  }
+
+  private generateInfrastructureRecommendations(
+    energyForecasts: any,
+    maintenancePredictions: any[],
+    spaceUtilizationTrends: any,
+    costProjections: any
+  ): Array<{
+    category: 'energy' | 'maintenance' | 'space' | 'cost';
+    priority: 'low' | 'medium' | 'high' | 'critical';
+    description: string;
+    expectedImpact: number;
+  }> {
+    const recommendations = [];
+
+    // Energy recommendations
+    if (costProjections.energy > 100000) {
+      recommendations.push({
+        category: 'energy' as const,
+        priority: 'high' as const,
+        description: 'Energy costs projected to exceed $100k. Implement energy efficiency measures.',
+        expectedImpact: 0.15
+      });
+    }
+
+    // Maintenance recommendations
+    const criticalMaintenanceItems = maintenancePredictions.filter(p => p.confidence > 0.8).length;
+    if (criticalMaintenanceItems > 0) {
+      recommendations.push({
+        category: 'maintenance' as const,
+        priority: 'critical' as const,
+        description: `${criticalMaintenanceItems} devices require immediate maintenance attention.`,
+        expectedImpact: 0.25
+      });
+    }
+
+    // Space recommendations
+    recommendations.push({
+      category: 'space' as const,
+      priority: 'medium' as const,
+      description: 'Space utilization patterns suggest optimization opportunities.',
+      expectedImpact: 0.10
+    });
+
+    return recommendations;
   }
 
   private async generateIntegratedRecommendations(

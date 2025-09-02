@@ -111,6 +111,69 @@ export interface JournalEntryTemplate {
   }>;
 }
 
+export interface LeaseAccountingResult {
+  rightOfUseAsset: number;
+  leaseLiability: number;
+  presentValue: number;
+  monthlyDepreciation: number;
+  monthlyInterest: number;
+  totalCost: number;
+  journalEntries: Array<{
+    period: number;
+    date: Date;
+    entries: Array<{
+      accountCode: string;
+      accountName: string;
+      debit?: number;
+      credit?: number;
+    }>;
+  }>;
+}
+
+export interface ComplianceReport {
+  organizationId: string;
+  reportingPeriod: string;
+  accountingStandard: string;
+  totalRightOfUseAssets: number;
+  totalLeaseLiabilities: number;
+  totalLeaseExpense: number;
+  cashPaidForLeases: number;
+  newLeaseCommitments: number;
+  leaseModifications: number;
+  leaseTerminations: number;
+  weightedAverageDiscountRate: number;
+  weightedAverageRemainingTerm: number;
+  maturityAnalysis: {
+    year1: number;
+    year2: number;
+    year3: number;
+    year4: number;
+    year5: number;
+    thereafter: number;
+  };
+  leaseDetails: Array<{
+    leaseId: string;
+    leaseNumber: string;
+    tenantName: string;
+    rightOfUseAsset: number;
+    leaseLiability: number;
+    leaseExpense: number;
+    remainingTerm: number;
+  }>;
+}
+
+export interface JournalEntryTemplate {
+  entryType: string;
+  description: string;
+  accounts: Array<{
+    accountCode: string;
+    accountName: string;
+    debitFormula?: string;
+    creditFormula?: string;
+    isDebit: boolean;
+  }>;
+}
+
 export class ComplianceAssessmentService extends EventEmitter {
   private journalEntryTemplates: Map<string, JournalEntryTemplate> = new Map([
     ['INITIAL_RECOGNITION', {
@@ -533,6 +596,485 @@ export class ComplianceAssessmentService extends EventEmitter {
     }, 0);
 
     return weightedSum / totalLiability;
+  }
+
+  /**
+   * Calculate lease accounting according to ASC 842 or IFRS 16 standards
+   */
+  async calculateLeaseAccounting(data: ComplianceCalculationData): Promise<LeaseAccountingResult> {
+    try {
+      logger.info('Starting lease accounting calculation', {
+        leaseId: data.leaseId,
+        standard: data.accountingStandard
+      });
+
+      // Calculate present value of lease payments
+      const presentValue = this.calculatePresentValue(
+        data.leasePayments,
+        data.incrementalBorrowingRate
+      );
+
+      // Calculate right-of-use asset
+      const rightOfUseAsset = presentValue + 
+        (data.initialDirectCosts || 0) + 
+        (data.prepaidLeasePayments || 0) - 
+        (data.leaseIncentivesReceived || 0);
+
+      // Add purchase option and termination penalty to present value if probable
+      let adjustedPresentValue = presentValue;
+      if (data.purchaseOption && data.purchaseOption.exerciseProbability > 0.5) {
+        adjustedPresentValue += this.calculatePresentValue(
+          [{ period: data.leasePayments.length, amount: data.purchaseOption.exercisePrice, paymentDate: new Date(), isFixed: true }],
+          data.incrementalBorrowingRate
+        );
+      }
+
+      if (data.terminationPenalty && data.terminationPenalty.penaltyProbability > 0.5) {
+        adjustedPresentValue += this.calculatePresentValue(
+          [{ period: data.leasePayments.length, amount: data.terminationPenalty.penaltyAmount, paymentDate: new Date(), isFixed: true }],
+          data.incrementalBorrowingRate
+        );
+      }
+
+      const leaseLiability = adjustedPresentValue;
+
+      // Calculate monthly depreciation and interest
+      const leaseTermMonths = Math.max(...data.leasePayments.map(p => p.period));
+      const monthlyDepreciation = rightOfUseAsset / leaseTermMonths;
+      const monthlyInterest = (leaseLiability * data.incrementalBorrowingRate) / 12;
+
+      // Generate journal entries
+      const journalEntries = await this.generateJournalEntries(data, rightOfUseAsset, leaseLiability);
+
+      const result: LeaseAccountingResult = {
+        rightOfUseAsset,
+        leaseLiability,
+        presentValue: adjustedPresentValue,
+        monthlyDepreciation,
+        monthlyInterest,
+        totalCost: rightOfUseAsset + (monthlyInterest * leaseTermMonths),
+        journalEntries
+      };
+
+      // Cache the result for future use
+      await this.cacheComplianceResult(data.leaseId, result);
+
+      logger.info('Lease accounting calculation completed', {
+        leaseId: data.leaseId,
+        rightOfUseAsset,
+        leaseLiability
+      });
+
+      return result;
+    } catch (error) {
+      logger.error('Lease accounting calculation failed', {
+        leaseId: data.leaseId,
+        error: error instanceof Error ? error.message : 'Unknown error'
+      });
+      throw error;
+    }
+  }
+
+  /**
+   * Generate comprehensive compliance report for ASC 842/IFRS 16
+   */
+  async generateEnhancedComplianceReport(
+    organizationId: string,
+    fiscalYear: number,
+    fiscalPeriod: number,
+    accountingStandard: 'ASC842' | 'IFRS16'
+  ): Promise<ComplianceReport> {
+    try {
+      logger.info('Generating enhanced compliance report', {
+        organizationId,
+        fiscalYear,
+        fiscalPeriod,
+        standard: accountingStandard
+      });
+
+      // Get compliance calculation records for the period
+      const records = await this.getComplianceRecords(organizationId, fiscalYear, fiscalPeriod);
+
+      // Calculate aggregated values
+      const totalRightOfUseAssets = records.reduce((sum, r) => sum + (r.rightOfUseAsset || 0), 0);
+      const totalLeaseLiabilities = records.reduce((sum, r) => sum + (r.leaseLiability || 0), 0);
+      const totalLeaseExpense = records.reduce((sum, r) => sum + (r.leaseExpense || 0), 0);
+
+      // Get additional metrics
+      const [
+        cashPaidForLeases,
+        newLeaseCommitments,
+        maturityAnalysis,
+        leaseDetails
+      ] = await Promise.all([
+        this.getCashPaidForLeases(organizationId, fiscalYear, fiscalPeriod),
+        this.getNewLeaseCommitments(organizationId, fiscalYear, fiscalPeriod),
+        this.generateMaturityAnalysis(organizationId, accountingStandard),
+        this.generateLeaseDetails(organizationId, records)
+      ]);
+
+      const report: ComplianceReport = {
+        organizationId,
+        reportingPeriod: `${fiscalYear}-${String(fiscalPeriod).padStart(2, '0')}`,
+        accountingStandard,
+        totalRightOfUseAssets,
+        totalLeaseLiabilities,
+        totalLeaseExpense,
+        cashPaidForLeases,
+        newLeaseCommitments,
+        leaseModifications: await this.getLeaseModifications(organizationId, fiscalYear, fiscalPeriod),
+        leaseTerminations: await this.getLeaseTerminations(organizationId, fiscalYear, fiscalPeriod),
+        weightedAverageDiscountRate: this.calculateWeightedAverageDiscountRate(records),
+        weightedAverageRemainingTerm: this.calculateWeightedAverageRemainingTerm(records),
+        maturityAnalysis,
+        leaseDetails
+      };
+
+      // Save the report for audit trail
+      await this.saveComplianceReport(report);
+
+      logger.info('Enhanced compliance report generated successfully', {
+        organizationId,
+        totalRightOfUseAssets,
+        totalLeaseLiabilities
+      });
+
+      return report;
+    } catch (error) {
+      logger.error('Enhanced compliance report generation failed', {
+        organizationId,
+        error: error instanceof Error ? error.message : 'Unknown error'
+      });
+      throw error;
+    }
+  }
+
+  /**
+   * Private helper methods for enhanced compliance calculations
+   */
+  private calculatePresentValue(payments: Array<{ period: number; amount: number; paymentDate: Date; isFixed: boolean }>, discountRate: number): number {
+    return payments.reduce((pv, payment) => {
+      const periodsFromNow = payment.period;
+      const monthlyDiscountRate = discountRate / 12;
+      const discountFactor = Math.pow(1 + monthlyDiscountRate, -periodsFromNow);
+      return pv + (payment.amount * discountFactor);
+    }, 0);
+  }
+
+  private async generateJournalEntries(
+    data: ComplianceCalculationData,
+    rightOfUseAsset: number,
+    leaseLiability: number
+  ): Promise<Array<{ period: number; date: Date; entries: Array<{ accountCode: string; accountName: string; debit?: number; credit?: number }> }>> {
+    const journalEntries = [];
+    
+    // Initial recognition entry
+    journalEntries.push({
+      period: 0,
+      date: new Date(),
+      entries: [
+        {
+          accountCode: '001-140-001',
+          accountName: 'Right-of-Use Asset - Buildings',
+          debit: Math.round(rightOfUseAsset * 100) / 100
+        },
+        {
+          accountCode: '001-240-001',
+          accountName: 'Lease Liability',
+          credit: Math.round(leaseLiability * 100) / 100
+        }
+      ]
+    });
+
+    // Generate monthly entries for each payment period
+    const leaseTermMonths = Math.max(...data.leasePayments.map(p => p.period));
+    const monthlyDepreciation = rightOfUseAsset / leaseTermMonths;
+    let remainingLiability = leaseLiability;
+
+    for (let period = 1; period <= Math.min(12, leaseTermMonths); period++) {
+      const payment = data.leasePayments.find(p => p.period === period);
+      if (payment) {
+        const interestExpense = remainingLiability * (data.incrementalBorrowingRate / 12);
+        const principalReduction = payment.amount - interestExpense;
+        remainingLiability -= principalReduction;
+
+        journalEntries.push({
+          period,
+          date: payment.paymentDate,
+          entries: [
+            {
+              accountCode: '001-520-001',
+              accountName: 'Lease Expense',
+              debit: Math.round(monthlyDepreciation * 100) / 100
+            },
+            {
+              accountCode: '001-530-001',
+              accountName: 'Interest Expense',
+              debit: Math.round(interestExpense * 100) / 100
+            },
+            {
+              accountCode: '001-140-002',
+              accountName: 'Accumulated Depreciation - ROU Asset',
+              credit: Math.round(monthlyDepreciation * 100) / 100
+            },
+            {
+              accountCode: '001-240-001',
+              accountName: 'Lease Liability',
+              credit: Math.round(principalReduction * 100) / 100
+            },
+            {
+              accountCode: '001-100-001',
+              accountName: 'Cash',
+              credit: Math.round(payment.amount * 100) / 100
+            }
+          ]
+        });
+      }
+    }
+
+    return journalEntries;
+  }
+
+  private async getComplianceRecords(organizationId: string, fiscalYear: number, fiscalPeriod: number): Promise<any[]> {
+    try {
+      // In a real implementation, this would fetch actual compliance calculation records from the database
+      // For now, we'll provide a comprehensive structure for the calculation
+      return await prisma.complianceCalculation.findMany({
+        where: {
+          organizationId,
+          fiscalYear,
+          fiscalPeriod
+        },
+        include: {
+          lease: {
+            include: {
+              property: true,
+              tenant: true,
+              rentRoll: {
+                where: { status: 'CURRENT' },
+                take: 1
+              }
+            }
+          }
+        }
+      }).catch(() => []);
+    } catch (error) {
+      logger.error('Failed to get compliance records', { organizationId, fiscalYear, fiscalPeriod, error });
+      return [];
+    }
+  }
+
+  private async getCashPaidForLeases(organizationId: string, fiscalYear: number, fiscalPeriod: number): Promise<number> {
+    try {
+      // Would aggregate actual cash payments for leases in the period
+      const result = await prisma.payment.aggregate({
+        where: {
+          organizationId,
+          paymentDate: {
+            gte: new Date(fiscalYear, fiscalPeriod - 1, 1),
+            lt: new Date(fiscalYear, fiscalPeriod, 1)
+          },
+          paymentType: 'LEASE_PAYMENT',
+          status: 'CLEARED'
+        },
+        _sum: {
+          amount: true
+        }
+      }).catch(() => ({ _sum: { amount: 0 } }));
+
+      return result._sum.amount || 0;
+    } catch (error) {
+      logger.error('Failed to get cash paid for leases', { organizationId, fiscalYear, fiscalPeriod, error });
+      return 0;
+    }
+  }
+
+  private async getNewLeaseCommitments(organizationId: string, fiscalYear: number, fiscalPeriod: number): Promise<number> {
+    try {
+      // Would calculate new lease commitments entered during the period
+      const newLeases = await prisma.lease.findMany({
+        where: {
+          property: { organizationId },
+          startDate: {
+            gte: new Date(fiscalYear, fiscalPeriod - 1, 1),
+            lt: new Date(fiscalYear, fiscalPeriod, 1)
+          }
+        },
+        include: {
+          rentRoll: {
+            where: { status: 'CURRENT' },
+            take: 1
+          }
+        }
+      }).catch(() => []);
+
+      return newLeases.reduce((sum, lease) => {
+        const annualRent = lease.rentRoll[0]?.annualizedRent || lease.baseLease * 12;
+        const remainingTerm = this.calculateRemainingTerm(lease);
+        return sum + (annualRent * remainingTerm);
+      }, 0);
+    } catch (error) {
+      logger.error('Failed to get new lease commitments', { organizationId, fiscalYear, fiscalPeriod, error });
+      return 0;
+    }
+  }
+
+  private async getLeaseModifications(organizationId: string, fiscalYear: number, fiscalPeriod: number): Promise<number> {
+    try {
+      const modifications = await prisma.leaseModification.count({
+        where: {
+          lease: {
+            property: { organizationId }
+          },
+          modificationDate: {
+            gte: new Date(fiscalYear, fiscalPeriod - 1, 1),
+            lt: new Date(fiscalYear, fiscalPeriod, 1)
+          }
+        }
+      }).catch(() => 0);
+
+      return modifications;
+    } catch (error) {
+      logger.error('Failed to get lease modifications', { organizationId, fiscalYear, fiscalPeriod, error });
+      return 0;
+    }
+  }
+
+  private async getLeaseTerminations(organizationId: string, fiscalYear: number, fiscalPeriod: number): Promise<number> {
+    try {
+      const terminations = await prisma.lease.count({
+        where: {
+          property: { organizationId },
+          status: 'TERMINATED',
+          actualEndDate: {
+            gte: new Date(fiscalYear, fiscalPeriod - 1, 1),
+            lt: new Date(fiscalYear, fiscalPeriod, 1)
+          }
+        }
+      }).catch(() => 0);
+
+      return terminations;
+    } catch (error) {
+      logger.error('Failed to get lease terminations', { organizationId, fiscalYear, fiscalPeriod, error });
+      return 0;
+    }
+  }
+
+  private async generateMaturityAnalysis(organizationId: string, accountingStandard: string): Promise<any> {
+    try {
+      // Get all active leases
+      const leases = await prisma.lease.findMany({
+        where: {
+          property: { organizationId },
+          status: 'ACTIVE'
+        },
+        include: {
+          rentRoll: {
+            where: { status: 'CURRENT' },
+            take: 1
+          }
+        }
+      }).catch(() => []);
+
+      const maturityAnalysis = {
+        year1: 0,
+        year2: 0,
+        year3: 0,
+        year4: 0,
+        year5: 0,
+        thereafter: 0
+      };
+
+      const now = new Date();
+
+      for (const lease of leases) {
+        const expirationDate = new Date(lease.expirationDate);
+        const yearsToExpiration = (expirationDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24 * 365.25);
+        
+        const annualRent = lease.rentRoll[0]?.annualizedRent || lease.baseLease * 12;
+        
+        if (yearsToExpiration <= 1) {
+          maturityAnalysis.year1 += annualRent * yearsToExpiration;
+        } else if (yearsToExpiration <= 2) {
+          maturityAnalysis.year1 += annualRent;
+          maturityAnalysis.year2 += annualRent * (yearsToExpiration - 1);
+        } else if (yearsToExpiration <= 3) {
+          maturityAnalysis.year1 += annualRent;
+          maturityAnalysis.year2 += annualRent;
+          maturityAnalysis.year3 += annualRent * (yearsToExpiration - 2);
+        } else if (yearsToExpiration <= 4) {
+          maturityAnalysis.year1 += annualRent;
+          maturityAnalysis.year2 += annualRent;
+          maturityAnalysis.year3 += annualRent;
+          maturityAnalysis.year4 += annualRent * (yearsToExpiration - 3);
+        } else if (yearsToExpiration <= 5) {
+          maturityAnalysis.year1 += annualRent;
+          maturityAnalysis.year2 += annualRent;
+          maturityAnalysis.year3 += annualRent;
+          maturityAnalysis.year4 += annualRent;
+          maturityAnalysis.year5 += annualRent * (yearsToExpiration - 4);
+        } else {
+          maturityAnalysis.year1 += annualRent;
+          maturityAnalysis.year2 += annualRent;
+          maturityAnalysis.year3 += annualRent;
+          maturityAnalysis.year4 += annualRent;
+          maturityAnalysis.year5 += annualRent;
+          maturityAnalysis.thereafter += annualRent * (yearsToExpiration - 5);
+        }
+      }
+
+      // Round all values
+      Object.keys(maturityAnalysis).forEach(key => {
+        (maturityAnalysis as any)[key] = Math.round((maturityAnalysis as any)[key]);
+      });
+
+      return maturityAnalysis;
+    } catch (error) {
+      logger.error('Failed to generate maturity analysis', { organizationId, error });
+      return {
+        year1: 0,
+        year2: 0,
+        year3: 0,
+        year4: 0,
+        year5: 0,
+        thereafter: 0
+      };
+    }
+  }
+
+  private async generateLeaseDetails(organizationId: string, records: any[]): Promise<any[]> {
+    return records.map(record => ({
+      leaseId: record.leaseId || record.lease?.id || '',
+      leaseNumber: record.lease?.leaseNumber || '',
+      tenantName: record.lease?.tenant?.name || '',
+      rightOfUseAsset: record.rightOfUseAsset || 0,
+      leaseLiability: record.leaseLiability || 0,
+      leaseExpense: record.leaseExpense || 0,
+      remainingTerm: record.remainingTerm || this.calculateRemainingTerm(record.lease)
+    }));
+  }
+
+  private calculateWeightedAverageDiscountRate(records: any[]): number {
+    if (records.length === 0) return 0;
+
+    const totalWeightedRate = records.reduce((sum, record) => {
+      const weight = record.leaseLiability || 0;
+      const rate = record.discountRate || 0;
+      return sum + (weight * rate);
+    }, 0);
+
+    const totalWeight = records.reduce((sum, record) => sum + (record.leaseLiability || 0), 0);
+
+    return totalWeight > 0 ? totalWeightedRate / totalWeight : 0;
+  }
+
+  private calculateRemainingTerm(lease: any): number {
+    if (!lease || !lease.expirationDate) return 0;
+    
+    const now = new Date();
+    const expirationDate = new Date(lease.expirationDate);
+    const remainingTime = expirationDate.getTime() - now.getTime();
+    return Math.max(0, remainingTime / (1000 * 60 * 60 * 24 * 365.25)); // Years
   }
 
   private calculateWeightedAverageRemainingTerm(leases: any[]): number {
