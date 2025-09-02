@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Turbo Asset - Dashboard</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 30px;
+        }
+        
+        .navigation {
+            margin-bottom: 30px;
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .nav-link {
+            display: inline-block;
+            margin-right: 20px;
+            padding: 8px 15px;
+            text-decoration: none;
+            color: #3498db;
+            border: 1px solid #3498db;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+        
+        .nav-link:hover {
+            background-color: #3498db;
+            color: white;
+        }
+        
+        .dashboard-widgets {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .widget {
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background: #f9f9f9;
+        }
+        
+        .widget h3 {
+            margin-top: 0;
+            color: #2c3e50;
+        }
+        
+        .form-section {
+            margin-bottom: 30px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #555;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-right: 10px;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: #2980b9;
+        }
+        
+        .btn-secondary {
+            background-color: #95a5a6;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #7f8c8d;
+        }
+        
+        .btn-danger {
+            background-color: #e74c3c;
+        }
+        
+        .btn-danger:hover {
+            background-color: #c0392b;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+        
+        .modal-content {
+            background-color: white;
+            margin: 15% auto;
+            padding: 20px;
+            border-radius: 8px;
+            width: 500px;
+            max-width: 90%;
+        }
+        
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .close:hover {
+            color: #000;
+        }
+        
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        
+        .data-table th,
+        .data-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .data-table th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+        }
+        
+        .data-table tbody tr:hover {
+            background-color: #f5f5f5;
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        
+        .status-active {
+            background-color: #27ae60;
+        }
+        
+        .status-inactive {
+            background-color: #e74c3c;
+        }
+        
+        .status-pending {
+            background-color: #f39c12;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 data-cy="page-title">Turbo Asset Management Dashboard</h1>
+        
+        <!-- Navigation -->
+        <div class="navigation" data-cy="navigation">
+            <a href="/" class="nav-link" data-cy="nav-dashboard">Dashboard</a>
+            <a href="/assets.html" class="nav-link" data-cy="nav-assets">Assets</a>
+            <a href="/reports.html" class="nav-link" data-cy="nav-reports">Reports</a>
+            <a href="/settings.html" class="nav-link" data-cy="nav-settings">Settings</a>
+        </div>
+        
+        <!-- Dashboard Widgets -->
+        <div class="dashboard-widgets">
+            <div class="widget" data-cy="asset-summary-widget">
+                <h3>Asset Summary</h3>
+                <p>Total Assets: <span data-cy="total-assets">15,234</span></p>
+                <p>Active: <span data-cy="active-assets">14,891</span></p>
+                <p>Maintenance: <span data-cy="maintenance-assets">343</span></p>
+                <button data-cy="view-assets-btn">View All Assets</button>
+            </div>
+            
+            <div class="widget" data-cy="financial-widget">
+                <h3>Financial Overview</h3>
+                <p>Total Value: <span data-cy="total-value">$2,450,000</span></p>
+                <p>Monthly Costs: <span data-cy="monthly-costs">$125,000</span></p>
+                <p>Savings: <span data-cy="savings">$18,500</span></p>
+                <button data-cy="view-financial-btn">View Details</button>
+            </div>
+            
+            <div class="widget" data-cy="maintenance-widget">
+                <h3>Maintenance Status</h3>
+                <p>Open Tickets: <span data-cy="open-tickets">23</span></p>
+                <p>In Progress: <span data-cy="in-progress-tickets">7</span></p>
+                <p>Completed Today: <span data-cy="completed-today">12</span></p>
+                <button data-cy="create-ticket-btn">Create Ticket</button>
+            </div>
+        </div>
+        
+        <!-- Interactive Form Section -->
+        <div class="form-section">
+            <h2 data-cy="form-section-title">Quick Asset Search</h2>
+            <form data-cy="asset-search-form">
+                <div class="form-group">
+                    <label for="asset-type">Asset Type:</label>
+                    <select id="asset-type" data-cy="asset-type-select">
+                        <option value="">All Types</option>
+                        <option value="equipment">Equipment</option>
+                        <option value="furniture">Furniture</option>
+                        <option value="vehicle">Vehicle</option>
+                        <option value="property">Property</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="asset-location">Location:</label>
+                    <input type="text" id="asset-location" placeholder="Enter location..." data-cy="asset-location-input">
+                </div>
+                
+                <div class="form-group">
+                    <label for="asset-status">Status:</label>
+                    <select id="asset-status" data-cy="asset-status-select">
+                        <option value="">All Status</option>
+                        <option value="active">Active</option>
+                        <option value="maintenance">Under Maintenance</option>
+                        <option value="retired">Retired</option>
+                    </select>
+                </div>
+                
+                <button type="submit" data-cy="search-btn">Search Assets</button>
+                <button type="button" data-cy="clear-btn" class="btn-secondary">Clear</button>
+                <button type="button" data-cy="advanced-search-btn">Advanced Search</button>
+            </form>
+        </div>
+        
+        <!-- Data Table -->
+        <div data-cy="assets-table-section">
+            <h2>Recent Assets</h2>
+            <table class="data-table" data-cy="assets-table">
+                <thead>
+                    <tr>
+                        <th data-cy="table-header-id">Asset ID</th>
+                        <th data-cy="table-header-name">Name</th>
+                        <th data-cy="table-header-type">Type</th>
+                        <th data-cy="table-header-status">Status</th>
+                        <th data-cy="table-header-location">Location</th>
+                        <th data-cy="table-header-actions">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr data-cy="asset-row-1">
+                        <td data-cy="asset-id-1">AST-001</td>
+                        <td data-cy="asset-name-1">Conference Room Projector</td>
+                        <td data-cy="asset-type-1">Equipment</td>
+                        <td data-cy="asset-status-1">
+                            <span class="status-indicator status-active"></span>Active
+                        </td>
+                        <td data-cy="asset-location-1">Building A, Room 201</td>
+                        <td>
+                            <button data-cy="edit-asset-1" class="btn-secondary">Edit</button>
+                            <button data-cy="delete-asset-1" class="btn-danger">Delete</button>
+                        </td>
+                    </tr>
+                    <tr data-cy="asset-row-2">
+                        <td data-cy="asset-id-2">AST-002</td>
+                        <td data-cy="asset-name-2">Office Desk</td>
+                        <td data-cy="asset-type-2">Furniture</td>
+                        <td data-cy="asset-status-2">
+                            <span class="status-indicator status-pending"></span>Maintenance
+                        </td>
+                        <td data-cy="asset-location-2">Building B, Room 105</td>
+                        <td>
+                            <button data-cy="edit-asset-2" class="btn-secondary">Edit</button>
+                            <button data-cy="delete-asset-2" class="btn-danger">Delete</button>
+                        </td>
+                    </tr>
+                    <tr data-cy="asset-row-3">
+                        <td data-cy="asset-id-3">AST-003</td>
+                        <td data-cy="asset-name-3">Company Vehicle</td>
+                        <td data-cy="asset-type-3">Vehicle</td>
+                        <td data-cy="asset-status-3">
+                            <span class="status-indicator status-active"></span>Active
+                        </td>
+                        <td data-cy="asset-location-3">Parking Lot A</td>
+                        <td>
+                            <button data-cy="edit-asset-3" class="btn-secondary">Edit</button>
+                            <button data-cy="delete-asset-3" class="btn-danger">Delete</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Action Buttons -->
+        <div style="margin-top: 30px;" data-cy="action-buttons">
+            <button data-cy="add-asset-btn">Add New Asset</button>
+            <button data-cy="export-data-btn" class="btn-secondary">Export Data</button>
+            <button data-cy="refresh-data-btn" class="btn-secondary">Refresh</button>
+            <button data-cy="show-modal-btn">Show Modal</button>
+        </div>
+    </div>
+    
+    <!-- Modal -->
+    <div id="sampleModal" class="modal" data-cy="sample-modal">
+        <div class="modal-content">
+            <span class="close" data-cy="modal-close">&times;</span>
+            <h2 data-cy="modal-title">Asset Details</h2>
+            <p data-cy="modal-content">This is a sample modal dialog for asset management operations.</p>
+            <div data-cy="modal-actions">
+                <button data-cy="modal-save-btn">Save Changes</button>
+                <button data-cy="modal-cancel-btn" class="btn-secondary">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Simple JavaScript for interactive elements
+        document.addEventListener('DOMContentLoaded', function() {
+            // Modal functionality
+            const modal = document.getElementById('sampleModal');
+            const showModalBtn = document.querySelector('[data-cy="show-modal-btn"]');
+            const closeBtn = document.querySelector('[data-cy="modal-close"]');
+            const cancelBtn = document.querySelector('[data-cy="modal-cancel-btn"]');
+            
+            showModalBtn.onclick = function() {
+                modal.style.display = 'block';
+            }
+            
+            closeBtn.onclick = function() {
+                modal.style.display = 'none';
+            }
+            
+            cancelBtn.onclick = function() {
+                modal.style.display = 'none';
+            }
+            
+            window.onclick = function(event) {
+                if (event.target == modal) {
+                    modal.style.display = 'none';
+                }
+            }
+            
+            // Form handling
+            const searchForm = document.querySelector('[data-cy="asset-search-form"]');
+            const clearBtn = document.querySelector('[data-cy="clear-btn"]');
+            
+            searchForm.onsubmit = function(e) {
+                e.preventDefault();
+                alert('Search functionality would be implemented here');
+            }
+            
+            clearBtn.onclick = function() {
+                searchForm.reset();
+            }
+            
+            // Table row actions
+            document.querySelectorAll('.btn-danger').forEach(btn => {
+                btn.onclick = function(e) {
+                    e.preventDefault();
+                    if (confirm('Are you sure you want to delete this asset?')) {
+                        alert('Delete functionality would be implemented here');
+                    }
+                }
+            });
+            
+            // Widget buttons
+            document.querySelector('[data-cy="view-assets-btn"]').onclick = function() {
+                alert('Navigate to assets page');
+            }
+            
+            document.querySelector('[data-cy="view-financial-btn"]').onclick = function() {
+                alert('Navigate to financial details');
+            }
+            
+            document.querySelector('[data-cy="create-ticket-btn"]').onclick = function() {
+                alert('Create new maintenance ticket');
+            }
+            
+            document.querySelector('[data-cy="add-asset-btn"]').onclick = function() {
+                alert('Add new asset form would open');
+            }
+            
+            document.querySelector('[data-cy="export-data-btn"]').onclick = function() {
+                alert('Export data functionality');
+            }
+            
+            document.querySelector('[data-cy="refresh-data-btn"]').onclick = function() {
+                alert('Data refreshed');
+            }
+        });
+    </script>
+</body>
+</html>
