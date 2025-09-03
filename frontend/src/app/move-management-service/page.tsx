@@ -131,36 +131,52 @@ const MoveManagementServicePage = () => {
       // Try to fetch from backend, fallback to mock data
       try {
         const response = await apiClient.get('/move-management?organizationId=demo');
-        // Handle response when backend is available
+        const moveData = response.data.data;
+        
+        // Use backend data if available
+        setMoveRequests(moveData.requests || getMockRequests());
+        setVendors(moveData.vendors || getMockVendors());
+        
+        // Calculate metrics from real data
+        const requests = moveData.requests || getMockRequests();
+        const newMetrics = {
+          totalRequests: requests.length,
+          pendingApprovals: requests.filter(r => r.status === 'Pending Approval').length,
+          inProgress: requests.filter(r => r.status === 'In Progress').length,
+          completedThisMonth: requests.filter(r => r.status === 'Completed' && 
+            new Date(r.scheduledDate).getMonth() === new Date().getMonth()).length,
+          averageCost: requests.reduce((sum, r) => sum + (r.actualCost || r.estimatedCost || 0), 0) / Math.max(requests.length, 1),
+          averageDuration: 5 // Default duration in days
+        };
+        setMetrics(newMetrics);
       } catch (apiError) {
         console.log('Backend not available, using mock data');
+        // Use mock data
+        const mockRequests = getMockRequests();
+        const mockVendors = getMockVendors();
+        
+        setMoveRequests(mockRequests);
+        setVendors(mockVendors);
+        
+        // Calculate metrics from mock data
+        const totalRequests = mockRequests.length;
+        const pendingApprovals = mockRequests.filter(r => r.status === 'Pending').length;
+        const inProgress = mockRequests.filter(r => r.status === 'In Progress').length;
+        const completedThisMonth = mockRequests.filter(r => 
+          r.status === 'Completed' && 
+          new Date(r.scheduledDate || r.requestDate).getMonth() === new Date().getMonth()
+        ).length;
+        const averageCost = mockRequests.reduce((sum, r) => sum + (r.actualCost || r.estimatedCost), 0) / totalRequests;
+        
+        setMetrics({
+          totalRequests,
+          pendingApprovals,
+          inProgress,
+          completedThisMonth,
+          averageCost: Math.round(averageCost),
+          averageDuration: 3.2
+        });
       }
-      
-      // Use mock data
-      const mockRequests = getMockRequests();
-      const mockVendors = getMockVendors();
-      
-      setMoveRequests(mockRequests);
-      setVendors(mockVendors);
-      
-      // Calculate metrics
-      const totalRequests = mockRequests.length;
-      const pendingApprovals = mockRequests.filter(r => r.status === 'Pending').length;
-      const inProgress = mockRequests.filter(r => r.status === 'In Progress').length;
-      const completedThisMonth = mockRequests.filter(r => 
-        r.status === 'Completed' && 
-        new Date(r.scheduledDate || r.requestDate).getMonth() === new Date().getMonth()
-      ).length;
-      const averageCost = mockRequests.reduce((sum, r) => sum + (r.actualCost || r.estimatedCost), 0) / totalRequests;
-      
-      setMetrics({
-        totalRequests,
-        pendingApprovals,
-        inProgress,
-        completedThisMonth,
-        averageCost: Math.round(averageCost),
-        averageDuration: 3.2
-      });
       
     } catch (error) {
       console.error('Failed to fetch move data:', error);
