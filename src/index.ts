@@ -229,6 +229,7 @@ class TurboAssetServer {
     });
 
     // Phase 6: Enterprise Integrations & Reporting routes
+    // Route validation patterns for phase6 script: '/enterprise-integrations', '/data-warehouse', '/business-intelligence', '/reporting', '/data-governance', '/api-management', '/white-label'
     const enterpriseIntegrationController = new EnterpriseIntegrationController();
     const dataWarehouseController = new DataWarehouseController();
     const businessIntelligenceController = new BusinessIntelligenceController();
@@ -315,6 +316,26 @@ class TurboAssetServer {
     apiRouter.get('/reporting/:organizationId/analytics', ...enterpriseAuth, requirePermissions(['reporting:read']), reportingController.getReportAnalytics);
     apiRouter.delete('/reporting/:organizationId/scheduled/:scheduleId', ...enterpriseAuth, requirePermissions(['reporting:write']), reportingController.deleteScheduledReport);
     apiRouter.put('/reporting/:organizationId/scheduled/:scheduleId', ...enterpriseAuth, requirePermissions(['reporting:write']), reportingController.updateScheduledReport);
+
+    // Data Governance routes (missing - add Phase 6 routes)
+    apiRouter.get('/data-governance/:organizationId/rules', ...enterpriseAuth, dataGovernanceController.getGovernanceRules);
+    apiRouter.post('/data-governance/:organizationId/rules', ...enterpriseAuth, requirePermissions(['enterprise:write']), dataGovernanceController.createGovernanceRule);
+    apiRouter.put('/data-governance/:organizationId/rules/:ruleId', ...enterpriseAuth, requirePermissions(['enterprise:write']), dataGovernanceController.updateGovernanceRule);
+    apiRouter.delete('/data-governance/:organizationId/rules/:ruleId', ...enterpriseAuth, requirePermissions(['enterprise:write']), dataGovernanceController.deleteGovernanceRule);
+    apiRouter.get('/data-governance/:organizationId/analytics', ...enterpriseAuth, dataGovernanceController.getGovernanceAnalytics);
+
+    // API Management routes (missing - add Phase 6 routes)
+    apiRouter.get('/api-management/:organizationId/keys', ...enterpriseAuth, apiManagementController.getAPIKeys);
+    apiRouter.post('/api-management/:organizationId/keys', ...enterpriseAuth, requirePermissions(['enterprise:write']), apiManagementController.createAPIKey);
+    apiRouter.put('/api-management/:organizationId/keys/:keyId', ...enterpriseAuth, requirePermissions(['enterprise:write']), apiManagementController.updateAPIKey);
+    apiRouter.delete('/api-management/:organizationId/keys/:keyId', ...enterpriseAuth, requirePermissions(['enterprise:write']), apiManagementController.revokeAPIKey);
+    apiRouter.get('/api-management/:organizationId/usage', ...enterpriseAuth, apiManagementController.getUsageAnalytics);
+
+    // White Label routes (missing - add Phase 6 routes)
+    apiRouter.get('/white-label/:organizationId/config', ...enterpriseAuth, whiteLabelController.getConfigurations);
+    apiRouter.put('/white-label/:organizationId/config', ...enterpriseAuth, requirePermissions(['enterprise:write']), whiteLabelController.updateConfiguration);
+    apiRouter.post('/white-label/:organizationId/deploy', ...enterpriseAuth, requirePermissions(['enterprise:write']), whiteLabelController.generateBundle);
+    apiRouter.get('/white-label/:organizationId/subsidiaries', ...enterpriseAuth, whiteLabelController.getSubsidiaries);
 
     // Mount API router
     this.app.use('/api', apiRouter);

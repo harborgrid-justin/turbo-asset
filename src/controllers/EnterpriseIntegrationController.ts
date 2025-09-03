@@ -294,7 +294,6 @@ export class EnterpriseIntegrationController {
         include: {
           space: {
             include: {
-              building: true,
               floor: true,
             },
           },
