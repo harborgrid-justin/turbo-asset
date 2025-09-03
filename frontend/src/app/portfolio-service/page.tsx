@@ -56,7 +56,7 @@ const PortfolioServicePage = () => {
       // Try to fetch from backend first, fallback to mock data
       try {
         const dashboardResponse = await apiClient.get('/portfolio/dashboard?organizationId=demo');
-        const dashboard = dashboardResponse.data;
+        const dashboard = dashboardResponse.data.data;
         
         setMetrics({
           totalProperties: dashboard.totalProperties || 42,

@@ -102,16 +102,22 @@ const EmergencyPlanningServicePage = () => {
       // Try to fetch from backend, fallback to mock data
       try {
         const response = await apiClient.get('/emergency-planning?organizationId=demo');
-        // Handle response when available
+        const emergencyData = response.data.data;
+        
+        // Use backend data if available
+        setPlans(emergencyData.plans || getMockPlans());
+        setContacts(emergencyData.contacts || getMockContacts());
+        setRoutes(emergencyData.routes || getMockRoutes());
+        setDrills(emergencyData.drills || getMockDrills());
       } catch (apiError) {
         console.log('Backend not available, using mock data');
+        
+        // Use mock data
+        setPlans(getMockPlans());
+        setContacts(getMockContacts());
+        setRoutes(getMockRoutes());
+        setDrills(getMockDrills());
       }
-      
-      // Use mock data
-      setPlans(getMockPlans());
-      setContacts(getMockContacts());
-      setRoutes(getMockRoutes());
-      setDrills(getMockDrills());
       
     } catch (error) {
       console.error('Failed to fetch emergency data:', error);

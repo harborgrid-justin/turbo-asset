@@ -65,32 +65,52 @@ const EnergyManagementServicePage = () => {
       // Try to fetch from backend, fallback to mock data
       try {
         const response = await apiClient.get('/energy-management?organizationId=demo');
-        // Handle response when available
+        const energyData = response.data.data;
+        
+        // Use backend data if available
+        setConsumptionData(energyData.consumptionData || getMockConsumption());
+        setDevices(energyData.devices || getMockDevices());
+        
+        // Calculate metrics from backend or fallback data  
+        const consumption = energyData.consumptionData || getMockConsumption();
+        const totalCost = consumption.reduce((sum, item) => sum + item.cost, 0);
+        const totalConsumption = consumption.reduce((sum, item) => sum + item.consumption, 0);
+        const averageEfficiency = consumption.reduce((sum, item) => sum + item.efficiency, 0) / consumption.length;
+        const topConsumer = consumption.sort((a, b) => b.consumption - a.consumption)[0]?.propertyName || '';
+        
+        setMetrics({
+          totalCost: Math.round(totalCost),
+          totalConsumption: Math.round(totalConsumption),
+          averageEfficiency: Math.round(averageEfficiency * 100) / 100,
+          co2Savings: energyData.metrics?.co2Savings || 15.6,
+          costSavings: energyData.metrics?.costSavings || 12.3,
+          topConsumer
+        });
       } catch (apiError) {
         console.log('Backend not available, using mock data');
+        
+        // Use mock data
+        const mockConsumption = getMockConsumption();
+        const mockDevices = getMockDevices();
+        
+        setConsumptionData(mockConsumption);
+        setDevices(mockDevices);
+        
+        // Calculate metrics
+        const totalCost = mockConsumption.reduce((sum, item) => sum + item.cost, 0);
+        const totalConsumption = mockConsumption.reduce((sum, item) => sum + item.consumption, 0);
+        const averageEfficiency = mockConsumption.reduce((sum, item) => sum + item.efficiency, 0) / mockConsumption.length;
+        const topConsumer = mockConsumption.sort((a, b) => b.consumption - a.consumption)[0]?.propertyName || '';
+        
+        setMetrics({
+          totalCost: Math.round(totalCost),
+          totalConsumption: Math.round(totalConsumption),
+          averageEfficiency: Math.round(averageEfficiency * 100) / 100,
+          co2Savings: 15.6,
+          costSavings: 12.3,
+          topConsumer
+        });
       }
-      
-      // Use mock data
-      const mockConsumption = getMockConsumption();
-      const mockDevices = getMockDevices();
-      
-      setConsumptionData(mockConsumption);
-      setDevices(mockDevices);
-      
-      // Calculate metrics
-      const totalCost = mockConsumption.reduce((sum, item) => sum + item.cost, 0);
-      const totalConsumption = mockConsumption.reduce((sum, item) => sum + item.consumption, 0);
-      const averageEfficiency = mockConsumption.reduce((sum, item) => sum + item.efficiency, 0) / mockConsumption.length;
-      const topConsumer = mockConsumption.sort((a, b) => b.consumption - a.consumption)[0]?.propertyName || '';
-      
-      setMetrics({
-        totalCost: Math.round(totalCost),
-        totalConsumption: Math.round(totalConsumption),
-        averageEfficiency: Math.round(averageEfficiency * 100) / 100,
-        co2Savings: 15.6,
-        costSavings: 12.3,
-        topConsumer
-      });
       
     } catch (error) {
       console.error('Failed to fetch energy data:', error);

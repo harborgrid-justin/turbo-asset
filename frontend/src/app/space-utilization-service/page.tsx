@@ -65,32 +65,52 @@ const SpaceUtilizationServicePage = () => {
       // Try to fetch from backend, fallback to mock data
       try {
         const response = await apiClient.get('/portfolio/utilization/analytics?organizationId=demo');
-        // Handle response data
+        const spaceData = response.data.data;
+        
+        // Use backend data if available
+        setSpaces(spaceData.spaces || getMockSpaces());
+        setBookings(spaceData.bookings || getMockBookings());
+        
+        // Calculate metrics from backend or fallback data
+        const spaces = spaceData.spaces || getMockSpaces();
+        const totalSpaces = spaces.length;
+        const occupiedSpaces = spaces.filter(s => s.status === 'Occupied').length;
+        const availableSpaces = spaces.filter(s => s.status === 'Available').length;
+        const maintenanceSpaces = spaces.filter(s => s.status === 'Maintenance').length;
+        const overallUtilization = spaces.reduce((sum, space) => sum + space.utilization, 0) / totalSpaces;
+        
+        setMetrics({
+          overallUtilization: Math.round(overallUtilization * 100) / 100,
+          totalSpaces,
+          occupiedSpaces,
+          availableSpaces,
+          maintenanceSpaces
+        });
       } catch (apiError) {
         console.log('Backend not available, using mock data');
+        
+        // Use mock data for now
+        const mockSpaces = getMockSpaces();
+        const mockBookings = getMockBookings();
+        
+        setSpaces(mockSpaces);
+        setBookings(mockBookings);
+        
+        // Calculate metrics
+        const totalSpaces = mockSpaces.length;
+        const occupiedSpaces = mockSpaces.filter(s => s.status === 'Occupied').length;
+        const availableSpaces = mockSpaces.filter(s => s.status === 'Available').length;
+        const maintenanceSpaces = mockSpaces.filter(s => s.status === 'Maintenance').length;
+        const overallUtilization = mockSpaces.reduce((sum, space) => sum + space.utilization, 0) / totalSpaces;
+        
+        setMetrics({
+          overallUtilization: Math.round(overallUtilization * 100) / 100,
+          totalSpaces,
+          occupiedSpaces,
+          availableSpaces,
+          maintenanceSpaces
+        });
       }
-      
-      // Use mock data for now
-      const mockSpaces = getMockSpaces();
-      const mockBookings = getMockBookings();
-      
-      setSpaces(mockSpaces);
-      setBookings(mockBookings);
-      
-      // Calculate metrics
-      const totalSpaces = mockSpaces.length;
-      const occupiedSpaces = mockSpaces.filter(s => s.status === 'Occupied').length;
-      const availableSpaces = mockSpaces.filter(s => s.status === 'Available').length;
-      const maintenanceSpaces = mockSpaces.filter(s => s.status === 'Maintenance').length;
-      const overallUtilization = mockSpaces.reduce((sum, space) => sum + space.utilization, 0) / totalSpaces;
-      
-      setMetrics({
-        overallUtilization: Math.round(overallUtilization * 100) / 100,
-        totalSpaces,
-        occupiedSpaces,
-        availableSpaces,
-        maintenanceSpaces
-      });
       
     } catch (error) {
       console.error('Failed to fetch space data:', error);
