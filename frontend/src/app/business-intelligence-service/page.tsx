@@ -52,7 +52,7 @@ const BusinessIntelligenceServicePage = () => {
   const { mutate: createReportMutation, loading: createLoading } = useApiMutation<Report, any>();
 
   // Extract reports from API response or fall back to mock data if API fails
-  const reports = reportsResponse?.data || [
+  const reports = reportsResponse?.data?.reports || [
     {
       id: 1,
       name: 'Asset Utilization Dashboard',
