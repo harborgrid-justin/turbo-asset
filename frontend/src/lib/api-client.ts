@@ -146,13 +146,13 @@ export const businessIntelligenceApi = {
 
 export const apiManagementApi = {
   getEndpoints: (organizationId: string) =>
-    apiClient.get<any[]>(`/api-management/${organizationId}/endpoints`),
+    apiClient.get<ApiResponse<{endpoints: any[]}>>(`/api-management/${organizationId}/endpoints`),
 
   createEndpoint: (organizationId: string, endpoint: any) =>
     apiClient.post<any>(`/api-management/${organizationId}/endpoints`, endpoint),
 
   getApiKeys: (organizationId: string) =>
-    apiClient.get<any[]>(`/api-management/${organizationId}/keys`),
+    apiClient.get<ApiResponse<{keys: any[]}>>(`/api-management/${organizationId}/keys`),
 
   createApiKey: (organizationId: string, keyData: any) =>
     apiClient.post<any>(`/api-management/${organizationId}/keys`, keyData),
