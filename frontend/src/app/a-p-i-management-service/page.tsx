@@ -69,7 +69,7 @@ const APIManagementServicePage = () => {
   } = useApi(() => apiManagementApi.getApiKeys(organizationId));
 
   // Fallback to mock data if API fails
-  const endpoints = endpointsData || [
+  const endpoints = (endpointsData?.data?.endpoints) || [
     {
       id: 1,
       name: 'Asset Management API',
@@ -115,7 +115,7 @@ const APIManagementServicePage = () => {
   ];
 
   // Fallback to mock keys if API fails
-  const apiKeys = keysData || [
+  const apiKeys = (keysData?.data?.keys) || [
     {
       id: 1,
       name: 'Mobile App Key',
