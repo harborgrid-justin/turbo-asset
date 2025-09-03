@@ -597,6 +597,9 @@ export class LeaseManagementService extends EventEmitter implements ILeaseManage
   // Database operations (simplified for demo)
   private async saveLease(lease: Lease): Promise<Lease> {
     lease.id = lease.id || `lease_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    return lease;
+  }
+
   /**
    * Comprehensive lease analysis and reporting
    */

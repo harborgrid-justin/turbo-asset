@@ -777,6 +777,8 @@ export class CriticalDateService extends EventEmitter implements ICriticalDateSe
   private async saveCriticalDate(criticalDate: CriticalDate): Promise<CriticalDate> {
     criticalDate.id = criticalDate.id || `criticaldate_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     return criticalDate;
+  }
+
   /**
    * Advanced critical date analytics and intelligence system
    */

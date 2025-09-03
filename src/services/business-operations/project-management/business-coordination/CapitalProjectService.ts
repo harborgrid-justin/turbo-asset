@@ -565,7 +565,7 @@ export class CapitalProjectService extends EventEmitter implements ICapitalProje
         // Risk Optimization
         riskOptimization: {
           riskMitigation: this.optimizeRiskMitigation(project),
-          contingencyPlanning: this.improveContingt ncyPlanning(project),
+          contingencyPlanning: this.improveContingencyPlanning(project),
           riskMonitoring: this.enhanceRiskMonitoring(project),
           riskTransfer: this.optimizeRiskTransfer(project),
           riskAcceptance: this.optimizeRiskAcceptance(project),
