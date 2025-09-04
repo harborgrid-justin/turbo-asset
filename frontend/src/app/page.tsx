@@ -45,6 +45,7 @@ const services = [
   { name: 'WhiteLabelService', kebab: 'white-label-service' },
   { name: 'WorkflowEngine', kebab: 'workflow-engine' },
   { name: 'WorkOrderService', kebab: 'work-order-service' },
+  { name: 'MultimediaEvidenceViewer', kebab: 'multimedia-evidence-viewer' },
 ];
 
 export default function Home() {
