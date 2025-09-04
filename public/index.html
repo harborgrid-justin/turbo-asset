@@ -440,7 +440,16 @@
         <button data-cy="close-settings-btn" class="btn-secondary">Close</button>
     </div>
 
-    <div class="container">
+    <header>
+        <nav class="navigation" data-cy="navigation">
+            <a href="/" class="nav-link" data-cy="nav-dashboard">Dashboard</a>
+            <a href="/assets.html" class="nav-link" data-cy="nav-assets">Assets</a>
+            <a href="/reports.html" class="nav-link" data-cy="nav-reports">Reports</a>
+            <a href="/settings.html" class="nav-link" data-cy="nav-settings">Settings</a>
+        </nav>
+    </header>
+
+    <main class="container">
         <h1 data-cy="page-title">Turbo Asset Management Dashboard</h1>
         
         <!-- Quick Actions Toolbar -->
@@ -455,15 +464,9 @@
         </div>
         
         <!-- Navigation -->
-        <div class="navigation" data-cy="navigation">
-            <a href="/" class="nav-link" data-cy="nav-dashboard">Dashboard</a>
-            <a href="/assets.html" class="nav-link" data-cy="nav-assets">Assets</a>
-            <a href="/reports.html" class="nav-link" data-cy="nav-reports">Reports</a>
-            <a href="/settings.html" class="nav-link" data-cy="nav-settings">Settings</a>
-        </div>
         
         <!-- Dashboard Widgets -->
-        <div class="dashboard-widgets" data-cy="dashboard-widgets">
+        <section class="dashboard-widgets" data-cy="dashboard-widgets">
             <div class="widget" data-cy="asset-summary-widget">
                 <h3>Asset Summary</h3>
                 <p>Total Assets: <span data-cy="total-assets">15,234</span></p>
@@ -487,10 +490,10 @@
                 <p>Completed Today: <span data-cy="completed-today">12</span></p>
                 <button data-cy="create-ticket-btn">Create Ticket</button>
             </div>
-        </div>
+        </section>
         
         <!-- Interactive Form Section -->
-        <div class="form-section">
+        <section class="form-section">
             <h2 data-cy="form-section-title">Quick Asset Search</h2>
             <form data-cy="asset-search-form">
                 <div class="form-group">
@@ -566,10 +569,10 @@
                     <button data-cy="reset-advanced-search" class="btn-secondary">Reset</button>
                 </div>
             </div>
-        </div>
+        </section>
         
         <!-- Expandable Data Insights Section -->
-        <div class="expandable-section" data-cy="insights-section">
+        <article class="expandable-section" data-cy="insights-section">
             <div class="section-header" data-cy="insights-header">
                 <h3>Data Insights & Analytics</h3>
                 <span class="expand-icon" data-cy="insights-expand-icon">▼</span>
@@ -588,10 +591,10 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </article>
         
         <!-- Expandable Reports Section -->
-        <div class="expandable-section" data-cy="reports-section">
+        <article class="expandable-section" data-cy="reports-section">
             <div class="section-header" data-cy="reports-header">
                 <h3>Quick Reports</h3>
                 <span class="expand-icon" data-cy="reports-expand-icon">▼</span>
@@ -604,10 +607,10 @@
                     <button class="quick-action-btn" data-cy="compliance-report-btn">✅ Compliance Report</button>
                 </div>
             </div>
-        </div>
+        </article>
         
         <!-- Data Table -->
-        <div data-cy="assets-table-section">
+        <section data-cy="assets-table-section">
             <h2>Recent Assets</h2>
             <table class="data-table" data-cy="assets-table">
                 <thead>
@@ -662,16 +665,16 @@
                     </tr>
                 </tbody>
             </table>
-        </div>
+        </section>
         
         <!-- Action Buttons -->
-        <div style="margin-top: 30px;" data-cy="action-buttons">
+        <footer style="margin-top: 30px;" data-cy="action-buttons">
             <button data-cy="add-asset-btn">Add New Asset</button>
             <button data-cy="export-data-btn" class="btn-secondary">Export Data</button>
             <button data-cy="refresh-data-btn" class="btn-secondary">Refresh</button>
             <button data-cy="show-modal-btn">Show Modal</button>
-        </div>
-    </div>
+        </footer>
+    </main>
     
     <!-- Modal -->
     <div id="sampleModal" class="modal" data-cy="sample-modal">

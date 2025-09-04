@@ -366,6 +366,85 @@
         .resize-handle:hover {
             background: #3498db;
         }
+        
+        /* Category-specific fields */
+        .category-specific-fields {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background: #f9f9f9;
+        }
+        
+        .critical-asset-fields {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #f39c12;
+            border-radius: 8px;
+            background: #fef5e7;
+        }
+        
+        /* Tags system */
+        .tag-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-bottom: 10px;
+        }
+        
+        .tag-option {
+            padding: 4px 8px;
+            background: #e3f2fd;
+            border: 1px solid #2196f3;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        
+        .tag-option:hover {
+            background: #2196f3;
+            color: white;
+        }
+        
+        .selected-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-bottom: 10px;
+        }
+        
+        .selected-tag {
+            padding: 4px 8px;
+            background: #4caf50;
+            color: white;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+        
+        .remove-tag {
+            margin-left: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .remove-tag:hover {
+            color: #ffeb3b;
+        }
+        
+        /* Status indicators */
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
     </style>
 </head>
 <body>
@@ -441,6 +520,67 @@
                 </div>
                 
                 <div class="form-group">
+                    <label for="purchase-date">Purchase Date</label>
+                    <input type="date" id="purchase-date" data-cy="purchase-date-input">
+                </div>
+                
+                <!-- Category-specific Fields -->
+                <div class="category-specific-fields" data-cy="vehicle-specific-fields" style="display: none;">
+                    <h3>Vehicle Information</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="vin">VIN Number</label>
+                            <input type="text" id="vin" data-cy="vin-input" placeholder="Enter VIN">
+                        </div>
+                        <div class="form-group">
+                            <label for="license-plate">License Plate</label>
+                            <input type="text" id="license-plate" data-cy="license-plate-input" placeholder="Enter license plate">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="category-specific-fields" data-cy="equipment-specific-fields" style="display: none;">
+                    <h3>Equipment Information</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="model-number">Model Number</label>
+                            <input type="text" id="model-number" data-cy="model-number-input" placeholder="Enter model number">
+                        </div>
+                        <div class="form-group">
+                            <label for="power-requirements">Power Requirements</label>
+                            <input type="text" id="power-requirements" data-cy="power-requirements-input" placeholder="e.g., 110V, 15A">
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Critical Asset Fields -->
+                <div class="critical-asset-fields" data-cy="sla-requirements" style="display: none;">
+                    <h3>SLA Requirements</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="uptime-requirement">Uptime Requirement (%)</label>
+                            <input type="number" id="uptime-requirement" min="0" max="100" step="0.1" value="99.9">
+                        </div>
+                        <div class="form-group">
+                            <label for="response-time">Response Time (hours)</label>
+                            <input type="number" id="response-time" min="0" step="0.5" value="4">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="critical-asset-fields" data-cy="backup-procedures" style="display: none;">
+                    <h3>Backup Procedures</h3>
+                    <div class="form-group">
+                        <label for="backup-frequency">Backup Frequency</label>
+                        <select id="backup-frequency">
+                            <option value="daily">Daily</option>
+                            <option value="weekly">Weekly</option>
+                            <option value="monthly">Monthly</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-group">
                     <label>Features</label>
                     <div class="checkbox-group" data-cy="asset-features">
                         <div class="checkbox-item">
@@ -476,7 +616,16 @@
             <div class="form-grid">
                 <div class="form-group">
                     <label>Asset Tags (Multi-select)</label>
-                    <div class="multi-select" data-cy="asset-tags-multiselect">
+                    <div class="multi-select" data-cy="tags-multiselect">
+                        <div class="selected-tags" data-cy="selected-tags"></div>
+                        <div class="tag-options">
+                            <div class="tag-option" data-cy="tag-option-maintenance">maintenance</div>
+                            <div class="tag-option" data-cy="tag-option-warranty">warranty</div>
+                            <div class="tag-option" data-cy="tag-option-critical">critical</div>
+                            <div class="tag-option">high-value</div>
+                            <div class="tag-option">portable</div>
+                            <div class="tag-option">sensitive</div>
+                        </div>
                         <input type="text" placeholder="Type to add tags..." data-cy="tags-input" style="border: none; outline: none; flex: 1; min-width: 100px;">
                     </div>
                 </div>
@@ -655,6 +804,21 @@
             <button data-cy="bulk-edit-btn" class="btn-secondary">Bulk Edit</button>
             <button data-cy="bulk-delete-btn" class="btn-danger">Bulk Delete</button>
             <button data-cy="export-selected-btn" class="btn-secondary">Export Selected</button>
+            <button data-cy="export-to-erp-btn" class="btn-secondary">Export to ERP</button>
+            <button data-cy="backup-data-btn" class="btn-secondary">Backup Data</button>
+            <button data-cy="restore-from-backup-btn" class="btn-secondary">Restore</button>
+            <button data-cy="validate-external-btn" class="btn-secondary">Validate</button>
+            <button data-cy="api-test-btn" class="btn-secondary">API Test</button>
+            <button data-cy="retry-btn" class="btn-secondary" style="display: none;">Retry</button>
+        </div>
+        
+        <!-- Status Indicators -->
+        <div style="margin-top: 10px;">
+            <div class="status-indicator" data-cy="sync-status-indicator">
+                <span class="status-dot status-active"></span>
+                <span>Sync Status: Connected</span>
+            </div>
+        </div>
         </div>
         
         <!-- Pagination -->
@@ -738,6 +902,88 @@
             document.querySelector('[data-cy="export-selected-btn"]').onclick = function() {
                 alert('Export functionality');
             }
+            
+            // Additional action buttons
+            document.querySelector('[data-cy="export-to-erp-btn"]').onclick = function() {
+                alert('Exporting to ERP system...');
+            }
+            
+            document.querySelector('[data-cy="backup-data-btn"]').onclick = function() {
+                alert('Creating data backup...');
+            }
+            
+            document.querySelector('[data-cy="restore-from-backup-btn"]').onclick = function() {
+                if (confirm('Are you sure you want to restore from backup?')) {
+                    alert('Data restored successfully!');
+                }
+            }
+            
+            document.querySelector('[data-cy="validate-external-btn"]').onclick = function() {
+                alert('Validating with external system...');
+            }
+            
+            document.querySelector('[data-cy="api-test-btn"]').onclick = function() {
+                alert('API test completed successfully');
+            }
+            
+            document.querySelector('[data-cy="retry-btn"]').onclick = function() {
+                alert('Retrying operation...');
+                this.style.display = 'none';
+            }
+            
+            // Category-dependent field visibility
+            const categorySelect = document.querySelector('[data-cy="asset-category-select"]');
+            const vehicleFields = document.querySelector('[data-cy="vehicle-specific-fields"]');
+            const equipmentFields = document.querySelector('[data-cy="equipment-specific-fields"]');
+            
+            categorySelect.addEventListener('change', function() {
+                // Hide all category-specific fields
+                vehicleFields.style.display = 'none';
+                equipmentFields.style.display = 'none';
+                
+                // Show relevant fields based on category
+                if (this.value === 'vehicle') {
+                    vehicleFields.style.display = 'block';
+                } else if (this.value === 'equipment') {
+                    equipmentFields.style.display = 'block';
+                }
+            });
+            
+            // Critical asset checkbox handler
+            const criticalCheckbox = document.querySelector('[data-cy="feature-critical"]');
+            const slaRequirements = document.querySelector('[data-cy="sla-requirements"]');
+            const backupProcedures = document.querySelector('[data-cy="backup-procedures"]');
+            
+            criticalCheckbox.addEventListener('change', function() {
+                if (this.checked) {
+                    slaRequirements.style.display = 'block';
+                    backupProcedures.style.display = 'block';
+                } else {
+                    slaRequirements.style.display = 'none';
+                    backupProcedures.style.display = 'none';
+                }
+            });
+            
+            // Tags multi-select functionality
+            const tagOptions = document.querySelectorAll('.tag-option');
+            const selectedTags = document.querySelector('[data-cy="selected-tags"]');
+            
+            tagOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    const tagText = this.textContent;
+                    const tagElement = document.createElement('span');
+                    tagElement.className = 'selected-tag';
+                    tagElement.innerHTML = `${tagText} <span class="remove-tag" data-cy="remove-tag-${tagText}">×</span>`;
+                    selectedTags.appendChild(tagElement);
+                    
+                    // Add remove functionality
+                    tagElement.querySelector('.remove-tag').addEventListener('click', function() {
+                        selectedTags.removeChild(tagElement);
+                    });
+                    
+                    this.style.display = 'none';
+                });
+            });
             
             // Pagination
             document.querySelectorAll('[data-cy^="page-"]').forEach(btn => {
