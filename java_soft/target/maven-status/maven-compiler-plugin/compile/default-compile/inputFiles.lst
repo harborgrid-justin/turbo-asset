@@ -1,0 +1,16 @@
+/home/runner/work/turbo-asset/turbo-asset/java_soft/src/main/java/com/harborgrid/turboasset/model/User.java
+/home/runner/work/turbo-asset/turbo-asset/java_soft/src/main/java/com/harborgrid/turboasset/service/AssetService.java
+/home/runner/work/turbo-asset/turbo-asset/java_soft/src/main/java/com/harborgrid/turboasset/controller/AssetController.java
+/home/runner/work/turbo-asset/turbo-asset/java_soft/src/main/java/com/harborgrid/turboasset/repository/UserRepository.java
+/home/runner/work/turbo-asset/turbo-asset/java_soft/src/main/java/com/harborgrid/turboasset/oracle/OracleEnterpriseIntegrationService.java
+/home/runner/work/turbo-asset/turbo-asset/java_soft/src/main/java/com/harborgrid/turboasset/model/SupportingEntities.java
+/home/runner/work/turbo-asset/turbo-asset/java_soft/src/main/java/com/harborgrid/turboasset/model/Organization.java
+/home/runner/work/turbo-asset/turbo-asset/java_soft/src/main/java/com/harborgrid/turboasset/model/Property.java
+/home/runner/work/turbo-asset/turbo-asset/java_soft/src/main/java/com/harborgrid/turboasset/config/SecurityConfig.java
+/home/runner/work/turbo-asset/turbo-asset/java_soft/src/main/java/com/harborgrid/turboasset/model/Asset.java
+/home/runner/work/turbo-asset/turbo-asset/java_soft/src/main/java/com/harborgrid/turboasset/repository/AssetRepository.java
+/home/runner/work/turbo-asset/turbo-asset/java_soft/src/main/java/com/harborgrid/turboasset/service/UserService.java
+/home/runner/work/turbo-asset/turbo-asset/java_soft/src/main/java/com/harborgrid/turboasset/TurboAssetOracleApplication.java
+/home/runner/work/turbo-asset/turbo-asset/java_soft/src/main/java/com/harborgrid/turboasset/model/Department.java
+/home/runner/work/turbo-asset/turbo-asset/java_soft/src/main/java/com/harborgrid/turboasset/config/OracleDatabaseConfig.java
+/home/runner/work/turbo-asset/turbo-asset/java_soft/src/main/java/com/harborgrid/turboasset/controller/UserController.java
