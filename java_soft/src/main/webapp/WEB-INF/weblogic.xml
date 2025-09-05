@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<weblogic-web-app xmlns="http://xmlns.oracle.com/weblogic/weblogic-web-app"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://xmlns.oracle.com/weblogic/weblogic-web-app
+                  http://xmlns.oracle.com/weblogic/weblogic-web-app/1.9/weblogic-web-app.xsd">
+
+    <context-root>/turbo-asset</context-root>
+
+    <!-- Oracle WebLogic specific configuration -->
+    <container-descriptor>
+        <prefer-application-packages>
+            <package-name>org.springframework.*</package-name>
+            <package-name>org.hibernate.*</package-name>
+            <package-name>com.fasterxml.jackson.*</package-name>
+            <package-name>com.harborgrid.turboasset.*</package-name>
+        </prefer-application-packages>
+        
+        <prefer-application-resources>
+            <resource-name>META-INF/spring.*</resource-name>
+        </prefer-application-resources>
+    </container-descriptor>
+
+    <!-- Resource references for Oracle -->
+    <resource-description>
+        <res-ref-name>jdbc/TurboAssetDS</res-ref-name>
+        <jndi-name>TurboAssetDataSource</jndi-name>
+    </resource-description>
+
+    <!-- Work manager configuration -->
+    <work-manager>
+        <name>TurboAssetWorkManager</name>
+        <min-threads-constraint>
+            <name>MinThreads</name>
+            <count>5</count>
+        </min-threads-constraint>
+        <max-threads-constraint>
+            <name>MaxThreads</name>
+            <count>25</count>
+        </max-threads-constraint>
+        <request-class>
+            <name>TurboAssetRequestClass</name>
+            <thread-count-limit>20</thread-count-limit>
+        </request-class>
+    </work-manager>
+
+    <!-- Security configuration -->
+    <security-role-assignment>
+        <role-name>oracle-admin</role-name>
+        <principal-name>OracleAdministrators</principal-name>
+    </security-role-assignment>
+
+    <security-role-assignment>
+        <role-name>super-admin</role-name>
+        <principal-name>SuperAdministrators</principal-name>
+    </security-role-assignment>
+
+    <security-role-assignment>
+        <role-name>admin</role-name>
+        <principal-name>Administrators</principal-name>
+    </security-role-assignment>
+
+    <security-role-assignment>
+        <role-name>manager</role-name>
+        <principal-name>Managers</principal-name>
+    </security-role-assignment>
+
+    <security-role-assignment>
+        <role-name>user</role-name>
+        <principal-name>Users</principal-name>
+    </security-role-assignment>
+
+    <!-- Oracle specific session descriptor -->
+    <session-descriptor>
+        <timeout-secs>1800</timeout-secs>
+        <invalidation-interval-secs>60</invalidation-interval-secs>
+        <tracking-enabled>true</tracking-enabled>
+        <cookies-enabled>true</cookies-enabled>
+        <cookie-name>TURBOASSET_SESSIONID</cookie-name>
+        <cookie-path>/turbo-asset</cookie-path>
+        <cookie-max-age-secs>-1</cookie-max-age-secs>
+        <cookie-secure>false</cookie-secure>
+        <cookie-http-only>true</cookie-http-only>
+    </session-descriptor>
+
+    <!-- Oracle JMS configuration (if needed) -->
+    <resource-env-description>
+        <res-env-ref-name>jms/TurboAssetConnectionFactory</res-env-ref-name>
+        <jndi-name>TurboAssetJMSConnectionFactory</jndi-name>
+    </resource-env-description>
+
+    <!-- Oracle Coherence configuration (if using distributed cache) -->
+    <library-ref>
+        <library-name>coherence-web-spi</library-name>
+        <specification-version>12.2.1</specification-version>
+        <implementation-version>12.2.1.4.0</implementation-version>
+        <exact-match>false</exact-match>
+    </library-ref>
+
+    <!-- Logging configuration for Oracle WebLogic -->
+    <logging>
+        <log-filename>turbo-asset.log</log-filename>
+        <logging-enabled>true</logging-enabled>
+        <log-file-count>5</log-file-count>
+        <log-file-rotation-size>10000</log-file-rotation-size>
+    </logging>
+
+    <!-- Oracle enterprise features -->
+    <context-param>
+        <param-name>oracle.adf.view.rich.automation.ENABLED</param-name>
+        <param-value>true</param-value>
+    </context-param>
+
+    <context-param>
+        <param-name>oracle.webcenter.spaces.internal.model.JCRApplicationConnection.REPOSITORY_LOCATION</param-name>
+        <param-value>/oracle/middleware/user_projects/domains/turbo_asset_domain/servers/AdminServer/tmp/.wlnotdelete/Extracted/webcenter.ear/webcenter.war/WEB-INF/oracle/webcenter/spaces/internal/model/jcr</param-value>
+    </context-param>
+
+</weblogic-web-app>
