@@ -74,6 +74,7 @@ export class NAPIServiceRegistry {
     try {
       // Map service names to their TypeScript equivalents
       const serviceMapping: Record<string, string> = {
+        // Original 20 services
         'asset-lifecycle': '../AssetLifecycleService',
         'notification': '../NotificationService',
         'document': '../DocumentService',
@@ -93,7 +94,29 @@ export class NAPIServiceRegistry {
         'space-utilization': '../SpaceUtilizationService',
         'work-order': '../WorkOrderService',
         'workflow-engine': '../WorkflowEngine',
-        'integration': '../IntegrationService'
+        'integration': '../IntegrationService',
+        
+        // Additional 20 services
+        'advanced-intelligence': '../ml/MachineLearningService',
+        'api-documentation': '../APIDocumentationService',
+        'api-management': '../APIManagementService',
+        'budget-forecast': '../BudgetForecastService',
+        'calendar-integration': '../CalendarIntegrationService',
+        'contract-lifecycle': '../ContractLifecycleService',
+        'critical-date': '../CriticalDateService',
+        'data-governance': '../DataGovernanceService',
+        'data-warehouse': '../DataWarehouseService',
+        'emergency-planning': '../EmergencyPlanningService',
+        'enterprise-service-bus': '../EnterpriseServiceBusService',
+        'financial-consolidation': '../FinancialConsolidationService',
+        'move-management': '../MoveManagementService',
+        'preventive-maintenance': '../PreventiveMaintenanceService',
+        'sdk-generator': '../SDKGeneratorService',
+        'space-standards': '../SpaceStandardsService',
+        'technician-mobile': '../TechnicianMobileService',
+        'vendor-broker': '../VendorBrokerService',
+        'white-label': '../WhiteLabelService',
+        'workflow': '../WorkflowService'
       };
 
       const tsModulePath = serviceMapping[config.serviceName];
@@ -410,6 +433,147 @@ export class NAPIServiceRegistry {
       {
         serviceName: 'integration',
         packageName: 'integration-service',
+        fallbackToTs: true,
+        enableMetrics: true,
+        enableCaching: false
+      },
+      // Additional 20 services
+      {
+        serviceName: 'advanced-intelligence',
+        packageName: 'advanced-intelligence-service',
+        fallbackToTs: true,
+        enableMetrics: true,
+        enableCaching: true
+      },
+      {
+        serviceName: 'api-documentation',
+        packageName: 'api-documentation-service',
+        fallbackToTs: true,
+        enableMetrics: true,
+        enableCaching: true
+      },
+      {
+        serviceName: 'api-management',
+        packageName: 'api-management-service',
+        fallbackToTs: true,
+        enableMetrics: true,
+        enableCaching: false
+      },
+      {
+        serviceName: 'budget-forecast',
+        packageName: 'budget-forecast-service',
+        fallbackToTs: true,
+        enableMetrics: true,
+        enableCaching: true
+      },
+      {
+        serviceName: 'calendar-integration',
+        packageName: 'calendar-integration-service',
+        fallbackToTs: true,
+        enableMetrics: true,
+        enableCaching: false
+      },
+      {
+        serviceName: 'contract-lifecycle',
+        packageName: 'contract-lifecycle-service',
+        fallbackToTs: true,
+        enableMetrics: true,
+        enableCaching: false
+      },
+      {
+        serviceName: 'critical-date',
+        packageName: 'critical-date-service',
+        fallbackToTs: true,
+        enableMetrics: true,
+        enableCaching: false
+      },
+      {
+        serviceName: 'data-governance',
+        packageName: 'data-governance-service',
+        fallbackToTs: true,
+        enableMetrics: true,
+        enableCaching: true
+      },
+      {
+        serviceName: 'data-warehouse',
+        packageName: 'data-warehouse-service',
+        fallbackToTs: true,
+        enableMetrics: true,
+        enableCaching: true
+      },
+      {
+        serviceName: 'emergency-planning',
+        packageName: 'emergency-planning-service',
+        fallbackToTs: true,
+        enableMetrics: true,
+        enableCaching: false
+      },
+      {
+        serviceName: 'enterprise-service-bus',
+        packageName: 'enterprise-service-bus-service',
+        fallbackToTs: true,
+        enableMetrics: true,
+        enableCaching: false
+      },
+      {
+        serviceName: 'financial-consolidation',
+        packageName: 'financial-consolidation-service',
+        fallbackToTs: true,
+        enableMetrics: true,
+        enableCaching: true
+      },
+      {
+        serviceName: 'move-management',
+        packageName: 'move-management-service',
+        fallbackToTs: true,
+        enableMetrics: true,
+        enableCaching: false
+      },
+      {
+        serviceName: 'preventive-maintenance',
+        packageName: 'preventive-maintenance-service',
+        fallbackToTs: true,
+        enableMetrics: true,
+        enableCaching: false
+      },
+      {
+        serviceName: 'sdk-generator',
+        packageName: 'sdk-generator-service',
+        fallbackToTs: true,
+        enableMetrics: true,
+        enableCaching: true
+      },
+      {
+        serviceName: 'space-standards',
+        packageName: 'space-standards-service',
+        fallbackToTs: true,
+        enableMetrics: true,
+        enableCaching: true
+      },
+      {
+        serviceName: 'technician-mobile',
+        packageName: 'technician-mobile-service',
+        fallbackToTs: true,
+        enableMetrics: true,
+        enableCaching: false
+      },
+      {
+        serviceName: 'vendor-broker',
+        packageName: 'vendor-broker-service',
+        fallbackToTs: true,
+        enableMetrics: true,
+        enableCaching: false
+      },
+      {
+        serviceName: 'white-label',
+        packageName: 'white-label-service',
+        fallbackToTs: true,
+        enableMetrics: true,
+        enableCaching: true
+      },
+      {
+        serviceName: 'workflow',
+        packageName: 'workflow-service',
         fallbackToTs: true,
         enableMetrics: true,
         enableCaching: false

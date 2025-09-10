@@ -106,3 +106,10 @@ export { CustomFieldService } from './CustomFieldService';
 // NotificationService, IntegrationService, TechnicianMobileService -> Service Operations domain
 // SDKGeneratorService, APIDocumentationService, BulkDataService -> Service Operations domain
 // AssetLifecycleService, InventoryService -> Asset Operations domain
+
+// NAPI Integration Layer - 40 High-Performance Services
+export { napiRegistry } from './napi-integration';
+export { businessLogicIntegration } from './business-logic-integration';
+export type { NAPIServiceConfig } from './napi-integration';
+export type { BusinessLogicBridge } from './business-logic-integration';
+// AssetLifecycleService, InventoryService -> Asset Operations domain

@@ -1,17 +1,15 @@
 {
   "name": "@turbo-asset/packages",
   "version": "1.0.0",
-  "description": "NAPI-RS packages for Turbo Asset IWMS platform",
+  "description": "Turbo Asset NAPI-RS Package Collection",
   "private": true,
   "workspaces": [
-    "packages/*"
+    "*"
   ],
   "scripts": {
-    "build": "npm run build --workspaces",
-    "test": "npm run test --workspaces",
-    "lint": "npm run lint --workspaces",
-    "clean": "npm run clean --workspaces",
-    "preinstall": "npx only-allow npm"
+    "build:all": "npm run build --workspaces",
+    "test:all": "npm run test --workspaces",
+    "clean:all": "npm run clean --workspaces"
   },
   "devDependencies": {
     "@napi-rs/cli": "^2.18.0",
