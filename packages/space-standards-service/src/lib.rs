@@ -1,9 +1,7 @@
-use chrono::{DateTime, Utc};
-use napi::{bindgen_prelude::*, Result};
+use napi::{Result};
 use napi_derive::napi;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
-use uuid::Uuid;
 
 /// Base entity structure following the universal data standard
 #[napi(object)]
@@ -11,8 +9,8 @@ use uuid::Uuid;
 pub struct BaseEntity {
   pub id: String,
   pub organization_id: String,
-  pub created_at: DateTime<Utc>,
-  pub updated_at: DateTime<Utc>,
+  pub created_at: String, // Use String for date serialization
+  pub updated_at: String, // Use String for date serialization
   pub created_by: String,
   pub updated_by: String,
   pub version: i32,
@@ -23,9 +21,9 @@ pub struct BaseEntity {
 /// Standard response structure
 #[napi(object)]
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct StandardResponse<T> {
+pub struct StandardResponse {
   pub success: bool,
-  pub data: Option<T>,
+  pub data: Option<String>, // Simplified to String for now
   pub error: Option<ErrorResponse>,
   pub metadata: Option<ResponseMetadata>,
 }
@@ -41,7 +39,7 @@ pub struct ErrorResponse {
 #[napi(object)]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ResponseMetadata {
-  pub timestamp: DateTime<Utc>,
+  pub timestamp: String, // Use String for date serialization
   #[napi(js_name = "requestId")]
   pub request_id: String,
   #[napi(js_name = "executionTime")]
@@ -50,61 +48,46 @@ pub struct ResponseMetadata {
   pub api_version: String,
 }
 
-/// Space standards compliance and management service
+/// Space planning and standards management
 #[napi]
-pub struct SpaceStandards {
+pub struct SpaceStandardsServiceService {
   // Service implementation
 }
 
 #[napi]
-impl SpaceStandards {
+impl SpaceStandardsServiceService {
   #[napi(constructor)]
   pub fn new() -> Self {
     Self {}
   }
 
-  /// Initialize the service with configuration
+  /// Initialize the service
   #[napi]
-  pub async fn initialize(&self, config: HashMap<String, String>) -> Result<bool> {
+  pub fn initialize(&self, config: HashMap<String, String>) -> Result<bool> {
     // Initialize service with configuration
+    let _ = config; // Acknowledge the parameter
     Ok(true)
   }
 
   /// Health check for the service
   #[napi]
-  pub fn health_check(&self) -> Result<HashMap<String, String>> {
-    let mut health = HashMap::new();
-    health.insert("status".to_string(), "healthy".to_string());
-    health.insert("service".to_string(), "space-standards-service".to_string());
-    health.insert("version".to_string(), "1.0.0".to_string());
-    Ok(health)
+  pub fn health_check(&self) -> Result<String> {
+    Ok("Service is healthy".to_string())
   }
 
   /// Get service information
   #[napi]
   pub fn get_service_info(&self) -> Result<HashMap<String, String>> {
     let mut info = HashMap::new();
-    info.insert("name".to_string(), "space-standards-service".to_string());
+    info.insert("name".to_string(), "space-standards-service-service".to_string());
     info.insert("version".to_string(), "1.0.0".to_string());
-    info.insert("description".to_string(), "Space standards compliance and management service".to_string());
-    info.insert("features".to_string(), "standards compliance, space allocation, utilization standards, policy enforcement".to_string());
+    info.insert("description".to_string(), "Space planning and standards management".to_string());
     Ok(info)
-  }
-
-  /// Get service metrics
-  #[napi]
-  pub fn get_metrics(&self) -> Result<HashMap<String, i64>> {
-    let mut metrics = HashMap::new();
-    metrics.insert("uptime_seconds".to_string(), 0);
-    metrics.insert("requests_processed".to_string(), 0);
-    metrics.insert("errors_count".to_string(), 0);
-    metrics.insert("avg_response_time_ms".to_string(), 0);
-    Ok(metrics)
   }
 }
 
 /// Initialize the module
 #[napi]
 pub fn init() -> Result<String> {
-  Ok("SpaceStandards initialized successfully".to_string())
+  Ok("SpaceStandardsServiceService initialized successfully".to_string())
 }

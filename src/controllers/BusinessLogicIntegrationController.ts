@@ -87,9 +87,6 @@ export class BusinessLogicIntegrationController {
         });
         return;
       }
-          }
-        });
-      }
 
       logger.info(`Executing production operation: ${serviceName}.${methodName}`, {
         serviceName,
