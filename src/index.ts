@@ -68,6 +68,7 @@ import { ReportingController } from './controllers/ReportingController';
 import { DataGovernanceController } from './controllers/DataGovernanceController';
 import { APIManagementController } from './controllers/APIManagementController';
 import { WhiteLabelController } from './controllers/WhiteLabelController';
+import { BusinessLogicIntegrationController } from './controllers/BusinessLogicIntegrationController';
 
 class TurboAssetServer {
   private app: express.Application;
@@ -355,6 +356,15 @@ class TurboAssetServer {
     apiRouter.post('/white-label/:organizationId/deploy', ...enterpriseAuth, requirePermissions(['enterprise:write']), whiteLabelController.generateBundle);
     apiRouter.get('/white-label/:organizationId/subsidiaries', ...enterpriseAuth, whiteLabelController.getSubsidiaries);
 
+    // Business Logic Integration routes - Production monitoring and management
+    apiRouter.get('/business-logic-integration/metrics', requireOrganizationAccess, BusinessLogicIntegrationController.getProductionMetrics);
+    apiRouter.get('/business-logic-integration/health', requireOrganizationAccess, BusinessLogicIntegrationController.getHealthStatus);
+    apiRouter.get('/business-logic-integration/bridges', requireOrganizationAccess, BusinessLogicIntegrationController.getAvailableBridges);
+    apiRouter.get('/business-logic-integration/services/:serviceName/metrics', requireOrganizationAccess, BusinessLogicIntegrationController.getServiceMetrics);
+    apiRouter.post('/business-logic-integration/execute', requireOrganizationAccess, requirePermissions(['business-logic:execute']), BusinessLogicIntegrationController.executeProductionOperation);
+    apiRouter.post('/business-logic-integration/validation-rules', requireOrganizationAccess, requirePermissions(['business-logic:admin']), BusinessLogicIntegrationController.addValidationRule);
+    apiRouter.post('/business-logic-integration/reset-metrics', requireOrganizationAccess, requirePermissions(['business-logic:admin']), BusinessLogicIntegrationController.resetMetrics);
+
     // Mount API router
     this.app.use('/api', apiRouter);
 
@@ -479,6 +489,12 @@ class TurboAssetServer {
       if (activeNapiServices < napiServiceCount) {
         logger.warn('⚠️  Some NAPI-RS services failed to initialize, fallback to TypeScript implementations enabled');
       }
+
+      // Initialize Business Logic Integration Service
+      logger.info('🔧 Initializing Business Logic Integration Service...');
+      const { businessLogicIntegration } = await import('./services/business-logic-integration');
+      await businessLogicIntegration.initialize();
+      logger.info('✅ Business Logic Integration Service initialized with production features');
 
       // Start server
       this.server.listen(config.server.port, () => {

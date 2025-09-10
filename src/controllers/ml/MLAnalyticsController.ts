@@ -8,6 +8,7 @@ import { recommendationEngineService } from '../../services/ml/RecommendationEng
 import { digitalTwinService } from '../../services/ml/DigitalTwinService';
 import { advancedForecastingService } from '../../services/ml/AdvancedForecastingService';
 import { sentimentAnalysisService } from '../../services/ml/SentimentAnalysisService';
+import { AnomalyType, AnomalySeverity } from '../../types/machinelearning';
 
 /**
  * MLAnalyticsController - Main controller for Machine Learning and Analytics endpoints
@@ -273,8 +274,8 @@ export class MLAnalyticsController {
       } = req.query;
 
       const parsedTimeRange = timeRange ? JSON.parse(timeRange as string) : undefined;
-      const parsedTypes = types ? (types as string).split(',') : undefined;
-      const parsedSeverityFilter = severityFilter ? (severityFilter as string).split(',') : undefined;
+      const parsedTypes = types ? (types as string).split(',') as AnomalyType[] : undefined;
+      const parsedSeverityFilter = severityFilter ? (severityFilter as string).split(',') as AnomalySeverity[] : undefined;
 
       logger.info('Generating anomaly dashboard', {
         organizationId,
@@ -863,7 +864,7 @@ export class MLAnalyticsController {
         metadata: {
           feedbackId,
           sentiment: analysis.sentiment.overall.label,
-          confidence: analysis.confidence,
+          confidence: analysis.sentiment.confidence,
           topicsFound: analysis.topics.length,
           actionItems: analysis.actionItems.length,
           analyzedAt: new Date()
