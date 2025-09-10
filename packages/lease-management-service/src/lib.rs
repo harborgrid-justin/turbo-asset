@@ -1,9 +1,7 @@
-use chrono::{DateTime, Utc};
-use napi::{bindgen_prelude::*, Result};
+use napi::{Result};
 use napi_derive::napi;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
-use uuid::Uuid;
 
 /// Base entity structure following the universal data standard
 #[napi(object)]
@@ -11,8 +9,8 @@ use uuid::Uuid;
 pub struct BaseEntity {
   pub id: String,
   pub organization_id: String,
-  pub created_at: DateTime<Utc>,
-  pub updated_at: DateTime<Utc>,
+  pub created_at: String, // Use String for date serialization
+  pub updated_at: String, // Use String for date serialization
   pub created_by: String,
   pub updated_by: String,
   pub version: i32,
@@ -23,9 +21,9 @@ pub struct BaseEntity {
 /// Standard response structure
 #[napi(object)]
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct StandardResponse<T> {
+pub struct StandardResponse {
   pub success: bool,
-  pub data: Option<T>,
+  pub data: Option<String>, // Simplified to String for now
   pub error: Option<ErrorResponse>,
   pub metadata: Option<ResponseMetadata>,
 }
@@ -41,7 +39,7 @@ pub struct ErrorResponse {
 #[napi(object)]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ResponseMetadata {
-  pub timestamp: DateTime<Utc>,
+  pub timestamp: String, // Use String for date serialization
   #[napi(js_name = "requestId")]
   pub request_id: String,
   #[napi(js_name = "executionTime")]
@@ -50,14 +48,14 @@ pub struct ResponseMetadata {
   pub api_version: String,
 }
 
-/// Lease administration and contract management service
+/// Lease contract management and optimization
 #[napi]
-pub struct LeaseManagementService {
+pub struct LeaseManagementServiceService {
   // Service implementation
 }
 
 #[napi]
-impl LeaseManagementService {
+impl LeaseManagementServiceService {
   #[napi(constructor)]
   pub fn new() -> Self {
     Self {}
@@ -65,8 +63,9 @@ impl LeaseManagementService {
 
   /// Initialize the service
   #[napi]
-  pub async fn initialize(&self, config: HashMap<String, String>) -> Result<bool> {
+  pub fn initialize(&self, config: HashMap<String, String>) -> Result<bool> {
     // Initialize service with configuration
+    let _ = config; // Acknowledge the parameter
     Ok(true)
   }
 
@@ -80,9 +79,9 @@ impl LeaseManagementService {
   #[napi]
   pub fn get_service_info(&self) -> Result<HashMap<String, String>> {
     let mut info = HashMap::new();
-    info.insert("name".to_string(), "lease-management-service".to_string());
+    info.insert("name".to_string(), "lease-management-service-service".to_string());
     info.insert("version".to_string(), "1.0.0".to_string());
-    info.insert("description".to_string(), "Lease administration and contract management service".to_string());
+    info.insert("description".to_string(), "Lease contract management and optimization".to_string());
     Ok(info)
   }
 }
@@ -90,5 +89,5 @@ impl LeaseManagementService {
 /// Initialize the module
 #[napi]
 pub fn init() -> Result<String> {
-  Ok("LeaseManagementService initialized successfully".to_string())
+  Ok("LeaseManagementServiceService initialized successfully".to_string())
 }

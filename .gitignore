@@ -11,6 +11,12 @@ build/
 frontend/.next/
 .next/
 
+# NAPI-RS build artifacts
+packages/*/target/
+packages/*/Cargo.lock
+packages/*/*.node
+packages/*/index.js
+
 # Environment variables
 .env
 .env.local
