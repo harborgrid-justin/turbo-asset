@@ -70,6 +70,9 @@ import { APIManagementController } from './controllers/APIManagementController';
 import { WhiteLabelController } from './controllers/WhiteLabelController';
 import { BusinessLogicIntegrationController } from './controllers/BusinessLogicIntegrationController';
 
+// Enhanced NAPI-RS Integration
+import enhancedBusinessLogicRoutes from './routes/enhanced-business-logic-integration';
+
 class TurboAssetServer {
   private app: express.Application;
   private server: any;
@@ -364,6 +367,9 @@ class TurboAssetServer {
     apiRouter.post('/business-logic-integration/execute', requireOrganizationAccess, requirePermissions(['business-logic:execute']), BusinessLogicIntegrationController.executeProductionOperation);
     apiRouter.post('/business-logic-integration/validation-rules', requireOrganizationAccess, requirePermissions(['business-logic:admin']), BusinessLogicIntegrationController.addValidationRule);
     apiRouter.post('/business-logic-integration/reset-metrics', requireOrganizationAccess, requirePermissions(['business-logic:admin']), BusinessLogicIntegrationController.resetMetrics);
+
+    // Enhanced Business Logic Integration routes - Production-grade features
+    apiRouter.use('/enhanced-business-logic-integration', requireOrganizationAccess, enhancedBusinessLogicRoutes);
 
     // Mount API router
     this.app.use('/api', apiRouter);

@@ -791,3 +791,37 @@ export interface ICriticalDateService extends EventEmitter {
   escalateOverdue(dateId: string): Promise<boolean>;
   markCompleted(dateId: string): Promise<CriticalDate>;
 }
+
+// Business Operations Context
+export interface BusinessOperationsContext {
+  organizationId: string;
+  userId: string;
+  userRole: string;
+  permissions: string[];
+  settings: Record<string, any>;
+  apiEndpoints: Record<string, string>;
+  eventEmitter: EventEmitter;
+}
+
+// Business Operations Events
+export interface BusinessOperationsEvent {
+  type: string;
+  source: string;
+  data: any;
+  timestamp: Date;
+  organizationId: string;
+  userId?: string;
+}
+
+// Default context creator
+export function createDefaultBusinessOperationsContext(): BusinessOperationsContext {
+  return {
+    organizationId: 'default',
+    userId: 'system',
+    userRole: 'admin',
+    permissions: ['*'],
+    settings: {},
+    apiEndpoints: {},
+    eventEmitter: new EventEmitter()
+  };
+}

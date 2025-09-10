@@ -15,6 +15,7 @@ import type {
 
 // Import business domain managers
 import { BusinessOperationsManager } from './business-operations/project-management/business-coordination';
+import { createDefaultBusinessOperationsContext } from './business-operations/project-management/business-coordination/types';
 import { FinancialOperationsManager } from './financial-management/cost-accounting/financial-operations';
 import { ComplianceManagementOperationsManager } from './compliance-governance/regulatory-operations/compliance-management';
 import { ExternalIntegrationSystemsManager } from './external-integration-systems/third-party-connectors/integration-orchestration';
@@ -97,7 +98,7 @@ export class BusinessLogicIntegrationService {
     logger.info('Initializing Business Logic Integration Service...');
 
     // Initialize domain managers
-    const businessOpsManager = new BusinessOperationsManager();
+    const businessOpsManager = new BusinessOperationsManager(createDefaultBusinessOperationsContext());
     const financialOpsManager = new FinancialOperationsManager();
     const complianceManager = new ComplianceManagementOperationsManager();
     const integrationManager = new ExternalIntegrationSystemsManager();
@@ -976,5 +977,4 @@ export class BusinessLogicIntegrationService {
 }
 
 // Export singleton instance
-export const businessLogicIntegration = BusinessLogicIntegrationService.getInstance();
 export const businessLogicIntegration = BusinessLogicIntegrationService.getInstance();
