@@ -52,6 +52,37 @@ export default function Home() {
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-3xl font-bold mb-8">Services Dashboard</h1>
+      
+      {/* Production Monitoring Section */}
+      <div className="mb-8 p-6 bg-blue-50 rounded-lg border border-blue-200">
+        <h2 className="text-xl font-semibold mb-4 text-blue-800">Production Monitoring</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <Link
+            href="/business-logic-integration-dashboard"
+            className="block p-4 bg-white border rounded-lg hover:bg-blue-50 transition-colors shadow-sm"
+          >
+            <h3 className="text-lg font-semibold text-blue-700">Business Logic Integration</h3>
+            <p className="text-gray-600">Monitor NAPI-RS services and TypeScript fallback performance</p>
+            <div className="mt-2 text-sm text-blue-600">
+              View real-time metrics, health status, and circuit breaker monitoring
+            </div>
+          </Link>
+          
+          <Link
+            href="/system-metrics"
+            className="block p-4 bg-white border rounded-lg hover:bg-blue-50 transition-colors shadow-sm"
+          >
+            <h3 className="text-lg font-semibold text-blue-700">System Metrics</h3>
+            <p className="text-gray-600">Overall system performance and resource utilization</p>
+            <div className="mt-2 text-sm text-blue-600">
+              View CPU, memory, and network metrics across all services
+            </div>
+          </Link>
+        </div>
+      </div>
+
+      {/* Services Grid */}
+      <h2 className="text-2xl font-semibold mb-6">Available Services</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {services.map((service) => (
           <Link

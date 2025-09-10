@@ -1,5 +1,5 @@
 import { GraphQLResolveInfo, GraphQLScalarType, Kind } from 'graphql';
-import { GraphQLUpload } from 'graphql-upload';
+import { Upload } from 'graphql-upload';
 import { prisma } from '../config/database';
 import { logger } from '../config/logger';
 import { WorkflowEngine } from '../services/WorkflowEngine';
@@ -63,7 +63,7 @@ export const resolvers = {
   // Custom Scalars
   DateTime: DateTimeScalar,
   JSON: JSONScalar,
-  Upload: GraphQLUpload,
+  Upload: Upload,
 
   // Root Query Resolvers
   Query: {
