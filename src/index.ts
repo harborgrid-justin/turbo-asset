@@ -7,6 +7,7 @@ import { config } from './config';
 import { logger } from './config/logger';
 import { connectRedis } from './config/redis';
 import { InternationalizationService } from './services/InternationalizationService';
+import { napiRegistry } from './services/napi-integration';
 
 // Import middleware
 import { 
@@ -164,6 +165,23 @@ class TurboAssetServer {
     this.app.get('/health', asyncHandler(this.healthController.health.bind(this.healthController)));
     this.app.get('/ready', asyncHandler(this.healthController.ready.bind(this.healthController)));
     this.app.get('/live', asyncHandler(this.healthController.live.bind(this.healthController)));
+    
+    // NAPI-RS services health check
+    this.app.get('/napi/health', asyncHandler(async (req, res) => {
+      const status = napiRegistry.getServicesStatus();
+      const totalServices = Object.keys(status).length;
+      const activeServices = Object.values(status).filter((s: any) => s.registered).length;
+      
+      res.json({
+        success: true,
+        data: {
+          totalServices,
+          activeServices,
+          healthScore: (activeServices / totalServices) * 100,
+          services: status
+        }
+      });
+    }));
 
     // Basic health check for load balancers
     this.app.get('/ping', (req, res) => {
@@ -447,6 +465,20 @@ class TurboAssetServer {
       // Initialize internationalization
       const i18nService = InternationalizationService.getInstance();
       await i18nService.initialize();
+
+      // Initialize NAPI-RS services
+      logger.info('🦀 Initializing NAPI-RS services...');
+      await napiRegistry.initializeAllServices();
+      
+      const napiStatus = napiRegistry.getServicesStatus();
+      const napiServiceCount = Object.keys(napiStatus).length;
+      const activeNapiServices = Object.values(napiStatus).filter((status: any) => status.registered).length;
+      
+      logger.info(`🦀 NAPI-RS services initialized: ${activeNapiServices}/${napiServiceCount} active`);
+      
+      if (activeNapiServices < napiServiceCount) {
+        logger.warn('⚠️  Some NAPI-RS services failed to initialize, fallback to TypeScript implementations enabled');
+      }
 
       // Start server
       this.server.listen(config.server.port, () => {

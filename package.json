@@ -3,7 +3,12 @@
   "version": "1.0.0",
   "description": "Enterprise IBM Tririga Alternative - IWMS Platform",
   "main": "dist/index.js",
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
+    "build:napi": "npm run build --workspaces",
+    "test:napi": "npm run test --workspaces",
     "build": "tsc",
     "dev": "node test-server.js",
     "dev:full": "tsx watch src/index.ts",
