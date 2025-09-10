@@ -1,0 +1,63 @@
+{
+  "name": "@turbo-asset/maintenance-service",
+  "version": "1.0.0",
+  "description": "Maintenance management and work order processing service",
+  "main": "index.js",
+  "types": "index.d.ts",
+  "files": [
+    "index.js",
+    "index.d.ts",
+    "*.node"
+  ],
+  "scripts": {
+    "build": "napi build --platform --release",
+    "build:debug": "napi build --platform",
+    "test": "node --test test/*.js",
+    "prepublishOnly": "npm run build",
+    "version": "napi version",
+    "artifacts": "napi artifacts"
+  },
+  "napi": {
+    "name": "maintenance-service",
+    "triples": {
+      "defaults": true,
+      "additional": [
+        "x86_64-unknown-linux-musl",
+        "aarch64-unknown-linux-gnu",
+        "i686-pc-windows-msvc",
+        "armv7-unknown-linux-gnueabihf",
+        "aarch64-apple-darwin",
+        "aarch64-pc-windows-msvc",
+        "aarch64-unknown-linux-musl",
+        "aarch64-linux-android",
+        "x86_64-unknown-freebsd",
+        "x86_64-unknown-linux-musl",
+        "x86_64-pc-windows-msvc",
+        "x86_64-apple-darwin"
+      ]
+    }
+  },
+  "devDependencies": {
+    "@napi-rs/cli": "^2.18.0",
+    "@types/node": "^20.19.12"
+  },
+  "keywords": [
+    "preventive maintenance",
+    "work order management",
+    "resource scheduling",
+    "cost tracking",
+    "napi-rs",
+    "rust",
+    "iwms",
+    "enterprise"
+  ],
+  "author": "HarborGrid",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
+  }
+}
