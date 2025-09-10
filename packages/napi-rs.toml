@@ -1,0 +1,18 @@
+# NAPI-RS packages configuration
+rust_target_dir = "target"
+rust_crate_dir = "rust"
+
+# Common configurations for all packages
+[packages]
+  [packages.common]
+    features = ["serde", "tokio", "uuid", "chrono"]
+    dependencies = [
+      "serde = { version = \"1.0\", features = [\"derive\"] }",
+      "serde_json = \"1.0\"",
+      "tokio = { version = \"1.0\", features = [\"full\"] }",
+      "uuid = { version = \"1.0\", features = [\"v4\", \"serde\"] }",
+      "chrono = { version = \"0.4\", features = [\"serde\"] }",
+      "anyhow = \"1.0\"",
+      "thiserror = \"1.0\"",
+      "tracing = \"0.1\"",
+    ]
