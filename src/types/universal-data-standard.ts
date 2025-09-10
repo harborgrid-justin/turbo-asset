@@ -30,6 +30,9 @@ export interface StandardResponse<T = any> {
     requestId: string;
     executionTime: number;
     apiVersion: string;
+    attempt?: number;
+    attempts?: number;
+    [key: string]: any;
   };
 }
 

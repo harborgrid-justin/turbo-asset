@@ -78,11 +78,15 @@ export class BusinessLogicIntegrationController {
       const { serviceName, methodName, args = [], options = {} } = req.body;
 
       if (!serviceName || !methodName) {
-        return res.status(400).json({
+        res.status(400).json({
           success: false,
           error: {
             code: 'INVALID_REQUEST',
             message: 'serviceName and methodName are required'
+          }
+        });
+        return;
+      }
           }
         });
       }
@@ -170,13 +174,14 @@ export class BusinessLogicIntegrationController {
       const { serviceName, methodName, rules } = req.body;
 
       if (!serviceName || !methodName || !rules || !Array.isArray(rules)) {
-        return res.status(400).json({
+        res.status(400).json({
           success: false,
           error: {
             code: 'INVALID_REQUEST',
             message: 'serviceName, methodName, and rules array are required'
           }
         });
+        return;
       }
 
       logger.info(`Adding validation rule for ${serviceName}.${methodName}`, {
@@ -222,13 +227,14 @@ export class BusinessLogicIntegrationController {
       const { serviceName } = req.params;
 
       if (!serviceName) {
-        return res.status(400).json({
+        res.status(400).json({
           success: false,
           error: {
             code: 'INVALID_REQUEST',
             message: 'serviceName parameter is required'
           }
         });
+        return;
       }
 
       logger.info(`Fetching metrics for service: ${serviceName}`);
@@ -241,13 +247,14 @@ export class BusinessLogicIntegrationController {
       );
 
       if (!bridgeInfo || !serviceMetrics) {
-        return res.status(404).json({
+        res.status(404).json({
           success: false,
           error: {
             code: 'SERVICE_NOT_FOUND',
             message: `Service ${serviceName} not found`
           }
         });
+        return;
       }
 
       res.json({
