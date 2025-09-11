@@ -3,11 +3,11 @@ import cors from 'cors';
 import helmet from 'helmet';
 import { createServer } from 'http';
 import { Server as SocketServer } from 'socket.io';
-import { config } from './config';
-import { logger } from './config/logger';
-import { connectRedis } from './config/redis';
-import { InternationalizationService } from './services/InternationalizationService';
-import { napiRegistry } from './services/napi-integration';
+import { config } from '@/config';
+import { logger } from '@/config/logger';
+import { connectRedis } from '@/config/redis';
+import { InternationalizationService } from '@/services/InternationalizationService';
+import { napiRegistry } from '@/services/napi-integration';
 
 // Import middleware
 import { 
@@ -15,63 +15,63 @@ import {
   notFoundHandler, 
   timeoutHandler,
   asyncHandler 
-} from './middleware/errorHandler';
+} from '@/middleware/errorHandler';
 import { 
   apiRateLimit, 
   authRateLimit, 
   strictRateLimit,
   uploadRateLimit,
   reportRateLimit 
-} from './middleware/rateLimiter';
+} from '@/middleware/rateLimiter';
 import { 
   authenticate, 
   optionalAuth, 
   requireOrganizationAccess,
   requireRoles,
   requirePermissions 
-} from './middleware/auth';
+} from '@/middleware/auth';
 import { 
   apiVersionManager 
-} from './middleware/versioning';
-import { HealthController } from './middleware/health';
+} from '@/middleware/versioning';
+import { HealthController } from '@/middleware/health';
 
 // Import routes
-import propertyRoutes from './controllers/PropertyController';
-import assetRoutes from './controllers/AssetController';
-import workflowRoutes from './controllers/WorkflowController';
-import documentRoutes from './controllers/DocumentController';
-import bulkDataRoutes from './controllers/BulkDataController';
-import customFieldRoutes from './controllers/CustomFieldController';
-import integrationRoutes from './controllers/IntegrationController';
-import notificationRoutes from './controllers/NotificationController';
+import propertyRoutes from '@/controllers/PropertyController';
+import assetRoutes from '@/controllers/AssetController';
+import workflowRoutes from '@/controllers/WorkflowController';
+import documentRoutes from '@/controllers/DocumentController';
+import bulkDataRoutes from '@/controllers/BulkDataController';
+import customFieldRoutes from '@/controllers/CustomFieldController';
+import integrationRoutes from '@/controllers/IntegrationController';
+import notificationRoutes from '@/controllers/NotificationController';
 
 // Phase 3: Space Management & Portfolio Tracking routes
-import spaceBookingRoutes from './controllers/SpaceBookingController';
-import moveManagementRoutes from './controllers/MoveManagementController';
-import portfolioRoutes from './controllers/PortfolioController';
+import spaceBookingRoutes from '@/controllers/SpaceBookingController';
+import moveManagementRoutes from '@/controllers/MoveManagementController';
+import portfolioRoutes from '@/controllers/PortfolioController';
 
 // Phase 4: Lease Administration & Financial Management routes
-import { LeaseManagementController } from './controllers/LeaseManagementController';
-import { ComplianceController } from './controllers/ComplianceController';
-import { CriticalDateController } from './controllers/CriticalDateController';
-import { FinancialConsolidationController } from './controllers/FinancialConsolidationController';
+import { LeaseManagementController } from '@/controllers/LeaseManagementController';
+import { ComplianceController } from '@/controllers/ComplianceController';
+import { CriticalDateController } from '@/controllers/CriticalDateController';
+import { FinancialConsolidationController } from '@/controllers/FinancialConsolidationController';
 
 // Phase 5: Maintenance & Asset Management routes
-import MaintenanceController from './controllers/MaintenanceController';
-import WorkOrderController from './controllers/WorkOrderController';
+import MaintenanceController from '@/controllers/MaintenanceController';
+import WorkOrderController from '@/controllers/WorkOrderController';
 
 // Phase 6: Enterprise Integrations & Reporting routes
-import { EnterpriseIntegrationController } from './controllers/EnterpriseIntegrationController';
-import { DataWarehouseController } from './controllers/DataWarehouseController';
-import { BusinessIntelligenceController } from './controllers/BusinessIntelligenceController';
-import { ReportingController } from './controllers/ReportingController';
-import { DataGovernanceController } from './controllers/DataGovernanceController';
-import { APIManagementController } from './controllers/APIManagementController';
-import { WhiteLabelController } from './controllers/WhiteLabelController';
-import { BusinessLogicIntegrationController } from './controllers/BusinessLogicIntegrationController';
+import { EnterpriseIntegrationController } from '@/controllers/EnterpriseIntegrationController';
+import { DataWarehouseController } from '@/controllers/DataWarehouseController';
+import { BusinessIntelligenceController } from '@/controllers/BusinessIntelligenceController';
+import { ReportingController } from '@/controllers/ReportingController';
+import { DataGovernanceController } from '@/controllers/DataGovernanceController';
+import { APIManagementController } from '@/controllers/APIManagementController';
+import { WhiteLabelController } from '@/controllers/WhiteLabelController';
+import { BusinessLogicIntegrationController } from '@/controllers/BusinessLogicIntegrationController';
 
 // Enhanced NAPI-RS Integration
-import enhancedBusinessLogicRoutes from './routes/enhanced-business-logic-integration';
+import enhancedBusinessLogicRoutes from '@/routes/enhanced-business-logic-integration';
 
 class TurboAssetServer {
   private app: express.Application;
@@ -498,7 +498,7 @@ class TurboAssetServer {
 
       // Initialize Business Logic Integration Service
       logger.info('🔧 Initializing Business Logic Integration Service...');
-      const { businessLogicIntegration } = await import('./services/business-logic-integration');
+      const { businessLogicIntegration } = await import('@/services/business-logic-integration');
       await businessLogicIntegration.initialize();
       logger.info('✅ Business Logic Integration Service initialized with production features');
 
