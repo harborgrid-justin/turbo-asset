@@ -12,12 +12,18 @@ module.exports = {
   moduleNameMapping: {
     '^@/(.*)$': '<rootDir>/src/$1',
     '^@/types/(.*)$': '<rootDir>/src/shared/types/$1',
+    '^@/interfaces/(.*)$': '<rootDir>/src/shared/interfaces/$1',
+    '^@/constants/(.*)$': '<rootDir>/src/shared/constants/$1',
     '^@/models/(.*)$': '<rootDir>/src/models/$1',
     '^@/services/(.*)$': '<rootDir>/src/services/$1',
     '^@/controllers/(.*)$': '<rootDir>/src/api/controllers/$1',
+    '^@/routes/(.*)$': '<rootDir>/src/api/routes/$1',
+    '^@/graphql/(.*)$': '<rootDir>/src/api/graphql/$1',
     '^@/middleware/(.*)$': '<rootDir>/src/core/middleware/$1',
     '^@/utils/(.*)$': '<rootDir>/src/core/utils/$1',
     '^@/config/(.*)$': '<rootDir>/src/core/config/$1',
+    '^@/auth/(.*)$': '<rootDir>/src/core/auth/$1',
+    '^@/database/(.*)$': '<rootDir>/src/core/database/$1',
   },
   collectCoverageFrom: [
     'src/**/*.ts',
