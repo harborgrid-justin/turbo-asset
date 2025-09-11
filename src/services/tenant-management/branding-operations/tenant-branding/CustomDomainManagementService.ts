@@ -8,7 +8,7 @@
 import { EventEmitter } from 'events';
 import * as dns from 'dns';
 import { promisify } from 'util';
-import { logger } from '../../../../../config/logger';
+import { logger } from '@/../../../config/logger';
 import { 
   CustomDomain, 
   DomainStatus, 

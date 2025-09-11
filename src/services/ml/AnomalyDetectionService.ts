@@ -1,5 +1,5 @@
 import { EventEmitter } from 'events';
-import { logger } from '../../config/logger';
+import { logger } from '@/config/logger';
 import { machineLearningService } from './MachineLearningService';
 import {
   Anomaly,
@@ -7,7 +7,7 @@ import {
   AnomalySeverity,
   AnomalyDetectionModel,
   MLModel
-} from '../../types/machinelearning';
+} from '@/types/machinelearning';
 
 /**
  * AnomalyDetectionService - Advanced anomaly detection for energy consumption and space utilization

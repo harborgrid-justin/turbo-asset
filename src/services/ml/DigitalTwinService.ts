@@ -1,5 +1,5 @@
 import { EventEmitter } from 'events';
-import { logger } from '../../config/logger';
+import { logger } from '@/config/logger';
 import { machineLearningService } from './MachineLearningService';
 import {
   DigitalTwinModel,
@@ -15,7 +15,7 @@ import {
   Visualization,
   Scenario,
   MLModel
-} from '../../types/machinelearning';
+} from '@/types/machinelearning';
 
 /**
  * DigitalTwinService - Digital twin integration with 3D visualization and simulation

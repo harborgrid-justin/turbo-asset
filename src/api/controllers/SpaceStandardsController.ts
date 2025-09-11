@@ -1,7 +1,6 @@
-import { toError } from '../../core/utils/validation';
 import express, { Request, Response } from 'express';
-import { SpaceStandardsService } from '../../services/SpaceStandardsService';
-import { logger } from '../../config/logger';
+import { SpaceStandardsService } from '@/services/SpaceStandardsService';
+import { logger } from '@/config/logger';
 
 const router = express.Router();
 const standardsService = new SpaceStandardsService();

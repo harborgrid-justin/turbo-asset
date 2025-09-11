@@ -1,7 +1,6 @@
-import { toError } from '../../core/utils/validation';
 import { Request, Response } from 'express';
-import { logger } from '../../config/logger';
-import { enhancedBusinessLogicIntegration } from '../../services/enhanced-business-logic-integration';
+import { logger } from '@/config/logger';
+import { enhancedBusinessLogicIntegration } from '@/services/enhanced-business-logic-integration';
 
 /**
  * Enhanced Business Logic Integration Controller

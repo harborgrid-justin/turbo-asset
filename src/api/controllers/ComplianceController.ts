@@ -1,7 +1,6 @@
-import { toError } from '../../core/utils/validation';
 import { Router, Request, Response } from 'express';
-import { ComplianceService } from '../../services/ComplianceService';
-import { logger } from '../../config/logger';
+import { ComplianceService } from '@/services/ComplianceService';
+import { logger } from '@/config/logger';
 
 const router = Router();
 const complianceService = new ComplianceService();

@@ -14,26 +14,20 @@ import {
   errorHandler, 
   notFoundHandler, 
   timeoutHandler,
-  asyncHandler 
-} from '@/middleware/errorHandler';
-import { 
+  asyncHandler,
   apiRateLimit, 
   authRateLimit, 
   strictRateLimit,
   uploadRateLimit,
-  reportRateLimit 
-} from '@/middleware/rateLimiter';
-import { 
+  reportRateLimit,
   authenticate, 
   optionalAuth, 
   requireOrganizationAccess,
   requireRoles,
-  requirePermissions 
-} from '@/middleware/auth';
-import { 
-  apiVersionManager 
-} from '@/middleware/versioning';
-import { HealthController } from '@/middleware/health';
+  requirePermissions,
+  apiVersionManager,
+  HealthController
+} from '@/middleware';
 
 // Import routes
 import propertyRoutes from '@/controllers/PropertyController';

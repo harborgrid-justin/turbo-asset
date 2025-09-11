@@ -1,5 +1,5 @@
 import { EventEmitter } from 'events';
-import { logger } from '../../config/logger';
+import { logger } from '@/config/logger';
 import { 
   MLModel, 
   MLModelType, 
@@ -15,7 +15,7 @@ import {
   BatchPredictionResponse,
   ModelMonitoring,
   MonitoringAlert
-} from '../../types/machinelearning';
+} from '@/types/machinelearning';
 
 /**
  * MachineLearningService - Core ML infrastructure

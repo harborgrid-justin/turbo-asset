@@ -1,8 +1,7 @@
-import { toError } from '../../core/utils/validation';
 import { Router, Request, Response } from 'express';
-import { DocumentService } from '../../services/DocumentService';
-import { logger } from '../../config/logger';
-import { prisma } from '../../config/database';
+import { DocumentService } from '@/services/DocumentService';
+import { logger } from '@/config/logger';
+import { prisma } from '@/config/database';
 import Joi from 'joi';
 import multer from 'multer';
 

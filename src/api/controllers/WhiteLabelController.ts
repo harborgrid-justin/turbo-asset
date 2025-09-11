@@ -1,8 +1,7 @@
-import { toError } from '../../core/utils/validation';
 import { Request, Response } from 'express';
-import { WhiteLabelService } from '../../services/WhiteLabelService';
-import { logger } from '../../config/logger';
-import { prisma } from '../../config/database';
+import { WhiteLabelService } from '@/services/WhiteLabelService';
+import { logger } from '@/config/logger';
+import { prisma } from '@/config/database';
 
 const whiteLabelService = new WhiteLabelService();
 

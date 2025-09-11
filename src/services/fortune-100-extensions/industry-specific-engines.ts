@@ -3,11 +3,11 @@
  * Advanced sector-specific calculations and rules for enterprise organizations
  */
 
-import { logger } from '../../config/logger';
+import { logger } from '@/config/logger';
 import type { 
   BaseEntity, 
   StandardResponse 
-} from '../../types/universal-data-standard';
+} from '@/types/universal-data-standard';
 
 // =================== Manufacturing Sector Engine ===================
 export interface ManufacturingAssetData {

@@ -3,8 +3,8 @@
  * Unified service that extends existing NAPI-RS packages with enterprise-level capabilities
  */
 
-import { logger } from '../../config/logger';
-import type { StandardResponse } from '../../types/universal-data-standard';
+import { logger } from '@/config/logger';
+import type { StandardResponse } from '@/types/universal-data-standard';
 
 // Import existing enhanced business logic
 import {

@@ -17,7 +17,7 @@
  */
 
 import { EventEmitter } from 'events';
-import { logger } from '../../../../../config/logger';
+import { logger } from '@/../../../config/logger';
 import crypto from 'crypto';
 
 // Core Interfaces and Types

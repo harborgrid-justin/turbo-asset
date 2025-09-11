@@ -1,10 +1,9 @@
-import { toError } from '../../core/utils/validation';
 import { Request, Response } from 'express';
-import { EnterpriseServiceBusService } from '../../services/EnterpriseServiceBusService';
-import { SalesforceIntegrationService } from '../../services/SalesforceIntegrationService';
-import { Microsoft365IntegrationService } from '../../services/Microsoft365IntegrationService';
-import { logger } from '../../config/logger';
-import { prisma } from '../../config/database';
+import { EnterpriseServiceBusService } from '@/services/EnterpriseServiceBusService';
+import { SalesforceIntegrationService } from '@/services/SalesforceIntegrationService';
+import { Microsoft365IntegrationService } from '@/services/Microsoft365IntegrationService';
+import { logger } from '@/config/logger';
+import { prisma } from '@/config/database';
 
 const esbService = new EnterpriseServiceBusService();
 const salesforceService = new SalesforceIntegrationService({

@@ -1,5 +1,5 @@
 import { EventEmitter } from 'events';
-import { logger } from '../../config/logger';
+import { logger } from '@/config/logger';
 import { machineLearningService } from './MachineLearningService';
 import {
   ForecastingModel,
@@ -16,7 +16,7 @@ import {
   BudgetDriver,
   BudgetRiskFactor,
   MLModel
-} from '../../types/machinelearning';
+} from '@/types/machinelearning';
 
 /**
  * AdvancedForecastingService - Advanced forecasting for portfolio planning and budgeting

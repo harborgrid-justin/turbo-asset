@@ -1,8 +1,7 @@
-import { toError } from '../../core/utils/validation';
 import { Request, Response } from 'express';
-import { DataGovernanceService } from '../../services/DataGovernanceService';
-import { logger } from '../../config/logger';
-import { prisma } from '../../config/database';
+import { DataGovernanceService } from '@/services/DataGovernanceService';
+import { logger } from '@/config/logger';
+import { prisma } from '@/config/database';
 
 const dataGovernanceService = new DataGovernanceService();
 

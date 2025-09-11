@@ -1,5 +1,5 @@
 import { EventEmitter } from 'events';
-import { logger } from '../../config/logger';
+import { logger } from '@/config/logger';
 import { machineLearningService } from './MachineLearningService';
 import { nlpService } from './NLPService';
 import {
@@ -18,7 +18,7 @@ import {
   SentimentInsight,
   SentimentRecommendation,
   MLModel
-} from '../../types/machinelearning';
+} from '@/types/machinelearning';
 
 /**
  * SentimentAnalysisService - Advanced sentiment analysis from employee feedback and surveys
