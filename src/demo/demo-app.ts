@@ -7,9 +7,9 @@ import express from 'express';
 import cors from 'cors';
 import { 
   enhancedBusinessLogicService,
-  ProductionGradeBusinessLogic 
-} from './demo/enhanced-napi-business-logic-demo';
-import enhancedBusinessLogicRoutes from './routes/enhanced-business-logic-routes';
+  ProductionBusinessLogicBridge 
+} from './enhanced-napi-business-logic-demo';
+import enhancedBusinessLogicRoutes from '../routes/enhanced-business-logic-routes';
 
 const app = express();
 const PORT = process.env.PORT || 3001;

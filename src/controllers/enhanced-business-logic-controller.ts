@@ -4,16 +4,14 @@
  */
 
 import { Request, Response } from 'express';
+import { AuthRequest } from '../middleware/auth';
 import { 
   enhancedBusinessLogicService,
-  ProductionGradeBusinessLogic 
+  ProductionBusinessLogicBridge 
 } from '../demo/enhanced-napi-business-logic-demo';
 
-interface ApiRequest extends Request {
-  user?: {
-    id: string;
-    role: string;
-  };
+interface ApiRequest extends AuthRequest {
+  // Extending AuthRequest which already has the proper user structure
 }
 
 /**
