@@ -115,7 +115,7 @@ export class ComputerVisionService extends EventEmitter {
       logger.info('Computer Vision Service initialized successfully');
       this.emit('service:initialized');
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to initialize Computer Vision Service', error);
       throw error;
     }
@@ -208,7 +208,7 @@ export class ComputerVisionService extends EventEmitter {
 
       return assessment;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to assess facility condition', { facilityId, error });
       throw error;
     }
@@ -281,7 +281,7 @@ export class ComputerVisionService extends EventEmitter {
 
       return occupancyData;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to detect occupancy', { spaceId, error });
       throw error;
     }
@@ -368,7 +368,7 @@ export class ComputerVisionService extends EventEmitter {
 
       return inspection;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to inspect equipment', { assetId, error });
       throw error;
     }
@@ -438,7 +438,7 @@ export class ComputerVisionService extends EventEmitter {
 
       return safetyMonitoring;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to monitor safety', { areaId, error });
       throw error;
     }
@@ -505,7 +505,7 @@ export class ComputerVisionService extends EventEmitter {
               generateReport: false
             });
             results.push(result);
-          } catch (error) {
+          } catch (error: unknown) {
             results.push({ error: error.message, facilityId: image.facilityId });
           }
         }
@@ -556,7 +556,7 @@ export class ComputerVisionService extends EventEmitter {
 
       return batchResult;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to process image batch', { organizationId, error });
       throw error;
     }
@@ -583,7 +583,7 @@ export class ComputerVisionService extends EventEmitter {
       }
 
       logger.info('All computer vision models trained successfully');
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to train computer vision models', error);
       throw error;
     }
@@ -872,10 +872,10 @@ export class ComputerVisionService extends EventEmitter {
       const centerX = person.boundingBox.x + person.boundingBox.width / 2;
       const centerY = person.boundingBox.y + person.boundingBox.height / 2;
       
-      if (centerX < 250 && centerY < 150) quadrants.topLeft++;
-      else if (centerX >= 250 && centerY < 150) quadrants.topRight++;
-      else if (centerX < 250 && centerY >= 150) quadrants.bottomLeft++;
-      else quadrants.bottomRight++;
+      if (centerX < 250 && centerY < 150) {quadrants.topLeft++;}
+      else if (centerX >= 250 && centerY < 150) {quadrants.topRight++;}
+      else if (centerX < 250 && centerY >= 150) {quadrants.bottomLeft++;}
+      else {quadrants.bottomRight++;}
     });
 
     return quadrants;
@@ -1178,7 +1178,7 @@ export class ComputerVisionService extends EventEmitter {
       assetId,
       title: `Equipment Maintenance Required - ${inspectionResult.detectedType}`,
       priority: conditionAssessment.urgency,
-      description: `Maintenance required based on computer vision inspection findings`,
+      description: 'Maintenance required based on computer vision inspection findings',
       findings: inspectionResult.findings,
       estimatedCost: inspectionResult.recommendations.reduce((sum: number, rec: any) => sum + rec.estimatedCost, 0),
       createdAt: new Date(),

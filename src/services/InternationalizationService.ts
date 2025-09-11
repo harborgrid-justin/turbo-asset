@@ -88,7 +88,7 @@ export class InternationalizationService {
         });
 
       logger.info('Internationalization service initialized');
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to initialize internationalization service', error);
       throw error;
     }

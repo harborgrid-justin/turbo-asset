@@ -171,7 +171,7 @@ export class AssetLifecycleService {
       });
 
       return depreciations;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to calculate asset depreciation', { assetId: lifecycleData.assetId, error });
       throw error;
     }
@@ -193,10 +193,10 @@ export class AssetLifecycleService {
     try {
       const where: any = { organizationId };
       
-      if (filters?.category) where.category = filters.category;
-      if (filters?.criticality) where.criticality = filters.criticality;
-      if (filters?.location) where.location = { contains: filters.location };
-      if (filters?.minValue) where.currentValue = { gte: filters.minValue };
+      if (filters?.category) {where.category = filters.category;}
+      if (filters?.criticality) {where.criticality = filters.criticality;}
+      if (filters?.location) {where.location = { contains: filters.location };}
+      if (filters?.minValue) {where.currentValue = { gte: filters.minValue };}
 
       const assets = await prisma.maintenanceAsset.findMany({
         where,
@@ -220,7 +220,7 @@ export class AssetLifecycleService {
       const currentDate = new Date();
 
       for (const asset of assets) {
-        if (!asset.purchaseDate || !asset.usefulLife) continue;
+        if (!asset.purchaseDate || !asset.usefulLife) {continue;}
 
         const assetAge = (currentDate.getTime() - asset.purchaseDate.getTime()) / (1000 * 60 * 60 * 24 * 365);
         const remainingUsefulLife = Math.max(0, asset.usefulLife - assetAge);
@@ -277,7 +277,7 @@ export class AssetLifecycleService {
         const priorityOrder = { 'IMMEDIATE': 1, 'HIGH': 2, 'MEDIUM': 3, 'LOW': 4 };
         const priorityDiff = priorityOrder[a.priority] - priorityOrder[b.priority];
         
-        if (priorityDiff !== 0) return priorityDiff;
+        if (priorityDiff !== 0) {return priorityDiff;}
         return a.recommendedReplacementDate.getTime() - b.recommendedReplacementDate.getTime();
       });
 
@@ -288,7 +288,7 @@ export class AssetLifecycleService {
       });
 
       return replacementPlans;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate replacement plan', { organizationId, error });
       throw error;
     }
@@ -449,7 +449,7 @@ export class AssetLifecycleService {
         totalCostOfOwnership,
         averageROI,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get lifecycle metrics', { organizationId, error });
       throw error;
     }
@@ -501,7 +501,7 @@ export class AssetLifecycleService {
       });
 
       return disposalRecord;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to record asset disposal', { assetId: disposalData.assetId, error });
       throw error;
     }
@@ -629,7 +629,7 @@ export class AssetLifecycleService {
       });
 
       return analyses;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to perform bulk lifecycle analysis', { organizationId, error });
       throw error;
     }

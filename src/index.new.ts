@@ -78,7 +78,7 @@ class TurboAssetApplication {
           defaultSrc: ["'self'"],
           styleSrc: ["'self'", "'unsafe-inline'"],
           scriptSrc: ["'self'"],
-          imgSrc: ["'self'", "data:", "https:"],
+          imgSrc: ["'self'", 'data:', 'https:'],
           connectSrc: ["'self'"],
           fontSrc: ["'self'"],
           objectSrc: ["'none'"],
@@ -195,7 +195,7 @@ class TurboAssetApplication {
       logger.info('Health check service initialized');
 
       logger.info('Application initialized successfully');
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to initialize application', { error });
       throw error;
     }
@@ -211,7 +211,7 @@ class TurboAssetApplication {
     const host = config.server.host || '0.0.0.0';
 
     this._server.listen(port, host, () => {
-      logger.info(`Server started successfully`, {
+      logger.info('Server started successfully', {
         port,
         host,
         environment: config.server.env,
@@ -247,7 +247,7 @@ class TurboAssetApplication {
 
       logger.info('Graceful shutdown completed');
       process.exit(0);
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Error during graceful shutdown', { error });
       process.exit(1);
     }

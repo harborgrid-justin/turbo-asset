@@ -91,7 +91,7 @@ export class LeaseManagementService extends EventEmitter implements ILeaseManage
 
       return savedLease;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create lease', error);
       throw new Error(`Failed to create lease: ${(error as Error).message}`);
     }
@@ -100,7 +100,7 @@ export class LeaseManagementService extends EventEmitter implements ILeaseManage
   async getLease(id: string): Promise<Lease | null> {
     try {
       const cached = this.cache.get(id);
-      if (cached) return cached;
+      if (cached) {return cached;}
 
       const lease = await this.loadLease(id);
       if (lease) {
@@ -108,7 +108,7 @@ export class LeaseManagementService extends EventEmitter implements ILeaseManage
       }
       return lease;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get lease', { leaseId: id, error });
       throw new Error(`Failed to get lease: ${(error as Error).message}`);
     }
@@ -145,7 +145,7 @@ export class LeaseManagementService extends EventEmitter implements ILeaseManage
       logger.info('Lease updated', { leaseId: id });
       return savedLease;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to update lease', { leaseId: id, error });
       throw new Error(`Failed to update lease: ${(error as Error).message}`);
     }
@@ -178,7 +178,7 @@ export class LeaseManagementService extends EventEmitter implements ILeaseManage
       logger.info('Lease deleted', { leaseId: id });
       return true;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to delete lease', { leaseId: id, error });
       throw new Error(`Failed to delete lease: ${(error as Error).message}`);
     }
@@ -232,7 +232,7 @@ export class LeaseManagementService extends EventEmitter implements ILeaseManage
 
       return filteredLeases;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to search leases', error);
       throw new Error(`Failed to search leases: ${(error as Error).message}`);
     }
@@ -248,7 +248,7 @@ export class LeaseManagementService extends EventEmitter implements ILeaseManage
         endDateBefore: cutoffDate.toISOString()
       });
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get expiring leases', { days, error });
       throw new Error(`Failed to get expiring leases: ${(error as Error).message}`);
     }
@@ -286,7 +286,7 @@ export class LeaseManagementService extends EventEmitter implements ILeaseManage
       logger.info('Rent calculated', { leaseId, date, totalRent });
       return totalRent;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to calculate rent', { leaseId, date, error });
       throw new Error(`Failed to calculate rent: ${(error as Error).message}`);
     }
@@ -313,7 +313,7 @@ export class LeaseManagementService extends EventEmitter implements ILeaseManage
       }
 
       // Update rent if renewal has new rate
-      let updatedRentDetails = lease.rentDetails;
+      const updatedRentDetails = lease.rentDetails;
       if (renewalOption.rentValue) {
         const newScheduleEntry = {
           startDate: new Date(lease.endDate),
@@ -350,7 +350,7 @@ export class LeaseManagementService extends EventEmitter implements ILeaseManage
       logger.info('Lease renewed', { leaseId, optionNumber, newEndDate });
       return updatedLease;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to renew lease', { leaseId, optionNumber, error });
       throw new Error(`Failed to renew lease: ${(error as Error).message}`);
     }
@@ -389,7 +389,7 @@ export class LeaseManagementService extends EventEmitter implements ILeaseManage
       logger.info('Lease terminated', { leaseId, reason });
       return updatedLease;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to terminate lease', { leaseId, error });
       throw new Error(`Failed to terminate lease: ${(error as Error).message}`);
     }
@@ -435,7 +435,7 @@ export class LeaseManagementService extends EventEmitter implements ILeaseManage
       logger.info('Lease abstract generated', { leaseId });
       return abstract;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate lease abstract', { leaseId, error });
       throw new Error(`Failed to generate abstract: ${(error as Error).message}`);
     }
@@ -477,7 +477,7 @@ export class LeaseManagementService extends EventEmitter implements ILeaseManage
       logger.info('Lease payment processed', { leaseId, paymentId: payment.id });
       return payment;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to process lease payment', { leaseId, error });
       throw new Error(`Failed to process payment: ${(error as Error).message}`);
     }
@@ -486,14 +486,14 @@ export class LeaseManagementService extends EventEmitter implements ILeaseManage
   // === PRIVATE HELPER METHODS ===
 
   private validateLeaseData(data: Partial<Lease>): void {
-    if (!data.propertyId) throw new Error('Property ID is required');
-    if (!data.leaseType) throw new Error('Lease type is required');
-    if (!data.startDate || !data.endDate) throw new Error('Start and end dates are required');
-    if (!data.rentableArea) throw new Error('Rentable area is required');
-    if (!data.usableArea) throw new Error('Usable area is required');
-    if (!data.rentDetails) throw new Error('Rent details are required');
-    if (!data.assignmentRights) throw new Error('Assignment rights are required');
-    if (!data.subleaseRights) throw new Error('Sublease rights are required');
+    if (!data.propertyId) {throw new Error('Property ID is required');}
+    if (!data.leaseType) {throw new Error('Lease type is required');}
+    if (!data.startDate || !data.endDate) {throw new Error('Start and end dates are required');}
+    if (!data.rentableArea) {throw new Error('Rentable area is required');}
+    if (!data.usableArea) {throw new Error('Usable area is required');}
+    if (!data.rentDetails) {throw new Error('Rent details are required');}
+    if (!data.assignmentRights) {throw new Error('Assignment rights are required');}
+    if (!data.subleaseRights) {throw new Error('Sublease rights are required');}
 
     if (new Date(data.endDate) <= new Date(data.startDate)) {
       throw new Error('End date must be after start date');
@@ -606,7 +606,7 @@ export class LeaseManagementService extends EventEmitter implements ILeaseManage
   async generateLeaseAnalytics(leaseId: string): Promise<any> {
     try {
       const lease = await this.getLease(leaseId);
-      if (!lease) throw new Error('Lease not found');
+      if (!lease) {throw new Error('Lease not found');}
 
       const analytics = {
         leaseId,
@@ -701,7 +701,7 @@ export class LeaseManagementService extends EventEmitter implements ILeaseManage
 
       return analytics;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate lease analytics', { leaseId, error });
       throw new Error(`Analytics generation failed: ${(error as Error).message}`);
     }
@@ -713,7 +713,7 @@ export class LeaseManagementService extends EventEmitter implements ILeaseManage
   async generateLeaseOptimization(leaseId: string): Promise<any> {
     try {
       const lease = await this.getLease(leaseId);
-      if (!lease) throw new Error('Lease not found');
+      if (!lease) {throw new Error('Lease not found');}
 
       const optimization = {
         leaseId,
@@ -799,7 +799,7 @@ export class LeaseManagementService extends EventEmitter implements ILeaseManage
 
       return optimization;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate lease optimization', { leaseId, error });
       throw new Error(`Optimization generation failed: ${(error as Error).message}`);
     }
@@ -811,7 +811,7 @@ export class LeaseManagementService extends EventEmitter implements ILeaseManage
   async generateLeaseForecasting(leaseId: string, scenarios: string[]): Promise<any> {
     try {
       const lease = await this.getLease(leaseId);
-      if (!lease) throw new Error('Lease not found');
+      if (!lease) {throw new Error('Lease not found');}
 
       const forecasting = {
         leaseId,
@@ -888,7 +888,7 @@ export class LeaseManagementService extends EventEmitter implements ILeaseManage
 
       return forecasting;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate lease forecasting', { leaseId, error });
       throw new Error(`Forecasting generation failed: ${(error as Error).message}`);
     }
@@ -922,7 +922,7 @@ export class LeaseManagementService extends EventEmitter implements ILeaseManage
 
   private calculateEscalationRate(lease: Lease): number {
     const escalations = lease.rentDetails.escalations;
-    if (escalations.length === 0) return 0;
+    if (escalations.length === 0) {return 0;}
     
     const totalEscalation = escalations.reduce((sum, esc) => sum + esc.value, 0);
     return totalEscalation / escalations.length;

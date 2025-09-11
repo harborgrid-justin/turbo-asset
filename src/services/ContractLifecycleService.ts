@@ -254,7 +254,7 @@ export class ContractLifecycleService {
       });
 
       return contract;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create contract', error);
       throw error;
     }
@@ -353,7 +353,7 @@ export class ContractLifecycleService {
         performanceMetrics,
         riskIndicators
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get contract summary', error);
       throw error;
     }
@@ -409,7 +409,7 @@ export class ContractLifecycleService {
       }
 
       return renewalAnalyses.sort((a, b) => b.renewalProbability - a.renewalProbability);
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to analyze renewal opportunities', error);
       throw error;
     }
@@ -467,7 +467,7 @@ export class ContractLifecycleService {
         performanceImprovements,
         contractStandardization
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate optimization recommendations', error);
       throw error;
     }
@@ -506,7 +506,7 @@ export class ContractLifecycleService {
       });
 
       return milestone;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to update milestone status', error);
       throw error;
     }
@@ -533,7 +533,7 @@ export class ContractLifecycleService {
         default:
           throw new Error('Invalid report type');
       }
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate contract report', error);
       throw error;
     }
@@ -611,7 +611,7 @@ export class ContractLifecycleService {
       });
 
       return renewedContract;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to process contract renewal', error);
       throw error;
     }
@@ -679,7 +679,7 @@ export class ContractLifecycleService {
       }
 
       return compliance;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to track contract compliance', error);
       throw error;
     }
@@ -972,7 +972,7 @@ export class ContractLifecycleService {
       where: { contractId }
     });
 
-    if (milestones.length === 0) return;
+    if (milestones.length === 0) {return;}
 
     const completedMilestones = milestones.filter(m => m.status === 'COMPLETED').length;
     const progressPercentage = (completedMilestones / milestones.length) * 100;

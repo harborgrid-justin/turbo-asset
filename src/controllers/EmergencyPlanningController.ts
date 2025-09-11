@@ -93,7 +93,7 @@ router.post('/plans', async (req: Request, res: Response) => {
     });
 
     res.status(201).json(plan);
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to create emergency plan', error);
     res.status(500).json({
       error: 'Failed to create emergency plan',
@@ -130,7 +130,7 @@ router.get('/plans/:buildingId', async (req: Request, res: Response) => {
     const plans = await emergencyService.getEmergencyPlans(buildingId);
 
     res.json(plans);
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to get emergency plans', error);
     res.status(500).json({
       error: 'Failed to get emergency plans',
@@ -207,7 +207,7 @@ router.post('/drills', async (req: Request, res: Response) => {
     });
 
     res.status(201).json(drill);
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to schedule emergency drill', error);
     res.status(500).json({
       error: 'Failed to schedule emergency drill',
@@ -296,7 +296,7 @@ router.post('/drills/:drillId/results', async (req: Request, res: Response) => {
     });
 
     res.json(drill);
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to record drill results', error);
     if (error instanceof Error && error.message.includes('not found')) {
       res.status(404).json({ error: error.message });
@@ -335,7 +335,7 @@ router.get('/compliance/:organizationId', async (req: Request, res: Response) =>
     const dashboard = await emergencyService.getComplianceDashboard(organizationId);
 
     res.json(dashboard);
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to get compliance dashboard', error);
     res.status(500).json({
       error: 'Failed to get compliance dashboard',
@@ -372,7 +372,7 @@ router.get('/evacuation/:buildingId/report', async (req: Request, res: Response)
     const report = await emergencyService.generateEvacuationReport(buildingId);
 
     res.json(report);
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to generate evacuation report', error);
     if (error instanceof Error && error.message.includes('not found')) {
       res.status(404).json({ error: error.message });
@@ -420,7 +420,7 @@ router.get('/procedures/:organizationId', async (req: Request, res: Response) =>
     );
 
     res.json(procedures);
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to get emergency procedures', error);
     res.status(500).json({
       error: 'Failed to get emergency procedures',
@@ -489,7 +489,7 @@ router.get('/analytics/:organizationId', async (req: Request, res: Response) => 
     };
 
     res.json(analytics);
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to get emergency analytics', error);
     res.status(500).json({
       error: 'Failed to get emergency analytics',

@@ -62,7 +62,7 @@ export const authenticateJWT = (req: AuthRequest, res: Response, next: NextFunct
         throw new AuthenticationError('Token verification failed');
       }
     }
-  } catch (error) {
+  } catch (error: unknown) {
     next(error);
   }
 };
@@ -98,7 +98,7 @@ export const authenticateAPIKey = (req: AuthRequest, res: Response, next: NextFu
     });
     
     next();
-  } catch (error) {
+  } catch (error: unknown) {
     next(error);
   }
 };
@@ -165,7 +165,7 @@ export const requireRoles = (roles: string | string[]) => {
       }
 
       next();
-    } catch (error) {
+    } catch (error: unknown) {
       next(error);
     }
   };
@@ -202,7 +202,7 @@ export const requirePermissions = (permissions: string | string[]) => {
       }
 
       next();
-    } catch (error) {
+    } catch (error: unknown) {
       next(error);
     }
   };
@@ -241,7 +241,7 @@ export const requireOrganizationAccess = (req: AuthRequest, res: Response, next:
     }
 
     next();
-  } catch (error) {
+  } catch (error: unknown) {
     next(error);
   }
 };
@@ -279,7 +279,7 @@ export const requireResourceOwnership = (resourceIdParam: string = 'id') => {
       }
 
       next();
-    } catch (error) {
+    } catch (error: unknown) {
       next(error);
     }
   };
@@ -311,7 +311,7 @@ export const requireTier = (minimumTier: 'free' | 'premium' | 'enterprise') => {
       }
 
       next();
-    } catch (error) {
+    } catch (error: unknown) {
       next(error);
     }
   };
@@ -339,7 +339,7 @@ export const requireFeature = (featureName: string) => {
       }
 
       next();
-    } catch (error) {
+    } catch (error: unknown) {
       next(error);
     }
   };
@@ -368,7 +368,7 @@ export const requireBusinessHours = (req: AuthRequest, res: Response, next: Next
     }
 
     next();
-  } catch (error) {
+  } catch (error: unknown) {
     next(error);
   }
 };
@@ -393,7 +393,7 @@ export const requireWhitelistedIP = (allowedIPs: string[]) => {
       }
 
       next();
-    } catch (error) {
+    } catch (error: unknown) {
       next(error);
     }
   };

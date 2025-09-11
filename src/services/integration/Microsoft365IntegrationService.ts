@@ -135,7 +135,7 @@ export class Microsoft365IntegrationService {
       });
 
       return this.token;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Microsoft 365 authentication failed', { error });
       throw error;
     }
@@ -184,7 +184,7 @@ export class Microsoft365IntegrationService {
       });
 
       return response.data;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Outlook calendar event creation failed', { userId, event, error });
       throw error;
     }
@@ -201,7 +201,7 @@ export class Microsoft365IntegrationService {
         userId,
         eventId,
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Outlook calendar event update failed', { userId, eventId, event, error });
       throw error;
     }
@@ -218,7 +218,7 @@ export class Microsoft365IntegrationService {
         userId,
         eventId,
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Outlook calendar event deletion failed', { userId, eventId, error });
       throw error;
     }
@@ -229,7 +229,7 @@ export class Microsoft365IntegrationService {
    */
   async getCalendarEvents(userId: string, startDate?: Date, endDate?: Date): Promise<OutlookEvent[]> {
     try {
-      let url = `/users/${userId}/events`;
+      const url = `/users/${userId}/events`;
       const params: any = {};
 
       if (startDate && endDate) {
@@ -238,7 +238,7 @@ export class Microsoft365IntegrationService {
 
       const response = await this.graphClient.get(url, { params });
       return response.data.value;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Outlook calendar events retrieval failed', { userId, error });
       throw error;
     }
@@ -267,7 +267,7 @@ export class Microsoft365IntegrationService {
       });
 
       return response.data;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('SharePoint document library creation failed', { siteId, libraryName, error });
       throw error;
     }
@@ -302,7 +302,7 @@ export class Microsoft365IntegrationService {
       });
 
       return response.data;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('SharePoint file upload failed', { siteId, libraryId, fileName, error });
       throw error;
     }
@@ -315,7 +315,7 @@ export class Microsoft365IntegrationService {
     try {
       const response = await this.graphClient.get('/sites?search=*');
       return response.data.value;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('SharePoint sites retrieval failed', { error });
       throw error;
     }
@@ -341,7 +341,7 @@ export class Microsoft365IntegrationService {
       });
 
       return response.data;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Teams channel creation failed', { teamId, channelName, error });
       throw error;
     }
@@ -368,7 +368,7 @@ export class Microsoft365IntegrationService {
       });
 
       return response.data;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Teams message sending failed', { teamId, channelId, message, error });
       throw error;
     }
@@ -381,7 +381,7 @@ export class Microsoft365IntegrationService {
     try {
       const response = await this.graphClient.get(`/users/${userId}`);
       return response.data;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('User profile retrieval failed', { userId, error });
       throw error;
     }
@@ -399,7 +399,7 @@ export class Microsoft365IntegrationService {
       });
 
       return response.data.value;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('User search failed', { query, error });
       throw error;
     }
@@ -465,7 +465,7 @@ export class Microsoft365IntegrationService {
         bookingId: bookingData.id,
         eventId: createdEvent.id,
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Booking sync to Outlook failed', { bookingData, error });
       throw error;
     }
@@ -497,7 +497,7 @@ export class Microsoft365IntegrationService {
         teamId,
         channelId,
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Work order sync to Teams failed', { workOrderData, error });
       throw error;
     }
@@ -527,7 +527,7 @@ export class Microsoft365IntegrationService {
       });
 
       return response.data;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Office 365 group creation failed', { propertyName, error });
       throw error;
     }
@@ -557,7 +557,7 @@ export class Microsoft365IntegrationService {
       });
 
       return response.data;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Microsoft 365 batch request failed', { requests, error });
       throw error;
     }

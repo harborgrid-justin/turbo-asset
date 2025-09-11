@@ -1,6 +1,7 @@
+import { toError } from '../../core/utils/validation';
 import { Router, Request, Response } from 'express';
-import { LeaseManagementService } from '../services/LeaseManagementService';
-import { logger } from '../config/logger';
+import { LeaseManagementService } from '../../services/LeaseManagementService';
+import { logger } from '../../config/logger';
 
 const router = Router();
 const leaseManagementService = new LeaseManagementService();
@@ -86,7 +87,7 @@ router.post('/leases', async (req: Request, res: Response) => {
       success: true,
       data: lease
     });
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to create lease', error);
     res.status(500).json({
       error: 'Failed to create lease',
@@ -115,7 +116,7 @@ router.get('/portfolio/summary/:organizationId', async (req: Request, res: Respo
       success: true,
       data: summary
     });
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to get portfolio summary', error);
     res.status(500).json({
       error: 'Failed to get portfolio summary',
@@ -173,7 +174,7 @@ router.get('/leases/search', async (req: Request, res: Response) => {
         total: leases.length
       }
     });
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to search leases', error);
     res.status(500).json({
       error: 'Failed to search leases',
@@ -204,7 +205,7 @@ router.get('/metrics/:organizationId', async (req: Request, res: Response) => {
       success: true,
       data: metrics
     });
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to get lease metrics', error);
     res.status(500).json({
       error: 'Failed to get lease metrics',
@@ -242,7 +243,7 @@ router.get('/renewals/analyze/:organizationId', async (req: Request, res: Respon
           Math.round(renewalAnalyses.reduce((sum, r) => sum + r.renewalProbability, 0) / renewalAnalyses.length) : 0
       }
     });
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to analyze renewal opportunities', error);
     res.status(500).json({
       error: 'Failed to analyze renewal opportunities',
@@ -273,23 +274,23 @@ router.put('/leases/:leaseId', async (req: Request, res: Response) => {
     }
 
     // Convert date strings to Date objects
-    if (updates.startDate) updates.startDate = new Date(updates.startDate);
-    if (updates.endDate) updates.endDate = new Date(updates.endDate);
-    if (updates.expirationDate) updates.expirationDate = new Date(updates.expirationDate);
-    if (updates.commencement) updates.commencement = new Date(updates.commencement);
-    if (updates.rentCommencement) updates.rentCommencement = new Date(updates.rentCommencement);
-    if (updates.optionDeadline) updates.optionDeadline = new Date(updates.optionDeadline);
-    if (updates.renewalNotice) updates.renewalNotice = new Date(updates.renewalNotice);
+    if (updates.startDate) {updates.startDate = new Date(updates.startDate);}
+    if (updates.endDate) {updates.endDate = new Date(updates.endDate);}
+    if (updates.expirationDate) {updates.expirationDate = new Date(updates.expirationDate);}
+    if (updates.commencement) {updates.commencement = new Date(updates.commencement);}
+    if (updates.rentCommencement) {updates.rentCommencement = new Date(updates.rentCommencement);}
+    if (updates.optionDeadline) {updates.optionDeadline = new Date(updates.optionDeadline);}
+    if (updates.renewalNotice) {updates.renewalNotice = new Date(updates.renewalNotice);}
 
     // Convert numeric strings to numbers
-    if (updates.baseLease) updates.baseLease = parseFloat(updates.baseLease);
-    if (updates.percentage) updates.percentage = parseFloat(updates.percentage);
-    if (updates.securityDeposit) updates.securityDeposit = parseFloat(updates.securityDeposit);
-    if (updates.leasableArea) updates.leasableArea = parseFloat(updates.leasableArea);
-    if (updates.usableArea) updates.usableArea = parseFloat(updates.usableArea);
-    if (updates.capex) updates.capex = parseFloat(updates.capex);
-    if (updates.personalProperty) updates.personalProperty = parseFloat(updates.personalProperty);
-    if (updates.originalTerm) updates.originalTerm = parseInt(updates.originalTerm);
+    if (updates.baseLease) {updates.baseLease = parseFloat(updates.baseLease);}
+    if (updates.percentage) {updates.percentage = parseFloat(updates.percentage);}
+    if (updates.securityDeposit) {updates.securityDeposit = parseFloat(updates.securityDeposit);}
+    if (updates.leasableArea) {updates.leasableArea = parseFloat(updates.leasableArea);}
+    if (updates.usableArea) {updates.usableArea = parseFloat(updates.usableArea);}
+    if (updates.capex) {updates.capex = parseFloat(updates.capex);}
+    if (updates.personalProperty) {updates.personalProperty = parseFloat(updates.personalProperty);}
+    if (updates.originalTerm) {updates.originalTerm = parseInt(updates.originalTerm);}
 
     const updatedLease = await leaseManagementService.updateLease(leaseId, updates, amendmentReason);
 
@@ -297,7 +298,7 @@ router.put('/leases/:leaseId', async (req: Request, res: Response) => {
       success: true,
       data: updatedLease
     });
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to update lease', error);
     res.status(500).json({
       error: 'Failed to update lease',
@@ -340,7 +341,7 @@ router.post('/reports/:organizationId', async (req: Request, res: Response) => {
       success: true,
       data: report
     });
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to generate lease report', error);
     res.status(500).json({
       error: 'Failed to generate lease report',
@@ -369,7 +370,7 @@ router.get('/leases/:leaseId', async (req: Request, res: Response) => {
       success: true,
       message: 'Get lease by ID endpoint - implementation pending'
     });
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to get lease', error);
     res.status(500).json({
       error: 'Failed to get lease',
@@ -398,7 +399,7 @@ router.delete('/leases/:leaseId', async (req: Request, res: Response) => {
       success: true,
       message: 'Delete lease endpoint - implementation pending'
     });
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to delete lease', error);
     res.status(500).json({
       error: 'Failed to delete lease',
@@ -443,7 +444,7 @@ router.get('/dashboard/:organizationId', async (req: Request, res: Response) => 
       success: true,
       data: dashboardData
     });
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to get lease dashboard', error);
     res.status(500).json({
       error: 'Failed to get lease dashboard',

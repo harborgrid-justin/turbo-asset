@@ -260,7 +260,7 @@ export class LeaseManagementService {
       });
 
       return lease;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create lease', error);
       throw error;
     }
@@ -385,7 +385,7 @@ export class LeaseManagementService {
         topTenants,
         renewalPipeline
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get portfolio summary', error);
       throw error;
     }
@@ -490,7 +490,7 @@ export class LeaseManagementService {
         ),
         upcomingDates: lease.criticalDates.slice(0, 3)
       }));
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to search leases', error);
       throw error;
     }
@@ -593,7 +593,7 @@ export class LeaseManagementService {
           year5Plus: Math.round(leaseRollover.year5Plus)
         }
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to calculate lease metrics', error);
       throw error;
     }
@@ -672,7 +672,7 @@ export class LeaseManagementService {
       }
 
       return renewalAnalyses.sort((a, b) => b.renewalProbability - a.renewalProbability);
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to analyze renewal opportunities', error);
       throw error;
     }
@@ -774,7 +774,7 @@ export class LeaseManagementService {
       });
 
       return updatedLease;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to update lease', error);
       throw error;
     }
@@ -797,7 +797,7 @@ export class LeaseManagementService {
         default:
           throw new Error('Invalid report type');
       }
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate lease report', error);
       throw error;
     }
@@ -880,10 +880,10 @@ export class LeaseManagementService {
   }
 
   private determineAmendmentType(updates: any): string {
-    if (updates.baseLease || updates.percentage) return 'RENT_CHANGE';
-    if (updates.endDate) return 'TERM_EXTENSION';
-    if (updates.leasableArea || updates.usableArea) return 'SPACE_MODIFICATION';
-    if (updates.useType) return 'USE_CHANGE';
+    if (updates.baseLease || updates.percentage) {return 'RENT_CHANGE';}
+    if (updates.endDate) {return 'TERM_EXTENSION';}
+    if (updates.leasableArea || updates.usableArea) {return 'SPACE_MODIFICATION';}
+    if (updates.useType) {return 'USE_CHANGE';}
     return 'OTHER';
   }
 

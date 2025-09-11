@@ -87,7 +87,7 @@ export class BulkDataService {
         failed: 0,
         errors: [],
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to import from CSV', error);
       throw error;
     }
@@ -126,7 +126,7 @@ export class BulkDataService {
         failed: 0,
         errors: [],
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to import from Excel', error);
       throw error;
     }
@@ -148,7 +148,7 @@ export class BulkDataService {
       return {
         jobId: job.id!.toString(),
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create export job', error);
       throw error;
     }
@@ -160,7 +160,7 @@ export class BulkDataService {
   async getImportJobStatus(jobId: string): Promise<BulkImportResult | null> {
     try {
       const job = await this.importQueue.getJob(jobId);
-      if (!job) return null;
+      if (!job) {return null;}
 
       const result = job.returnvalue || {
         jobId,
@@ -172,7 +172,7 @@ export class BulkDataService {
       };
 
       return result;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get import job status', error);
       throw error;
     }
@@ -184,13 +184,13 @@ export class BulkDataService {
   async getExportJobStatus(jobId: string): Promise<{ status: string; filePath?: string } | null> {
     try {
       const job = await this.exportQueue.getJob(jobId);
-      if (!job) return null;
+      if (!job) {return null;}
 
       return {
         status: await job.getState(),
         filePath: job.returnvalue?.filePath,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get export job status', error);
       throw error;
     }
@@ -277,7 +277,7 @@ export class BulkDataService {
         }
 
         result.successful++;
-      } catch (error) {
+      } catch (error: unknown) {
         result.failed++;
         result.errors.push({
           row: i + 1,
@@ -359,17 +359,17 @@ export class BulkDataService {
     // Basic validation based on entity type
     switch (entityType) {
       case 'property':
-        if (!data.name) errors.push('Name is required');
-        if (!data.type) errors.push('Type is required');
+        if (!data.name) {errors.push('Name is required');}
+        if (!data.type) {errors.push('Type is required');}
         break;
       case 'asset':
-        if (!data.name) errors.push('Name is required');
-        if (!data.assetTag) errors.push('Asset tag is required');
+        if (!data.name) {errors.push('Name is required');}
+        if (!data.assetTag) {errors.push('Asset tag is required');}
         break;
       case 'user':
-        if (!data.email) errors.push('Email is required');
-        if (!data.firstName) errors.push('First name is required');
-        if (!data.lastName) errors.push('Last name is required');
+        if (!data.email) {errors.push('Email is required');}
+        if (!data.firstName) {errors.push('First name is required');}
+        if (!data.lastName) {errors.push('Last name is required');}
         break;
     }
 
@@ -560,7 +560,7 @@ export class BulkDataService {
    * Generate CSV file
    */
   private async generateCSV(data: any[], filePath: string): Promise<void> {
-    if (data.length === 0) return;
+    if (data.length === 0) {return;}
 
     const headers = Object.keys(data[0]);
     const csvContent = [

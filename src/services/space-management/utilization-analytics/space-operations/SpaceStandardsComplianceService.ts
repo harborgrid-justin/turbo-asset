@@ -143,7 +143,7 @@ export class SpaceStandardsComplianceService {
 
       logger.info('Space standard created successfully', { standardId: standard.id });
       return standard;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create space standard', error);
       throw error;
     }
@@ -209,7 +209,7 @@ export class SpaceStandardsComplianceService {
       });
 
       return assessment;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to assess space compliance', error);
       throw error;
     }
@@ -340,7 +340,7 @@ export class SpaceStandardsComplianceService {
       });
 
       return report;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate compliance report', error);
       throw error;
     }
@@ -433,7 +433,7 @@ export class SpaceStandardsComplianceService {
         benchmarking: fullBenchmarkData,
         insights
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to perform benchmarking analysis', error);
       throw error;
     }
@@ -545,7 +545,7 @@ export class SpaceStandardsComplianceService {
         assessments,
         upcomingAssessments
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get space compliance status', error);
       throw error;
     }

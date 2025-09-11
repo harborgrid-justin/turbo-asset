@@ -53,7 +53,7 @@ export class DocumentManagementService {
 
       logger.info('Document updated', { documentId, organizationId });
       return updatedDocument;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to update document', error);
       throw error;
     }
@@ -83,7 +83,7 @@ export class DocumentManagementService {
         for (const version of versions) {
           try {
             await fs.unlink(version.filePath);
-          } catch (error) {
+          } catch (error: unknown) {
             logger.warn('Failed to delete file', { filePath: version.filePath, error });
           }
         }
@@ -112,7 +112,7 @@ export class DocumentManagementService {
 
         logger.info('Document soft deleted', { documentId, organizationId });
       }
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to delete document', error);
       throw error;
     }
@@ -141,7 +141,7 @@ export class DocumentManagementService {
       }
 
       logger.info('Document restored', { documentId, organizationId });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to restore document', error);
       throw error;
     }
@@ -181,7 +181,7 @@ export class DocumentManagementService {
 
       logger.info('Document preview generated', { documentId });
       return previewUrl;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate document preview', error);
       return null;
     }

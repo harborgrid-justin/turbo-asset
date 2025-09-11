@@ -156,7 +156,7 @@ export class CalendarIntegrationService extends EventEmitter {
         name: provider.name,
         type: provider.type
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to add calendar provider', {
         providerName: provider.name,
         error: error instanceof Error ? error.message : 'Unknown error'
@@ -169,7 +169,7 @@ export class CalendarIntegrationService extends EventEmitter {
     try {
       const cacheKey = providerName || 'all';
       const cached = this.calendarsCache.get(cacheKey);
-      if (cached) return cached;
+      if (cached) {return cached;}
 
       const calendars: Calendar[] = [];
       const providersToQuery = providerName 
@@ -190,7 +190,7 @@ export class CalendarIntegrationService extends EventEmitter {
       });
 
       return calendars;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get calendars', {
         providerName,
         error: error instanceof Error ? error.message : 'Unknown error'
@@ -208,7 +208,7 @@ export class CalendarIntegrationService extends EventEmitter {
     try {
       const cacheKey = `events_${calendarId}_${startDate.toISOString()}_${endDate.toISOString()}`;
       const cached = this.eventsCache.get(cacheKey);
-      if (cached) return cached;
+      if (cached) {return cached;}
 
       const provider = providerName 
         ? this.providers.get(providerName)
@@ -229,7 +229,7 @@ export class CalendarIntegrationService extends EventEmitter {
       });
 
       return events;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get calendar events', {
         calendarId,
         startDate,
@@ -268,7 +268,7 @@ export class CalendarIntegrationService extends EventEmitter {
       });
 
       return createdEvent;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create calendar event', {
         calendarId,
         eventTitle: event.title,
@@ -306,7 +306,7 @@ export class CalendarIntegrationService extends EventEmitter {
       });
 
       return updatedEvent;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to update calendar event', {
         eventId,
         calendarId,
@@ -338,7 +338,7 @@ export class CalendarIntegrationService extends EventEmitter {
       });
 
       logger.info('Calendar event deleted successfully', { eventId, calendarId });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to delete calendar event', {
         eventId,
         calendarId,
@@ -379,7 +379,7 @@ export class CalendarIntegrationService extends EventEmitter {
       });
 
       return freeBusyData;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get free/busy information', {
         emails,
         startTime,
@@ -431,7 +431,7 @@ export class CalendarIntegrationService extends EventEmitter {
           // Update calendar sync time
           await this.updateCalendarSyncTime(calendar.id);
 
-        } catch (error) {
+        } catch (error: unknown) {
           syncResult.errors.push(
             `Calendar ${calendar.name}: ${error instanceof Error ? error.message : 'Unknown error'}`
           );
@@ -453,7 +453,7 @@ export class CalendarIntegrationService extends EventEmitter {
         errorCount: syncResult.errors.length
       });
 
-    } catch (error) {
+    } catch (error: unknown) {
       syncResult.status = 'failed';
       syncResult.completedAt = new Date();
       syncResult.errors.push(`Sync failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
@@ -495,7 +495,7 @@ export class CalendarIntegrationService extends EventEmitter {
 
       await client.get('/users/me/calendarList');
       logger.info('Google Calendar connection test successful');
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Google Calendar connection test failed', { error });
       throw new Error('Failed to connect to Google Calendar');
     }
@@ -514,7 +514,7 @@ export class CalendarIntegrationService extends EventEmitter {
 
       await client.get('/me/calendars');
       logger.info('Outlook Calendar connection test successful');
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Outlook Calendar connection test failed', { error });
       throw new Error('Failed to connect to Outlook Calendar');
     }
@@ -542,7 +542,7 @@ export class CalendarIntegrationService extends EventEmitter {
       });
 
       logger.info('CalDAV connection test successful');
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('CalDAV connection test failed', { error });
       throw new Error('Failed to connect to CalDAV server');
     }
@@ -742,7 +742,7 @@ export class CalendarIntegrationService extends EventEmitter {
 
   private async storeProviderConfig(provider: CalendarProvider): Promise<void> {
     try {
-      if (!this.context?.organizationId) return;
+      if (!this.context?.organizationId) {return;}
 
       await prisma.calendarProvider.upsert({
         where: {
@@ -763,14 +763,14 @@ export class CalendarIntegrationService extends EventEmitter {
           config: JSON.stringify(provider.config)
         }
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to store provider config', { providerName: provider.name, error });
     }
   }
 
   private async updateCalendarSyncTime(calendarId: string): Promise<void> {
     try {
-      if (!this.context?.organizationId) return;
+      if (!this.context?.organizationId) {return;}
 
       await prisma.calendarSyncStatus.upsert({
         where: {
@@ -788,7 +788,7 @@ export class CalendarIntegrationService extends EventEmitter {
           lastSyncTime: new Date()
         }
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to update calendar sync time', { calendarId, error });
     }
   }
@@ -854,7 +854,7 @@ export class CalendarIntegrationService extends EventEmitter {
       try {
         await this.testProviderConnection(provider);
         healthyCount++;
-      } catch (error) {
+      } catch (error: unknown) {
         providerHealth.status = 'error';
         logger.warn(`Calendar provider ${name} health check failed`, { error });
       }

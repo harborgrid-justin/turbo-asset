@@ -17,7 +17,7 @@ class MemoryCacheStore {
 
   get(key: string): any | null {
     const entry = this.cache.get(key);
-    if (!entry) return null;
+    if (!entry) {return null;}
 
     // Check expiration
     if (Date.now() > entry.expiresAt) {
@@ -226,7 +226,7 @@ export class CacheManager {
       let responseSent = false;
 
       const captureResponse = (body: any) => {
-        if (responseSent) return;
+        if (responseSent) {return;}
         responseSent = true;
 
         // Only cache successful responses

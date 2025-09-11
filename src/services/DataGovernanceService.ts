@@ -149,7 +149,7 @@ export class DataGovernanceService extends EventEmitter {
       });
 
       return rule;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create governance rule', { name, error });
       throw error;
     }
@@ -186,7 +186,7 @@ export class DataGovernanceService extends EventEmitter {
       });
 
       return record;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create master data record', { entityType, entityId, error });
       throw error;
     }
@@ -224,7 +224,7 @@ export class DataGovernanceService extends EventEmitter {
       });
 
       return lineage;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Data lineage tracking failed', { entityId, entityType, error });
       throw error;
     }
@@ -277,7 +277,7 @@ export class DataGovernanceService extends EventEmitter {
       });
 
       return metrics;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Data quality calculation failed', { entityType, entityId, error });
       throw error;
     }
@@ -307,7 +307,7 @@ export class DataGovernanceService extends EventEmitter {
         level: classification.level,
         categories: classification.categories,
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Data classification failed', { entityType, entityId, error });
       throw error;
     }
@@ -332,7 +332,7 @@ export class DataGovernanceService extends EventEmitter {
         name: steward.name,
         domains: domains.length,
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Data steward assignment failed', { steward, error });
       throw error;
     }
@@ -363,7 +363,7 @@ export class DataGovernanceService extends EventEmitter {
       });
 
       return violations;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Policy violation detection failed', { organizationId, error });
       throw error;
     }
@@ -423,7 +423,7 @@ export class DataGovernanceService extends EventEmitter {
       }
 
       return masterDataManagement;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Master data management failed', { entityType, error });
       throw error;
     }
@@ -490,7 +490,7 @@ export class DataGovernanceService extends EventEmitter {
         action,
         authorized: isAuthorized,
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Data access auditing failed', {
         userId,
         entityType,
@@ -521,7 +521,7 @@ export class DataGovernanceService extends EventEmitter {
           expiredAt: item.expiredAt,
         });
       }
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Retention policy monitoring failed', { organizationId, error });
     }
   }
@@ -534,7 +534,7 @@ export class DataGovernanceService extends EventEmitter {
     reportType: 'COMPLIANCE' | 'QUALITY' | 'LINEAGE' | 'STEWARDSHIP' | 'VIOLATIONS'
   ): Promise<any> {
     try {
-      let report: any = {
+      const report: any = {
         organizationId,
         reportType,
         generatedAt: new Date(),
@@ -565,7 +565,7 @@ export class DataGovernanceService extends EventEmitter {
       });
 
       return report;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Governance report generation failed', { organizationId, reportType, error });
       throw error;
     }
@@ -576,7 +576,7 @@ export class DataGovernanceService extends EventEmitter {
    */
 
   private calculateCompleteness(records: any[]): number {
-    if (!records.length) return 0;
+    if (!records.length) {return 0;}
 
     const totalFields = records.length * Object.keys(records[0]).length;
     const nonNullFields = records.reduce((count, record) => {
@@ -622,13 +622,13 @@ export class DataGovernanceService extends EventEmitter {
     const processed = new Set();
 
     for (let i = 0; i < records.length; i++) {
-      if (processed.has(i)) continue;
+      if (processed.has(i)) {continue;}
 
       const group = [records[i]];
       processed.add(i);
 
       for (let j = i + 1; j < records.length; j++) {
-        if (processed.has(j)) continue;
+        if (processed.has(j)) {continue;}
 
         if (this.recordsMatch(records[i], records[j], matchingRules)) {
           group.push(records[j]);
@@ -662,8 +662,8 @@ export class DataGovernanceService extends EventEmitter {
   }
 
   private calculateFieldSimilarity(value1: any, value2: any, algorithm: string): number {
-    if (value1 === value2) return 1.0;
-    if (!value1 || !value2) return 0.0;
+    if (value1 === value2) {return 1.0;}
+    if (!value1 || !value2) {return 0.0;}
 
     switch (algorithm) {
       case 'EXACT':
@@ -682,7 +682,7 @@ export class DataGovernanceService extends EventEmitter {
   private fuzzyMatch(str1: string, str2: string): number {
     // Implement fuzzy string matching (e.g., Levenshtein distance)
     const maxLength = Math.max(str1.length, str2.length);
-    if (maxLength === 0) return 1.0;
+    if (maxLength === 0) {return 1.0;}
 
     const distance = this.levenshteinDistance(str1, str2);
     return 1 - (distance / maxLength);
@@ -775,10 +775,10 @@ export class DataGovernanceService extends EventEmitter {
   }
 
   private getQualityStatus(qualityScore: number): 'UNKNOWN' | 'EXCELLENT' | 'GOOD' | 'FAIR' | 'POOR' | 'CRITICAL' {
-    if (qualityScore >= 95) return 'EXCELLENT';
-    if (qualityScore >= 85) return 'GOOD';
-    if (qualityScore >= 70) return 'FAIR';
-    if (qualityScore >= 50) return 'POOR';
+    if (qualityScore >= 95) {return 'EXCELLENT';}
+    if (qualityScore >= 85) {return 'GOOD';}
+    if (qualityScore >= 70) {return 'FAIR';}
+    if (qualityScore >= 50) {return 'POOR';}
     return 'CRITICAL';
   }
 

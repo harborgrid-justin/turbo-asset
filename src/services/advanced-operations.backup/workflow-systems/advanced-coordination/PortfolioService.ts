@@ -91,7 +91,7 @@ export class PortfolioService extends EventEmitter {
       });
 
       return result.id;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create portfolio', error);
       throw error;
     }
@@ -146,7 +146,7 @@ export class PortfolioService extends EventEmitter {
       });
 
       return result.id;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to add property to portfolio', error);
       throw error;
     }
@@ -224,7 +224,7 @@ export class PortfolioService extends EventEmitter {
 
       this.portfolioCache.set(portfolioId, fullPortfolio);
       return fullPortfolio;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get portfolio', error);
       throw error;
     }
@@ -266,7 +266,7 @@ export class PortfolioService extends EventEmitter {
       });
 
       return analysis;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to analyze portfolio', error);
       throw new Error(ERROR_MESSAGES.ANALYSIS_FAILED);
     }
@@ -306,7 +306,7 @@ export class PortfolioService extends EventEmitter {
         action: 'STRATEGY_UPDATED',
         timestamp: new Date(),
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to update portfolio strategy', error);
       throw error;
     }
@@ -355,7 +355,7 @@ export class PortfolioService extends EventEmitter {
       }
 
       return metrics;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get portfolio dashboard metrics', error);
       throw error;
     }
@@ -381,7 +381,7 @@ export class PortfolioService extends EventEmitter {
         portfoliosCount: portfolios.length,
         timestamp: new Date(),
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to update benchmark data', error);
       throw new Error(ERROR_MESSAGES.BENCHMARK_UPDATE_FAILED);
     }
@@ -413,7 +413,7 @@ export class PortfolioService extends EventEmitter {
       });
 
       return results;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to run scenario analysis', error);
       throw error;
     }
@@ -938,7 +938,7 @@ export class PortfolioService extends EventEmitter {
       });
 
       logger.info('Portfolios loaded into cache', { count: portfolios.length });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to load portfolios', error);
     }
   }

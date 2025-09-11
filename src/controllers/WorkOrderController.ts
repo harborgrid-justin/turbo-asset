@@ -61,7 +61,7 @@ router.get('/', async (req, res) => {
       success: true,
       data: result,
     });
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to search work orders', error);
     res.status(500).json({
       error: 'Failed to search work orders',
@@ -117,7 +117,7 @@ router.post('/', async (req, res) => {
       success: true,
       data: workOrder,
     });
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to create work order', error);
     res.status(500).json({
       error: 'Failed to create work order',
@@ -150,7 +150,7 @@ router.get('/:id', async (req, res) => {
       success: true,
       data: workOrder,
     });
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to get work order', error);
     res.status(error instanceof Error && error.message === 'Work order not found' ? 404 : 500).json({
       error: 'Failed to get work order',
@@ -206,7 +206,7 @@ router.put('/:id/status', async (req, res) => {
       success: true,
       data: workOrder,
     });
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to update work order status', error);
     res.status(500).json({
       error: 'Failed to update work order status',
@@ -259,7 +259,7 @@ router.post('/:id/tasks', async (req, res) => {
       success: true,
       data: task,
     });
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to add work order task', error);
     res.status(500).json({
       error: 'Failed to add work order task',
@@ -311,7 +311,7 @@ router.post('/:id/materials', async (req, res) => {
       success: true,
       data: material,
     });
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to add work order material', error);
     res.status(500).json({
       error: 'Failed to add work order material',
@@ -366,7 +366,7 @@ router.post('/:id/time-entries', async (req, res) => {
       success: true,
       data: timeEntry,
     });
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to record time entry', error);
     res.status(500).json({
       error: 'Failed to record time entry',
@@ -422,7 +422,7 @@ router.put('/tasks/:taskId/status', async (req, res) => {
       success: true,
       data: task,
     });
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to update task status', error);
     res.status(500).json({
       error: 'Failed to update task status',
@@ -484,7 +484,7 @@ router.put('/:id/assign', async (req, res) => {
       success: true,
       data: workOrder,
     });
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to assign work order', error);
     res.status(500).json({
       error: 'Failed to assign work order',
@@ -533,7 +533,7 @@ router.get('/metrics', async (req, res) => {
       success: true,
       data: metrics,
     });
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to get work order metrics', error);
     res.status(500).json({
       error: 'Failed to get work order metrics',
@@ -598,7 +598,7 @@ router.get('/technician/:technicianId/schedule', async (req, res) => {
       success: true,
       data: schedule,
     });
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to get technician schedule', error);
     res.status(500).json({
       error: 'Failed to get technician schedule',

@@ -223,7 +223,7 @@ export class CapitalProjectService {
       });
 
       return project;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create capital project', error);
       throw error;
     }
@@ -285,7 +285,7 @@ export class CapitalProjectService {
       });
 
       return task;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to add project task', error);
       throw error;
     }
@@ -352,7 +352,7 @@ export class CapitalProjectService {
       });
 
       return updatedTask;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to update task progress', { taskId, error });
       throw error;
     }
@@ -391,7 +391,7 @@ export class CapitalProjectService {
       });
 
       return budget;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to add project budget', error);
       throw error;
     }
@@ -491,7 +491,7 @@ export class CapitalProjectService {
         totalPages,
         currentPage: page,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to search capital projects', { filters, error });
       throw error;
     }
@@ -612,7 +612,7 @@ export class CapitalProjectService {
         portfolioValue: totalApprovedBudget,
         roi: performanceMetrics.successRate,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get project metrics', { organizationId, error });
       throw error;
     }
@@ -676,7 +676,7 @@ export class CapitalProjectService {
         totalFloat,
         riskFactors,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to analyze project schedule', { projectId, error });
       throw error;
     }
@@ -754,7 +754,7 @@ export class CapitalProjectService {
         schedulePerformanceIndex,
         estimateToComplete,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to analyze budget variance', { projectId, error });
       throw error;
     }
@@ -786,7 +786,7 @@ export class CapitalProjectService {
         },
       });
 
-      if (!project) return;
+      if (!project) {return;}
 
       // Calculate overall progress
       const totalTasks = project.tasks.length;
@@ -820,7 +820,7 @@ export class CapitalProjectService {
           phase: phase as any,
         },
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to update project progress', { projectId, error });
     }
   }
@@ -840,7 +840,7 @@ export class CapitalProjectService {
           remainingBudget: totalBudget, // Will be updated as costs are incurred
         },
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to recalculate project budget', { projectId, error });
     }
   }
@@ -894,7 +894,7 @@ export class CapitalProjectService {
     let totalCostVariance = 0;
     let totalScheduleVariance = 0;
     let successfulProjects = 0;
-    let totalProjects = projects.length;
+    const totalProjects = projects.length;
 
     projects.forEach(project => {
       // Cost variance

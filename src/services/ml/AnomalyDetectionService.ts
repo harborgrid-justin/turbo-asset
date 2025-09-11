@@ -178,7 +178,7 @@ export class AnomalyDetectionService extends EventEmitter {
       logger.info('Anomaly Detection Service initialized successfully');
       this.emit('service:initialized');
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to initialize Anomaly Detection Service', error);
       throw error;
     }
@@ -248,7 +248,7 @@ export class AnomalyDetectionService extends EventEmitter {
 
       return anomalies;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to detect energy anomalies', { organizationId, error });
       throw error;
     }
@@ -308,7 +308,7 @@ export class AnomalyDetectionService extends EventEmitter {
 
       return filteredAnomalies;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to detect utilization anomalies', { organizationId, error });
       throw error;
     }
@@ -379,7 +379,7 @@ export class AnomalyDetectionService extends EventEmitter {
 
       return dashboard;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate anomaly dashboard', { organizationId, error });
       throw error;
     }
@@ -391,7 +391,7 @@ export class AnomalyDetectionService extends EventEmitter {
   private async analyzeEnergyData(buildingData: any, realTime: boolean): Promise<Anomaly[]> {
     const anomalies: Anomaly[] = [];
     
-    if (!this.energyAnomalyModel) return anomalies;
+    if (!this.energyAnomalyModel) {return anomalies;}
 
     for (const dataPoint of buildingData.readings) {
       const features = this.prepareEnergyFeatures(dataPoint, buildingData);
@@ -407,7 +407,7 @@ export class AnomalyDetectionService extends EventEmitter {
           const anomaly = this.createEnergyAnomaly(dataPoint, buildingData, prediction);
           anomalies.push(anomaly);
         }
-      } catch (error) {
+      } catch (error: unknown) {
         logger.debug('Energy anomaly detection failed for data point', { error });
       }
     }
@@ -421,7 +421,7 @@ export class AnomalyDetectionService extends EventEmitter {
   private async analyzeUtilizationData(spaceData: any, realTime: boolean): Promise<Anomaly[]> {
     const anomalies: Anomaly[] = [];
     
-    if (!this.utilizationAnomalyModel) return anomalies;
+    if (!this.utilizationAnomalyModel) {return anomalies;}
 
     for (const dataPoint of spaceData.utilizationReadings) {
       const features = this.prepareUtilizationFeatures(dataPoint, spaceData);
@@ -437,7 +437,7 @@ export class AnomalyDetectionService extends EventEmitter {
           const anomaly = this.createUtilizationAnomaly(dataPoint, spaceData, prediction);
           anomalies.push(anomaly);
         }
-      } catch (error) {
+      } catch (error: unknown) {
         logger.debug('Utilization anomaly detection failed for data point', { error });
       }
     }
@@ -607,7 +607,7 @@ export class AnomalyDetectionService extends EventEmitter {
             this.handleRealTimeAnomalies(orgId, utilizationAnomalies);
           }
         }
-      } catch (error) {
+      } catch (error: unknown) {
         logger.error('Real-time monitoring failed', error);
       }
     }, 60000); // Check every minute
@@ -648,17 +648,17 @@ export class AnomalyDetectionService extends EventEmitter {
 
   private determineEnergySeverity(dataPoint: any, prediction: any): AnomalySeverity {
     const score = prediction.prediction.anomalyScore || 0;
-    if (score > 0.9) return 'CRITICAL';
-    if (score > 0.7) return 'HIGH';
-    if (score > 0.5) return 'MEDIUM';
+    if (score > 0.9) {return 'CRITICAL';}
+    if (score > 0.7) {return 'HIGH';}
+    if (score > 0.5) {return 'MEDIUM';}
     return 'LOW';
   }
 
   private determineUtilizationSeverity(dataPoint: any, prediction: any): AnomalySeverity {
     const score = prediction.prediction.anomalyScore || 0;
-    if (score > 0.85) return 'CRITICAL';
-    if (score > 0.65) return 'HIGH';
-    if (score > 0.45) return 'MEDIUM';
+    if (score > 0.85) {return 'CRITICAL';}
+    if (score > 0.65) {return 'HIGH';}
+    if (score > 0.45) {return 'MEDIUM';}
     return 'LOW';
   }
 
@@ -675,9 +675,9 @@ export class AnomalyDetectionService extends EventEmitter {
   }
 
   private inferEnergyRootCause(dataPoint: any, buildingData: any, prediction: any): string | undefined {
-    if (dataPoint.equipmentStatus !== 'NORMAL') return 'Equipment malfunction detected';
-    if (dataPoint.occupancy > buildingData.avgOccupancy * 1.5) return 'Unusually high occupancy';
-    if (Math.abs(dataPoint.temperature - buildingData.avgTemperature) > 5) return 'Extreme temperature variation';
+    if (dataPoint.equipmentStatus !== 'NORMAL') {return 'Equipment malfunction detected';}
+    if (dataPoint.occupancy > buildingData.avgOccupancy * 1.5) {return 'Unusually high occupancy';}
+    if (Math.abs(dataPoint.temperature - buildingData.avgTemperature) > 5) {return 'Extreme temperature variation';}
     return 'Unknown cause - requires investigation';
   }
 

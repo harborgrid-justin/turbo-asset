@@ -184,7 +184,7 @@ export class WhiteLabelService extends EventEmitter {
       });
 
       return config;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('White label configuration creation failed', { organizationId, error });
       throw error;
     }
@@ -255,7 +255,7 @@ export class WhiteLabelService extends EventEmitter {
         whiteLabelConfig,
         subsidiaryBranding,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Subsidiary creation failed', { parentOrganizationId, error });
       throw error;
     }
@@ -297,7 +297,7 @@ export class WhiteLabelService extends EventEmitter {
         organizationId,
         changes: Object.keys(branding),
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Branding update failed', { organizationId, error });
       throw error;
     }
@@ -333,7 +333,7 @@ export class WhiteLabelService extends EventEmitter {
         organizationId,
         themeName: theme.name,
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Theme application failed', { organizationId, error });
       throw error;
     }
@@ -385,7 +385,7 @@ export class WhiteLabelService extends EventEmitter {
       });
 
       return updatedConfig;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Custom domain setup failed', { organizationId, error });
       throw error;
     }
@@ -421,7 +421,7 @@ export class WhiteLabelService extends EventEmitter {
       }
 
       return isVerified;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Domain verification failed', { organizationId, domain, error });
       throw error;
     }
@@ -445,7 +445,7 @@ export class WhiteLabelService extends EventEmitter {
       }
 
       return organizationId;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Domain organization lookup failed', { domain, error });
       return null;
     }
@@ -475,7 +475,7 @@ export class WhiteLabelService extends EventEmitter {
       });
 
       return bundle;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Bundle generation failed', { organizationId, platform, error });
       throw error;
     }
@@ -503,7 +503,7 @@ export class WhiteLabelService extends EventEmitter {
       });
 
       return emailTemplate;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Email template creation failed', { organizationId, error });
       throw error;
     }
@@ -542,7 +542,7 @@ export class WhiteLabelService extends EventEmitter {
       });
 
       return renderedTemplate;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Email template rendering failed', { organizationId, templateId, error });
       throw error;
     }
@@ -562,7 +562,7 @@ export class WhiteLabelService extends EventEmitter {
         organizationId,
         featureCount: Object.keys(features).length,
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Feature flags setup failed', { organizationId, error });
       throw error;
     }
@@ -612,7 +612,7 @@ export class WhiteLabelService extends EventEmitter {
       }
 
       return true;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Feature flag check failed', { organizationId, featureName, error });
       return false;
     }
@@ -658,7 +658,7 @@ export class WhiteLabelService extends EventEmitter {
       };
 
       return manifest;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('PWA manifest generation failed', { organizationId, error });
       throw error;
     }
@@ -747,11 +747,11 @@ export class WhiteLabelService extends EventEmitter {
   }
 
   private applyBrandingToTemplate(template: EmailTemplate, branding: any): EmailTemplate {
-    if (!branding) return template;
+    if (!branding) {return template;}
 
     // Apply branding to email template
     let htmlContent = template.htmlContent;
-    let textContent = template.textContent;
+    const textContent = template.textContent;
 
     // Replace branding placeholders
     htmlContent = htmlContent
@@ -785,7 +785,7 @@ export class WhiteLabelService extends EventEmitter {
       // This would use DNS lookup libraries to check DNS records
       // For now, return mock verification
       return Math.random() > 0.5; // 50% chance of verification
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('DNS record check failed', { domain, error });
       return false;
     }
@@ -803,7 +803,7 @@ export class WhiteLabelService extends EventEmitter {
       });
 
       logger.info(`Loaded ${configs.length} white label configurations`);
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to load configurations', { error });
     }
   }

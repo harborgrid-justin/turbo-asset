@@ -1,6 +1,7 @@
+import { toError } from '../../core/utils/validation';
 import { Router, Request, Response } from 'express';
-import { prisma } from '../config/database';
-import { logger } from '../config/logger';
+import { prisma } from '../../config/database';
+import { logger } from '../../config/logger';
 
 const router = Router();
 
@@ -121,7 +122,7 @@ router.get('/', async (req: Request, res: Response) => {
     });
 
     res.json(bookings);
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to get space bookings', error);
     res.status(500).json({
       error: 'Failed to get space bookings',
@@ -198,7 +199,7 @@ router.get('/:id', async (req: Request, res: Response) => {
     }
 
     res.json(booking);
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to get space booking', error);
     res.status(500).json({
       error: 'Failed to get space booking',
@@ -361,7 +362,7 @@ router.post('/', async (req: Request, res: Response) => {
     logger.info('Space booking created', { bookingId: booking.id, spaceId, organizationId });
 
     res.status(201).json(booking);
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to create space booking', error);
     res.status(500).json({
       error: 'Failed to create space booking',
@@ -485,7 +486,7 @@ router.patch('/:id/status', async (req: Request, res: Response) => {
     });
 
     res.json(updatedBooking);
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to update space booking status', error);
     res.status(500).json({
       error: 'Failed to update space booking status',
@@ -626,7 +627,7 @@ router.get('/availability/check', async (req: Request, res: Response) => {
         unavailableSpaces: availabilityResults.filter(r => !r.isAvailable).length,
       },
     });
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to check space availability', error);
     res.status(500).json({
       error: 'Failed to check space availability',

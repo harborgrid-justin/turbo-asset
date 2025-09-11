@@ -21,7 +21,7 @@ redis.on('disconnect', () => {
 export const connectRedis = async () => {
   try {
     await redis.connect();
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to connect to Redis', error);
     throw error;
   }

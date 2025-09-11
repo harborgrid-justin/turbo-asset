@@ -74,7 +74,7 @@ export class SpaceUtilizationService {
         recordCount: validRecords.length,
         invalidCount: records.length - validRecords.length,
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to record space utilization', error);
       throw error;
     }
@@ -152,7 +152,7 @@ export class SpaceUtilizationService {
       });
 
       return utilizationData;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get utilization data', error);
       throw error;
     }
@@ -177,7 +177,7 @@ export class SpaceUtilizationService {
       const reports: UtilizationReport[] = [];
 
       for (const [spaceId, records] of spaceDataMap.entries()) {
-        if (records.length === 0) continue;
+        if (records.length === 0) {continue;}
 
         const firstRecord = records[0];
         const utilizationValues = records.map(r => r.value);
@@ -201,7 +201,7 @@ export class SpaceUtilizationService {
       }
 
       return reports.sort((a, b) => b.averageUtilization - a.averageUtilization);
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate utilization report', error);
       throw error;
     }
@@ -290,7 +290,7 @@ export class SpaceUtilizationService {
       );
 
       return enrichedData;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get real-time occupancy', error);
       throw error;
     }
@@ -378,7 +378,7 @@ export class SpaceUtilizationService {
           recordCount: utilizationRecords.length 
         });
       }
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to process sensor data', error);
       throw error;
     }
@@ -463,7 +463,7 @@ export class SpaceUtilizationService {
         heatmap,
         recommendations,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get utilization analytics', error);
       throw error;
     }
@@ -473,7 +473,7 @@ export class SpaceUtilizationService {
    * Calculate utilization trend using simple linear regression
    */
   private calculateTrend(records: any[]): 'INCREASING' | 'DECREASING' | 'STABLE' {
-    if (records.length < 2) return 'STABLE';
+    if (records.length < 2) {return 'STABLE';}
 
     // Sort by date
     const sortedRecords = records.sort((a, b) => 
@@ -491,8 +491,8 @@ export class SpaceUtilizationService {
     const slope = (n * sumXY - sumX * sumY) / (n * sumXX - sumX * sumX);
 
     // Determine trend based on slope
-    if (slope > 0.1) return 'INCREASING';
-    if (slope < -0.1) return 'DECREASING';
+    if (slope > 0.1) {return 'INCREASING';}
+    if (slope < -0.1) {return 'DECREASING';}
     return 'STABLE';
   }
 
@@ -557,7 +557,7 @@ export class SpaceUtilizationService {
         optimizationSuggestions,
         riskAssessment,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get predictive space planning', error);
       throw error;
     }
@@ -628,7 +628,7 @@ export class SpaceUtilizationService {
         alerts,
         recommendations,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to process realtime sensor data', error);
       throw error;
     }
@@ -708,7 +708,7 @@ export class SpaceUtilizationService {
         expansionNeeds,
         costOptimization,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get enterprise occupancy insights', error);
       throw error;
     }
@@ -731,7 +731,7 @@ export class SpaceUtilizationService {
     const predictions: any[] = [];
 
     spaceData.forEach((data, spaceId) => {
-      if (data.length < 30) return; // Need at least 30 days of data
+      if (data.length < 30) {return;} // Need at least 30 days of data
 
       // Sort by date
       data.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
@@ -794,7 +794,7 @@ export class SpaceUtilizationService {
         },
       });
 
-      if (!space) continue;
+      if (!space) {continue;}
 
       // Check if space will be over-utilized
       const maxProjectedUtilization = Math.max(
@@ -905,10 +905,10 @@ export class SpaceUtilizationService {
       const minUtilization = Math.min(...prediction.projections.map((p: any) => p.predictedUtilization));
       const utilizationRange = maxUtilization - minUtilization;
 
-      if (maxUtilization > 95) risks.overCapacity++;
-      if (minUtilization < 20) risks.underUtilization++;
-      if (prediction.trendStrength > 2) risks.rapidGrowth++;
-      if (utilizationRange > 40) risks.volatility++;
+      if (maxUtilization > 95) {risks.overCapacity++;}
+      if (minUtilization < 20) {risks.underUtilization++;}
+      if (prediction.trendStrength > 2) {risks.rapidGrowth++;}
+      if (utilizationRange > 40) {risks.volatility++;}
     });
 
     // Calculate overall risk
@@ -998,7 +998,7 @@ export class SpaceUtilizationService {
       take: 100,
     });
 
-    if (historical.length < 10) return null; // Need enough data
+    if (historical.length < 10) {return null;} // Need enough data
 
     const average = historical.reduce((sum, record) => sum + record.value, 0) / historical.length;
     const stdDev = Math.sqrt(

@@ -86,7 +86,7 @@ export class DataWarehouseService extends EventEmitter {
       });
 
       return result.id;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to register data warehouse connection', error);
       throw error;
     }
@@ -144,7 +144,7 @@ export class DataWarehouseService extends EventEmitter {
       });
 
       return result.id;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create ETL job', error);
       throw error;
     }
@@ -216,7 +216,7 @@ export class DataWarehouseService extends EventEmitter {
       });
 
       return executionId;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to execute ETL job', error);
       throw error;
     }
@@ -252,7 +252,7 @@ export class DataWarehouseService extends EventEmitter {
       });
 
       return result.id;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create data quality rule', error);
       throw error;
     }
@@ -321,7 +321,7 @@ export class DataWarehouseService extends EventEmitter {
         qualityScore,
         issues,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to run data quality checks', error);
       throw error;
     }
@@ -357,7 +357,7 @@ export class DataWarehouseService extends EventEmitter {
           } else {
             failureCount++;
           }
-        } catch (error) {
+        } catch (error: unknown) {
           logger.error('ETL job execution failed during sync', { jobId: job.id, error });
           failureCount++;
         }
@@ -388,7 +388,7 @@ export class DataWarehouseService extends EventEmitter {
         dataVolumeProcessed: totalDataVolume,
         syncDuration,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to synchronize data warehouse', error);
       throw error;
     }
@@ -420,7 +420,7 @@ export class DataWarehouseService extends EventEmitter {
         sourceTable: lineage.sourceTable,
         targetTable: lineage.targetTable 
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to track data lineage', error);
       throw error;
     }
@@ -453,7 +453,7 @@ export class DataWarehouseService extends EventEmitter {
         qualityScore: qualityResult.qualityScore,
         lastSyncTime: lastSync,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get data warehouse metrics', error);
       throw error;
     }
@@ -553,7 +553,7 @@ export class DataWarehouseService extends EventEmitter {
         success: true,
         responseTime,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown connection error',
@@ -643,7 +643,7 @@ export class DataWarehouseService extends EventEmitter {
     cron.schedule(cronPattern, async () => {
       try {
         await this.executeETLJob(jobId);
-      } catch (error) {
+      } catch (error: unknown) {
         logger.error('Scheduled ETL job execution failed', { jobId, error });
       }
     }, {
@@ -705,7 +705,7 @@ export class DataWarehouseService extends EventEmitter {
         recordsProcessed: transformedData.length,
         timestamp: new Date(),
       });
-    } catch (error) {
+    } catch (error: unknown) {
       // Update execution record with error
       await prisma.etlExecution.update({
         where: { id: executionId },
@@ -1084,7 +1084,7 @@ export class DataWarehouseService extends EventEmitter {
       }
 
       logger.info('Data warehouse connections loaded', { count: this.connections.size });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to load data warehouse connections', error);
     }
   }
@@ -1118,7 +1118,7 @@ export class DataWarehouseService extends EventEmitter {
             error: testResult.error 
           });
         }
-      } catch (error) {
+      } catch (error: unknown) {
         logger.error('Failed to test connection', { connectionId, error });
       }
     }

@@ -184,7 +184,7 @@ export class EmergencyPlanningService {
       });
 
       return emergencyPlan;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create emergency plan', error);
       throw error;
     }
@@ -211,7 +211,7 @@ export class EmergencyPlanningService {
       });
 
       return plans;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get emergency plans', error);
       throw error;
     }
@@ -256,7 +256,7 @@ export class EmergencyPlanningService {
       });
 
       return drill;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to schedule emergency drill', error);
       throw error;
     }
@@ -298,7 +298,7 @@ export class EmergencyPlanningService {
       await this.updateComplianceScores(drill.buildingId, drillRecord.score || 0);
 
       return updatedDrill;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to record drill results', error);
       throw error;
     }
@@ -375,7 +375,7 @@ export class EmergencyPlanningService {
         drillSchedule,
         certificationStatus,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get compliance dashboard', error);
       throw error;
     }
@@ -452,7 +452,7 @@ export class EmergencyPlanningService {
         recommendations,
         complianceChecks,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate evacuation report', error);
       throw error;
     }
@@ -513,7 +513,7 @@ export class EmergencyPlanningService {
         resources,
         checklists,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get emergency response procedures', error);
       throw error;
     }

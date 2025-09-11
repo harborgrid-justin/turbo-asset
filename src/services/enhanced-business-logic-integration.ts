@@ -371,7 +371,7 @@ export class EnhancedBusinessLogicIntegrationService {
         }
       };
 
-    } catch (error) {
+    } catch (error: unknown) {
       // Update metrics on failure
       this.updateMetricsOnFailure(serviceName, Date.now() - startTime);
       
@@ -449,7 +449,7 @@ export class EnhancedBusinessLogicIntegrationService {
 
         throw lastError || new Error('No fallback available');
 
-      } catch (error) {
+      } catch (error: unknown) {
         lastError = error;
         
         if (attempt < maxRetries) {
@@ -467,7 +467,7 @@ export class EnhancedBusinessLogicIntegrationService {
    */
   private checkRateLimit(serviceName: string): { allowed: boolean; resetTime?: Date } {
     const bridge = this.bridges.get(serviceName);
-    if (!bridge) return { allowed: true };
+    if (!bridge) {return { allowed: true };}
 
     const now = Date.now();
     const windowStart = Math.floor(now / 60000) * 60000; // 1-minute windows
@@ -493,10 +493,10 @@ export class EnhancedBusinessLogicIntegrationService {
    */
   private isCircuitClosed(serviceName: string): boolean {
     const bridge = this.bridges.get(serviceName);
-    if (!bridge) return true;
+    if (!bridge) {return true;}
 
     const cbMetrics = this.globalMetrics.circuitBreakerMetrics.get(serviceName);
-    if (!cbMetrics) return true;
+    if (!cbMetrics) {return true;}
 
     if (bridge.metrics.circuitBreakerStatus === 'OPEN') {
       // Check if timeout has passed
@@ -712,7 +712,7 @@ export class EnhancedBusinessLogicIntegrationService {
           }
         }
         bridge.metrics.lastHealthCheck = new Date();
-      } catch (error) {
+      } catch (error: unknown) {
         logger.warn(`Health check failed for service ${serviceName}:`, error);
         this.globalMetrics.serviceHealth.set(serviceName, 'UNHEALTHY');
       }
@@ -769,7 +769,7 @@ export class EnhancedBusinessLogicIntegrationService {
           { timeout: 5000 }
         );
         napiServiceHealth = napiResult.success;
-      } catch (error) {
+      } catch (error: unknown) {
         napiServiceHealth = false;
       }
 
@@ -781,7 +781,7 @@ export class EnhancedBusinessLogicIntegrationService {
         } else {
           businessLogicHealth = true; // Assume healthy if no health check available
         }
-      } catch (error) {
+      } catch (error: unknown) {
         businessLogicHealth = false;
       }
 
@@ -850,7 +850,7 @@ export class EnhancedBusinessLogicIntegrationService {
    */
   addValidationRule(serviceName: string, methodName: string, rules: ValidationRule[]): boolean {
     const bridge = this.bridges.get(serviceName);
-    if (!bridge) return false;
+    if (!bridge) {return false;}
 
     const existingRules = bridge.validation.rules.get(serviceName) || [];
     bridge.validation.rules.set(serviceName, [...existingRules, ...rules]);
@@ -862,7 +862,7 @@ export class EnhancedBusinessLogicIntegrationService {
    */
   resetServiceMetrics(serviceName: string): boolean {
     const bridge = this.bridges.get(serviceName);
-    if (!bridge) return false;
+    if (!bridge) {return false;}
 
     bridge.metrics = {
       callCount: 0,
@@ -934,8 +934,8 @@ export class EnhancedBusinessLogicIntegrationService {
           [],
           { timeout: 5000 }
         );
-        if (napiResult.success) napiHealthy++;
-      } catch (error) {
+        if (napiResult.success) {napiHealthy++;}
+      } catch (error: unknown) {
         // NAPI service not healthy
       }
 
@@ -943,11 +943,11 @@ export class EnhancedBusinessLogicIntegrationService {
       try {
         if (bridge.businessLogicService && bridge.businessLogicService.healthCheck) {
           const isHealthy = await bridge.businessLogicService.healthCheck();
-          if (isHealthy) businessLogicHealthy++;
+          if (isHealthy) {businessLogicHealthy++;}
         } else {
           businessLogicHealthy++; // Assume healthy if no health check
         }
-      } catch (error) {
+      } catch (error: unknown) {
         // Business logic service not healthy
       }
     }
@@ -1316,7 +1316,7 @@ export class AdvancedBusinessRulesEngine {
 
     // Group similar underutilized spaces for consolidation
     const spacesByType = underutilizedSpaces.reduce((acc, space) => {
-      if (!acc[space.spaceType]) acc[space.spaceType] = [];
+      if (!acc[space.spaceType]) {acc[space.spaceType] = [];}
       acc[space.spaceType].push(space);
       return acc;
     }, {} as Record<string, any[]>);
@@ -1764,7 +1764,7 @@ export class AdvancedDataStandardizationEngine {
     let dataQualityScore = 100;
 
     // Asset ID standardization
-    let standardizedId = this.standardizeAssetId(rawAssetData, sourceSystem);
+    const standardizedId = this.standardizeAssetId(rawAssetData, sourceSystem);
     if (standardizedId !== rawAssetData.id) {
       transformationLog.push({
         field: 'id',
@@ -1775,7 +1775,7 @@ export class AdvancedDataStandardizationEngine {
     }
 
     // Name standardization - clean and format
-    let standardizedName = this.cleanAndFormatText(rawAssetData.name || rawAssetData.assetName || 'Unknown Asset');
+    const standardizedName = this.cleanAndFormatText(rawAssetData.name || rawAssetData.assetName || 'Unknown Asset');
     if (!rawAssetData.name && !rawAssetData.assetName) {
       standardizationIssues.push({
         field: 'name',
@@ -2043,7 +2043,7 @@ export class AdvancedDataStandardizationEngine {
   }
 
   private cleanAndFormatText(text: string): string {
-    if (!text) return '';
+    if (!text) {return '';}
     return text.toString()
       .trim()
       .replace(/\s+/g, ' ') // Multiple spaces to single space
@@ -2052,7 +2052,7 @@ export class AdvancedDataStandardizationEngine {
   }
 
   private standardizeAssetType(rawType: string): string | null {
-    if (!rawType) return null;
+    if (!rawType) {return null;}
     
     const typeMapping: Record<string, string> = {
       // HVAC Equipment
@@ -2092,7 +2092,7 @@ export class AdvancedDataStandardizationEngine {
   }
 
   private standardizeSpaceType(rawType: string): 'office' | 'meeting' | 'common' | 'storage' | 'specialized' | 'retail' | 'warehouse' | null {
-    if (!rawType) return null;
+    if (!rawType) {return null;}
     
     const typeMapping: Record<string, 'office' | 'meeting' | 'common' | 'storage' | 'specialized' | 'retail' | 'warehouse'> = {
       'office': 'office',
@@ -2205,13 +2205,13 @@ export class AdvancedDataStandardizationEngine {
   }
 
   private standardizeFloorData(floor: any): string {
-    if (!floor) return '';
+    if (!floor) {return '';}
     
     // Convert numeric floors to standard format
     const floorNum = parseInt(String(floor), 10);
     if (!isNaN(floorNum)) {
-      if (floorNum === 0) return 'Ground Floor';
-      if (floorNum < 0) return `Basement ${Math.abs(floorNum)}`;
+      if (floorNum === 0) {return 'Ground Floor';}
+      if (floorNum < 0) {return `Basement ${Math.abs(floorNum)}`;}
       return `Floor ${floorNum}`;
     }
     
@@ -2219,12 +2219,12 @@ export class AdvancedDataStandardizationEngine {
   }
 
   private standardizeAddress(address: string): string {
-    if (!address) return '';
+    if (!address) {return '';}
     return this.cleanAndFormatText(address);
   }
 
   private standardizeAmenities(amenities: any[]): string[] {
-    if (!Array.isArray(amenities)) return [];
+    if (!Array.isArray(amenities)) {return [];}
     
     const amenityMapping: Record<string, string> = {
       'wifi': 'Wi-Fi',
@@ -2249,7 +2249,7 @@ export class AdvancedDataStandardizationEngine {
   }
 
   private standardizeAccessibilityFeatures(features: any[]): string[] {
-    if (!Array.isArray(features)) return [];
+    if (!Array.isArray(features)) {return [];}
     
     const featureMapping: Record<string, string> = {
       'ramp': 'Wheelchair Ramp',
@@ -2294,8 +2294,8 @@ export class AdvancedDataStandardizationEngine {
   }
 
   private parseNumericValue(value: any): number {
-    if (typeof value === 'number') return value;
-    if (!value) return 0;
+    if (typeof value === 'number') {return value;}
+    if (!value) {return 0;}
     
     const numStr = String(value).replace(/[,$\s]/g, ''); // Remove currency symbols and commas
     const parsed = parseFloat(numStr);
@@ -2303,15 +2303,15 @@ export class AdvancedDataStandardizationEngine {
   }
 
   private parseBooleanValue(value: any): boolean {
-    if (typeof value === 'boolean') return value;
-    if (!value) return false;
+    if (typeof value === 'boolean') {return value;}
+    if (!value) {return false;}
     
     const str = String(value).toLowerCase().trim();
     return ['true', '1', 'yes', 'y', 'enabled', 'on'].includes(str);
   }
 
   private standardizeCurrencyCode(currency: string): string {
-    if (!currency) return 'USD';
+    if (!currency) {return 'USD';}
     
     const currencyMapping: Record<string, string> = {
       'usd': 'USD',
@@ -2335,11 +2335,11 @@ export class AdvancedDataStandardizationEngine {
   }
 
   private standardizeDate(dateValue: any): string {
-    if (!dateValue) return '';
+    if (!dateValue) {return '';}
     
     try {
       const date = new Date(dateValue);
-      if (isNaN(date.getTime())) return '';
+      if (isNaN(date.getTime())) {return '';}
       return date.toISOString().split('T')[0]; // Return YYYY-MM-DD format
     } catch {
       return '';
@@ -2504,8 +2504,8 @@ export class AdvancedFinancialAnalyticsEngine {
       rate = rate - npv / dnpv;
       
       // Ensure rate stays within reasonable bounds
-      if (rate < -0.99) rate = -0.99;
-      if (rate > 10) rate = 10;
+      if (rate < -0.99) {rate = -0.99;}
+      if (rate > 10) {rate = 10;}
     }
     
     return {
@@ -2865,12 +2865,12 @@ export class AdvancedRiskAssessmentEngine {
     
     // Generate recommendations
     const recommendations: string[] = [];
-    if (ageRiskScore > 20) recommendations.push('Consider asset replacement due to age');
-    if (conditionRiskScore > 40) recommendations.push('Immediate condition assessment and repair needed');
-    if (maintenanceRiskScore > 30) recommendations.push('Improve preventive maintenance schedule compliance');
-    if (environmentalRiskScore > 30) recommendations.push('Optimize environmental conditions (temperature, humidity, vibration)');
-    if (utilizationRiskScore > 20) recommendations.push('Review asset utilization patterns and optimize usage');
-    if (criticalityLevel === 'critical' && overallRiskScore > 50) recommendations.push('Implement redundancy measures for critical asset');
+    if (ageRiskScore > 20) {recommendations.push('Consider asset replacement due to age');}
+    if (conditionRiskScore > 40) {recommendations.push('Immediate condition assessment and repair needed');}
+    if (maintenanceRiskScore > 30) {recommendations.push('Improve preventive maintenance schedule compliance');}
+    if (environmentalRiskScore > 30) {recommendations.push('Optimize environmental conditions (temperature, humidity, vibration)');}
+    if (utilizationRiskScore > 20) {recommendations.push('Review asset utilization patterns and optimize usage');}
+    if (criticalityLevel === 'critical' && overallRiskScore > 50) {recommendations.push('Implement redundancy measures for critical asset');}
     
     return {
       overallRiskScore,
@@ -2893,8 +2893,8 @@ export class AdvancedRiskAssessmentEngine {
    */
   private generateNormalRandom(): number {
     let u = 0, v = 0;
-    while(u === 0) u = Math.random(); // Converting [0,1) to (0,1)
-    while(v === 0) v = Math.random();
+    while(u === 0) {u = Math.random();} // Converting [0,1) to (0,1)
+    while(v === 0) {v = Math.random();}
     
     return Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
   }
@@ -2996,24 +2996,24 @@ export class AdvancedComplianceEngine {
     
     // ESG Rating
     let rating: 'AAA' | 'AA' | 'A' | 'BBB' | 'BB' | 'B' | 'CCC';
-    if (overallESGScore >= 85) rating = 'AAA';
-    else if (overallESGScore >= 75) rating = 'AA';
-    else if (overallESGScore >= 65) rating = 'A';
-    else if (overallESGScore >= 55) rating = 'BBB';
-    else if (overallESGScore >= 45) rating = 'BB';
-    else if (overallESGScore >= 35) rating = 'B';
-    else rating = 'CCC';
+    if (overallESGScore >= 85) {rating = 'AAA';}
+    else if (overallESGScore >= 75) {rating = 'AA';}
+    else if (overallESGScore >= 65) {rating = 'A';}
+    else if (overallESGScore >= 55) {rating = 'BBB';}
+    else if (overallESGScore >= 45) {rating = 'BB';}
+    else if (overallESGScore >= 35) {rating = 'B';}
+    else {rating = 'CCC';}
     
     // Benchmark comparison (simulated industry data)
     const industryAverage = 58;
     const topQuartile = 72;
     
     let performanceLevel: 'Leading' | 'Above Average' | 'Average' | 'Below Average' | 'Lagging';
-    if (overallESGScore >= topQuartile) performanceLevel = 'Leading';
-    else if (overallESGScore >= industryAverage + 5) performanceLevel = 'Above Average';
-    else if (overallESGScore >= industryAverage - 5) performanceLevel = 'Average';
-    else if (overallESGScore >= industryAverage - 15) performanceLevel = 'Below Average';
-    else performanceLevel = 'Lagging';
+    if (overallESGScore >= topQuartile) {performanceLevel = 'Leading';}
+    else if (overallESGScore >= industryAverage + 5) {performanceLevel = 'Above Average';}
+    else if (overallESGScore >= industryAverage - 5) {performanceLevel = 'Average';}
+    else if (overallESGScore >= industryAverage - 15) {performanceLevel = 'Below Average';}
+    else {performanceLevel = 'Lagging';}
     
     // Improvement areas identification
     const improvementAreas: Array<any> = [];
@@ -3199,10 +3199,10 @@ export class AdvancedComplianceEngine {
     
     // Determine compliance status
     let complianceStatus: 'Compliant' | 'Minor Issues' | 'Major Issues' | 'Non-Compliant';
-    if (complianceScore >= 95) complianceStatus = 'Compliant';
-    else if (complianceScore >= 80) complianceStatus = 'Minor Issues';
-    else if (complianceScore >= 60) complianceStatus = 'Major Issues';
-    else complianceStatus = 'Non-Compliant';
+    if (complianceScore >= 95) {complianceStatus = 'Compliant';}
+    else if (complianceScore >= 80) {complianceStatus = 'Minor Issues';}
+    else if (complianceScore >= 60) {complianceStatus = 'Major Issues';}
+    else {complianceStatus = 'Non-Compliant';}
     
     // Required actions
     const requiredActions: string[] = [];
@@ -3217,9 +3217,9 @@ export class AdvancedComplianceEngine {
     const criticalViolations = violations.filter(v => v.severity === 'Critical').length;
     const highViolations = violations.filter(v => v.severity === 'High').length;
     
-    if (criticalViolations > 0 || highViolations > 2) auditRisk = 'High';
-    else if (highViolations > 0 || violations.length > 3) auditRisk = 'Medium';
-    else auditRisk = 'Low';
+    if (criticalViolations > 0 || highViolations > 2) {auditRisk = 'High';}
+    else if (highViolations > 0 || violations.length > 3) {auditRisk = 'Medium';}
+    else {auditRisk = 'Low';}
     
     return {
       overallCompliance: Math.max(0, complianceScore),
@@ -3281,7 +3281,7 @@ export const ProductionGradeBusinessLogic = {
 
   async applyAdvancedBusinessRules(serviceName: string, methodName: string, data: any, ruleConfig: any = {}): Promise<any> {
     // Apply appropriate business rules based on service and method
-    let enhancedData = { ...data };
+    const enhancedData = { ...data };
     
     if (serviceName === 'asset-lifecycle' && methodName === 'calculateDepreciation' && data.assetData) {
       const depreciationResult = advancedBusinessRules.calculateAssetDepreciation({
@@ -3427,7 +3427,7 @@ export const productionGradeBusinessLogicService = {
         recommendations
       };
       
-    } catch (error) {
+    } catch (error: unknown) {
       throw new Error(`Comprehensive asset analysis failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   },
@@ -3500,7 +3500,7 @@ export const productionGradeBusinessLogicService = {
         recommendations
       };
       
-    } catch (error) {
+    } catch (error: unknown) {
       throw new Error(`Organizational assessment failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   },
@@ -3602,7 +3602,7 @@ export const productionGradeBusinessLogicService = {
         actionPlan
       };
 
-    } catch (error) {
+    } catch (error: unknown) {
       throw new Error(`Predictive asset analysis failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   },
@@ -3684,7 +3684,7 @@ export const productionGradeBusinessLogicService = {
         recommendations
       };
 
-    } catch (error) {
+    } catch (error: unknown) {
       throw new Error(`Real-time data processing failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   },
@@ -3760,7 +3760,7 @@ export const productionGradeBusinessLogicService = {
         recommendations
       };
 
-    } catch (error) {
+    } catch (error: unknown) {
       throw new Error(`Demand forecasting failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }

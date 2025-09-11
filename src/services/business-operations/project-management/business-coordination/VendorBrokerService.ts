@@ -91,7 +91,7 @@ export class VendorBrokerService extends EventEmitter implements IVendorBrokerSe
 
       return savedVendor;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create vendor', error);
       throw new Error(`Failed to create vendor: ${(error as Error).message}`);
     }
@@ -147,7 +147,7 @@ export class VendorBrokerService extends EventEmitter implements IVendorBrokerSe
 
       return savedBroker;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create broker', error);
       throw new Error(`Failed to create broker: ${(error as Error).message}`);
     }
@@ -159,7 +159,7 @@ export class VendorBrokerService extends EventEmitter implements IVendorBrokerSe
   async getVendor(id: string): Promise<Vendor | null> {
     try {
       const cached = this.vendorCache.get(id);
-      if (cached) return cached;
+      if (cached) {return cached;}
 
       const vendor = await this.loadVendor(id);
       if (vendor) {
@@ -167,7 +167,7 @@ export class VendorBrokerService extends EventEmitter implements IVendorBrokerSe
       }
       return vendor;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get vendor', { vendorId: id, error });
       throw new Error(`Failed to get vendor: ${(error as Error).message}`);
     }
@@ -179,7 +179,7 @@ export class VendorBrokerService extends EventEmitter implements IVendorBrokerSe
   async getBroker(id: string): Promise<Broker | null> {
     try {
       const cached = this.brokerCache.get(id);
-      if (cached) return cached;
+      if (cached) {return cached;}
 
       const broker = await this.loadBroker(id);
       if (broker) {
@@ -187,7 +187,7 @@ export class VendorBrokerService extends EventEmitter implements IVendorBrokerSe
       }
       return broker;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get broker', { brokerId: id, error });
       throw new Error(`Failed to get broker: ${(error as Error).message}`);
     }
@@ -227,7 +227,7 @@ export class VendorBrokerService extends EventEmitter implements IVendorBrokerSe
       logger.info('Vendor updated', { vendorId: id });
       return savedVendor;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to update vendor', { vendorId: id, error });
       throw new Error(`Failed to update vendor: ${(error as Error).message}`);
     }
@@ -267,7 +267,7 @@ export class VendorBrokerService extends EventEmitter implements IVendorBrokerSe
       logger.info('Broker updated', { brokerId: id });
       return savedBroker;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to update broker', { brokerId: id, error });
       throw new Error(`Failed to update broker: ${(error as Error).message}`);
     }
@@ -338,7 +338,7 @@ export class VendorBrokerService extends EventEmitter implements IVendorBrokerSe
 
       return vendors;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to search vendors', error);
       throw new Error(`Failed to search vendors: ${(error as Error).message}`);
     }
@@ -409,7 +409,7 @@ export class VendorBrokerService extends EventEmitter implements IVendorBrokerSe
 
       return brokers;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to search brokers', error);
       throw new Error(`Failed to search brokers: ${(error as Error).message}`);
     }
@@ -465,7 +465,7 @@ export class VendorBrokerService extends EventEmitter implements IVendorBrokerSe
 
       return vendorRating;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to rate vendor', { vendorId, error });
       throw new Error(`Failed to rate vendor: ${(error as Error).message}`);
     }
@@ -529,7 +529,7 @@ export class VendorBrokerService extends EventEmitter implements IVendorBrokerSe
 
       return performance;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to calculate vendor performance', { vendorId, error });
       throw new Error(`Failed to calculate performance: ${(error as Error).message}`);
     }
@@ -584,7 +584,7 @@ export class VendorBrokerService extends EventEmitter implements IVendorBrokerSe
 
       return brokerDeal;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to add broker deal', { brokerId, error });
       throw new Error(`Failed to add deal: ${(error as Error).message}`);
     }
@@ -681,7 +681,7 @@ export class VendorBrokerService extends EventEmitter implements IVendorBrokerSe
       logger.info('Vendor performance report generated', { vendorId });
       return report;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate vendor report', { vendorId, error });
       throw new Error(`Failed to generate report: ${(error as Error).message}`);
     }
@@ -766,7 +766,7 @@ export class VendorBrokerService extends EventEmitter implements IVendorBrokerSe
       logger.info('Broker performance report generated', { brokerId });
       return report;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate broker report', { brokerId, error });
       throw new Error(`Failed to generate report: ${(error as Error).message}`);
     }
@@ -775,18 +775,18 @@ export class VendorBrokerService extends EventEmitter implements IVendorBrokerSe
   // === PRIVATE HELPER METHODS ===
 
   private validateVendorData(data: Partial<Vendor>): void {
-    if (!data.name) throw new Error('Vendor name is required');
-    if (!data.vendorType) throw new Error('Vendor type is required');
-    if (!data.contactInfo) throw new Error('Contact information is required');
-    if (!data.primaryContact) throw new Error('Primary contact is required');
-    if (!data.businessInfo) throw new Error('Business information is required');
+    if (!data.name) {throw new Error('Vendor name is required');}
+    if (!data.vendorType) {throw new Error('Vendor type is required');}
+    if (!data.contactInfo) {throw new Error('Contact information is required');}
+    if (!data.primaryContact) {throw new Error('Primary contact is required');}
+    if (!data.businessInfo) {throw new Error('Business information is required');}
   }
 
   private validateBrokerData(data: Partial<Broker>): void {
-    if (!data.name) throw new Error('Broker name is required');
-    if (!data.licenseInfo) throw new Error('License information is required');
-    if (!data.contactInfo) throw new Error('Contact information is required');
-    if (!data.commission) throw new Error('Commission structure is required');
+    if (!data.name) {throw new Error('Broker name is required');}
+    if (!data.licenseInfo) {throw new Error('License information is required');}
+    if (!data.contactInfo) {throw new Error('Contact information is required');}
+    if (!data.commission) {throw new Error('Commission structure is required');}
   }
 
   private validateVendorUpdateData(data: Partial<Vendor>, existing: Vendor): void {
@@ -802,17 +802,17 @@ export class VendorBrokerService extends EventEmitter implements IVendorBrokerSe
   }
 
   private validateVendorRating(rating: Partial<VendorRating>): void {
-    if (!rating.ratingType) throw new Error('Rating type is required');
-    if (!rating.rating) throw new Error('Rating value is required');
-    if (rating.rating < 1 || rating.rating > 5) throw new Error('Rating must be between 1 and 5');
+    if (!rating.ratingType) {throw new Error('Rating type is required');}
+    if (!rating.rating) {throw new Error('Rating value is required');}
+    if (rating.rating < 1 || rating.rating > 5) {throw new Error('Rating must be between 1 and 5');}
   }
 
   private validateBrokerDeal(deal: Partial<BrokerDeal>): void {
-    if (!deal.dealType) throw new Error('Deal type is required');
-    if (!deal.propertyId) throw new Error('Property ID is required');
-    if (!deal.dealValue) throw new Error('Deal value is required');
-    if (!deal.closeDate) throw new Error('Close date is required');
-    if (!deal.clientId) throw new Error('Client ID is required');
+    if (!deal.dealType) {throw new Error('Deal type is required');}
+    if (!deal.propertyId) {throw new Error('Property ID is required');}
+    if (!deal.dealValue) {throw new Error('Deal value is required');}
+    if (!deal.closeDate) {throw new Error('Close date is required');}
+    if (!deal.clientId) {throw new Error('Client ID is required');}
   }
 
   private async generateVendorCode(): Promise<string> {
@@ -858,7 +858,7 @@ export class VendorBrokerService extends EventEmitter implements IVendorBrokerSe
   }
 
   private calculateAverageRating(ratings: VendorRating[]): number {
-    if (ratings.length === 0) return 0;
+    if (ratings.length === 0) {return 0;}
     return ratings.reduce((sum, r) => sum + r.rating, 0) / ratings.length;
   }
 
@@ -1039,7 +1039,7 @@ export class VendorBrokerService extends EventEmitter implements IVendorBrokerSe
   }
 
   private analyzePerformanceTrend(ratings: VendorRating[]): string {
-    if (ratings.length < 2) return 'INSUFFICIENT_DATA';
+    if (ratings.length < 2) {return 'INSUFFICIENT_DATA';}
     
     const recentRatings = ratings.slice(0, 5);
     const olderRatings = ratings.slice(5, 10);
@@ -1047,8 +1047,8 @@ export class VendorBrokerService extends EventEmitter implements IVendorBrokerSe
     const recentAvg = this.calculateAverageRating(recentRatings);
     const olderAvg = this.calculateAverageRating(olderRatings);
     
-    if (recentAvg > olderAvg + 0.2) return 'IMPROVING';
-    if (recentAvg < olderAvg - 0.2) return 'DECLINING';
+    if (recentAvg > olderAvg + 0.2) {return 'IMPROVING';}
+    if (recentAvg < olderAvg - 0.2) {return 'DECLINING';}
     return 'STABLE';
   }
 
@@ -1092,12 +1092,12 @@ export class VendorBrokerService extends EventEmitter implements IVendorBrokerSe
   }
 
   private calculateAverageDealValue(deals: BrokerDeal[]): number {
-    if (deals.length === 0) return 0;
+    if (deals.length === 0) {return 0;}
     return deals.reduce((sum, d) => sum + d.dealValue, 0) / deals.length;
   }
 
   private calculateAverageCommissionRate(broker: Broker): number {
-    if (broker.deals.length === 0) return broker.commission.defaultRate;
+    if (broker.deals.length === 0) {return broker.commission.defaultRate;}
     
     const totalCommission = broker.deals.reduce((sum, d) => sum + d.commissionEarned, 0);
     const totalValue = broker.deals.reduce((sum, d) => sum + d.dealValue, 0);

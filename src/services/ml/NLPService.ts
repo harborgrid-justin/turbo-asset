@@ -133,7 +133,7 @@ export class NLPService extends EventEmitter {
       logger.info('NLP Service initialized successfully');
       this.emit('service:initialized');
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to initialize NLP Service', error);
       throw error;
     }
@@ -249,7 +249,7 @@ export class NLPService extends EventEmitter {
 
       return classification;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to classify ticket', { ticketId, error });
       throw error;
     }
@@ -339,7 +339,7 @@ export class NLPService extends EventEmitter {
 
       return results;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to batch classify tickets', { error });
       throw error;
     }
@@ -405,7 +405,7 @@ export class NLPService extends EventEmitter {
 
       return sentimentScore;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to analyze sentiment', { error });
       throw error;
     }
@@ -470,7 +470,7 @@ export class NLPService extends EventEmitter {
         extractedEntities.sort((a, b) => b.confidence - a.confidence)
       );
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to extract entities', { error });
       return [];
     }
@@ -529,7 +529,7 @@ export class NLPService extends EventEmitter {
 
       return summary;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to summarize text', { error });
       return text.substring(0, 150) + '...';
     }
@@ -564,7 +564,7 @@ export class NLPService extends EventEmitter {
         confidence: detectedLanguage ? detectedLanguage[1] : 0.5
       };
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to detect language', { error });
       return { language: 'en', confidence: 0.5 };
     }
@@ -627,7 +627,7 @@ export class NLPService extends EventEmitter {
         confidence
       };
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.debug('Classification failed, using keyword fallback', { error });
       return this.classifyByKeywords(text);
     }
@@ -665,7 +665,7 @@ export class NLPService extends EventEmitter {
         reasoning
       };
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.debug('Priority classification failed, using heuristics', { error });
       return this.classifyPriorityByHeuristics(text);
     }
@@ -796,7 +796,7 @@ export class NLPService extends EventEmitter {
       return {
         level: 'HIGH',
         confidence: Math.min(0.8, highCount * 0.2 + 0.5),
-        reasoning: `High priority indicators detected`
+        reasoning: 'High priority indicators detected'
       };
     } else if (highCount > 0 || text.includes('?')) {
       return {
@@ -995,13 +995,13 @@ export class NLPService extends EventEmitter {
     
     // Length score (prefer medium length sentences)
     const words = sentence.split(/\s+/).length;
-    if (words >= 5 && words <= 20) score += 2;
-    else if (words > 20) score += 1;
+    if (words >= 5 && words <= 20) {score += 2;}
+    else if (words > 20) {score += 1;}
     
     // Keyword score
     const importantKeywords = ['problem', 'issue', 'need', 'help', 'urgent', 'broken', 'not working'];
     importantKeywords.forEach(keyword => {
-      if (sentence.toLowerCase().includes(keyword)) score += 3;
+      if (sentence.toLowerCase().includes(keyword)) {score += 3;}
     });
     
     // Position score (first and last sentences are often important)
@@ -1213,7 +1213,7 @@ export class NLPService extends EventEmitter {
       }
 
       logger.info('All NLP models trained successfully');
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to train NLP models', error);
       throw error;
     }
@@ -1261,7 +1261,7 @@ export class NLPService extends EventEmitter {
     const seen = new Set<string>();
     return entities.filter(entity => {
       const key = `${entity.type}:${entity.value.toLowerCase()}`;
-      if (seen.has(key)) return false;
+      if (seen.has(key)) {return false;}
       seen.add(key);
       return true;
     });

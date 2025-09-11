@@ -54,7 +54,7 @@ export class MLAnalyticsController {
         data: status
       });
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get ML service status', error);
       res.status(500).json({
         success: false,
@@ -103,7 +103,7 @@ export class MLAnalyticsController {
         }
       });
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to predict space optimization', error);
       res.status(500).json({
         success: false,
@@ -153,7 +153,7 @@ export class MLAnalyticsController {
         }
       });
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to forecast costs', error);
       res.status(500).json({
         success: false,
@@ -203,7 +203,7 @@ export class MLAnalyticsController {
         }
       });
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to detect energy anomalies', error);
       res.status(500).json({
         success: false,
@@ -252,7 +252,7 @@ export class MLAnalyticsController {
         }
       });
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to detect utilization anomalies', error);
       res.status(500).json({
         success: false,
@@ -302,7 +302,7 @@ export class MLAnalyticsController {
         }
       });
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate anomaly dashboard', error);
       res.status(500).json({
         success: false,
@@ -354,7 +354,7 @@ export class MLAnalyticsController {
         }
       });
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to assess facility condition', error);
       res.status(500).json({
         success: false,
@@ -405,7 +405,7 @@ export class MLAnalyticsController {
         }
       });
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to detect occupancy', error);
       res.status(500).json({
         success: false,
@@ -461,7 +461,7 @@ export class MLAnalyticsController {
         }
       });
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to classify ticket', error);
       res.status(500).json({
         success: false,
@@ -506,7 +506,7 @@ export class MLAnalyticsController {
         }
       });
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to batch classify tickets', error);
       res.status(500).json({
         success: false,
@@ -557,7 +557,7 @@ export class MLAnalyticsController {
         }
       });
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate vendor recommendations', error);
       res.status(500).json({
         success: false,
@@ -607,7 +607,7 @@ export class MLAnalyticsController {
         }
       });
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate lease recommendations', error);
       res.status(500).json({
         success: false,
@@ -660,7 +660,7 @@ export class MLAnalyticsController {
         }
       });
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create digital twin', error);
       res.status(500).json({
         success: false,
@@ -711,7 +711,7 @@ export class MLAnalyticsController {
         }
       });
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to run simulation', error);
       res.status(500).json({
         success: false,
@@ -762,7 +762,7 @@ export class MLAnalyticsController {
         }
       });
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate portfolio forecast', error);
       res.status(500).json({
         success: false,
@@ -813,7 +813,7 @@ export class MLAnalyticsController {
         }
       });
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate budget forecast', error);
       res.status(500).json({
         success: false,
@@ -871,7 +871,7 @@ export class MLAnalyticsController {
         }
       });
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to analyze feedback', error);
       res.status(500).json({
         success: false,
@@ -924,7 +924,7 @@ export class MLAnalyticsController {
         }
       });
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to analyze sentiment trends', error);
       res.status(500).json({
         success: false,
@@ -975,7 +975,7 @@ export class MLAnalyticsController {
         }
       });
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate sentiment dashboard', error);
       res.status(500).json({
         success: false,

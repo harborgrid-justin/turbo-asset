@@ -333,10 +333,10 @@ export class HealthCheckService {
       ]);
 
       // Add fulfilled results
-      if (database.status === 'fulfilled') checks.push(database.value);
-      if (redis.status === 'fulfilled') checks.push(redis.value);
-      if (filesystem.status === 'fulfilled') checks.push(filesystem.value);
-      if (externalServices.status === 'fulfilled') checks.push(externalServices.value);
+      if (database.status === 'fulfilled') {checks.push(database.value);}
+      if (redis.status === 'fulfilled') {checks.push(redis.value);}
+      if (filesystem.status === 'fulfilled') {checks.push(filesystem.value);}
+      if (externalServices.status === 'fulfilled') {checks.push(externalServices.value);}
 
       // Add rejected results as unhealthy
       if (database.status === 'rejected') {
@@ -403,7 +403,7 @@ export class HealthCheckService {
       // Check if database is accessible
       await this.prisma.$queryRaw`SELECT 1`;
       return true;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Readiness check failed', error);
       return false;
     }
@@ -417,7 +417,7 @@ export class HealthCheckService {
     try {
       const memUsage = process.memoryUsage();
       return memUsage.heapUsed > 0;
-    } catch (error) {
+    } catch (error: unknown) {
       return false;
     }
   }

@@ -237,7 +237,7 @@ export class SpaceOperationsManager {
         timeline,
         expectedOutcomes
       };
-    } catch (error) {
+    } catch (error: unknown) {
       throw new Error(`Failed to execute optimization workflow: ${error.message}`);
     }
   }

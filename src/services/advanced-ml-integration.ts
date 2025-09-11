@@ -223,8 +223,8 @@ export class AdvancedMLIntegrationEngine {
     const gamma = seasonality.detected ? 0.2 : 0; // Seasonal smoothing
     
     // Initialize components
-    let level = values[values.length - 1];
-    let trendComponent = trend.changeRate;
+    const level = values[values.length - 1];
+    const trendComponent = trend.changeRate;
     
     for (let i = 0; i < forecastPeriods; i++) {
       // Calculate base forecast
@@ -429,23 +429,23 @@ export class AdvancedMLIntegrationEngine {
     let probability = 0.1; // Base probability
     
     // Age factor
-    if (features.age > 10) probability += 0.2;
-    if (features.age > 20) probability += 0.3;
+    if (features.age > 10) {probability += 0.2;}
+    if (features.age > 20) {probability += 0.3;}
     
     // Temperature factor
-    if (features.maxTemperature > 80) probability += 0.15;
-    if (features.tempVariability > 0.3) probability += 0.1;
+    if (features.maxTemperature > 80) {probability += 0.15;}
+    if (features.tempVariability > 0.3) {probability += 0.1;}
     
     // Vibration factor  
-    if (features.maxVibration > 0.5) probability += 0.1;
+    if (features.maxVibration > 0.5) {probability += 0.1;}
     
     // Maintenance factor
-    if (features.emergencyMaintenanceRatio > 0.3) probability += 0.2;
-    if (features.maintenanceFrequency < 1) probability += 0.15; // Too little maintenance
+    if (features.emergencyMaintenanceRatio > 0.3) {probability += 0.2;}
+    if (features.maintenanceFrequency < 1) {probability += 0.15;} // Too little maintenance
     
     // Performance factor
-    if (features.avgEfficiency < 0.7) probability += 0.1;
-    if (features.efficiencyTrend < -0.1) probability += 0.15; // Declining efficiency
+    if (features.avgEfficiency < 0.7) {probability += 0.1;}
+    if (features.efficiencyTrend < -0.1) {probability += 0.15;} // Declining efficiency
     
     return Math.min(1, probability);
   }
@@ -476,9 +476,9 @@ export class AdvancedMLIntegrationEngine {
     const temperatureDataPoints = assetData.temperature?.length || 0;
     const maintenanceHistoryLength = assetData.maintenanceHistory?.length || 0;
     
-    if (temperatureDataPoints < 10) confidence -= 0.1;
-    if (maintenanceHistoryLength < 3) confidence -= 0.15;
-    if (assetData.age < 1) confidence -= 0.2; // New assets have less predictable patterns
+    if (temperatureDataPoints < 10) {confidence -= 0.1;}
+    if (maintenanceHistoryLength < 3) {confidence -= 0.15;}
+    if (assetData.age < 1) {confidence -= 0.2;} // New assets have less predictable patterns
     
     // Feature completeness
     const featureCompleteness = Object.keys(features).length / 15; // Assuming 15 ideal features
@@ -568,7 +568,7 @@ export class AdvancedMLIntegrationEngine {
     let bestStrength = 0;
     
     for (const period of testPeriods) {
-      if (values.length < period * 2) continue;
+      if (values.length < period * 2) {continue;}
       
       // Calculate autocorrelation at the period lag
       const correlation = this.calculateAutocorrelation(values, period);
@@ -586,7 +586,7 @@ export class AdvancedMLIntegrationEngine {
   }
 
   private calculateAutocorrelation(values: number[], lag: number): number {
-    if (values.length <= lag) return 0;
+    if (values.length <= lag) {return 0;}
     
     const n = values.length - lag;
     const mean1 = values.slice(0, n).reduce((sum, val) => sum + val, 0) / n;
@@ -610,7 +610,7 @@ export class AdvancedMLIntegrationEngine {
   }
 
   private calculateVariability(values: number[]): number {
-    if (values.length < 2) return 0;
+    if (values.length < 2) {return 0;}
     
     const mean = values.reduce((sum, val) => sum + val, 0) / values.length;
     const variance = values.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / values.length;

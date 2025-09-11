@@ -36,7 +36,7 @@ export class DocumentUploadService {
   private async ensureUploadDir(): Promise<void> {
     try {
       await fs.mkdir(this.uploadDir, { recursive: true });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create upload directory', error);
     }
   }
@@ -141,7 +141,7 @@ export class DocumentUploadService {
       });
 
       return document.id;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to upload document', error);
       throw error;
     }
@@ -209,7 +209,7 @@ export class DocumentUploadService {
       });
 
       return version.id;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to upload document version', error);
       throw error;
     }
@@ -222,7 +222,7 @@ export class DocumentUploadService {
     try {
       const data = await fs.readFile(filePath);
       return crypto.createHash('sha256').update(data).digest('hex');
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to calculate file checksum', { filePath, error });
       throw error;
     }

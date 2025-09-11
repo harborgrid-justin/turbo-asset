@@ -1,16 +1,17 @@
+import { toError } from '../../core/utils/validation';
 /**
  * Enhanced Business Logic Controller
  * API endpoints for production-grade business logic integration
  */
 
 import { Request, Response } from 'express';
-import { logger } from '../config/logger';
+import { logger } from '../../config/logger';
 import { 
   ProductionGradeBusinessLogic,
   enhancedBusinessLogicService, 
   advancedBusinessRules,
   dataStandardizationEngine
-} from '../services/enhanced-business-logic-integration';
+} from '../../services/enhanced-business-logic-integration';
 
 export class EnhancedBusinessLogicController {
   /**
@@ -43,7 +44,7 @@ export class EnhancedBusinessLogicController {
       );
 
       return res.json(result);
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Error executing advanced business logic:', error);
       return res.status(500).json({
         success: false,
@@ -63,7 +64,7 @@ export class EnhancedBusinessLogicController {
     try {
       const healthStatus = await ProductionGradeBusinessLogic.getComprehensiveHealthStatus();
       return res.json(healthStatus);
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Error getting health status:', error);
       return res.status(500).json({
         success: false,
@@ -100,7 +101,7 @@ export class EnhancedBusinessLogicController {
       };
 
       return res.json(serializedMetrics);
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Error getting production metrics:', error);
       return res.status(500).json({
         success: false,
@@ -146,7 +147,7 @@ export class EnhancedBusinessLogicController {
           calculationMethod: assetData.depreciationMethod || 'straight-line',
         },
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Error calculating asset depreciation:', error);
       return res.status(500).json({
         success: false,
@@ -195,7 +196,7 @@ export class EnhancedBusinessLogicController {
           currency: leaseData.currency || 'USD',
         },
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Error calculating lease accounting:', error);
       return res.status(500).json({
         success: false,
@@ -236,7 +237,7 @@ export class EnhancedBusinessLogicController {
           algorithm: 'Advanced Space Utilization Optimization',
         },
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Error optimizing space utilization:', error);
       return res.status(500).json({
         success: false,
@@ -277,7 +278,7 @@ export class EnhancedBusinessLogicController {
           algorithm: 'Advanced Maintenance Cost Optimization',
         },
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Error optimizing maintenance costs:', error);
       return res.status(500).json({
         success: false,
@@ -319,7 +320,7 @@ export class EnhancedBusinessLogicController {
           consolidationDate: financialData.consolidationDate,
         },
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Error performing financial consolidation:', error);
       return res.status(500).json({
         success: false,
@@ -360,7 +361,7 @@ export class EnhancedBusinessLogicController {
           dataQualityScore: standardizationResult.dataQualityScore,
         },
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Error standardizing asset data:', error);
       return res.status(500).json({
         success: false,
@@ -401,7 +402,7 @@ export class EnhancedBusinessLogicController {
           dataQualityScore: standardizationResult.dataQualityScore,
         },
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Error standardizing space data:', error);
       return res.status(500).json({
         success: false,
@@ -437,7 +438,7 @@ export class EnhancedBusinessLogicController {
         success: result,
         message: result ? 'Validation rules added successfully' : 'Failed to add validation rules',
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Error adding validation rules:', error);
       return res.status(500).json({
         success: false,
@@ -472,7 +473,7 @@ export class EnhancedBusinessLogicController {
         success: result,
         message: result ? 'Service metrics reset successfully' : 'Failed to reset service metrics',
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Error resetting service metrics:', error);
       return res.status(500).json({
         success: false,
@@ -501,7 +502,7 @@ export class EnhancedBusinessLogicController {
           timestamp: new Date().toISOString(),
         },
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Error listing services:', error);
       return res.status(500).json({
         success: false,

@@ -308,7 +308,7 @@ export class AdvancedWorkflowEngine extends EventEmitter {
         avgAccuracy: Object.values(models).reduce((acc, m) => acc + m.accuracy, 0) / Object.keys(models).length
       });
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to initialize workflow AI models', { error });
     }
   }
@@ -378,7 +378,7 @@ export class AdvancedWorkflowEngine extends EventEmitter {
 
       return workflow;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create workflow definition', { error, definition });
       throw error;
     }
@@ -468,7 +468,7 @@ export class AdvancedWorkflowEngine extends EventEmitter {
 
       return instance;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to start workflow instance', { error, workflowId, initiator });
       throw error;
     }
@@ -582,7 +582,7 @@ export class AdvancedWorkflowEngine extends EventEmitter {
 
       return instance;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to process workflow step', { error, instanceId, stepId, action, userId });
       throw error;
     }
@@ -673,7 +673,7 @@ export class AdvancedWorkflowEngine extends EventEmitter {
 
       return analytics;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate workflow analytics', { error, workflowId });
       throw error;
     }
@@ -702,7 +702,7 @@ export class AdvancedWorkflowEngine extends EventEmitter {
         const assignees = await this.getRuleBasedAssignment(step);
         instance.currentAssignees = assignees;
       }
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to assign workflow step', { error, instanceId: instance.id, stepId: step.id });
     }
   }

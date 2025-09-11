@@ -61,7 +61,7 @@ export class AssetValidationService {
         warnings
       };
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Asset validation failed', {
         assetTag: assetData.assetTag,
         error: error.message
@@ -147,7 +147,7 @@ export class AssetValidationService {
       if (orgSettings.tagPattern && !new RegExp(orgSettings.tagPattern).test(assetTag)) {
         errors.push('Asset tag does not match organizational format requirements');
       }
-    } catch (error) {
+    } catch (error: unknown) {
       // If we can't get org settings, continue with basic validation
       logger.warn('Could not retrieve organizational asset settings', { organizationId });
     }
@@ -236,7 +236,7 @@ export class AssetValidationService {
         errors.push('Location description cannot exceed 200 characters');
       }
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.warn('Location validation failed', { 
         assetTag: assetData.assetTag, 
         error: error.message 
@@ -542,7 +542,7 @@ export class AssetValidationService {
         }
       }
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.warn('Could not validate organizational constraints', { 
         organizationId: assetData.organizationId,
         error: error.message 
@@ -579,7 +579,7 @@ export class AssetValidationService {
         }
       });
       return count > 0;
-    } catch (error) {
+    } catch (error: unknown) {
       return false;
     }
   }
@@ -599,7 +599,7 @@ export class AssetValidationService {
         }
       });
       return count > 0;
-    } catch (error) {
+    } catch (error: unknown) {
       return false;
     }
   }
@@ -627,7 +627,7 @@ export class AssetValidationService {
         }
       });
       return count > 0;
-    } catch (error) {
+    } catch (error: unknown) {
       return false;
     }
   }

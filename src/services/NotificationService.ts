@@ -206,7 +206,7 @@ export class NotificationService extends EventEmitter {
 
       this.emit('notificationCreated', notification);
       return notification.id;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create notification', error);
       throw error;
     }
@@ -270,7 +270,7 @@ export class NotificationService extends EventEmitter {
       });
 
       return notificationIds;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create bulk notifications', error);
       throw error;
     }
@@ -323,7 +323,7 @@ export class NotificationService extends EventEmitter {
             break;
         }
       }
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to queue notification delivery', error);
       throw error;
     }
@@ -364,7 +364,7 @@ export class NotificationService extends EventEmitter {
           },
         },
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get user preferences', error);
       throw error;
     }
@@ -389,7 +389,7 @@ export class NotificationService extends EventEmitter {
 
       logger.info('User notification preferences updated', { userId });
       this.emit('preferencesUpdated', { userId, preferences });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to update user preferences', error);
       throw error;
     }
@@ -454,7 +454,7 @@ export class NotificationService extends EventEmitter {
         notificationId, 
         userId 
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to mark notification as read', error);
       throw error;
     }
@@ -480,7 +480,7 @@ export class NotificationService extends EventEmitter {
       this.emitToUser(userId, 'allNotificationsRead', {});
 
       logger.info('All notifications marked as read', { userId });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to mark all notifications as read', error);
       throw error;
     }
@@ -565,7 +565,7 @@ export class NotificationService extends EventEmitter {
         unreadCount,
         hasMore: offset + limit < total,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get user notifications', error);
       throw error;
     }
@@ -588,7 +588,7 @@ export class NotificationService extends EventEmitter {
       });
 
       return count;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get unread notification count', error);
       throw error;
     }
@@ -615,7 +615,7 @@ export class NotificationService extends EventEmitter {
       });
 
       return deleteResult.count;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to cleanup old notifications', error);
       throw error;
     }
@@ -636,7 +636,7 @@ export class NotificationService extends EventEmitter {
       });
 
       return template.id;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create notification template', error);
       throw error;
     }
@@ -656,7 +656,7 @@ export class NotificationService extends EventEmitter {
       });
 
       return templates as NotificationTemplate[];
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get notification templates', error);
       throw error;
     }
@@ -691,7 +691,7 @@ export class NotificationService extends EventEmitter {
       }
 
       return { subject, htmlContent, textContent };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to render template', error);
       throw error;
     }
@@ -701,7 +701,7 @@ export class NotificationService extends EventEmitter {
    * Initialize WebSocket handlers
    */
   private initializeSocketHandlers(): void {
-    if (!this.socketServer) return;
+    if (!this.socketServer) {return;}
 
     this.socketServer.on('connection', (socket: any) => {
       socket.on('authenticate', async (data: { userId: string; token: string }) => {
@@ -718,7 +718,7 @@ export class NotificationService extends EventEmitter {
           socket.emit('unreadCount', { count: unreadCount });
 
           logger.info('Socket authenticated', { userId: data.userId, socketId: socket.id });
-        } catch (error) {
+        } catch (error: unknown) {
           socket.emit('authenticated', { success: false, error: 'Authentication failed' });
           logger.error('Socket authentication failed', error);
         }
@@ -767,7 +767,7 @@ export class NotificationService extends EventEmitter {
         notificationId, 
         userId 
       });
-    } catch (error) {
+    } catch (error: unknown) {
       await this.updateDeliveryStatus(jobData.notificationId, 'WEBSOCKET', 'FAILED', error.message);
       logger.error('Failed to deliver WebSocket notification', error);
       throw error;
@@ -818,7 +818,7 @@ export class NotificationService extends EventEmitter {
 
         await this.updateDeliveryStatus(notificationId, 'EMAIL', 'DELIVERED');
         logger.info('Email notification sent', { notificationId, userId, email: user.email });
-      } catch (error) {
+      } catch (error: unknown) {
         await this.updateDeliveryStatus(notificationId, 'EMAIL', 'FAILED', error.message);
         logger.error('Failed to send email notification', error);
         throw error;
@@ -846,7 +846,7 @@ export class NotificationService extends EventEmitter {
 
         await this.updateDeliveryStatus(notificationId, 'SMS', 'DELIVERED');
         logger.info('SMS notification sent', { notificationId, userId, phone: user.phoneNumber });
-      } catch (error) {
+      } catch (error: unknown) {
         await this.updateDeliveryStatus(notificationId, 'SMS', 'FAILED', error.message);
         logger.error('Failed to send SMS notification', error);
         throw error;
@@ -864,7 +864,7 @@ export class NotificationService extends EventEmitter {
 
         await this.updateDeliveryStatus(notificationId, 'PUSH', 'DELIVERED');
         logger.info('Push notification sent', { notificationId, userId });
-      } catch (error) {
+      } catch (error: unknown) {
         await this.updateDeliveryStatus(notificationId, 'PUSH', 'FAILED', error.message);
         logger.error('Failed to send push notification', error);
         throw error;
@@ -906,7 +906,7 @@ export class NotificationService extends EventEmitter {
           errorMessage,
         },
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to update delivery status', error);
     }
   }

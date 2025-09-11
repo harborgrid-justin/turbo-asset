@@ -125,11 +125,11 @@ export class ManufacturingIndustryEngine {
   private static generateManufacturingRecommendations(oee: number, tpm: number, lean: number, data: ManufacturingAssetData): string[] {
     const recommendations: string[] = [];
     
-    if (oee < 85) recommendations.push("Implement OEE improvement program - target 85%+ for world-class performance");
-    if (tpm < 75) recommendations.push("Enhance Total Productive Maintenance practices");
-    if (lean < 80) recommendations.push("Focus on lean manufacturing initiatives to reduce waste");
-    if (data.qualityMetrics.defectRate > 5) recommendations.push("Implement quality control measures to reduce defect rate below 5%");
-    if (data.supplierData.reliabilityScore < 90) recommendations.push("Diversify supplier base to improve supply chain resilience");
+    if (oee < 85) {recommendations.push('Implement OEE improvement program - target 85%+ for world-class performance');}
+    if (tpm < 75) {recommendations.push('Enhance Total Productive Maintenance practices');}
+    if (lean < 80) {recommendations.push('Focus on lean manufacturing initiatives to reduce waste');}
+    if (data.qualityMetrics.defectRate > 5) {recommendations.push('Implement quality control measures to reduce defect rate below 5%');}
+    if (data.supplierData.reliabilityScore < 90) {recommendations.push('Diversify supplier base to improve supply chain resilience');}
     
     return recommendations;
   }
@@ -214,9 +214,9 @@ export class FinancialServicesEngine {
     const liquidityCoverageRatio = data.liquidity.liquidityRatio;
     const netStableFundingRatio = data.liquidity.stableFundingRatio;
     
-    let complianceStatus = "COMPLIANT";
+    let complianceStatus = 'COMPLIANT';
     if (leverageRatio < 3 || liquidityCoverageRatio < 100 || netStableFundingRatio < 100) {
-      complianceStatus = "NON_COMPLIANT";
+      complianceStatus = 'NON_COMPLIANT';
     }
     
     return {
@@ -253,11 +253,11 @@ export class FinancialServicesEngine {
   private static generateFinancialRecommendations(car: number, basel3: any, data: FinancialServicesData): string[] {
     const recommendations: string[] = [];
     
-    if (car < 10.5) recommendations.push("Increase Tier 1 capital to meet regulatory minimums (10.5% + buffers)");
-    if (basel3.leverageRatio < 3) recommendations.push("Improve leverage ratio to meet Basel III minimum of 3%");
-    if (basel3.liquidityCoverageRatio < 100) recommendations.push("Enhance liquidity position to meet LCR requirements");
-    if (data.operationalRiskEvents > 10) recommendations.push("Strengthen operational risk management framework");
-    if (data.marketRiskVaR / data.tier1Capital > 0.05) recommendations.push("Reduce market risk exposure relative to capital");
+    if (car < 10.5) {recommendations.push('Increase Tier 1 capital to meet regulatory minimums (10.5% + buffers)');}
+    if (basel3.leverageRatio < 3) {recommendations.push('Improve leverage ratio to meet Basel III minimum of 3%');}
+    if (basel3.liquidityCoverageRatio < 100) {recommendations.push('Enhance liquidity position to meet LCR requirements');}
+    if (data.operationalRiskEvents > 10) {recommendations.push('Strengthen operational risk management framework');}
+    if (data.marketRiskVaR / data.tier1Capital > 0.05) {recommendations.push('Reduce market risk exposure relative to capital');}
     
     return recommendations;
   }
@@ -389,12 +389,12 @@ export class HealthcareIndustryEngine {
   private static generateHealthcareRecommendations(clinical: number, operational: number, regulatory: number, data: HealthcareAssetData): string[] {
     const recommendations: string[] = [];
     
-    if (clinical < 85) recommendations.push("Implement quality improvement initiatives to enhance clinical outcomes");
-    if (operational < 80) recommendations.push("Optimize asset utilization and maintenance schedules");
-    if (regulatory < 95) recommendations.push("Address regulatory compliance gaps immediately");
-    if (data.clinicalOutcomes.readmissionRate > 15) recommendations.push("Focus on discharge planning and patient follow-up");
-    if (data.costMetrics.operatingMargin < 5) recommendations.push("Review cost structure and revenue cycle management");
-    if (data.regulatoryCompliance.hipaaCompliance < 100) recommendations.push("Critical: Address HIPAA compliance violations");
+    if (clinical < 85) {recommendations.push('Implement quality improvement initiatives to enhance clinical outcomes');}
+    if (operational < 80) {recommendations.push('Optimize asset utilization and maintenance schedules');}
+    if (regulatory < 95) {recommendations.push('Address regulatory compliance gaps immediately');}
+    if (data.clinicalOutcomes.readmissionRate > 15) {recommendations.push('Focus on discharge planning and patient follow-up');}
+    if (data.costMetrics.operatingMargin < 5) {recommendations.push('Review cost structure and revenue cycle management');}
+    if (data.regulatoryCompliance.hipaaCompliance < 100) {recommendations.push('Critical: Address HIPAA compliance violations');}
     
     return recommendations;
   }
@@ -433,7 +433,7 @@ export class Fortune100IndustryEngine {
           benchmarkingAvailable: true
         }
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(`Fortune 100 industry analysis failed for ${industry}:`, error);
       return {
         success: false,

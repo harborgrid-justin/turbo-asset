@@ -141,7 +141,7 @@ export class APIManagementService extends EventEmitter {
       await this.redis.connect();
 
       logger.info('API Management Redis connection established');
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to setup Redis for API Management', { error });
     }
   }
@@ -206,7 +206,7 @@ export class APIManagementService extends EventEmitter {
       });
 
       return apiKey;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('API key creation failed', { name, error });
       throw error;
     }
@@ -253,7 +253,7 @@ export class APIManagementService extends EventEmitter {
       }
 
       return null;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('API key validation failed', { apiKey: apiKey.substring(0, 8) + '...', error });
       return null;
     }
@@ -306,7 +306,7 @@ export class APIManagementService extends EventEmitter {
       this.rateLimitCache.set(apiKey, status);
 
       return status;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Rate limit check failed', { apiKey: apiKey.substring(0, 8) + '...', error });
       throw error;
     }
@@ -335,7 +335,7 @@ export class APIManagementService extends EventEmitter {
       pipeline.expire(dayKey, 86400);
 
       await pipeline.exec();
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Rate limit increment failed', { apiKey: apiKey.substring(0, 8) + '...', error });
     }
   }
@@ -397,7 +397,7 @@ export class APIManagementService extends EventEmitter {
       }
 
       this.emit('api:request', usageRecord);
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('API usage logging failed', { apiKey: apiKey.substring(0, 8) + '...', error });
     }
   }
@@ -438,7 +438,7 @@ export class APIManagementService extends EventEmitter {
       });
 
       return analytics;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Usage analytics generation failed', { organizationId, error });
       throw error;
     }
@@ -482,7 +482,7 @@ export class APIManagementService extends EventEmitter {
       };
 
       return usage;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('API key usage retrieval failed', { apiKey: apiKey.substring(0, 8) + '...', error });
       throw error;
     }
@@ -506,7 +506,7 @@ export class APIManagementService extends EventEmitter {
         path: endpoint.path,
         service: endpoint.service,
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('API endpoint registration failed', { endpoint: endpoint.path, error });
       throw error;
     }
@@ -538,7 +538,7 @@ export class APIManagementService extends EventEmitter {
       return endpoint.permissions.every(permission => 
         keyData.permissions.includes(permission)
       );
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Endpoint permission check failed', {
         apiKey: apiKey.substring(0, 8) + '...',
         method,
@@ -591,7 +591,7 @@ export class APIManagementService extends EventEmitter {
       };
 
       return documentation;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('API documentation generation failed', { organizationId, error });
       throw error;
     }
@@ -611,7 +611,7 @@ export class APIManagementService extends EventEmitter {
       this.rateLimitCache.delete(apiKey);
 
       logger.info('API key revoked', { apiKey: apiKey.substring(0, 8) + '...' });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('API key revocation failed', { apiKey: apiKey.substring(0, 8) + '...', error });
       throw error;
     }
@@ -651,7 +651,7 @@ export class APIManagementService extends EventEmitter {
       };
 
       return metrics;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('API health metrics retrieval failed', { error });
       throw error;
     }
@@ -752,12 +752,12 @@ export class APIManagementService extends EventEmitter {
   }
 
   private calculateAverage(numbers: number[]): number {
-    if (numbers.length === 0) return 0;
+    if (numbers.length === 0) {return 0;}
     return numbers.reduce((sum, num) => sum + num, 0) / numbers.length;
   }
 
   private calculatePercentile(numbers: number[], percentile: number): number {
-    if (numbers.length === 0) return 0;
+    if (numbers.length === 0) {return 0;}
     const sorted = numbers.sort((a, b) => a - b);
     const index = Math.ceil((percentile / 100) * sorted.length) - 1;
     return sorted[index] || 0;
@@ -815,7 +815,7 @@ export class APIManagementService extends EventEmitter {
 
   private calculateErrorRates(records: any[]): Record<string, number> {
     const total = records.length;
-    if (total === 0) return {};
+    if (total === 0) {return {};}
 
     const errorCounts = records.reduce((acc, record) => {
       if (record.statusCode >= 400) {
@@ -845,7 +845,7 @@ export class APIManagementService extends EventEmitter {
     try {
       // Process batched usage data (e.g., analytics, alerting)
       logger.debug('Processed usage batch', { count: batch.length });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Batch usage processing failed', { error });
     }
   }
@@ -877,7 +877,7 @@ export class APIManagementService extends EventEmitter {
       });
 
       logger.info(`Loaded ${keys.length} API keys`);
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to load API keys', { error });
     }
   }
@@ -951,7 +951,7 @@ export class APIManagementService extends EventEmitter {
       }
 
       logger.info('API Management service shutdown completed');
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Error during shutdown', { error });
     }
   }

@@ -124,7 +124,7 @@ export class DocumentAnalyticsService {
       }
 
       return analytics;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get document analytics', error);
       throw error;
     }
@@ -188,7 +188,7 @@ export class DocumentAnalyticsService {
       });
 
       return Array.from(userActivityMap.values()).sort((a, b) => b.totalAccess - a.totalAccess);
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get user activity', error);
       return [];
     }
@@ -237,7 +237,7 @@ export class DocumentAnalyticsService {
         user: activity.user,
         document: activity.document,
       }));
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get recent activity', error);
       return [];
     }
@@ -292,7 +292,7 @@ export class DocumentAnalyticsService {
       }
 
       return false;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to check document permission', error);
       return false;
     }
@@ -317,7 +317,7 @@ export class DocumentAnalyticsService {
           accessedAt: new Date(),
         },
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to log document access', error);
       // Don't throw, access logging is not critical
     }

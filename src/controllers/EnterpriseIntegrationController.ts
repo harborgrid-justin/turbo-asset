@@ -53,7 +53,7 @@ export class EnterpriseIntegrationController {
           pages: Math.ceil(total / Number(limit)),
         },
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get integrations', { error });
       res.status(500).json({ error: 'Failed to get integrations' });
     }
@@ -93,7 +93,7 @@ export class EnterpriseIntegrationController {
       });
 
       res.status(201).json(integration);
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create integration', { error });
       res.status(500).json({ error: 'Failed to create integration' });
     }
@@ -118,7 +118,7 @@ export class EnterpriseIntegrationController {
       });
 
       res.json(integration);
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to update integration', { error });
       res.status(500).json({ error: 'Failed to update integration' });
     }
@@ -137,7 +137,7 @@ export class EnterpriseIntegrationController {
 
       logger.info('Enterprise integration deleted', { integrationId });
       res.status(204).send();
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to delete integration', { error });
       res.status(500).json({ error: 'Failed to delete integration' });
     }
@@ -174,7 +174,7 @@ export class EnterpriseIntegrationController {
       }
 
       res.json(testResult);
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Integration connection test failed', { error });
       res.json({ status: 'error', message: error.message });
     }
@@ -203,7 +203,7 @@ export class EnterpriseIntegrationController {
       }, pattern);
 
       res.json({ message: 'Message sent successfully' });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to send ESB message', { error });
       res.status(500).json({ error: 'Failed to send message' });
     }
@@ -216,7 +216,7 @@ export class EnterpriseIntegrationController {
     try {
       const metrics = await esbService.getMetrics();
       res.json(metrics);
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get ESB metrics', { error });
       res.status(500).json({ error: 'Failed to get ESB metrics' });
     }
@@ -229,7 +229,7 @@ export class EnterpriseIntegrationController {
     try {
       const health = await esbService.healthCheck();
       res.json(health);
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get ESB health', { error });
       res.status(500).json({ error: 'Failed to get ESB health' });
     }
@@ -262,7 +262,7 @@ export class EnterpriseIntegrationController {
       }
 
       res.json({ message: 'Salesforce sync completed' });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Salesforce sync failed', { error });
       res.status(500).json({ error: 'Salesforce sync failed' });
     }
@@ -276,7 +276,7 @@ export class EnterpriseIntegrationController {
       const { reportId } = req.params;
       const reportData = await salesforceService.getReportData(reportId);
       res.json(reportData);
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get Salesforce reports', { error });
       res.status(500).json({ error: 'Failed to get Salesforce reports' });
     }
@@ -308,7 +308,7 @@ export class EnterpriseIntegrationController {
 
       await microsoft365Service.syncBookingToOutlook(booking);
       res.json({ message: 'Booking synced to Outlook' });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to sync booking to Outlook', { error });
       res.status(500).json({ error: 'Failed to sync booking to Outlook' });
     }
@@ -328,7 +328,7 @@ export class EnterpriseIntegrationController {
       );
 
       res.json(library);
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create SharePoint library', { error });
       res.status(500).json({ error: 'Failed to create SharePoint library' });
     }
@@ -342,7 +342,7 @@ export class EnterpriseIntegrationController {
       const { state } = req.query;
       const authUrl = microsoft365Service.getAuthorizationUrl(state as string);
       res.json({ authUrl });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get authorization URL', { error });
       res.status(500).json({ error: 'Failed to get authorization URL' });
     }
@@ -376,7 +376,7 @@ export class EnterpriseIntegrationController {
           pages: Math.ceil(total / Number(limit)),
         },
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get integration flows', { error });
       res.status(500).json({ error: 'Failed to get integration flows' });
     }
@@ -414,7 +414,7 @@ export class EnterpriseIntegrationController {
       });
 
       res.status(201).json(flow);
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create integration flow', { error });
       res.status(500).json({ error: 'Failed to create integration flow' });
     }
@@ -457,7 +457,7 @@ export class EnterpriseIntegrationController {
       });
 
       res.json({ message: 'Integration flow executed successfully' });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to execute integration flow', { error });
       res.status(500).json({ error: 'Failed to execute integration flow' });
     }
@@ -509,7 +509,7 @@ export class EnterpriseIntegrationController {
       };
 
       res.json(analytics);
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get integration analytics', { error });
       res.status(500).json({ error: 'Failed to get integration analytics' });
     }

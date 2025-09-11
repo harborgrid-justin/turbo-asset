@@ -210,7 +210,7 @@ export class Phase3IntegrationService extends EventEmitter {
         alerts,
         recommendations,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get comprehensive space dashboard', error);
       throw error;
     }
@@ -341,7 +341,7 @@ export class Phase3IntegrationService extends EventEmitter {
         steps: execution.steps,
         results: execution.results,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to execute space optimization workflow', error);
       throw error;
     }
@@ -416,7 +416,7 @@ export class Phase3IntegrationService extends EventEmitter {
         recommendations,
         correlations,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to perform integrated space analytics', error);
       throw error;
     }
@@ -450,7 +450,7 @@ export class Phase3IntegrationService extends EventEmitter {
         try {
           const syncResult = await this.syncSpaceUtilizationData(organizationId, syncOptions);
           results.push({ service: 'SpaceUtilization', ...syncResult });
-        } catch (error) {
+        } catch (error: unknown) {
           errors.push({ service: 'SpaceUtilization', error: error instanceof Error ? error.message : 'Unknown error' });
         }
       }
@@ -461,7 +461,7 @@ export class Phase3IntegrationService extends EventEmitter {
           const syncResult = await this.syncCADSpaceMappings(organizationId, syncOptions);
           results.push({ service: 'CADIntegration', ...syncResult });
           conflicts.push(...syncResult.conflicts || []);
-        } catch (error) {
+        } catch (error: unknown) {
           errors.push({ service: 'CADIntegration', error: error instanceof Error ? error.message : 'Unknown error' });
         }
       }
@@ -471,7 +471,7 @@ export class Phase3IntegrationService extends EventEmitter {
         try {
           const syncResult = await this.syncMoveManagementData(organizationId, syncOptions);
           results.push({ service: 'MoveManagement', ...syncResult });
-        } catch (error) {
+        } catch (error: unknown) {
           errors.push({ service: 'MoveManagement', error: error instanceof Error ? error.message : 'Unknown error' });
         }
       }
@@ -481,7 +481,7 @@ export class Phase3IntegrationService extends EventEmitter {
         try {
           const syncResult = await this.syncChargebackData(organizationId, syncOptions);
           results.push({ service: 'Chargeback', ...syncResult });
-        } catch (error) {
+        } catch (error: unknown) {
           errors.push({ service: 'Chargeback', error: error instanceof Error ? error.message : 'Unknown error' });
         }
       }
@@ -504,7 +504,7 @@ export class Phase3IntegrationService extends EventEmitter {
         conflicts,
         errors,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to synchronize cross-service data', error);
       throw error;
     }

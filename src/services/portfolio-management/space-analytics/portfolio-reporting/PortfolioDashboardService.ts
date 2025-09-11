@@ -60,7 +60,7 @@ export class PortfolioDashboardService {
 
       return dashboard;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate portfolio dashboard', {
         query,
         error: error.message,
@@ -138,7 +138,7 @@ export class PortfolioDashboardService {
 
       return summary;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get portfolio summary', {
         query,
         error: error.message,
@@ -202,7 +202,7 @@ export class PortfolioDashboardService {
 
       return dashboard;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate executive dashboard', {
         organizationId,
         timeFrame,
@@ -272,7 +272,7 @@ export class PortfolioDashboardService {
 
       return indicators;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get portfolio performance indicators', {
         organizationId,
         error: error.message,
@@ -319,7 +319,7 @@ export class PortfolioDashboardService {
 
       return allAlerts;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get portfolio alerts', {
         organizationId,
         error: error.message,
@@ -411,7 +411,7 @@ export class PortfolioDashboardService {
 
       return benchmarks;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get portfolio benchmarks', {
         organizationId,
         benchmarkType,
@@ -652,7 +652,7 @@ export class PortfolioDashboardService {
 
   private calculateOverallPerformanceScore(scores: number[]): number {
     const validScores = scores.filter(score => !isNaN(score));
-    if (validScores.length === 0) return 0;
+    if (validScores.length === 0) {return 0;}
     
     const average = validScores.reduce((sum, score) => sum + score, 0) / validScores.length;
     return Math.round(average * 100) / 100;
@@ -704,7 +704,7 @@ export class PortfolioDashboardService {
   }
 
   private calculateBenchmarkPerformance(current: number, benchmark: number, direction: string): number {
-    if (benchmark === 0) return 0;
+    if (benchmark === 0) {return 0;}
     
     const variance = ((current - benchmark) / benchmark) * 100;
     

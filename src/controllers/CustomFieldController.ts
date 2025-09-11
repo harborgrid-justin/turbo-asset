@@ -100,7 +100,7 @@ export class CustomFieldController {
         data: definitions,
         count: definitions.length,
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get field definitions', error);
       res.status(500).json({ error: 'Failed to get field definitions' });
     }
@@ -126,7 +126,7 @@ export class CustomFieldController {
         data: { id: fieldId },
         message: 'Custom field definition created successfully',
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create field definition', error);
       res.status(500).json({ error: 'Failed to create field definition' });
     }
@@ -151,7 +151,7 @@ export class CustomFieldController {
         success: true,
         message: 'Custom field definition updated successfully',
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to update field definition', error);
       res.status(500).json({ error: 'Failed to update field definition' });
     }
@@ -170,7 +170,7 @@ export class CustomFieldController {
         success: true,
         message: 'Custom field definition deleted successfully',
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to delete field definition', error);
       res.status(500).json({ error: 'Failed to delete field definition' });
     }
@@ -199,7 +199,7 @@ export class CustomFieldController {
         success: true,
         data: values,
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get field values', error);
       res.status(500).json({ error: 'Failed to get field values' });
     }
@@ -229,7 +229,7 @@ export class CustomFieldController {
         success: true,
         message: 'Custom field values set successfully',
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to set field values', error);
       res.status(500).json({ error: 'Failed to set field values' });
     }
@@ -258,7 +258,7 @@ export class CustomFieldController {
         success: true,
         data: validation,
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to validate field values', error);
       res.status(500).json({ error: 'Failed to validate field values' });
     }
@@ -287,7 +287,7 @@ export class CustomFieldController {
         success: true,
         data: definition,
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get field definition', error);
       res.status(500).json({ error: 'Failed to get field definition' });
     }
@@ -318,7 +318,7 @@ export class CustomFieldController {
         data: { id: newFieldId },
         message: 'Field definition copied successfully',
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to copy field definition', error);
       res.status(500).json({ error: 'Failed to copy field definition' });
     }
@@ -349,7 +349,7 @@ export class CustomFieldController {
         data: results,
         message: `Bulk update completed. ${results.successCount} successful, ${results.errorCount} failed.`,
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to bulk update field values', error);
       res.status(500).json({ error: 'Failed to bulk update field values' });
     }
@@ -368,7 +368,7 @@ export class CustomFieldController {
         success: true,
         data: stats,
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get field usage stats', error);
       res.status(500).json({ error: 'Failed to get field usage stats' });
     }
@@ -406,7 +406,7 @@ export class CustomFieldController {
       } else {
         res.status(400).json({ error: 'Invalid format. Supported formats: json, csv' });
       }
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to export fields', error);
       res.status(500).json({ error: 'Failed to export fields' });
     }
@@ -437,7 +437,7 @@ export class CustomFieldController {
         data: results,
         message: `Import completed. ${results.imported} fields imported, ${results.skipped} skipped, ${results.errors} errors.`,
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to import fields', error);
       res.status(500).json({ error: 'Failed to import fields' });
     }
@@ -457,7 +457,7 @@ export class CustomFieldController {
         data: templates,
         count: templates.length,
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get field templates', error);
       res.status(500).json({ error: 'Failed to get field templates' });
     }
@@ -488,7 +488,7 @@ export class CustomFieldController {
         data: { appliedFields },
         message: `Template applied successfully. ${appliedFields.length} fields created.`,
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to apply field template', error);
       res.status(500).json({ error: 'Failed to apply field template' });
     }

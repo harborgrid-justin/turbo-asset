@@ -197,7 +197,7 @@ export class Phase3IntegrationService extends EventEmitter {
       });
 
       return rule;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create integration rule', {
         ruleName: ruleData.name,
         error: error instanceof Error ? error.message : 'Unknown error'
@@ -234,7 +234,7 @@ export class Phase3IntegrationService extends EventEmitter {
       });
 
       return workflow;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create workflow', {
         workflowName: workflowData.name,
         error: error instanceof Error ? error.message : 'Unknown error'
@@ -283,7 +283,7 @@ export class Phase3IntegrationService extends EventEmitter {
       await this.executeWorkflowSteps(execution, workflow);
 
       return execution;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to execute workflow', {
         workflowId,
         error: error instanceof Error ? error.message : 'Unknown error'
@@ -329,7 +329,7 @@ export class Phase3IntegrationService extends EventEmitter {
       });
 
       return dashboard;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate comprehensive dashboard', { organizationId, error });
       throw error;
     }
@@ -357,7 +357,7 @@ export class Phase3IntegrationService extends EventEmitter {
     try {
       let processedData = sourceData;
       const errors: string[] = [];
-      let inputRecords = Array.isArray(sourceData) ? sourceData.length : 1;
+      const inputRecords = Array.isArray(sourceData) ? sourceData.length : 1;
 
       for (const rule of transformationRules) {
         try {
@@ -379,7 +379,7 @@ export class Phase3IntegrationService extends EventEmitter {
               errors.push(...validationErrors);
               break;
           }
-        } catch (error) {
+        } catch (error: unknown) {
           errors.push(`Transformation ${rule.type} failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
         }
       }
@@ -403,7 +403,7 @@ export class Phase3IntegrationService extends EventEmitter {
       });
 
       return result;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to process data pipeline', { pipelineId, error });
       throw error;
     }
@@ -420,7 +420,7 @@ export class Phase3IntegrationService extends EventEmitter {
         spaceId: data.spaceId,
         organizationId: this.context?.organizationId
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to handle utilization update', { data, error });
     }
   }
@@ -436,7 +436,7 @@ export class Phase3IntegrationService extends EventEmitter {
         toSpaceId: data.toSpaceId,
         organizationId: this.context?.organizationId
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to handle move completion', { data, error });
     }
   }
@@ -451,7 +451,7 @@ export class Phase3IntegrationService extends EventEmitter {
         buildingId: data.buildingId,
         organizationId: this.context?.organizationId
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to handle CAD processing', { data, error });
     }
   }
@@ -467,7 +467,7 @@ export class Phase3IntegrationService extends EventEmitter {
         score: data.score,
         organizationId: this.context?.organizationId
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to handle drill completion', { data, error });
     }
   }
@@ -482,7 +482,7 @@ export class Phase3IntegrationService extends EventEmitter {
         changeType: data.changeType,
         organizationId: this.context?.organizationId
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to handle portfolio change', { data, error });
     }
   }
@@ -493,7 +493,7 @@ export class Phase3IntegrationService extends EventEmitter {
       await this.executeWorkflow('asset_onboarding_workflow', { assetId: data.assetId });
       
       this.emit('integration:asset_created', data);
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to handle asset creation', { data, error });
     }
   }
@@ -504,7 +504,7 @@ export class Phase3IntegrationService extends EventEmitter {
       await this.triggerIntegration('asset_updated', data);
       
       this.emit('integration:asset_updated', data);
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to handle asset update', { data, error });
     }
   }
@@ -515,7 +515,7 @@ export class Phase3IntegrationService extends EventEmitter {
       await this.triggerIntegration('maintenance_scheduled', data);
       
       this.emit('integration:maintenance_scheduled', data);
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to handle maintenance scheduling', { data, error });
     }
   }
@@ -526,7 +526,7 @@ export class Phase3IntegrationService extends EventEmitter {
       await this.triggerIntegration('maintenance_completed', data);
       
       this.emit('integration:maintenance_completed', data);
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to handle maintenance completion', { data, error });
     }
   }
@@ -537,7 +537,7 @@ export class Phase3IntegrationService extends EventEmitter {
       await this.triggerIntegration('budget_allocated', data);
       
       this.emit('integration:budget_allocated', data);
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to handle budget allocation', { data, error });
     }
   }
@@ -548,7 +548,7 @@ export class Phase3IntegrationService extends EventEmitter {
       await this.triggerIntegration('invoice_processed', data);
       
       this.emit('integration:invoice_processed', data);
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to handle invoice processing', { data, error });
     }
   }
@@ -562,7 +562,7 @@ export class Phase3IntegrationService extends EventEmitter {
     for (const rule of relevantRules) {
       try {
         await this.executeIntegrationRule(rule, data);
-      } catch (error) {
+      } catch (error: unknown) {
         logger.error('Integration rule execution failed', {
           ruleId: rule.id,
           ruleName: rule.name,
@@ -604,7 +604,7 @@ export class Phase3IntegrationService extends EventEmitter {
   }
 
   private async applyTransformation(transformation: IntegrationRule['transformation'], data: any): Promise<any> {
-    if (!transformation) return data;
+    if (!transformation) {return data;}
 
     try {
       switch (transformation.language) {
@@ -620,7 +620,7 @@ export class Phase3IntegrationService extends EventEmitter {
         default:
           return data;
       }
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Transformation execution failed', {
         language: transformation.language,
         error: error instanceof Error ? error.message : 'Unknown error'
@@ -682,7 +682,7 @@ export class Phase3IntegrationService extends EventEmitter {
             message: `Completed step: ${step.name}`
           });
 
-        } catch (error) {
+        } catch (error: unknown) {
           // Handle step error
           execution.executionLog.push({
             stepId: step.id,
@@ -720,7 +720,7 @@ export class Phase3IntegrationService extends EventEmitter {
         organizationId: this.context?.organizationId
       });
 
-    } catch (error) {
+    } catch (error: unknown) {
       execution.status = 'failed';
       execution.completedAt = new Date();
       
@@ -865,7 +865,7 @@ export class Phase3IntegrationService extends EventEmitter {
 
   // Data transformation methods
   private applyMapTransformation(data: any, config: any): any {
-    if (!Array.isArray(data)) return data;
+    if (!Array.isArray(data)) {return data;}
     
     return data.map(item => {
       const mapped: any = {};
@@ -877,25 +877,25 @@ export class Phase3IntegrationService extends EventEmitter {
   }
 
   private applyFilterTransformation(data: any, config: any): any {
-    if (!Array.isArray(data)) return data;
+    if (!Array.isArray(data)) {return data;}
     
     return data.filter(item => {
       for (const [key, expectedValue] of Object.entries(config.conditions || {})) {
-        if (item[key] !== expectedValue) return false;
+        if (item[key] !== expectedValue) {return false;}
       }
       return true;
     });
   }
 
   private applyAggregateTransformation(data: any, config: any): any {
-    if (!Array.isArray(data)) return data;
+    if (!Array.isArray(data)) {return data;}
     
     const grouped: Record<string, any[]> = {};
     const groupBy = config.groupBy;
     
     for (const item of data) {
       const key = item[groupBy] || 'default';
-      if (!grouped[key]) grouped[key] = [];
+      if (!grouped[key]) {grouped[key] = [];}
       grouped[key].push(item);
     }
     
@@ -932,7 +932,7 @@ export class Phase3IntegrationService extends EventEmitter {
     try {
       // Mock database save
       logger.debug('Integration rule saved', { ruleId: rule.id });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to save integration rule', { ruleId: rule.id, error });
     }
   }
@@ -941,7 +941,7 @@ export class Phase3IntegrationService extends EventEmitter {
     try {
       // Mock database save
       logger.debug('Workflow definition saved', { workflowId: workflow.id });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to save workflow definition', { workflowId: workflow.id, error });
     }
   }
@@ -950,7 +950,7 @@ export class Phase3IntegrationService extends EventEmitter {
     try {
       // Mock loading from database
       logger.debug('Integration rules loaded');
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to load integration rules', { error });
     }
   }
@@ -959,7 +959,7 @@ export class Phase3IntegrationService extends EventEmitter {
     try {
       // Mock loading from database
       logger.debug('Workflow definitions loaded');
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to load workflow definitions', { error });
     }
   }

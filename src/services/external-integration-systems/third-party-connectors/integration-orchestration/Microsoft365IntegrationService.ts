@@ -155,7 +155,7 @@ export class Microsoft365IntegrationService extends EventEmitter {
       this.emit('authenticated', { organizationId: this.context?.organizationId });
       
       return this.token;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Microsoft 365 authentication failed', error);
       throw error;
     }
@@ -194,7 +194,7 @@ export class Microsoft365IntegrationService extends EventEmitter {
       });
 
       return response.data;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Outlook calendar event creation failed', { userId, event, error });
       throw error;
     }
@@ -205,7 +205,7 @@ export class Microsoft365IntegrationService extends EventEmitter {
    */
   async getCalendarEvents(userId: string, startDate?: Date, endDate?: Date): Promise<OutlookEvent[]> {
     try {
-      let url = `/users/${userId}/events`;
+      const url = `/users/${userId}/events`;
       const params: any = {};
 
       if (startDate && endDate) {
@@ -214,7 +214,7 @@ export class Microsoft365IntegrationService extends EventEmitter {
 
       const response = await this.graphClient.get(url, { params });
       return response.data.value;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Outlook calendar events retrieval failed', { userId, error });
       throw error;
     }
@@ -249,7 +249,7 @@ export class Microsoft365IntegrationService extends EventEmitter {
       });
 
       return response.data;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('SharePoint document library creation failed', { siteId, libraryName, error });
       throw error;
     }
@@ -292,7 +292,7 @@ export class Microsoft365IntegrationService extends EventEmitter {
       });
 
       return response.data;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('SharePoint file upload failed', { siteId, libraryId, fileName, error });
       throw error;
     }
@@ -324,7 +324,7 @@ export class Microsoft365IntegrationService extends EventEmitter {
       });
 
       return response.data;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Teams channel creation failed', { teamId, channelName, error });
       throw error;
     }
@@ -358,7 +358,7 @@ export class Microsoft365IntegrationService extends EventEmitter {
       });
 
       return response.data;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Teams message sending failed', { teamId, channelId, error });
       throw error;
     }
@@ -387,7 +387,7 @@ export class Microsoft365IntegrationService extends EventEmitter {
     try {
       await this.graphClient.get('/me');
       return true;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Microsoft 365 connection test failed', error);
       return false;
     }
@@ -641,7 +641,7 @@ export class Microsoft365IntegrationService extends EventEmitter {
       });
 
       return this.token;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Microsoft 365 authentication failed', {
         error: error instanceof Error ? error.message : 'Unknown error',
         tenantId: this.config.tenantId
@@ -657,7 +657,7 @@ export class Microsoft365IntegrationService extends EventEmitter {
     try {
       const cacheKey = 'sharepoint_sites';
       const cached = this.integrationCache.get(cacheKey);
-      if (cached) return cached;
+      if (cached) {return cached;}
 
       const response = await this.graphClient.get('/sites');
       const sites = response.data.value.map((site: any) => ({
@@ -678,7 +678,7 @@ export class Microsoft365IntegrationService extends EventEmitter {
       });
 
       return sites;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get SharePoint sites', { error });
       throw error;
     }
@@ -688,7 +688,7 @@ export class Microsoft365IntegrationService extends EventEmitter {
     try {
       const cacheKey = `sharepoint_lists_${siteId}`;
       const cached = this.integrationCache.get(cacheKey);
-      if (cached) return cached;
+      if (cached) {return cached;}
 
       const response = await this.graphClient.get(`/sites/${siteId}/lists`);
       const lists = response.data.value.map((list: any) => ({
@@ -710,7 +710,7 @@ export class Microsoft365IntegrationService extends EventEmitter {
       });
 
       return lists;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get SharePoint lists', { siteId, error });
       throw error;
     }
@@ -730,7 +730,7 @@ export class Microsoft365IntegrationService extends EventEmitter {
       });
 
       return response.data;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create SharePoint list item', { siteId, listId, error });
       throw error;
     }
@@ -775,7 +775,7 @@ export class Microsoft365IntegrationService extends EventEmitter {
       });
 
       return events;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get calendar events', { userId, error });
       throw error;
     }
@@ -808,7 +808,7 @@ export class Microsoft365IntegrationService extends EventEmitter {
       });
 
       return createdEvent;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create calendar event', { userId, error });
       throw error;
     }
@@ -848,7 +848,7 @@ export class Microsoft365IntegrationService extends EventEmitter {
         subject,
         userId: userId || 'me'
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to send email', { to, subject, userId, error });
       throw error;
     }
@@ -861,7 +861,7 @@ export class Microsoft365IntegrationService extends EventEmitter {
     try {
       const cacheKey = `teams_channels_${teamId}`;
       const cached = this.integrationCache.get(cacheKey);
-      if (cached) return cached;
+      if (cached) {return cached;}
 
       const response = await this.graphClient.get(`/teams/${teamId}/channels`);
       const channels = response.data.value.map((channel: any) => ({
@@ -882,7 +882,7 @@ export class Microsoft365IntegrationService extends EventEmitter {
       });
 
       return channels;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get Teams channels', { teamId, error });
       throw error;
     }
@@ -911,7 +911,7 @@ export class Microsoft365IntegrationService extends EventEmitter {
       });
 
       return sentMessage;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to send Teams message', { teamId, channelId, error });
       throw error;
     }
@@ -945,7 +945,7 @@ export class Microsoft365IntegrationService extends EventEmitter {
       });
 
       return files;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get OneDrive files', { folderId, userId, error });
       throw error;
     }
@@ -984,7 +984,7 @@ export class Microsoft365IntegrationService extends EventEmitter {
       });
 
       return uploadedFile;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to upload file to OneDrive', { fileName, folderId, userId, error });
       throw error;
     }
@@ -1021,7 +1021,7 @@ export class Microsoft365IntegrationService extends EventEmitter {
       });
 
       return response.data;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create subscription', { resource, error });
       throw error;
     }
@@ -1048,7 +1048,7 @@ export class Microsoft365IntegrationService extends EventEmitter {
       });
 
       return response.data;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to renew subscription', { subscriptionId, error });
       throw error;
     }
@@ -1090,7 +1090,7 @@ export class Microsoft365IntegrationService extends EventEmitter {
       });
 
       return users;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get users', { filter, error });
       throw error;
     }
@@ -1120,7 +1120,7 @@ export class Microsoft365IntegrationService extends EventEmitter {
       }
 
       await this.authenticate(undefined, this.token.refreshToken);
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Token refresh failed', { error });
       this.token = null;
       throw error;
@@ -1129,7 +1129,7 @@ export class Microsoft365IntegrationService extends EventEmitter {
 
   private async storeToken(token: Microsoft365Token): Promise<void> {
     try {
-      if (!this.context?.organizationId) return;
+      if (!this.context?.organizationId) {return;}
 
       await prisma.integrationToken.upsert({
         where: {
@@ -1154,7 +1154,7 @@ export class Microsoft365IntegrationService extends EventEmitter {
           tokenType: token.tokenType
         }
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to store Microsoft 365 token', { error });
     }
   }
@@ -1203,7 +1203,7 @@ export class Microsoft365IntegrationService extends EventEmitter {
       try {
         await this.graphClient.get('/me');
         healthCheck.services.graph = 'available';
-      } catch (error) {
+      } catch (error: unknown) {
         logger.warn('Graph API health check failed', { error });
       }
 
@@ -1211,14 +1211,14 @@ export class Microsoft365IntegrationService extends EventEmitter {
       try {
         await this.graphClient.get('/me/drive');
         healthCheck.services.onedrive = 'available';
-      } catch (error) {
+      } catch (error: unknown) {
         logger.warn('OneDrive health check failed', { error });
       }
 
       try {
         await this.graphClient.get('/me/calendar');
         healthCheck.services.outlook = 'available';
-      } catch (error) {
+      } catch (error: unknown) {
         logger.warn('Outlook health check failed', { error });
       }
 
@@ -1232,7 +1232,7 @@ export class Microsoft365IntegrationService extends EventEmitter {
         healthCheck.status = 'warning';
       }
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Microsoft 365 health check failed', { error });
       healthCheck.status = 'error';
     }
@@ -1277,7 +1277,7 @@ export class Microsoft365IntegrationService extends EventEmitter {
       try {
         const sites = await this.getSharePointSites();
         syncOperation.results.sites = sites.length;
-      } catch (error) {
+      } catch (error: unknown) {
         syncOperation.errors.push(`Sites sync failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
       }
 
@@ -1287,7 +1287,7 @@ export class Microsoft365IntegrationService extends EventEmitter {
         const endDate = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
         const events = await this.getCalendarEvents(startDate, endDate);
         syncOperation.results.events = events.length;
-      } catch (error) {
+      } catch (error: unknown) {
         syncOperation.errors.push(`Events sync failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
       }
 
@@ -1295,7 +1295,7 @@ export class Microsoft365IntegrationService extends EventEmitter {
       try {
         const files = await this.getOneDriveFiles();
         syncOperation.results.files = files.length;
-      } catch (error) {
+      } catch (error: unknown) {
         syncOperation.errors.push(`Files sync failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
       }
 
@@ -1303,7 +1303,7 @@ export class Microsoft365IntegrationService extends EventEmitter {
       try {
         const users = await this.getUsers();
         syncOperation.results.users = users.length;
-      } catch (error) {
+      } catch (error: unknown) {
         syncOperation.errors.push(`Users sync failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
       }
 
@@ -1323,7 +1323,7 @@ export class Microsoft365IntegrationService extends EventEmitter {
         errorCount: syncOperation.errors.length
       });
 
-    } catch (error) {
+    } catch (error: unknown) {
       syncOperation.status = 'failed';
       syncOperation.completedAt = new Date();
       syncOperation.errors.push(`Sync failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
@@ -1351,7 +1351,7 @@ export class Microsoft365IntegrationService extends EventEmitter {
   }
 
   async revokeToken(): Promise<void> {
-    if (!this.token) return;
+    if (!this.token) {return;}
 
     try {
       // Revoke the token with Microsoft
@@ -1374,7 +1374,7 @@ export class Microsoft365IntegrationService extends EventEmitter {
       });
 
       logger.info('Microsoft 365 token revoked successfully');
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to revoke Microsoft 365 token', { error });
       throw error;
     }

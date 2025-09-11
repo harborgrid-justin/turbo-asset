@@ -12,7 +12,7 @@ export class ReportingController {
   /**
    * Generate standard reports
    */
-  generateReport = async (req: Request, res: Response): Promise<void> => {
+  generateReport = async (req: Request, res: Response) => {
     try {
       const { organizationId } = req.params;
       const { reportType, parameters, format } = req.body;
@@ -28,7 +28,7 @@ export class ReportingController {
         success: true,
         data: report
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate report', error);
       res.status(500).json({
         success: false,
@@ -40,7 +40,7 @@ export class ReportingController {
   /**
    * Get scheduled reports
    */
-  getScheduledReports = async (req: Request, res: Response): Promise<void> => {
+  getScheduledReports = async (req: Request, res: Response) => {
     try {
       const { organizationId } = req.params;
 
@@ -50,7 +50,7 @@ export class ReportingController {
         success: true,
         data: schedules
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get scheduled reports', error);
       res.status(500).json({
         success: false,
@@ -62,7 +62,7 @@ export class ReportingController {
   /**
    * Schedule a report
    */
-  scheduleReport = async (req: Request, res: Response): Promise<void> => {
+  scheduleReport = async (req: Request, res: Response) => {
     try {
       const { organizationId } = req.params;
       const scheduleData = req.body;
@@ -76,7 +76,7 @@ export class ReportingController {
         success: true,
         data: schedule
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to schedule report', error);
       res.status(500).json({
         success: false,
@@ -88,7 +88,7 @@ export class ReportingController {
   /**
    * Export report
    */
-  exportReport = async (req: Request, res: Response): Promise<void> => {
+  exportReport = async (req: Request, res: Response) => {
     try {
       const { organizationId, reportId } = req.params;
       const { format } = req.query;
@@ -103,7 +103,7 @@ export class ReportingController {
         success: true,
         data: exportedReport
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to export report', error);
       res.status(500).json({
         success: false,
@@ -115,7 +115,7 @@ export class ReportingController {
   /**
    * Get report templates
    */
-  getReportTemplates = async (req: Request, res: Response): Promise<void> => {
+  getReportTemplates = async (req: Request, res: Response) => {
     try {
       const { organizationId } = req.params;
 
@@ -125,7 +125,7 @@ export class ReportingController {
         success: true,
         data: templates
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get report templates', error);
       res.status(500).json({
         success: false,
@@ -137,7 +137,7 @@ export class ReportingController {
   /**
    * Create report template
    */
-  createReportTemplate = async (req: Request, res: Response): Promise<void> => {
+  createReportTemplate = async (req: Request, res: Response) => {
     try {
       const { organizationId } = req.params;
       const templateData = req.body;
@@ -151,7 +151,7 @@ export class ReportingController {
         success: true,
         data: template
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create report template', error);
       res.status(500).json({
         success: false,
@@ -163,7 +163,7 @@ export class ReportingController {
   /**
    * Get report history
    */
-  getReportHistory = async (req: Request, res: Response): Promise<void> => {
+  getReportHistory = async (req: Request, res: Response) => {
     try {
       const { organizationId } = req.params;
       const { limit, offset } = req.query;
@@ -178,7 +178,7 @@ export class ReportingController {
         success: true,
         data: history
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get report history', error);
       res.status(500).json({
         success: false,
@@ -190,7 +190,7 @@ export class ReportingController {
   /**
    * Get report analytics
    */
-  getReportAnalytics = async (req: Request, res: Response): Promise<void> => {
+  getReportAnalytics = async (req: Request, res: Response) => {
     try {
       const { organizationId } = req.params;
 
@@ -200,7 +200,7 @@ export class ReportingController {
         success: true,
         data: analytics
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get report analytics', error);
       res.status(500).json({
         success: false,
@@ -212,7 +212,7 @@ export class ReportingController {
   /**
    * Delete scheduled report
    */
-  deleteScheduledReport = async (req: Request, res: Response): Promise<void> => {
+  deleteScheduledReport = async (req: Request, res: Response) => {
     try {
       const { organizationId, scheduleId } = req.params;
 
@@ -222,7 +222,7 @@ export class ReportingController {
         success: true,
         message: 'Scheduled report deleted successfully'
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to delete scheduled report', error);
       res.status(500).json({
         success: false,
@@ -234,7 +234,7 @@ export class ReportingController {
   /**
    * Update scheduled report
    */
-  updateScheduledReport = async (req: Request, res: Response): Promise<void> => {
+  updateScheduledReport = async (req: Request, res: Response) => {
     try {
       const { organizationId, scheduleId } = req.params;
       const updateData = req.body;
@@ -249,7 +249,7 @@ export class ReportingController {
         success: true,
         data: updatedSchedule
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to update scheduled report', error);
       res.status(500).json({
         success: false,

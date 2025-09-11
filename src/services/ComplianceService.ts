@@ -188,7 +188,7 @@ export class ComplianceService {
       }
 
       // Initial lease liability equals present value
-      let leaseLiability = presentValue;
+      const leaseLiability = presentValue;
 
       // Calculate monthly depreciation (straight-line over lease term)
       const leaseTermMonths = this.calculateLeaseTermMonths(lease);
@@ -228,7 +228,7 @@ export class ComplianceService {
       });
 
       return result;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to calculate lease accounting', error);
       throw error;
     }
@@ -295,7 +295,7 @@ export class ComplianceService {
         ...accountingRecord,
         journalEntryIds
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create lease accounting record', error);
       throw error;
     }
@@ -399,7 +399,7 @@ export class ComplianceService {
           });
 
           processed++;
-        } catch (error) {
+        } catch (error: unknown) {
           logger.error('Failed to process lease accounting', {
             leaseId: lease.id,
             error: error instanceof Error ? error.message : 'Unknown error'
@@ -432,7 +432,7 @@ export class ComplianceService {
         },
         results
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to process bulk lease accounting', error);
       throw error;
     }
@@ -532,7 +532,7 @@ export class ComplianceService {
       });
 
       return report;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate compliance report', error);
       throw error;
     }
@@ -643,7 +643,7 @@ export class ComplianceService {
         },
         details: results
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to update discount rates', error);
       throw error;
     }
@@ -735,7 +735,7 @@ export class ComplianceService {
       });
 
       return disclosureNotes;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate disclosure notes', error);
       throw error;
     }
@@ -937,7 +937,7 @@ export class ComplianceService {
   }
 
   private calculateWeightedAverageDiscountRate(records: any[]): number {
-    if (records.length === 0) return 0;
+    if (records.length === 0) {return 0;}
 
     const totalWeightedRate = records.reduce((sum, record) => {
       const weight = record.leaseLIABILITY || 0;
@@ -951,7 +951,7 @@ export class ComplianceService {
   }
 
   private async calculateWeightedAverageRemainingTerm(records: any[]): Promise<number> {
-    if (records.length === 0) return 0;
+    if (records.length === 0) {return 0;}
 
     let totalWeightedTerm = 0;
     let totalWeight = 0;

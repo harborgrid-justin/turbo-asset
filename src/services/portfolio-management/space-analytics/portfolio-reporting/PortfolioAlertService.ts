@@ -63,7 +63,7 @@ export class PortfolioAlertService {
 
       return alerts;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate portfolio alerts', {
         organizationId,
         error: error.message,
@@ -87,8 +87,8 @@ export class PortfolioAlertService {
 
       if (filters?.startDate || filters?.endDate) {
         whereClause.createdAt = {};
-        if (filters.startDate) whereClause.createdAt.gte = filters.startDate;
-        if (filters.endDate) whereClause.createdAt.lte = filters.endDate;
+        if (filters.startDate) {whereClause.createdAt.gte = filters.startDate;}
+        if (filters.endDate) {whereClause.createdAt.lte = filters.endDate;}
       }
 
       const alerts = await prisma.portfolioAlert.findMany({
@@ -102,7 +102,7 @@ export class PortfolioAlertService {
 
       return alerts.map(alert => this.mapToPortfolioAlert(alert));
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get active alerts', {
         organizationId,
         error: error.message,
@@ -140,7 +140,7 @@ export class PortfolioAlertService {
 
       return this.mapToPortfolioAlert(alert);
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to acknowledge alert', {
         alertId,
         error: error.message,
@@ -184,7 +184,7 @@ export class PortfolioAlertService {
 
       return this.mapToPortfolioAlert(alert);
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to resolve alert', {
         alertId,
         error: error.message,
@@ -246,7 +246,7 @@ export class PortfolioAlertService {
 
       return statistics;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get alert statistics', {
         organizationId,
         timeframe,
@@ -313,7 +313,7 @@ export class PortfolioAlertService {
 
       return configuredRules;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to configure alert rules', {
         organizationId,
         error: error.message,
@@ -363,7 +363,7 @@ export class PortfolioAlertService {
         }
       }
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to send alert notifications', {
         alertId: alert.id,
         error: error.message,
@@ -407,9 +407,9 @@ export class PortfolioAlertService {
         );
 
         let priority: AlertPriority = 'LOW';
-        if (daysToExpiration <= 30) priority = 'CRITICAL';
-        else if (daysToExpiration <= 60) priority = 'HIGH';
-        else priority = 'MEDIUM';
+        if (daysToExpiration <= 30) {priority = 'CRITICAL';}
+        else if (daysToExpiration <= 60) {priority = 'HIGH';}
+        else {priority = 'MEDIUM';}
 
         alerts.push({
           id: `lease_exp_${lease.id}`,

@@ -159,7 +159,7 @@ export class InfrastructureTechnologyOperationsManager extends EventEmitter {
 
       logger.info(`Infrastructure provisioning completed for organization: ${organizationId}`);
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(`Failed to provision infrastructure systems: ${error}`);
       throw error;
     }
@@ -203,7 +203,7 @@ export class InfrastructureTechnologyOperationsManager extends EventEmitter {
       logger.info(`Infrastructure context created for user: ${userId} in organization: ${organizationId}`);
       return context;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(`Failed to create infrastructure context: ${error}`);
       throw error;
     }
@@ -278,7 +278,7 @@ export class InfrastructureTechnologyOperationsManager extends EventEmitter {
       logger.info(`Infrastructure dashboard generated for organization: ${organizationId}`);
       return dashboardData;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(`Failed to generate infrastructure dashboard: ${error}`);
       throw error;
     }
@@ -324,7 +324,7 @@ export class InfrastructureTechnologyOperationsManager extends EventEmitter {
         recommendations,
       };
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(`Failed to generate comprehensive predictive insights: ${error}`);
       throw error;
     }
@@ -548,7 +548,7 @@ export class InfrastructureTechnologyOperationsManager extends EventEmitter {
         energyMapping,
         optimizationRecommendations
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Integrated space analysis failed', {
         organizationId,
         buildingId,
@@ -656,7 +656,7 @@ export class InfrastructureTechnologyOperationsManager extends EventEmitter {
         costProjections,
         recommendations
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Predictive infrastructure insights generation failed', {
         organizationId,
         error: error instanceof Error ? error.message : 'Unknown error'

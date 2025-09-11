@@ -182,7 +182,7 @@ export class IoTDeviceService {
       });
 
       return device;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to register IoT device', error);
       throw error;
     }
@@ -255,7 +255,7 @@ export class IoTDeviceService {
       });
 
       return reading;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to record sensor reading', error);
       throw error;
     }
@@ -315,7 +315,7 @@ export class IoTDeviceService {
       });
 
       return conditionMonitoring;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to update condition monitoring', { deviceId, error });
       throw error;
     }
@@ -493,7 +493,7 @@ export class IoTDeviceService {
         },
         sensorCoverage: sensorCounts,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get IoT metrics', { organizationId, error });
       throw error;
     }
@@ -540,10 +540,10 @@ export class IoTDeviceService {
       const insights: PredictiveMaintenanceInsight[] = [];
 
       for (const device of devices) {
-        if (!device.asset || device.sensorReadings.length < 20) continue;
+        if (!device.asset || device.sensorReadings.length < 20) {continue;}
 
         const latestCondition = device.conditionMonitoring[0];
-        if (!latestCondition) continue;
+        if (!latestCondition) {continue;}
 
         // Perform time series analysis
         const timeSeriesAnalysis = this.performTimeSeriesAnalysis(device.sensorReadings);
@@ -591,7 +591,7 @@ export class IoTDeviceService {
       });
 
       return insights;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate predictive maintenance insights', { organizationId, error });
       throw error;
     }
@@ -631,7 +631,7 @@ export class IoTDeviceService {
         deviceId: device.deviceId,
         rulesCount: rules.length,
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to configure alert rules', { deviceId, error });
       throw error;
     }
@@ -662,7 +662,7 @@ export class IoTDeviceService {
             quality: reading.quality,
           });
           processed++;
-        } catch (error) {
+        } catch (error: unknown) {
           failed++;
           errors.push(`Reading from ${reading.deviceId}: ${error instanceof Error ? error.message : 'Unknown error'}`);
         }
@@ -675,7 +675,7 @@ export class IoTDeviceService {
       });
 
       return { processed, failed, errors };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to process batch sensor data', error);
       throw error;
     }
@@ -769,7 +769,7 @@ export class IoTDeviceService {
         select: { alertThresholds: true, alertsEnabled: true },
       });
 
-      if (!device || !device.alertsEnabled || !device.alertThresholds) return;
+      if (!device || !device.alertsEnabled || !device.alertThresholds) {return;}
 
       const thresholds = device.alertThresholds as any;
       
@@ -777,7 +777,7 @@ export class IoTDeviceService {
       Object.keys(thresholds).forEach(ruleKey => {
         if (ruleKey.startsWith(`${sensorType}_`)) {
           const rule = thresholds[ruleKey];
-          if (!rule.enabled) return;
+          if (!rule.enabled) {return;}
 
           let alertTriggered = false;
           const condition = ruleKey.split('_')[1];
@@ -806,7 +806,7 @@ export class IoTDeviceService {
           }
         }
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to check alert conditions', { deviceId, sensorType, error });
     }
   }
@@ -850,7 +850,7 @@ export class IoTDeviceService {
     const healthScore = Math.round((qualityScore + variabilityScore) / 2);
 
     // Determine risk and alert level
-    let riskScore = 100 - healthScore;
+    const riskScore = 100 - healthScore;
     let alertLevel = 'NORMAL';
     let recommendedAction = 'NO_ACTION_REQUIRED';
     let urgencyLevel = 'LOW';
@@ -885,7 +885,7 @@ export class IoTDeviceService {
   }
 
   private calculateVariabilityScore(readings: any[]): number {
-    if (readings.length < 2) return 100;
+    if (readings.length < 2) {return 100;}
 
     const values = readings.map(r => r.value);
     const mean = values.reduce((sum, v) => sum + v, 0) / values.length;
@@ -898,10 +898,10 @@ export class IoTDeviceService {
   }
 
   private determineMonitoringType(deviceType: string, sensorTypes: string[]): string {
-    if (sensorTypes.includes('VIBRATION')) return 'VIBRATION_ANALYSIS';
-    if (sensorTypes.includes('TEMPERATURE')) return 'THERMAL_IMAGING';
-    if (sensorTypes.includes('CURRENT') || sensorTypes.includes('VOLTAGE')) return 'ELECTRICAL';
-    if (sensorTypes.includes('PRESSURE')) return 'PERFORMANCE';
+    if (sensorTypes.includes('VIBRATION')) {return 'VIBRATION_ANALYSIS';}
+    if (sensorTypes.includes('TEMPERATURE')) {return 'THERMAL_IMAGING';}
+    if (sensorTypes.includes('CURRENT') || sensorTypes.includes('VOLTAGE')) {return 'ELECTRICAL';}
+    if (sensorTypes.includes('PRESSURE')) {return 'PERFORMANCE';}
     return 'VISUAL_INSPECTION';
   }
 
@@ -971,7 +971,7 @@ export class IoTDeviceService {
   }
 
   private calculateVolatility(values: number[]): number {
-    if (values.length < 2) return 0;
+    if (values.length < 2) {return 0;}
     
     const changes = [];
     for (let i = 1; i < values.length; i++) {
@@ -1068,9 +1068,9 @@ export class IoTDeviceService {
   }
 
   private determineRiskLevel(riskScore: number): 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL' {
-    if (riskScore >= 90) return 'CRITICAL';
-    if (riskScore >= 70) return 'HIGH';
-    if (riskScore >= 40) return 'MEDIUM';
+    if (riskScore >= 90) {return 'CRITICAL';}
+    if (riskScore >= 70) {return 'HIGH';}
+    if (riskScore >= 40) {return 'MEDIUM';}
     return 'LOW';
   }
 }

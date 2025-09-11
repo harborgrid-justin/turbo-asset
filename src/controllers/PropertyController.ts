@@ -66,7 +66,7 @@ router.get('/', async (req: Request, res: Response) => {
         total: properties.length,
       },
     });
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to get properties', error);
     res.status(500).json({
       error: 'Failed to get properties',
@@ -123,7 +123,7 @@ router.get('/:id', async (req: Request, res: Response) => {
     (property as any).customFields = customFields;
 
     res.json(property);
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to get property', error);
     res.status(500).json({
       error: 'Failed to get property',
@@ -214,7 +214,7 @@ router.post('/', async (req: Request, res: Response) => {
     logger.info('Property created', { propertyId: property.id, organizationId });
 
     res.status(201).json(property);
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to create property', error);
     res.status(500).json({
       error: 'Failed to create property',
@@ -276,16 +276,16 @@ router.put('/:id', async (req: Request, res: Response) => {
 
     // Update property
     const updateData: any = {};
-    if (name !== undefined) updateData.name = name;
-    if (type !== undefined) updateData.type = type;
-    if (address !== undefined) updateData.address = address;
-    if (totalArea !== undefined) updateData.totalArea = totalArea ? parseFloat(totalArea) : null;
-    if (usableArea !== undefined) updateData.usableArea = usableArea ? parseFloat(usableArea) : null;
-    if (acquisitionCost !== undefined) updateData.acquisitionCost = acquisitionCost ? parseFloat(acquisitionCost) : null;
-    if (currentValue !== undefined) updateData.currentValue = currentValue ? parseFloat(currentValue) : null;
-    if (acquisitionDate !== undefined) updateData.acquisitionDate = acquisitionDate ? new Date(acquisitionDate) : null;
-    if (coordinates !== undefined) updateData.coordinates = coordinates;
-    if (timezone !== undefined) updateData.timezone = timezone;
+    if (name !== undefined) {updateData.name = name;}
+    if (type !== undefined) {updateData.type = type;}
+    if (address !== undefined) {updateData.address = address;}
+    if (totalArea !== undefined) {updateData.totalArea = totalArea ? parseFloat(totalArea) : null;}
+    if (usableArea !== undefined) {updateData.usableArea = usableArea ? parseFloat(usableArea) : null;}
+    if (acquisitionCost !== undefined) {updateData.acquisitionCost = acquisitionCost ? parseFloat(acquisitionCost) : null;}
+    if (currentValue !== undefined) {updateData.currentValue = currentValue ? parseFloat(currentValue) : null;}
+    if (acquisitionDate !== undefined) {updateData.acquisitionDate = acquisitionDate ? new Date(acquisitionDate) : null;}
+    if (coordinates !== undefined) {updateData.coordinates = coordinates;}
+    if (timezone !== undefined) {updateData.timezone = timezone;}
 
     const property = await prisma.property.update({
       where: { id },
@@ -316,7 +316,7 @@ router.put('/:id', async (req: Request, res: Response) => {
     logger.info('Property updated', { propertyId: property.id, organizationId });
 
     res.json(property);
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to update property', error);
     res.status(500).json({
       error: 'Failed to update property',
@@ -355,7 +355,7 @@ router.delete('/:id', async (req: Request, res: Response) => {
     logger.info('Property deleted', { propertyId: id, organizationId });
 
     res.json({ message: 'Property deleted successfully' });
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to delete property', error);
     res.status(500).json({
       error: 'Failed to delete property',

@@ -91,7 +91,7 @@ export class ContractLifecycleService extends EventEmitter implements IContractL
 
       return savedContract;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create contract', error);
       throw new Error(`Failed to create contract: ${(error as Error).message}`);
     }
@@ -103,7 +103,7 @@ export class ContractLifecycleService extends EventEmitter implements IContractL
   async getContract(id: string): Promise<Contract | null> {
     try {
       const cached = this.cache.get(id);
-      if (cached) return cached;
+      if (cached) {return cached;}
 
       const contract = await this.loadContract(id);
       if (contract) {
@@ -111,7 +111,7 @@ export class ContractLifecycleService extends EventEmitter implements IContractL
       }
       return contract;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get contract', { contractId: id, error });
       throw new Error(`Failed to get contract: ${(error as Error).message}`);
     }
@@ -151,7 +151,7 @@ export class ContractLifecycleService extends EventEmitter implements IContractL
       logger.info('Contract updated', { contractId: id });
       return savedContract;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to update contract', { contractId: id, error });
       throw new Error(`Failed to update contract: ${(error as Error).message}`);
     }
@@ -187,7 +187,7 @@ export class ContractLifecycleService extends EventEmitter implements IContractL
       logger.info('Contract deleted', { contractId: id });
       return true;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to delete contract', { contractId: id, error });
       throw new Error(`Failed to delete contract: ${(error as Error).message}`);
     }
@@ -244,7 +244,7 @@ export class ContractLifecycleService extends EventEmitter implements IContractL
 
       return filteredContracts;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to search contracts', error);
       throw new Error(`Failed to search contracts: ${(error as Error).message}`);
     }
@@ -263,7 +263,7 @@ export class ContractLifecycleService extends EventEmitter implements IContractL
         expirationDateBefore: cutoffDate.toISOString()
       });
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get expiring contracts', { days, error });
       throw new Error(`Failed to get expiring contracts: ${(error as Error).message}`);
     }
@@ -340,7 +340,7 @@ export class ContractLifecycleService extends EventEmitter implements IContractL
 
       return updatedContract;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to renew contract', { contractId: id, error });
       throw new Error(`Failed to renew contract: ${(error as Error).message}`);
     }
@@ -386,7 +386,7 @@ export class ContractLifecycleService extends EventEmitter implements IContractL
 
       return updatedContract;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to terminate contract', { contractId: id, error });
       throw new Error(`Failed to terminate contract: ${(error as Error).message}`);
     }
@@ -447,7 +447,7 @@ export class ContractLifecycleService extends EventEmitter implements IContractL
 
       return updatedMilestones;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to track contract milestones', { contractId, error });
       throw new Error(`Failed to track milestones: ${(error as Error).message}`);
     }
@@ -495,7 +495,7 @@ export class ContractLifecycleService extends EventEmitter implements IContractL
 
       return milestone;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to add milestone', { contractId, error });
       throw new Error(`Failed to add milestone: ${(error as Error).message}`);
     }
@@ -542,7 +542,7 @@ export class ContractLifecycleService extends EventEmitter implements IContractL
 
       return contract.milestones[milestoneIndex];
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to complete milestone', { contractId, milestoneId, error });
       throw new Error(`Failed to complete milestone: ${(error as Error).message}`);
     }
@@ -640,7 +640,7 @@ export class ContractLifecycleService extends EventEmitter implements IContractL
       logger.info('Contract performance report generated', { contractId });
       return report;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate performance report', { contractId, error });
       throw new Error(`Failed to generate report: ${(error as Error).message}`);
     }
@@ -649,10 +649,10 @@ export class ContractLifecycleService extends EventEmitter implements IContractL
   // === PRIVATE HELPER METHODS ===
 
   private validateContractData(data: Partial<Contract>): void {
-    if (!data.contractType) throw new Error('Contract type is required');
-    if (!data.title) throw new Error('Contract title is required');
-    if (!data.effectiveDate || !data.expirationDate) throw new Error('Effective and expiration dates are required');
-    if (!data.paymentTerms) throw new Error('Payment terms are required');
+    if (!data.contractType) {throw new Error('Contract type is required');}
+    if (!data.title) {throw new Error('Contract title is required');}
+    if (!data.effectiveDate || !data.expirationDate) {throw new Error('Effective and expiration dates are required');}
+    if (!data.paymentTerms) {throw new Error('Payment terms are required');}
     
     if (new Date(data.expirationDate) <= new Date(data.effectiveDate)) {
       throw new Error('Expiration date must be after effective date');
@@ -688,7 +688,7 @@ export class ContractLifecycleService extends EventEmitter implements IContractL
   }
 
   private calculateComplianceScore(contract: Contract): number {
-    if (contract.complianceRequirements.length === 0) return 100;
+    if (contract.complianceRequirements.length === 0) {return 100;}
     
     const approvedCount = contract.complianceRequirements.filter(r => r.status === 'APPROVED').length;
     return (approvedCount / contract.complianceRequirements.length) * 100;
@@ -703,7 +703,7 @@ export class ContractLifecycleService extends EventEmitter implements IContractL
   }
 
   private calculateMilestonePerformance(contract: Contract): number {
-    if (contract.milestones.length === 0) return 100;
+    if (contract.milestones.length === 0) {return 100;}
     
     const completedCount = contract.milestones.filter(m => m.status === 'COMPLETED').length;
     const overdueCount = contract.milestones.filter(m => m.status === 'OVERDUE').length;
@@ -719,13 +719,13 @@ export class ContractLifecycleService extends EventEmitter implements IContractL
     const totalDays = (contract.expirationDate.getTime() - contract.effectiveDate.getTime()) / (1000 * 60 * 60 * 24);
     const daysElapsed = (today.getTime() - contract.effectiveDate.getTime()) / (1000 * 60 * 60 * 24);
     
-    if (daysElapsed < 0 || contract.status !== 'ACTIVE') return 100;
+    if (daysElapsed < 0 || contract.status !== 'ACTIVE') {return 100;}
     
     const progressRatio = Math.min(1, daysElapsed / totalDays);
     const completedMilestones = contract.milestones.filter(m => m.status === 'COMPLETED').length;
     const expectedMilestones = Math.floor(contract.milestones.length * progressRatio);
     
-    if (expectedMilestones === 0) return 100;
+    if (expectedMilestones === 0) {return 100;}
     
     return Math.min(100, (completedMilestones / expectedMilestones) * 100);
   }
@@ -737,31 +737,31 @@ export class ContractLifecycleService extends EventEmitter implements IContractL
     let riskScore = 0;
     
     // Expiration risk
-    if (daysToExpiration <= 30) riskScore += 40;
-    else if (daysToExpiration <= 90) riskScore += 20;
-    else if (daysToExpiration <= 180) riskScore += 10;
+    if (daysToExpiration <= 30) {riskScore += 40;}
+    else if (daysToExpiration <= 90) {riskScore += 20;}
+    else if (daysToExpiration <= 180) {riskScore += 10;}
     
     // Performance risk
     const performanceScore = this.calculatePerformanceScore(contract);
-    if (performanceScore < 60) riskScore += 30;
-    else if (performanceScore < 80) riskScore += 15;
+    if (performanceScore < 60) {riskScore += 30;}
+    else if (performanceScore < 80) {riskScore += 15;}
     
     // Compliance risk
     const complianceScore = this.calculateComplianceScore(contract);
-    if (complianceScore < 80) riskScore += 20;
-    else if (complianceScore < 95) riskScore += 10;
+    if (complianceScore < 80) {riskScore += 20;}
+    else if (complianceScore < 95) {riskScore += 10;}
     
     // Overdue milestones risk
     const overdueMilestones = contract.milestones.filter(m => m.status === 'OVERDUE').length;
-    if (overdueMilestones > 0) riskScore += overdueMilestones * 5;
+    if (overdueMilestones > 0) {riskScore += overdueMilestones * 5;}
     
-    if (riskScore >= 60) return 'HIGH';
-    if (riskScore >= 30) return 'MEDIUM';
+    if (riskScore >= 60) {return 'HIGH';}
+    if (riskScore >= 30) {return 'MEDIUM';}
     return 'LOW';
   }
 
   private calculateNextReviewDate(contract: Contract): Date | null {
-    if (!contract.renewalTerms || !contract.renewalTerms.noticePeriod) return null;
+    if (!contract.renewalTerms || !contract.renewalTerms.noticePeriod) {return null;}
     
     const reviewDate = new Date(contract.expirationDate);
     if (contract.renewalTerms.noticePeriodUnit === 'DAYS') {
@@ -814,7 +814,7 @@ export class ContractLifecycleService extends EventEmitter implements IContractL
   async generateContractPerformanceAnalytics(contractId: string): Promise<any> {
     try {
       const contract = await this.getContract(contractId);
-      if (!contract) throw new Error('Contract not found');
+      if (!contract) {throw new Error('Contract not found');}
 
       const analytics = {
         contractId,
@@ -891,7 +891,7 @@ export class ContractLifecycleService extends EventEmitter implements IContractL
 
       return analytics;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate contract performance analytics', { contractId, error });
       throw new Error(`Analytics generation failed: ${(error as Error).message}`);
     }
@@ -906,7 +906,7 @@ export class ContractLifecycleService extends EventEmitter implements IContractL
 
   private calculateDeliverableCompletionRate(contract: Contract): number {
     const milestones = contract.milestones || [];
-    if (milestones.length === 0) return 100;
+    if (milestones.length === 0) {return 100;}
     
     const completed = milestones.filter(m => m.status === 'COMPLETED').length;
     return (completed / milestones.length) * 100;
@@ -934,7 +934,7 @@ export class ContractLifecycleService extends EventEmitter implements IContractL
 
   private calculateComplianceScore(contract: Contract): number {
     const requirements = contract.complianceRequirements || [];
-    if (requirements.length === 0) return 100;
+    if (requirements.length === 0) {return 100;}
     
     const compliant = requirements.filter(r => r.status === 'APPROVED').length;
     return (compliant / requirements.length) * 100;

@@ -145,7 +145,7 @@ export class PredictiveAnalyticsService extends EventEmitter {
       logger.info('Predictive Analytics Service initialized successfully');
       this.emit('service:initialized');
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to initialize Predictive Analytics Service', error);
       throw error;
     }
@@ -236,7 +236,7 @@ export class PredictiveAnalyticsService extends EventEmitter {
 
       return predictions;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to predict space optimization', { organizationId, error });
       throw error;
     }
@@ -336,7 +336,7 @@ export class PredictiveAnalyticsService extends EventEmitter {
 
       return forecasts;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to forecast costs', { organizationId, error });
       throw error;
     }
@@ -436,7 +436,7 @@ export class PredictiveAnalyticsService extends EventEmitter {
         recommendations: await this.generateDemandRecommendations(demandPredictions, organizationId)
       };
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to predict space demand', { organizationId, error });
       throw error;
     }
@@ -527,7 +527,7 @@ export class PredictiveAnalyticsService extends EventEmitter {
         overallRecommendations: await this.generateOverallEnergyRecommendations(energyPredictions)
       };
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to predict energy costs', { organizationId, error });
       throw error;
     }
@@ -554,7 +554,7 @@ export class PredictiveAnalyticsService extends EventEmitter {
       }
 
       logger.info('All predictive models trained successfully');
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to train predictive models', error);
       throw error;
     }
@@ -781,7 +781,7 @@ export class PredictiveAnalyticsService extends EventEmitter {
   }
 
   private calculateTrendFactor(historicalData: any[]): number {
-    if (historicalData.length < 2) return 1.0;
+    if (historicalData.length < 2) {return 1.0;}
     
     const recent = historicalData.slice(0, 10).map((d: any) => d.utilization);
     const older = historicalData.slice(-10).map((d: any) => d.utilization);
@@ -846,7 +846,7 @@ export class PredictiveAnalyticsService extends EventEmitter {
       recommendations.push({
         type: 'CONSOLIDATE',
         priority: 'HIGH',
-        description: `Space showing low utilization. Consider consolidating with adjacent spaces.`,
+        description: 'Space showing low utilization. Consider consolidating with adjacent spaces.',
         expectedSavings: optimizationPotential * 50, // $50 per sq ft saved annually
         implementationCost: optimizationPotential * 25,
         roi: 2.0,

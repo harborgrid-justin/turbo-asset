@@ -81,7 +81,7 @@ export class PortfolioDataExportService {
       
       return result;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to export portfolio data to Excel', {
         organizationId,
         error: error.message,
@@ -158,7 +158,7 @@ export class PortfolioDataExportService {
       
       return result;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to export portfolio data to CSV', {
         organizationId,
         error: error.message,
@@ -220,7 +220,7 @@ export class PortfolioDataExportService {
       
       return result;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to export portfolio data to JSON', {
         organizationId,
         error: error.message,
@@ -280,7 +280,7 @@ export class PortfolioDataExportService {
       
       return result;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to export dashboard data', {
         organizationId,
         dashboardName: dashboardConfig.dashboardName,
@@ -306,8 +306,8 @@ export class PortfolioDataExportService {
       
       if (filters?.startDate || filters?.endDate) {
         whereClause.exportedAt = {};
-        if (filters.startDate) whereClause.exportedAt.gte = filters.startDate;
-        if (filters.endDate) whereClause.exportedAt.lte = filters.endDate;
+        if (filters.startDate) {whereClause.exportedAt.gte = filters.startDate;}
+        if (filters.endDate) {whereClause.exportedAt.lte = filters.endDate;}
       }
       
       const exports = await prisma.portfolioExport.findMany({
@@ -329,7 +329,7 @@ export class PortfolioDataExportService {
         status: exp.status,
       }));
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get export history', {
         organizationId,
         error: error.message,
@@ -373,7 +373,7 @@ export class PortfolioDataExportService {
         createdAt: scheduledExport.createdAt,
       };
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to schedule recurring export', {
         organizationId,
         error: error.message,
@@ -420,49 +420,49 @@ export class PortfolioDataExportService {
   }
 
   private async addPortfolioSummarySheet(workbook: any, data: any): Promise<void> {
-    if (!data) return;
+    if (!data) {return;}
     
     const worksheet = XLSX.utils.json_to_sheet([data]);
     XLSX.utils.book_append_sheet(workbook, worksheet, 'Portfolio Summary');
   }
 
   private async addPropertiesSheet(workbook: any, data: any[]): Promise<void> {
-    if (!data || data.length === 0) return;
+    if (!data || data.length === 0) {return;}
     
     const worksheet = XLSX.utils.json_to_sheet(data);
     XLSX.utils.book_append_sheet(workbook, worksheet, 'Properties');
   }
 
   private async addLeasesSheet(workbook: any, data: any[]): Promise<void> {
-    if (!data || data.length === 0) return;
+    if (!data || data.length === 0) {return;}
     
     const worksheet = XLSX.utils.json_to_sheet(data);
     XLSX.utils.book_append_sheet(workbook, worksheet, 'Leases');
   }
 
   private async addFinancialsSheet(workbook: any, data: any[]): Promise<void> {
-    if (!data || data.length === 0) return;
+    if (!data || data.length === 0) {return;}
     
     const worksheet = XLSX.utils.json_to_sheet(data);
     XLSX.utils.book_append_sheet(workbook, worksheet, 'Financials');
   }
 
   private async addOccupancySheet(workbook: any, data: any[]): Promise<void> {
-    if (!data || data.length === 0) return;
+    if (!data || data.length === 0) {return;}
     
     const worksheet = XLSX.utils.json_to_sheet(data);
     XLSX.utils.book_append_sheet(workbook, worksheet, 'Occupancy');
   }
 
   private async addMetricsSheet(workbook: any, data: any): Promise<void> {
-    if (!data) return;
+    if (!data) {return;}
     
     const worksheet = XLSX.utils.json_to_sheet([data]);
     XLSX.utils.book_append_sheet(workbook, worksheet, 'Metrics');
   }
 
   private convertToCSV(data: any[]): string {
-    if (!data || data.length === 0) return '';
+    if (!data || data.length === 0) {return '';}
     
     const headers = Object.keys(data[0]);
     const csvRows = [headers.join(',')];
@@ -522,17 +522,17 @@ export class PortfolioDataExportService {
     try {
       const stats = await fs.stat(filePath);
       return stats.size;
-    } catch (error) {
+    } catch (error: unknown) {
       return 0;
     }
   }
 
   private calculateTotalRecords(data: PortfolioExportData): number {
     let total = 0;
-    if (data.properties) total += data.properties.length;
-    if (data.leases) total += data.leases.length;
-    if (data.financials) total += data.financials.length;
-    if (data.occupancy) total += data.occupancy.length;
+    if (data.properties) {total += data.properties.length;}
+    if (data.leases) {total += data.leases.length;}
+    if (data.financials) {total += data.financials.length;}
+    if (data.occupancy) {total += data.occupancy.length;}
     return total;
   }
 

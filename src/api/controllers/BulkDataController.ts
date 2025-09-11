@@ -1,6 +1,7 @@
+import { toError } from '../../core/utils/validation';
 import { Router, Request, Response } from 'express';
-import { BulkDataService } from '../services/BulkDataService';
-import { logger } from '../config/logger';
+import { BulkDataService } from '../../services/BulkDataService';
+import { logger } from '../../config/logger';
 import multer from 'multer';
 import path from 'path';
 
@@ -76,7 +77,7 @@ router.post('/import', upload.single('file'), async (req: Request, res: Response
       total: result.total,
       message: 'Import job started successfully',
     });
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to start import job', error);
     res.status(500).json({
       error: 'Failed to start import job',
@@ -127,7 +128,7 @@ router.post('/export', async (req: Request, res: Response) => {
       jobId: result.jobId,
       message: 'Export job started successfully',
     });
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to start export job', error);
     res.status(500).json({
       error: 'Failed to start export job',
@@ -151,7 +152,7 @@ router.get('/import/:jobId/status', async (req: Request, res: Response) => {
     }
 
     res.json(result);
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to get import job status', error);
     res.status(500).json({
       error: 'Failed to get import job status',
@@ -175,7 +176,7 @@ router.get('/export/:jobId/status', async (req: Request, res: Response) => {
     }
 
     res.json(result);
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to get export job status', error);
     res.status(500).json({
       error: 'Failed to get export job status',
@@ -199,7 +200,7 @@ router.get('/export/:jobId/download', async (req: Request, res: Response) => {
     }
 
     res.download(result.filePath);
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to download export file', error);
     res.status(500).json({
       error: 'Failed to download export file',

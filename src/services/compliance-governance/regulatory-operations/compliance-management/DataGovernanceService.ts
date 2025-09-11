@@ -113,7 +113,7 @@ export class DataGovernanceService extends EventEmitter {
       });
 
       return rule;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create governance rule', { name, error });
       throw error;
     }
@@ -151,7 +151,7 @@ export class DataGovernanceService extends EventEmitter {
       });
 
       return lineage;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Data lineage tracking failed', { entityId, entityType, error });
       throw error;
     }
@@ -204,7 +204,7 @@ export class DataGovernanceService extends EventEmitter {
       });
 
       return metrics;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Data quality calculation failed', { entityType, entityId, error });
       throw error;
     }
@@ -227,7 +227,7 @@ export class DataGovernanceService extends EventEmitter {
         violationsByType: this.groupViolationsByType(violations),
         qualityTrends: await this.getQualityTrends(organizationId)
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate governance dashboard', { organizationId, error });
       throw error;
     }
@@ -258,7 +258,7 @@ export class DataGovernanceService extends EventEmitter {
       });
 
       return violations;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Policy violation detection failed', { organizationId, error });
       throw error;
     }
@@ -268,7 +268,7 @@ export class DataGovernanceService extends EventEmitter {
    * Private helper methods for data quality calculations
    */
   private calculateCompleteness(records: any[]): number {
-    if (records.length === 0) return 0;
+    if (records.length === 0) {return 0;}
     
     let totalFields = 0;
     let completedFields = 0;

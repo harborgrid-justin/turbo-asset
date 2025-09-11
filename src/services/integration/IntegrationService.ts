@@ -79,7 +79,7 @@ export class IntegrationService {
         operation: operation.operation, 
         entityId: operation.entityId 
       });
-    } catch (error) {
+    } catch (error: unknown) {
       await this.handleIntegrationError('SAP', operation, error);
     }
   }
@@ -115,7 +115,7 @@ export class IntegrationService {
         operation: operation.operation, 
         entityId: operation.entityId 
       });
-    } catch (error) {
+    } catch (error: unknown) {
       await this.handleIntegrationError('ORACLE', operation, error);
     }
   }
@@ -145,7 +145,7 @@ export class IntegrationService {
         operation: operation.operation, 
         entityId: operation.entityId 
       });
-    } catch (error) {
+    } catch (error: unknown) {
       await this.handleIntegrationError('WORKDAY', operation, error);
     }
   }
@@ -183,7 +183,7 @@ export class IntegrationService {
         operation: operation.operation, 
         entityId: operation.entityId 
       });
-    } catch (error) {
+    } catch (error: unknown) {
       await this.handleIntegrationError('SERVICENOW', operation, error);
     }
   }
@@ -223,7 +223,7 @@ export class IntegrationService {
         operation: operation.operation, 
         entityId: operation.entityId 
       });
-    } catch (error) {
+    } catch (error: unknown) {
       await this.handleIntegrationError('GENERIC_API', operation, error);
     }
   }

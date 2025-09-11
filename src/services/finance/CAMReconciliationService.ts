@@ -189,7 +189,7 @@ export class CAMReconciliationService {
       });
 
       return reconciliation;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create CAM reconciliation', error);
       throw error;
     }
@@ -335,7 +335,7 @@ export class CAMReconciliationService {
         monthlyTrends: Array.from(periodMap.values()).sort((a, b) => a.period.localeCompare(b.period)),
         expenseCategoryBreakdown: expenseCategoryBreakdown.sort((a, b) => Math.abs(b.variance) - Math.abs(a.variance))
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get CAM reconciliation summary', error);
       throw error;
     }
@@ -404,7 +404,7 @@ export class CAMReconciliationService {
         recommendations,
         rootCauseAnalysis
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to perform variance analysis', error);
       throw error;
     }
@@ -486,7 +486,7 @@ export class CAMReconciliationService {
       });
 
       return updatedReconciliation;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to process CAM dispute', error);
       throw error;
     }
@@ -576,7 +576,7 @@ export class CAMReconciliationService {
       });
 
       return updatedReconciliation;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to resolve CAM dispute', error);
       throw error;
     }
@@ -603,7 +603,7 @@ export class CAMReconciliationService {
         default:
           throw new Error('Invalid report type');
       }
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate CAM report', error);
       throw error;
     }
@@ -684,7 +684,7 @@ export class CAMReconciliationService {
           });
 
           processed++;
-        } catch (error) {
+        } catch (error: unknown) {
           logger.error('Failed to process reconciliation for lease', {
             leaseId: lease.id,
             error: error instanceof Error ? error.message : 'Unknown error'
@@ -716,7 +716,7 @@ export class CAMReconciliationService {
         },
         results
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to bulk process reconciliations', error);
       throw error;
     }
@@ -772,7 +772,7 @@ export class CAMReconciliationService {
     } else if (category.includes('maintenance') && variancePercent > 20) {
       return 'Maintenance variance could indicate deferred maintenance or emergency repairs.';
     } else {
-      return `Variance within acceptable range but should be monitored.`;
+      return 'Variance within acceptable range but should be monitored.';
     }
   }
 

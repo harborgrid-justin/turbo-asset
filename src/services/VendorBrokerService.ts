@@ -236,7 +236,7 @@ export class VendorBrokerService {
       });
 
       return vendor;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create vendor', error);
       throw error;
     }
@@ -293,7 +293,7 @@ export class VendorBrokerService {
       });
 
       return broker;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create broker', error);
       throw error;
     }
@@ -311,7 +311,7 @@ export class VendorBrokerService {
       } else {
         throw new Error('Either vendorId or brokerId must be provided');
       }
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to record performance evaluation', error);
       throw error;
     }
@@ -391,7 +391,7 @@ export class VendorBrokerService {
         performanceMetrics,
         riskAssessment
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get vendor summary', error);
       throw error;
     }
@@ -465,7 +465,7 @@ export class VendorBrokerService {
         performanceMetrics,
         marketAnalysis
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get broker summary', error);
       throw error;
     }
@@ -531,7 +531,7 @@ export class VendorBrokerService {
           description: 'Background check has not been completed',
           mitigation: 'Complete background verification before contract execution'
         });
-        if (riskLevel === 'LOW') riskLevel = 'MEDIUM';
+        if (riskLevel === 'LOW') {riskLevel = 'MEDIUM';}
       }
 
       // Payment history analysis
@@ -547,7 +547,7 @@ export class VendorBrokerService {
           description: `${overdueInvoices.length} overdue invoices indicate payment processing issues`,
           mitigation: 'Review payment processes and terms'
         });
-        if (riskLevel === 'LOW') riskLevel = 'MEDIUM';
+        if (riskLevel === 'LOW') {riskLevel = 'MEDIUM';}
       }
 
       // Insurance coverage check
@@ -604,7 +604,7 @@ export class VendorBrokerService {
       });
 
       return assessment;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to perform vendor risk assessment', error);
       throw error;
     }
@@ -631,7 +631,7 @@ export class VendorBrokerService {
         default:
           throw new Error('Invalid report type');
       }
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate vendor performance report', error);
       throw error;
     }
@@ -659,7 +659,7 @@ export class VendorBrokerService {
       });
 
       return vendor;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to update vendor rating', error);
       throw error;
     }
@@ -698,7 +698,7 @@ export class VendorBrokerService {
             newStatus: update.newStatus
           });
 
-        } catch (error) {
+        } catch (error: unknown) {
           results.push({
             vendorId: update.vendorId,
             status: 'ERROR',
@@ -722,7 +722,7 @@ export class VendorBrokerService {
         },
         results
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to bulk update vendor status', error);
       throw error;
     }
@@ -822,7 +822,7 @@ export class VendorBrokerService {
       orderBy: { evaluationDate: 'desc' }
     });
 
-    if (performances.length === 0) return;
+    if (performances.length === 0) {return;}
 
     const avgOverallScore = performances.reduce((sum, p) => sum + (p.overallScore || 0), 0) / performances.length;
     const totalProjects = performances.reduce((sum, p) => sum + (p.projectsCompleted || 0), 0);
@@ -845,7 +845,7 @@ export class VendorBrokerService {
       orderBy: { evaluationDate: 'desc' }
     });
 
-    if (performances.length === 0) return;
+    if (performances.length === 0) {return;}
 
     const avgOverallScore = performances.reduce((sum, p) => sum + (p.overallScore || 0), 0) / performances.length;
     const totalTransactions = performances.reduce((sum, p) => sum + (p.transactionsCompleted || 0), 0);

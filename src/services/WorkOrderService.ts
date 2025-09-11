@@ -171,7 +171,7 @@ export class WorkOrderService {
       });
       
       return workOrder;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create work order', error);
       throw error;
     }
@@ -213,7 +213,7 @@ export class WorkOrderService {
       }
 
       return workOrder;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get work order', { workOrderId, error });
       throw error;
     }
@@ -317,7 +317,7 @@ export class WorkOrderService {
         totalPages,
         currentPage: page,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to search work orders', { filters, error });
       throw error;
     }
@@ -397,7 +397,7 @@ export class WorkOrderService {
       });
 
       return updatedWorkOrder;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to update work order status', { workOrderId, newStatus, error });
       throw error;
     }
@@ -430,7 +430,7 @@ export class WorkOrderService {
 
       logger.info('Work order task added', { taskId: task.id, workOrderId: taskData.workOrderId });
       return task;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to add work order task', error);
       throw error;
     }
@@ -486,7 +486,7 @@ export class WorkOrderService {
 
       logger.info('Task status updated', { taskId, newStatus, updatedBy });
       return updatedTask;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to update task status', { taskId, newStatus, error });
       throw error;
     }
@@ -521,7 +521,7 @@ export class WorkOrderService {
 
       logger.info('Work order material added', { materialId: material.id, workOrderId: materialData.workOrderId });
       return material;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to add work order material', error);
       throw error;
     }
@@ -572,7 +572,7 @@ export class WorkOrderService {
 
       logger.info('Time entry recorded', { timeEntryId: timeEntry.id, workOrderId: timeEntryData.workOrderId });
       return timeEntry;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to record time entry', error);
       throw error;
     }
@@ -758,7 +758,7 @@ export class WorkOrderService {
         totalLaborHours: totalLaborHours._sum.hoursWorked || 0,
         technicianWorkload,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get work order metrics', { organizationId, error });
       throw error;
     }
@@ -837,7 +837,7 @@ export class WorkOrderService {
         availableHours,
         utilizationRate,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get technician schedule', { technicianId, error });
       throw error;
     }
@@ -889,7 +889,7 @@ export class WorkOrderService {
       });
 
       return updatedWorkOrder;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to assign work order', { workOrderId, technicianId, error });
       throw error;
     }
@@ -972,7 +972,7 @@ export class WorkOrderService {
       });
 
       logger.info('Actual cost calculated', { workOrderId, actualCost });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to calculate actual cost', { workOrderId, error });
     }
   }
@@ -986,7 +986,7 @@ export class WorkOrderService {
         where: { id: assetId },
         data: { lastMaintenanceDate: new Date() },
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to update asset maintenance date', { assetId, error });
     }
   }
@@ -1003,7 +1003,7 @@ export class WorkOrderService {
           quantityAvailable: { decrement: quantity },
         },
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to reserve inventory item', { inventoryItemId, quantity, error });
     }
   }

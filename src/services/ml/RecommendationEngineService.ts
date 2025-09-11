@@ -166,7 +166,7 @@ export class RecommendationEngineService extends EventEmitter {
       logger.info('Recommendation Engine Service initialized successfully');
       this.emit('service:initialized');
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to initialize Recommendation Engine Service', error);
       throw error;
     }
@@ -256,7 +256,7 @@ export class RecommendationEngineService extends EventEmitter {
       const enhancedRecommendations = [];
 
       for (const recommendation of mlRecommendations) {
-        let enhancedRecommendation = { ...recommendation };
+        const enhancedRecommendation = { ...recommendation };
 
         // Add risk assessment if requested
         if (includeRiskAssessment) {
@@ -324,7 +324,7 @@ export class RecommendationEngineService extends EventEmitter {
 
       return finalRecommendations;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate vendor recommendations', { organizationId, serviceCategory, error });
       throw error;
     }
@@ -392,7 +392,7 @@ export class RecommendationEngineService extends EventEmitter {
       const enhancedRecommendations = [];
 
       for (const recommendation of mlRecommendations) {
-        let enhancedRecommendation = { ...recommendation };
+        const enhancedRecommendation = { ...recommendation };
 
         // Add market comparisons if requested
         if (includeMktComparisons) {
@@ -457,7 +457,7 @@ export class RecommendationEngineService extends EventEmitter {
 
       return enhancedRecommendations;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate lease recommendations', { organizationId, propertyId, error });
       throw error;
     }
@@ -574,7 +574,7 @@ export class RecommendationEngineService extends EventEmitter {
 
       return analysis;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to analyze contract', { organizationId, contractId, error });
       throw error;
     }
@@ -706,7 +706,7 @@ export class RecommendationEngineService extends EventEmitter {
 
       return priceOptimization;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to optimize pricing', { organizationId, serviceCategory, error });
       throw error;
     }
@@ -802,7 +802,7 @@ export class RecommendationEngineService extends EventEmitter {
 
       return insights;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate recommendation insights', { organizationId, error });
       throw error;
     }
@@ -960,7 +960,7 @@ export class RecommendationEngineService extends EventEmitter {
       }
 
       logger.info('All recommendation models trained successfully');
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to train recommendation models', error);
       throw error;
     }
@@ -1126,7 +1126,7 @@ export class RecommendationEngineService extends EventEmitter {
 
       return recommendations.sort((a, b) => b.score - a.score);
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.warn('ML vendor recommendation failed, using fallback', error);
       return this.generateFallbackVendorRecommendations(candidates, maxRecommendations);
     }
@@ -1230,7 +1230,7 @@ export class RecommendationEngineService extends EventEmitter {
         mitigationStrategies: this.generateMitigationStrategies(riskFactors)
       };
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.warn('Risk assessment failed, using fallback', error);
       return this.generateFallbackRiskAssessment();
     }
@@ -1347,7 +1347,7 @@ export class RecommendationEngineService extends EventEmitter {
     const marketData = this.marketData.get(serviceCategory);
     const vendor = this.vendorDatabase.get(vendorId);
     
-    if (!marketData || !vendor) return 0.5;
+    if (!marketData || !vendor) {return 0.5;}
     
     // Simple market position calculation based on size and reputation
     const sizeScore = Math.min(1, (vendor.employeeCount || 50) / 200);
@@ -1392,7 +1392,7 @@ export class RecommendationEngineService extends EventEmitter {
 
   private calculateValueForMoney(vendorId: string, estimatedCost: number): number {
     const performance = this.performanceMetrics.get(vendorId);
-    if (!performance) return 0.5;
+    if (!performance) {return 0.5;}
     
     const qualityScore = performance.qualityScore / 10;
     const reliabilityScore = performance.onTimePerformance;
@@ -1421,9 +1421,9 @@ export class RecommendationEngineService extends EventEmitter {
   private assessLeaseFlexibility(lease: any): number {
     let flexibility = 0.5;
     
-    if (lease.renewalOptions?.length > 0) flexibility += 0.2;
-    if (lease.sublettingAllowed) flexibility += 0.15;
-    if (lease.expansionRights) flexibility += 0.15;
+    if (lease.renewalOptions?.length > 0) {flexibility += 0.2;}
+    if (lease.sublettingAllowed) {flexibility += 0.15;}
+    if (lease.expansionRights) {flexibility += 0.15;}
     
     return Math.min(1, flexibility);
   }

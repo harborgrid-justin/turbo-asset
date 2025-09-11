@@ -555,7 +555,7 @@ export class AssetOperationsManager extends EventEmitter {
 
       return dashboard;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate asset operations dashboard', {
         error,
         organizationId: this.context.organizationId,
@@ -695,7 +695,7 @@ export class AssetOperationsManager extends EventEmitter {
       
       return asset;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create asset', {
         error,
         assetData,
@@ -783,7 +783,7 @@ export class AssetOperationsManager extends EventEmitter {
       
       return updatedAsset;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to update asset', {
         error,
         assetId,
@@ -1003,7 +1003,7 @@ export class AssetOperationsManager extends EventEmitter {
       
       return result;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to initiate asset disposal', {
         error,
         disposeRequest,
@@ -1076,7 +1076,7 @@ export class AssetOperationsManager extends EventEmitter {
       
       return result;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to search assets', {
         error,
         searchParams,
@@ -1157,7 +1157,7 @@ export class AssetOperationsManager extends EventEmitter {
       
       return report;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate asset report', {
         error,
         reportRequest,
@@ -1269,7 +1269,7 @@ export class AssetOperationsManager extends EventEmitter {
       
       return inventoryItem;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create inventory item', {
         error,
         itemRequest,
@@ -1382,7 +1382,7 @@ export class AssetOperationsManager extends EventEmitter {
       
       return result;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to update inventory stock', {
         error,
         updateRequest,
@@ -1434,7 +1434,7 @@ export class AssetOperationsManager extends EventEmitter {
           };
 
           return dashboard;
-        } catch (error) {
+        } catch (error: unknown) {
           logger.error('Failed to generate asset analytics dashboard', error);
           throw error;
         }
@@ -2303,7 +2303,7 @@ export class AssetOperationsManager extends EventEmitter {
       if (asset.category === AssetCategory.EQUIPMENT || asset.category === AssetCategory.FURNITURE) {
         await this.updateInventoryTracking(asset);
       }
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to trigger asset creation workflows', { error, assetId: asset.id });
     }
   }
@@ -2324,7 +2324,7 @@ export class AssetOperationsManager extends EventEmitter {
         fromLocation: transfer.fromLocationId,
         toLocation: transfer.toLocationId,
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to update location analytics', { error, transfer });
     }
   }
@@ -2341,7 +2341,7 @@ export class AssetOperationsManager extends EventEmitter {
         finalBookValue: financialImpact.finalBookValue,
         disposalGainLoss: financialImpact.disposalGainLoss,
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to update financial records', { error, assetId: asset.id });
     }
   }
@@ -2357,7 +2357,7 @@ export class AssetOperationsManager extends EventEmitter {
       if (inventoryItem.expiryDate) {
         this.alertSystem.createExpiryAlert(inventoryItem);
       }
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to setup inventory monitoring', { error, itemId: inventoryItem.id });
     }
   }
@@ -2367,7 +2367,7 @@ export class AssetOperationsManager extends EventEmitter {
       if (inventoryItem.currentStock <= inventoryItem.reorderPoint) {
         this.triggerReorderProcess(inventoryItem);
       }
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to check reorder triggers', { error, itemId: inventoryItem.id });
     }
   }
@@ -2381,7 +2381,7 @@ export class AssetOperationsManager extends EventEmitter {
       setTimeout(() => {
         this.alertSystem.createMaintenanceReminder(schedule);
       }, reminderDate.getTime() - Date.now());
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to setup maintenance reminders', { error, scheduleId: schedule.id });
     }
   }
@@ -2394,7 +2394,7 @@ export class AssetOperationsManager extends EventEmitter {
         workOrderId: workOrder.id,
         completedAt: workOrder.completedAt,
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to update maintenance records', { error, assetId });
     }
   }
@@ -2619,7 +2619,7 @@ class PredictiveMaintenanceAnalyzer {
         modelVersion: model.version,
         dataQuality: this.assessDataQuality(sensorData),
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to analyze predictive maintenance', { error, assetId });
       throw new Error(`Predictive maintenance analysis failed: ${error.message}`);
     }
@@ -2915,7 +2915,7 @@ class AssetOptimizationEngine {
         roi: this.calculateOptimizationROI(optimalScenario, currentState),
         generatedAt: new Date(),
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to optimize asset portfolio', { error, organizationId });
       throw new Error(`Asset optimization failed: ${error.message}`);
     }
@@ -3655,7 +3655,7 @@ class SmartAssetRecommendationSystem {
       });
 
       return recommendations;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate asset recommendations', { error, organizationId });
       throw new Error(`Asset recommendation generation failed: ${error.message}`);
     }
@@ -5217,7 +5217,7 @@ class EnterpriseAssetIntelligencePlatform {
 
       return comprehensiveAnalysis;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Comprehensive portfolio analysis failed', {
         analysisId,
         error: error.message,
@@ -5269,7 +5269,7 @@ class EnterpriseAssetIntelligencePlatform {
         dataQualityMetrics: await this.assessRawDataQuality(assets),
       };
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Asset data collection failed', { error, request });
       throw error;
     }
@@ -5306,7 +5306,7 @@ class EnterpriseAssetIntelligencePlatform {
         sourceData: rawData,
       };
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Asset data enrichment failed', { error });
       throw error;
     }
@@ -6137,7 +6137,7 @@ class AdvancedAssetSystemBlock$i {
 
       return result;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(\`AI analysis block $i failed\`, {
         analysisId,
         error: error.message,
@@ -6219,7 +6219,7 @@ class AdvancedAssetSystemBlock$i {
 
       return result;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(\`Blockchain tracking failed - block $i\`, {
         transactionId,
         assetId: asset.id,
@@ -6308,7 +6308,7 @@ class AdvancedAssetSystemBlock$i {
 
       return result;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(\`IoT integration failed - block $i\`, {
         integrationId,
         assetId: asset.id,
@@ -6451,7 +6451,7 @@ class AdvancedAssetSystemBlock$i {
 
       return result;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(\`Digital twin creation failed - block $i\`, {
         twinId,
         assetId: asset.id,
@@ -6575,7 +6575,7 @@ class AdvancedAssetSystemBlock$i {
 
       return result;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(\`Quantum analysis failed - block $i\`, {
         quantumJobId,
         error: error.message,
@@ -7298,7 +7298,7 @@ class AdvancedAssetSystemBlock$i {
 
       return result;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(\`AI analysis block $i failed\`, {
         analysisId,
         error: error.message,
@@ -7380,7 +7380,7 @@ class AdvancedAssetSystemBlock$i {
 
       return result;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(\`Blockchain tracking failed - block $i\`, {
         transactionId,
         assetId: asset.id,
@@ -7469,7 +7469,7 @@ class AdvancedAssetSystemBlock$i {
 
       return result;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(\`IoT integration failed - block $i\`, {
         integrationId,
         assetId: asset.id,
@@ -7612,7 +7612,7 @@ class AdvancedAssetSystemBlock$i {
 
       return result;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(\`Digital twin creation failed - block $i\`, {
         twinId,
         assetId: asset.id,
@@ -7736,7 +7736,7 @@ class AdvancedAssetSystemBlock$i {
 
       return result;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(\`Quantum analysis failed - block $i\`, {
         quantumJobId,
         error: error.message,
@@ -8459,7 +8459,7 @@ class AdvancedAssetSystemBlock$i {
 
       return result;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(\`AI analysis block $i failed\`, {
         analysisId,
         error: error.message,
@@ -8541,7 +8541,7 @@ class AdvancedAssetSystemBlock$i {
 
       return result;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(\`Blockchain tracking failed - block $i\`, {
         transactionId,
         assetId: asset.id,
@@ -8630,7 +8630,7 @@ class AdvancedAssetSystemBlock$i {
 
       return result;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(\`IoT integration failed - block $i\`, {
         integrationId,
         assetId: asset.id,
@@ -8773,7 +8773,7 @@ class AdvancedAssetSystemBlock$i {
 
       return result;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(\`Digital twin creation failed - block $i\`, {
         twinId,
         assetId: asset.id,
@@ -8897,7 +8897,7 @@ class AdvancedAssetSystemBlock$i {
 
       return result;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(\`Quantum analysis failed - block $i\`, {
         quantumJobId,
         error: error.message,
@@ -9620,7 +9620,7 @@ class AdvancedAssetSystemBlock$i {
 
       return result;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(\`AI analysis block $i failed\`, {
         analysisId,
         error: error.message,
@@ -9702,7 +9702,7 @@ class AdvancedAssetSystemBlock$i {
 
       return result;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(\`Blockchain tracking failed - block $i\`, {
         transactionId,
         assetId: asset.id,
@@ -9791,7 +9791,7 @@ class AdvancedAssetSystemBlock$i {
 
       return result;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(\`IoT integration failed - block $i\`, {
         integrationId,
         assetId: asset.id,
@@ -9934,7 +9934,7 @@ class AdvancedAssetSystemBlock$i {
 
       return result;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(\`Digital twin creation failed - block $i\`, {
         twinId,
         assetId: asset.id,
@@ -10058,7 +10058,7 @@ class AdvancedAssetSystemBlock$i {
 
       return result;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(\`Quantum analysis failed - block $i\`, {
         quantumJobId,
         error: error.message,
@@ -10781,7 +10781,7 @@ class AdvancedAssetSystemBlock$i {
 
       return result;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(\`AI analysis block $i failed\`, {
         analysisId,
         error: error.message,
@@ -10863,7 +10863,7 @@ class AdvancedAssetSystemBlock$i {
 
       return result;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(\`Blockchain tracking failed - block $i\`, {
         transactionId,
         assetId: asset.id,
@@ -10952,7 +10952,7 @@ class AdvancedAssetSystemBlock$i {
 
       return result;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(\`IoT integration failed - block $i\`, {
         integrationId,
         assetId: asset.id,
@@ -11095,7 +11095,7 @@ class AdvancedAssetSystemBlock$i {
 
       return result;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(\`Digital twin creation failed - block $i\`, {
         twinId,
         assetId: asset.id,
@@ -11219,7 +11219,7 @@ class AdvancedAssetSystemBlock$i {
 
       return result;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(\`Quantum analysis failed - block $i\`, {
         quantumJobId,
         error: error.message,
@@ -11942,7 +11942,7 @@ class AdvancedAssetSystemBlock$i {
 
       return result;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(\`AI analysis block $i failed\`, {
         analysisId,
         error: error.message,
@@ -12024,7 +12024,7 @@ class AdvancedAssetSystemBlock$i {
 
       return result;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(\`Blockchain tracking failed - block $i\`, {
         transactionId,
         assetId: asset.id,
@@ -12113,7 +12113,7 @@ class AdvancedAssetSystemBlock$i {
 
       return result;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(\`IoT integration failed - block $i\`, {
         integrationId,
         assetId: asset.id,
@@ -12256,7 +12256,7 @@ class AdvancedAssetSystemBlock$i {
 
       return result;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(\`Digital twin creation failed - block $i\`, {
         twinId,
         assetId: asset.id,
@@ -12380,7 +12380,7 @@ class AdvancedAssetSystemBlock$i {
 
       return result;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(\`Quantum analysis failed - block $i\`, {
         quantumJobId,
         error: error.message,
@@ -13103,7 +13103,7 @@ class AdvancedAssetSystemBlock$i {
 
       return result;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(\`AI analysis block $i failed\`, {
         analysisId,
         error: error.message,
@@ -13185,7 +13185,7 @@ class AdvancedAssetSystemBlock$i {
 
       return result;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(\`Blockchain tracking failed - block $i\`, {
         transactionId,
         assetId: asset.id,
@@ -13274,7 +13274,7 @@ class AdvancedAssetSystemBlock$i {
 
       return result;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(\`IoT integration failed - block $i\`, {
         integrationId,
         assetId: asset.id,
@@ -13417,7 +13417,7 @@ class AdvancedAssetSystemBlock$i {
 
       return result;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(\`Digital twin creation failed - block $i\`, {
         twinId,
         assetId: asset.id,
@@ -13541,7 +13541,7 @@ class AdvancedAssetSystemBlock$i {
 
       return result;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(\`Quantum analysis failed - block $i\`, {
         quantumJobId,
         error: error.message,
@@ -14264,7 +14264,7 @@ class AdvancedAssetSystemBlock$i {
 
       return result;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(\`AI analysis block $i failed\`, {
         analysisId,
         error: error.message,
@@ -14346,7 +14346,7 @@ class AdvancedAssetSystemBlock$i {
 
       return result;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(\`Blockchain tracking failed - block $i\`, {
         transactionId,
         assetId: asset.id,
@@ -14435,7 +14435,7 @@ class AdvancedAssetSystemBlock$i {
 
       return result;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(\`IoT integration failed - block $i\`, {
         integrationId,
         assetId: asset.id,
@@ -14578,7 +14578,7 @@ class AdvancedAssetSystemBlock$i {
 
       return result;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(\`Digital twin creation failed - block $i\`, {
         twinId,
         assetId: asset.id,
@@ -14702,7 +14702,7 @@ class AdvancedAssetSystemBlock$i {
 
       return result;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(\`Quantum analysis failed - block $i\`, {
         quantumJobId,
         error: error.message,
@@ -15425,7 +15425,7 @@ class AdvancedAssetSystemBlock$i {
 
       return result;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(\`AI analysis block $i failed\`, {
         analysisId,
         error: error.message,
@@ -15507,7 +15507,7 @@ class AdvancedAssetSystemBlock$i {
 
       return result;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(\`Blockchain tracking failed - block $i\`, {
         transactionId,
         assetId: asset.id,
@@ -15596,7 +15596,7 @@ class AdvancedAssetSystemBlock$i {
 
       return result;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(\`IoT integration failed - block $i\`, {
         integrationId,
         assetId: asset.id,
@@ -15739,7 +15739,7 @@ class AdvancedAssetSystemBlock$i {
 
       return result;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(\`Digital twin creation failed - block $i\`, {
         twinId,
         assetId: asset.id,
@@ -15863,7 +15863,7 @@ class AdvancedAssetSystemBlock$i {
 
       return result;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(\`Quantum analysis failed - block $i\`, {
         quantumJobId,
         error: error.message,
@@ -16586,7 +16586,7 @@ class AdvancedAssetSystemBlock$i {
 
       return result;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(\`AI analysis block $i failed\`, {
         analysisId,
         error: error.message,
@@ -16668,7 +16668,7 @@ class AdvancedAssetSystemBlock$i {
 
       return result;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(\`Blockchain tracking failed - block $i\`, {
         transactionId,
         assetId: asset.id,
@@ -16757,7 +16757,7 @@ class AdvancedAssetSystemBlock$i {
 
       return result;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(\`IoT integration failed - block $i\`, {
         integrationId,
         assetId: asset.id,
@@ -16900,7 +16900,7 @@ class AdvancedAssetSystemBlock$i {
 
       return result;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(\`Digital twin creation failed - block $i\`, {
         twinId,
         assetId: asset.id,
@@ -17024,7 +17024,7 @@ class AdvancedAssetSystemBlock$i {
 
       return result;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(\`Quantum analysis failed - block $i\`, {
         quantumJobId,
         error: error.message,
@@ -17747,7 +17747,7 @@ class AdvancedAssetSystemBlock$i {
 
       return result;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(\`AI analysis block $i failed\`, {
         analysisId,
         error: error.message,
@@ -17829,7 +17829,7 @@ class AdvancedAssetSystemBlock$i {
 
       return result;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(\`Blockchain tracking failed - block $i\`, {
         transactionId,
         assetId: asset.id,
@@ -17918,7 +17918,7 @@ class AdvancedAssetSystemBlock$i {
 
       return result;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(\`IoT integration failed - block $i\`, {
         integrationId,
         assetId: asset.id,
@@ -18061,7 +18061,7 @@ class AdvancedAssetSystemBlock$i {
 
       return result;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(\`Digital twin creation failed - block $i\`, {
         twinId,
         assetId: asset.id,
@@ -18185,7 +18185,7 @@ class AdvancedAssetSystemBlock$i {
 
       return result;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(\`Quantum analysis failed - block $i\`, {
         quantumJobId,
         error: error.message,
@@ -18908,7 +18908,7 @@ class AdvancedAssetSystemBlock$i {
 
       return result;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(\`AI analysis block $i failed\`, {
         analysisId,
         error: error.message,
@@ -18990,7 +18990,7 @@ class AdvancedAssetSystemBlock$i {
 
       return result;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(\`Blockchain tracking failed - block $i\`, {
         transactionId,
         assetId: asset.id,
@@ -19079,7 +19079,7 @@ class AdvancedAssetSystemBlock$i {
 
       return result;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(\`IoT integration failed - block $i\`, {
         integrationId,
         assetId: asset.id,
@@ -19222,7 +19222,7 @@ class AdvancedAssetSystemBlock$i {
 
       return result;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(\`Digital twin creation failed - block $i\`, {
         twinId,
         assetId: asset.id,
@@ -19346,7 +19346,7 @@ class AdvancedAssetSystemBlock$i {
 
       return result;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(\`Quantum analysis failed - block $i\`, {
         quantumJobId,
         error: error.message,
@@ -20069,7 +20069,7 @@ class AdvancedAssetSystemBlock$i {
 
       return result;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(\`AI analysis block $i failed\`, {
         analysisId,
         error: error.message,
@@ -20151,7 +20151,7 @@ class AdvancedAssetSystemBlock$i {
 
       return result;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(\`Blockchain tracking failed - block $i\`, {
         transactionId,
         assetId: asset.id,
@@ -20240,7 +20240,7 @@ class AdvancedAssetSystemBlock$i {
 
       return result;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(\`IoT integration failed - block $i\`, {
         integrationId,
         assetId: asset.id,
@@ -20383,7 +20383,7 @@ class AdvancedAssetSystemBlock$i {
 
       return result;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(\`Digital twin creation failed - block $i\`, {
         twinId,
         assetId: asset.id,
@@ -20507,7 +20507,7 @@ class AdvancedAssetSystemBlock$i {
 
       return result;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(\`Quantum analysis failed - block $i\`, {
         quantumJobId,
         error: error.message,
@@ -21230,7 +21230,7 @@ class AdvancedAssetSystemBlock$i {
 
       return result;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(\`AI analysis block $i failed\`, {
         analysisId,
         error: error.message,
@@ -21312,7 +21312,7 @@ class AdvancedAssetSystemBlock$i {
 
       return result;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(\`Blockchain tracking failed - block $i\`, {
         transactionId,
         assetId: asset.id,
@@ -21401,7 +21401,7 @@ class AdvancedAssetSystemBlock$i {
 
       return result;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(\`IoT integration failed - block $i\`, {
         integrationId,
         assetId: asset.id,
@@ -21544,7 +21544,7 @@ class AdvancedAssetSystemBlock$i {
 
       return result;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(\`Digital twin creation failed - block $i\`, {
         twinId,
         assetId: asset.id,
@@ -21668,7 +21668,7 @@ class AdvancedAssetSystemBlock$i {
 
       return result;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(\`Quantum analysis failed - block $i\`, {
         quantumJobId,
         error: error.message,
@@ -22391,7 +22391,7 @@ class AdvancedAssetSystemBlock$i {
 
       return result;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(\`AI analysis block $i failed\`, {
         analysisId,
         error: error.message,
@@ -22473,7 +22473,7 @@ class AdvancedAssetSystemBlock$i {
 
       return result;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(\`Blockchain tracking failed - block $i\`, {
         transactionId,
         assetId: asset.id,
@@ -22562,7 +22562,7 @@ class AdvancedAssetSystemBlock$i {
 
       return result;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(\`IoT integration failed - block $i\`, {
         integrationId,
         assetId: asset.id,
@@ -22705,7 +22705,7 @@ class AdvancedAssetSystemBlock$i {
 
       return result;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(\`Digital twin creation failed - block $i\`, {
         twinId,
         assetId: asset.id,
@@ -22829,7 +22829,7 @@ class AdvancedAssetSystemBlock$i {
 
       return result;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(\`Quantum analysis failed - block $i\`, {
         quantumJobId,
         error: error.message,

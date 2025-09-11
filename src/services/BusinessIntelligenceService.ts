@@ -138,7 +138,7 @@ export class BusinessIntelligenceService {
       });
 
       return report;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create BI report', { name, error });
       throw error;
     }
@@ -185,7 +185,7 @@ export class BusinessIntelligenceService {
         data: processedData,
         chartConfig: report.chartConfig,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Report execution failed', { reportId, error });
       throw error;
     }
@@ -226,7 +226,7 @@ export class BusinessIntelligenceService {
       });
 
       return dashboard;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create dashboard', { name, error });
       throw error;
     }
@@ -264,7 +264,7 @@ export class BusinessIntelligenceService {
           } else if (widget.type === 'text') {
             widgetData[widget.id] = widget.configuration;
           }
-        } catch (error) {
+        } catch (error: unknown) {
           logger.warn(`Widget data loading failed: ${widget.id}`, { error });
           widgetData[widget.id] = { error: error.message };
         }
@@ -275,7 +275,7 @@ export class BusinessIntelligenceService {
         widgetData,
         refreshedAt: new Date(),
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Dashboard data retrieval failed', { dashboardId, error });
       throw error;
     }
@@ -309,7 +309,7 @@ export class BusinessIntelligenceService {
       });
 
       return { sql, data };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Report building failed', { warehouseId, builder, error });
       throw error;
     }
@@ -413,7 +413,7 @@ export class BusinessIntelligenceService {
       };
 
       return kpi;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('KPI calculation failed', { kpiConfig, error });
       throw error;
     }
@@ -428,7 +428,7 @@ export class BusinessIntelligenceService {
       // For now, return mock data
       const mockData = this.generateMockData(sql);
       return mockData;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Query execution failed', { sql, error });
       throw error;
     }
@@ -465,7 +465,7 @@ export class BusinessIntelligenceService {
       }
 
       return processedData;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Data processing failed', { chartConfig, error });
       return data; // Return original data if processing fails
     }
@@ -503,7 +503,7 @@ export class BusinessIntelligenceService {
    * Apply aggregations to data
    */
   private applyAggregations(data: any[], chartConfig: ChartConfiguration): any[] {
-    if (!chartConfig.xAxis?.field) return data;
+    if (!chartConfig.xAxis?.field) {return data;}
 
     const groupedData = data.reduce((acc, row) => {
       const key = row[chartConfig.xAxis.field];
@@ -735,7 +735,7 @@ export class BusinessIntelligenceService {
       ];
 
       return dataSources;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get data sources', { warehouseId, error });
       throw error;
     }
@@ -809,7 +809,7 @@ export class BusinessIntelligenceService {
         default:
           throw new Error(`Unsupported export format: ${format}`);
       }
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Report export failed', { reportId, format, error });
       throw error;
     }
@@ -819,7 +819,7 @@ export class BusinessIntelligenceService {
    * Export to CSV format
    */
   private exportToCSV(data: any[]): Buffer {
-    if (!data.length) return Buffer.from('');
+    if (!data.length) {return Buffer.from('');}
 
     const headers = Object.keys(data[0]);
     const csvContent = [

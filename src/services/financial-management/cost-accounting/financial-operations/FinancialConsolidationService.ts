@@ -101,7 +101,7 @@ export class FinancialConsolidationService {
 
       logger.info('Consolidation rule created successfully', { ruleId: rule.id });
       return rule;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create consolidation rule', error);
       throw error;
     }
@@ -172,7 +172,7 @@ export class FinancialConsolidationService {
 
       logger.info('Financial statement created successfully', { statementId: statement.id });
       return statement;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create financial statement', error);
       throw error;
     }
@@ -277,7 +277,7 @@ export class FinancialConsolidationService {
       });
 
       return consolidatedStatement;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to consolidate financial statements', error);
       throw error;
     }
@@ -333,7 +333,7 @@ export class FinancialConsolidationService {
         statementsByLevel,
         consolidationMetrics
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get consolidation summary', error);
       throw error;
     }

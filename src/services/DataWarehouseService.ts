@@ -112,7 +112,7 @@ export class DataWarehouseService extends EventEmitter {
       });
 
       return warehouse;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create data warehouse', { name, error });
       throw error;
     }
@@ -156,7 +156,7 @@ export class DataWarehouseService extends EventEmitter {
       });
 
       return etlProcess;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create ETL process', { name, error });
       throw error;
     }
@@ -230,7 +230,7 @@ export class DataWarehouseService extends EventEmitter {
         });
 
         return metrics;
-      } catch (error) {
+      } catch (error: unknown) {
         metrics.status = 'FAILED';
         metrics.endTime = new Date();
         metrics.errors.push(error.message);
@@ -244,7 +244,7 @@ export class DataWarehouseService extends EventEmitter {
       } finally {
         this.runningPipelines.delete(processId);
       }
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('ETL process execution failed', { processId, error });
       throw error;
     }
@@ -276,7 +276,7 @@ export class DataWarehouseService extends EventEmitter {
       const connection = await this.getConnection(sourceConfig.connectionString);
       const result = await connection.query(sourceConfig.query);
       return Array.isArray(result) ? result : result.rows || [];
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Database extraction failed', { sourceConfig, error });
       throw error;
     }
@@ -295,7 +295,7 @@ export class DataWarehouseService extends EventEmitter {
       });
 
       return Array.isArray(response.data) ? response.data : [response.data];
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('API extraction failed', { sourceConfig, error });
       throw error;
     }
@@ -321,7 +321,7 @@ export class DataWarehouseService extends EventEmitter {
         default:
           throw new Error(`Unsupported file format: ${path.extname(filePath)}`);
       }
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('File extraction failed', { sourceConfig, error });
       throw error;
     }
@@ -349,7 +349,7 @@ export class DataWarehouseService extends EventEmitter {
         // Custom transformation logic
         return this.executeCustomTransformation(data, transformationSQL);
       }
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Data transformation failed', { error });
       throw error;
     }
@@ -369,7 +369,7 @@ export class DataWarehouseService extends EventEmitter {
       
       alasql('DROP TABLE source_data');
       return result;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('SQL transformation failed', { sql, error });
       throw error;
     }
@@ -384,7 +384,7 @@ export class DataWarehouseService extends EventEmitter {
       // This would typically be a safe sandbox environment
       const transformFunction = new Function('data', transformationCode);
       return transformFunction(data);
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Custom transformation failed', { error });
       throw error;
     }
@@ -411,7 +411,7 @@ export class DataWarehouseService extends EventEmitter {
             await this.insertRecord(connection, targetConfig, record);
             inserted++;
           }
-        } catch (error) {
+        } catch (error: unknown) {
           logger.warn('Record processing failed', { record, error });
         }
       }
@@ -424,7 +424,7 @@ export class DataWarehouseService extends EventEmitter {
       });
 
       return { inserted, updated, deleted };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Data loading failed', { targetConfig, error });
       throw error;
     }
@@ -454,7 +454,7 @@ export class DataWarehouseService extends EventEmitter {
           });
         }
       }
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Data quality check failed', { processId, error });
     }
   }
@@ -508,7 +508,7 @@ export class DataWarehouseService extends EventEmitter {
       const job = cron.schedule(cronPattern, async () => {
         try {
           await this.executeETLProcess(processId);
-        } catch (error) {
+        } catch (error: unknown) {
           logger.error('Scheduled ETL process failed', { processId, error });
         }
       }, {
@@ -533,7 +533,7 @@ export class DataWarehouseService extends EventEmitter {
         cronPattern,
         nextRun,
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to schedule ETL process', { processId, error });
       throw error;
     }
@@ -577,7 +577,7 @@ export class DataWarehouseService extends EventEmitter {
 
       const result = await connection.query(query, params);
       return result.rows || result;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Historical data retrieval failed', {
         warehouseId,
         table,
@@ -661,7 +661,7 @@ export class DataWarehouseService extends EventEmitter {
         sourceQuery,
         createdAt: new Date(),
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Data mart creation failed', {
         warehouseId,
         name,
@@ -701,7 +701,7 @@ export class DataWarehouseService extends EventEmitter {
       };
 
       return metrics;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get ETL metrics', { processId, error });
       throw error;
     }
@@ -726,7 +726,7 @@ export class DataWarehouseService extends EventEmitter {
       }
 
       logger.info(`Loaded ${scheduledProcesses.length} scheduled ETL processes`);
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to load scheduled pipelines', { error });
     }
   }
@@ -872,7 +872,7 @@ export class DataWarehouseService extends EventEmitter {
       this.connections.clear();
 
       logger.info('Data warehouse service shutdown completed');
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Error during shutdown', { error });
     }
   }

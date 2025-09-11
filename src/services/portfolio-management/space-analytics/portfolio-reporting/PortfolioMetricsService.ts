@@ -68,7 +68,7 @@ export class PortfolioMetricsService {
 
       return kpis;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to calculate portfolio KPIs', {
         organizationId,
         timeframe,
@@ -123,7 +123,7 @@ export class PortfolioMetricsService {
         isSignificant: trendAnalysis.isSignificant,
       }));
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get KPI trends', {
         organizationId,
         kpiType,
@@ -186,7 +186,7 @@ export class PortfolioMetricsService {
 
       return metrics;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to calculate space utilization metrics', {
         organizationId,
         error: error.message,
@@ -248,7 +248,7 @@ export class PortfolioMetricsService {
 
       return metrics;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to calculate tenant retention metrics', {
         organizationId,
         error: error.message,
@@ -311,7 +311,7 @@ export class PortfolioMetricsService {
 
       return metrics;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to calculate energy efficiency metrics', {
         organizationId,
         error: error.message,
@@ -376,7 +376,7 @@ export class PortfolioMetricsService {
 
       return metrics;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to calculate maintenance performance metrics', {
         organizationId,
         error: error.message,
@@ -437,7 +437,7 @@ export class PortfolioMetricsService {
 
       return comparison;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to compare against benchmarks', {
         organizationId,
         benchmarkType,

@@ -79,7 +79,7 @@ export class ChargebackService {
       });
 
       return rule;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create chargeback rule', error);
       throw error;
     }
@@ -124,7 +124,7 @@ export class ChargebackService {
       });
 
       return rules;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get chargeback rules', error);
       throw error;
     }
@@ -146,7 +146,7 @@ export class ChargebackService {
       for (const rule of rules) {
         try {
           await this.processRuleAllocation(rule, period);
-        } catch (error) {
+        } catch (error: unknown) {
           logger.error('Failed to process rule allocation', {
             ruleId: rule.id,
             ruleName: rule.name,
@@ -159,7 +159,7 @@ export class ChargebackService {
         organizationId,
         period,
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to process monthly allocations', error);
       throw error;
     }
@@ -222,7 +222,7 @@ export class ChargebackService {
         totalCost,
         allocationCount: allocations.length,
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to process rule allocation', error);
       throw error;
     }
@@ -548,7 +548,7 @@ export class ChargebackService {
       }
 
       return reports.sort((a, b) => b.totalAllocated - a.totalAllocated);
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate chargeback report', error);
       throw error;
     }
@@ -649,7 +649,7 @@ export class ChargebackService {
           totalCost: Math.round(cost),
         })).sort((a, b) => b.totalCost - a.totalCost),
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get chargeback analytics', error);
       throw error;
     }
@@ -688,7 +688,7 @@ export class ChargebackService {
       });
 
       return updatedRule;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to update chargeback rule', error);
       throw error;
     }
@@ -720,7 +720,7 @@ export class ChargebackService {
       });
 
       logger.info('Chargeback rule deleted', { ruleId, organizationId });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to delete chargeback rule', error);
       throw error;
     }
@@ -783,7 +783,7 @@ export class ChargebackService {
         costOptimization,
         subsidiaryBreakdown,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get advanced chargeback analytics', error);
       throw error;
     }
@@ -853,7 +853,7 @@ export class ChargebackService {
         deliveryStatus,
         approvalQueue: approvalRequired ? approvalQueue : undefined,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate automated invoices', error);
       throw error;
     }
@@ -908,7 +908,7 @@ export class ChargebackService {
         rootCauseAnalysis,
         recommendations,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to perform variance analysis', error);
       throw error;
     }
@@ -954,7 +954,7 @@ export class ChargebackService {
         pendingApprovals,
         recentActivity,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get real-time chargeback dashboard', error);
       throw error;
     }
@@ -1023,7 +1023,7 @@ export class ChargebackService {
         filename,
         recordCount: chargebackData.length,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to export chargeback data', error);
       throw error;
     }
@@ -1184,7 +1184,7 @@ export class ChargebackService {
           description: alloc.rule.name,
         })),
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.warn('Failed to get chargeback allocations', { organizationId, period, error });
       return {
         period,

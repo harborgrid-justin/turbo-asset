@@ -78,7 +78,7 @@ export class EnterpriseServiceBusService extends EventEmitter {
       });
 
       return result.id;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to register integration endpoint', error);
       throw error;
     }
@@ -126,7 +126,7 @@ export class EnterpriseServiceBusService extends EventEmitter {
       });
 
       return result.id;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create ESB flow', error);
       throw error;
     }
@@ -182,7 +182,7 @@ export class EnterpriseServiceBusService extends EventEmitter {
       });
 
       return messageId;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to send message through ESB', error);
       throw error;
     }
@@ -219,7 +219,7 @@ export class EnterpriseServiceBusService extends EventEmitter {
         pattern: flow.pattern,
         timestamp: new Date(),
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to process message through flow', error);
       
       // Send to retry queue if configured
@@ -251,7 +251,7 @@ export class EnterpriseServiceBusService extends EventEmitter {
       }
 
       return transformedMessage;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to transform message', error);
       throw new Error(ERROR_MESSAGES.TRANSFORMATION_FAILED);
     }
@@ -285,7 +285,7 @@ export class EnterpriseServiceBusService extends EventEmitter {
         messageType: message.messageType,
         priority: message.priority,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get message', error);
       throw error;
     }
@@ -323,7 +323,7 @@ export class EnterpriseServiceBusService extends EventEmitter {
 
       this.endpoints.set(endpointId, fullEndpoint);
       return fullEndpoint;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get endpoint', error);
       throw error;
     }
@@ -363,7 +363,7 @@ export class EnterpriseServiceBusService extends EventEmitter {
 
       this.flows.set(flowId, fullFlow);
       return fullFlow;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get flow', error);
       throw error;
     }
@@ -395,7 +395,7 @@ export class EnterpriseServiceBusService extends EventEmitter {
         throughput,
         latency,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get ESB metrics', error);
       throw error;
     }
@@ -481,7 +481,7 @@ export class EnterpriseServiceBusService extends EventEmitter {
       for (const route of matchingRoutes) {
         await this.processRoute(message, route);
       }
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to route message', error);
       throw new Error(ERROR_MESSAGES.MESSAGE_ROUTING_FAILED);
     }
@@ -543,7 +543,7 @@ export class EnterpriseServiceBusService extends EventEmitter {
       if (targetEndpoint) {
         await this.sendToEndpoint(transformedMessage, targetEndpoint);
       }
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to process route', error);
       throw error;
     }
@@ -581,7 +581,7 @@ export class EnterpriseServiceBusService extends EventEmitter {
         endpointId: endpoint.id,
         endpointType: endpoint.type 
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to send message to endpoint', error);
       throw error;
     }
@@ -968,7 +968,7 @@ export class EnterpriseServiceBusService extends EventEmitter {
         endpoints: this.endpoints.size,
         flows: this.flows.size 
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to load ESB configuration', error);
     }
   }

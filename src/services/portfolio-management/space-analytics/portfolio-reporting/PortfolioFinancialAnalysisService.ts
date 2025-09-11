@@ -78,7 +78,7 @@ export class PortfolioFinancialAnalysisService {
 
       return metrics;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to calculate financial metrics', {
         query,
         error: error.message,
@@ -187,7 +187,7 @@ export class PortfolioFinancialAnalysisService {
 
       return breakdown;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get cost breakdown', {
         query,
         error: error.message,
@@ -247,7 +247,7 @@ export class PortfolioFinancialAnalysisService {
 
       return analysis;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get revenue analysis', {
         organizationId,
         startDate,
@@ -322,7 +322,7 @@ export class PortfolioFinancialAnalysisService {
 
       return analysis;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get ROI analysis', {
         organizationId,
         error: error.message,
@@ -386,7 +386,7 @@ export class PortfolioFinancialAnalysisService {
 
       return forecast;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get financial forecast', {
         organizationId,
         forecastPeriodMonths,
@@ -475,7 +475,7 @@ export class PortfolioFinancialAnalysisService {
 
       return analysis;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get budget variance analysis', {
         organizationId,
         budgetPeriod,
@@ -685,7 +685,7 @@ export class PortfolioFinancialAnalysisService {
   }
 
   private calculateYearsSinceAcquisition(purchaseDate: Date | null): number {
-    if (!purchaseDate) return 0;
+    if (!purchaseDate) {return 0;}
     const now = new Date();
     const diff = now.getTime() - purchaseDate.getTime();
     return diff / (1000 * 60 * 60 * 24 * 365.25);

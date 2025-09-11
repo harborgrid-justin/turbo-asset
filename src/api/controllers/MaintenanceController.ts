@@ -1,6 +1,7 @@
+import { toError } from '../../core/utils/validation';
 import express from 'express';
-import { maintenanceService } from '../services/MaintenanceService';
-import { logger } from '../config/logger';
+import { maintenanceService } from '../../services/MaintenanceService';
+import { logger } from '../../config/logger';
 
 const router = express.Router();
 
@@ -71,7 +72,7 @@ router.get('/assets', async (req, res) => {
       success: true,
       data: result,
     });
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to search maintenance assets', error);
     res.status(500).json({
       error: 'Failed to search maintenance assets',
@@ -126,7 +127,7 @@ router.post('/assets', async (req, res) => {
       success: true,
       data: asset,
     });
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to create maintenance asset', error);
     res.status(500).json({
       error: 'Failed to create maintenance asset',
@@ -159,7 +160,7 @@ router.get('/assets/:id', async (req, res) => {
       success: true,
       data: asset,
     });
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to get maintenance asset', error);
     res.status(error instanceof Error && error.message === 'Maintenance asset not found' ? 404 : 500).json({
       error: 'Failed to get maintenance asset',
@@ -192,7 +193,7 @@ router.get('/metrics', async (req, res) => {
       success: true,
       data: metrics,
     });
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to get maintenance metrics', error);
     res.status(500).json({
       error: 'Failed to get maintenance metrics',
@@ -250,7 +251,7 @@ router.put('/assets/:id/condition', async (req, res) => {
       success: true,
       data: result,
     });
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to update asset condition', error);
     res.status(500).json({
       error: 'Failed to update asset condition',
@@ -299,7 +300,7 @@ router.post('/assets/condition-summary', async (req, res) => {
       success: true,
       data: summary,
     });
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to get asset condition summary', error);
     res.status(500).json({
       error: 'Failed to get asset condition summary',
@@ -348,7 +349,7 @@ router.post('/assets/lifecycle-analysis', async (req, res) => {
       success: true,
       data: analysis,
     });
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to perform lifecycle analysis', error);
     res.status(500).json({
       error: 'Failed to perform lifecycle analysis',
@@ -402,7 +403,7 @@ router.get('/cost-analytics', async (req, res) => {
       success: true,
       data: analytics,
     });
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to get maintenance cost analytics', error);
     res.status(500).json({
       error: 'Failed to get maintenance cost analytics',
@@ -456,7 +457,7 @@ router.put('/assets/bulk-update', async (req, res) => {
       success: true,
       data: result,
     });
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to bulk update assets', error);
     res.status(500).json({
       error: 'Failed to bulk update assets',

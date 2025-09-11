@@ -84,7 +84,7 @@ export class CAMReconciliationService extends EventEmitter implements ICAMReconc
 
       return savedReconciliation;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create CAM reconciliation', error);
       throw new Error(`Failed to create reconciliation: ${(error as Error).message}`);
     }
@@ -93,7 +93,7 @@ export class CAMReconciliationService extends EventEmitter implements ICAMReconc
   async getReconciliation(id: string): Promise<CAMReconciliation | null> {
     try {
       const cached = this.cache.get(id);
-      if (cached) return cached;
+      if (cached) {return cached;}
 
       const reconciliation = await this.loadReconciliation(id);
       if (reconciliation) {
@@ -101,7 +101,7 @@ export class CAMReconciliationService extends EventEmitter implements ICAMReconc
       }
       return reconciliation;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get CAM reconciliation', { reconciliationId: id, error });
       throw new Error(`Failed to get reconciliation: ${(error as Error).message}`);
     }
@@ -138,7 +138,7 @@ export class CAMReconciliationService extends EventEmitter implements ICAMReconc
       logger.info('CAM reconciliation updated', { reconciliationId: id });
       return savedReconciliation;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to update CAM reconciliation', { reconciliationId: id, error });
       throw new Error(`Failed to update reconciliation: ${(error as Error).message}`);
     }
@@ -197,7 +197,7 @@ export class CAMReconciliationService extends EventEmitter implements ICAMReconc
 
       return expense;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to add CAM expense', { reconciliationId, error });
       throw new Error(`Failed to add expense: ${(error as Error).message}`);
     }
@@ -255,7 +255,7 @@ export class CAMReconciliationService extends EventEmitter implements ICAMReconc
 
       return tenantAllocations;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to calculate tenant allocations', { reconId, error });
       throw new Error(`Failed to calculate allocations: ${(error as Error).message}`);
     }
@@ -310,7 +310,7 @@ export class CAMReconciliationService extends EventEmitter implements ICAMReconc
 
       return camDispute;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to submit CAM dispute', { reconId, error });
       throw new Error(`Failed to submit dispute: ${(error as Error).message}`);
     }
@@ -386,7 +386,7 @@ export class CAMReconciliationService extends EventEmitter implements ICAMReconc
 
       return dispute;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to resolve CAM dispute', { reconId, disputeId, error });
       throw new Error(`Failed to resolve dispute: ${(error as Error).message}`);
     }
@@ -432,7 +432,7 @@ export class CAMReconciliationService extends EventEmitter implements ICAMReconc
       logger.info('CAM reconciliation finalized', { reconId });
       return updatedReconciliation;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to finalize CAM reconciliation', { reconId, error });
       throw new Error(`Failed to finalize reconciliation: ${(error as Error).message}`);
     }
@@ -485,7 +485,7 @@ export class CAMReconciliationService extends EventEmitter implements ICAMReconc
       logger.info('CAM statement generated', { reconId, leaseId });
       return statementBuffer;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate CAM statement', { reconId, leaseId, error });
       throw new Error(`Failed to generate statement: ${(error as Error).message}`);
     }
@@ -561,7 +561,7 @@ export class CAMReconciliationService extends EventEmitter implements ICAMReconc
       logger.info('CAM reconciliation report generated', { reconId });
       return report;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate reconciliation report', { reconId, error });
       throw new Error(`Failed to generate report: ${(error as Error).message}`);
     }
@@ -570,9 +570,9 @@ export class CAMReconciliationService extends EventEmitter implements ICAMReconc
   // === PRIVATE HELPER METHODS ===
 
   private validateReconciliationData(data: Partial<CAMReconciliation>): void {
-    if (!data.propertyId) throw new Error('Property ID is required');
-    if (!data.leaseIds || data.leaseIds.length === 0) throw new Error('Lease IDs are required');
-    if (!data.reconciliationYear) throw new Error('Reconciliation year is required');
+    if (!data.propertyId) {throw new Error('Property ID is required');}
+    if (!data.leaseIds || data.leaseIds.length === 0) {throw new Error('Lease IDs are required');}
+    if (!data.reconciliationYear) {throw new Error('Reconciliation year is required');}
 
     const currentYear = new Date().getFullYear();
     if (data.reconciliationYear < CAM_CONFIG.VALIDATION.MIN_RECONCILIATION_YEAR || 
@@ -588,17 +588,17 @@ export class CAMReconciliationService extends EventEmitter implements ICAMReconc
   }
 
   private validateExpenseData(data: Partial<CAMExpense>): void {
-    if (!data.category) throw new Error('Expense category is required');
-    if (!data.description) throw new Error('Expense description is required');
-    if (!data.amount || data.amount <= 0) throw new Error('Valid expense amount is required');
+    if (!data.category) {throw new Error('Expense category is required');}
+    if (!data.description) {throw new Error('Expense description is required');}
+    if (!data.amount || data.amount <= 0) {throw new Error('Valid expense amount is required');}
   }
 
   private validateDisputeData(data: Partial<CAMDispute>): void {
-    if (!data.leaseId) throw new Error('Lease ID is required');
-    if (!data.tenantName) throw new Error('Tenant name is required');
-    if (!data.disputeType) throw new Error('Dispute type is required');
-    if (!data.description) throw new Error('Dispute description is required');
-    if (!data.disputedAmount || data.disputedAmount <= 0) throw new Error('Valid disputed amount is required');
+    if (!data.leaseId) {throw new Error('Lease ID is required');}
+    if (!data.tenantName) {throw new Error('Tenant name is required');}
+    if (!data.disputeType) {throw new Error('Dispute type is required');}
+    if (!data.description) {throw new Error('Dispute description is required');}
+    if (!data.disputedAmount || data.disputedAmount <= 0) {throw new Error('Valid disputed amount is required');}
   }
 
   private calculateDueDate(year: number): Date {
@@ -736,7 +736,7 @@ export class CAMReconciliationService extends EventEmitter implements ICAMReconc
   async generateReconciliationAnalytics(reconId: string): Promise<any> {
     try {
       const reconciliation = await this.getReconciliation(reconId);
-      if (!reconciliation) throw new Error('Reconciliation not found');
+      if (!reconciliation) {throw new Error('Reconciliation not found');}
 
       const analytics = {
         reconciliationId: reconId,
@@ -846,7 +846,7 @@ export class CAMReconciliationService extends EventEmitter implements ICAMReconc
 
       return analytics;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate CAM analytics', { reconId, error });
       throw new Error(`Analytics generation failed: ${(error as Error).message}`);
     }
@@ -858,7 +858,7 @@ export class CAMReconciliationService extends EventEmitter implements ICAMReconc
   async generateDisputeAnalysis(reconId: string): Promise<any> {
     try {
       const reconciliation = await this.getReconciliation(reconId);
-      if (!reconciliation) throw new Error('Reconciliation not found');
+      if (!reconciliation) {throw new Error('Reconciliation not found');}
 
       const disputeAnalysis = {
         reconciliationId: reconId,
@@ -956,7 +956,7 @@ export class CAMReconciliationService extends EventEmitter implements ICAMReconc
 
       return disputeAnalysis;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate dispute analysis', { reconId, error });
       throw new Error(`Dispute analysis failed: ${(error as Error).message}`);
     }
@@ -968,7 +968,7 @@ export class CAMReconciliationService extends EventEmitter implements ICAMReconc
   async generateOptimizationRecommendations(reconId: string): Promise<any> {
     try {
       const reconciliation = await this.getReconciliation(reconId);
-      if (!reconciliation) throw new Error('Reconciliation not found');
+      if (!reconciliation) {throw new Error('Reconciliation not found');}
 
       const optimization = {
         reconciliationId: reconId,
@@ -1054,7 +1054,7 @@ export class CAMReconciliationService extends EventEmitter implements ICAMReconc
 
       return optimization;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate optimization recommendations', { reconId, error });
       throw new Error(`Optimization failed: ${(error as Error).message}`);
     }
@@ -1063,7 +1063,7 @@ export class CAMReconciliationService extends EventEmitter implements ICAMReconc
   // === DETAILED CALCULATION METHODS ===
 
   private calculateRecoveryRate(reconciliation: CAMReconciliation): number {
-    if (reconciliation.totalCAMExpenses === 0) return 0;
+    if (reconciliation.totalCAMExpenses === 0) {return 0;}
     return (reconciliation.totalRecoverableExpenses / reconciliation.totalCAMExpenses) * 100;
   }
 

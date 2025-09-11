@@ -37,7 +37,7 @@ export class PortfolioVisualizationService {
         totalCharts: charts.length,
       };
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate portfolio overview charts', {
         organizationId,
         error: error.message,
@@ -246,7 +246,7 @@ export class PortfolioVisualizationService {
 
       return charts;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate KPI dashboard charts', {
         organizationId,
         error: error.message,
@@ -391,7 +391,7 @@ export class PortfolioVisualizationService {
         insights: this.generateLeaseExpirationInsights(expirationCounts),
       };
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate lease expiration chart', { error: error.message });
       throw error;
     }
@@ -534,9 +534,9 @@ export class PortfolioVisualizationService {
   }
 
   private getScoreLabel(score: number): string {
-    if (score >= 85) return 'Excellent';
-    if (score >= 75) return 'Good';
-    if (score >= 60) return 'Fair';
+    if (score >= 85) {return 'Excellent';}
+    if (score >= 75) {return 'Good';}
+    if (score >= 60) {return 'Fair';}
     return 'Poor';
   }
 }

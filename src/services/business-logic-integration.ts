@@ -388,7 +388,7 @@ export class BusinessLogicIntegrationService {
         }
       };
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(`Error executing integrated operation ${serviceName}.${methodName}:`, error);
       
       return {
@@ -436,7 +436,7 @@ export class BusinessLogicIntegrationService {
         if (napiResult.success) {
           napiHealthy++;
         }
-      } catch (error) {
+      } catch (error: unknown) {
         // NAPI service not available
       }
 
@@ -445,7 +445,7 @@ export class BusinessLogicIntegrationService {
         try {
           await bridge.businessLogicService.healthCheck();
           businessLogicHealthy++;
-        } catch (error) {
+        } catch (error: unknown) {
           // Business logic service not healthy
         }
       }
@@ -572,7 +572,7 @@ export class BusinessLogicIntegrationService {
               await this.delay(Math.pow(2, attempt - 1) * 1000); // Exponential backoff
             }
           }
-        } catch (error) {
+        } catch (error: unknown) {
           lastError = error;
           if (attempt < maxRetries) {
             await this.delay(Math.pow(2, attempt - 1) * 1000);
@@ -599,7 +599,7 @@ export class BusinessLogicIntegrationService {
         }
       };
 
-    } catch (error) {
+    } catch (error: unknown) {
       this.metrics.failedRequests++;
       logger.error(`Production operation failed: ${serviceName}.${methodName}`, error);
       
@@ -802,7 +802,7 @@ export class BusinessLogicIntegrationService {
 
   private checkRateLimit(serviceName: string): boolean {
     const bridge = this.bridges.get(serviceName);
-    if (!bridge?.rateLimit) return true;
+    if (!bridge?.rateLimit) {return true;}
 
     const now = Date.now();
     const windowStart = Math.floor(now / 60000) * 60000; // Current minute window
@@ -823,7 +823,7 @@ export class BusinessLogicIntegrationService {
 
   private isCircuitOpen(serviceName: string): boolean {
     const bridge = this.bridges.get(serviceName);
-    if (!bridge?.metrics) return false;
+    if (!bridge?.metrics) {return false;}
 
     const successRate = bridge.metrics.callCount > 0 ? 
       (bridge.metrics.successCount / bridge.metrics.callCount) : 1;
@@ -838,7 +838,7 @@ export class BusinessLogicIntegrationService {
 
   private updateBridgeMetrics(serviceName: string, success: boolean, responseTime: number): void {
     const bridge = this.bridges.get(serviceName);
-    if (!bridge) return;
+    if (!bridge) {return;}
 
     if (!bridge.metrics) {
       bridge.metrics = {
@@ -877,13 +877,13 @@ export class BusinessLogicIntegrationService {
         { timeout: 3000 }
       );
       return result.success ? 'HEALTHY' : 'UNHEALTHY';
-    } catch (error) {
+    } catch (error: unknown) {
       return 'UNKNOWN';
     }
   }
 
   private async checkBusinessLogicHealth(bridge: BusinessLogicBridge): Promise<'HEALTHY' | 'UNHEALTHY' | 'UNKNOWN'> {
-    if (!bridge.businessLogicService) return 'UNKNOWN';
+    if (!bridge.businessLogicService) {return 'UNKNOWN';}
     
     try {
       if (typeof bridge.businessLogicService.healthCheck === 'function') {
@@ -892,7 +892,7 @@ export class BusinessLogicIntegrationService {
       } else {
         return 'UNKNOWN';
       }
-    } catch (error) {
+    } catch (error: unknown) {
       return 'UNHEALTHY';
     }
   }
@@ -941,7 +941,7 @@ export class BusinessLogicIntegrationService {
         this.metrics.napiSuccessRate = this.calculateNapiSuccessRate();
         this.metrics.fallbackUsageRate = this.calculateFallbackUsageRate();
         
-      } catch (error) {
+      } catch (error: unknown) {
         logger.error('Health check monitoring failed:', error);
       }
     }, this.healthCheckInterval);

@@ -55,7 +55,7 @@ export class NAPIServiceRegistry {
       
       logger.info(`Registered NAPI service: ${config.serviceName}`);
       return true;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(`Failed to register NAPI service ${config.serviceName}:`, error);
       
       if (config.fallbackToTs) {
@@ -128,7 +128,7 @@ export class NAPIServiceRegistry {
       }
       
       return false;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(`Failed to load TypeScript fallback for ${config.serviceName}:`, error);
       return false;
     }
@@ -192,7 +192,7 @@ export class NAPIServiceRegistry {
         }
       };
 
-    } catch (error) {
+    } catch (error: unknown) {
       const executionTime = Date.now() - startTime;
       
       // Record metrics
@@ -253,7 +253,7 @@ export class NAPIServiceRegistry {
     errorCode?: string
   ): void {
     const config = this.configs.get(serviceName);
-    if (!config?.enableMetrics) return;
+    if (!config?.enableMetrics) {return;}
 
     const metric: ModuleMetrics = {
       moduleId: serviceName,

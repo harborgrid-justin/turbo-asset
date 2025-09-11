@@ -1,6 +1,7 @@
+import { toError } from '../../core/utils/validation';
 import express, { Request, Response } from 'express';
-import { CADIntegrationService } from '../services/CADIntegrationService';
-import { logger } from '../config/logger';
+import { CADIntegrationService } from '../../services/CADIntegrationService';
+import { logger } from '../../config/logger';
 import multer from 'multer';
 
 const router = express.Router();
@@ -154,7 +155,7 @@ router.post('/upload', upload.single('file'), async (req: Request, res: Response
     const result = await cadService.uploadCADFile(uploadData, processingOptions);
 
     res.status(201).json(result);
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to upload CAD file', error);
     if (error instanceof Error && error.message.includes('File size exceeds')) {
       res.status(413).json({ error: error.message });
@@ -204,7 +205,7 @@ router.get('/files/:fileId', async (req: Request, res: Response) => {
     const cadFile = await cadService.getCADFile(fileId, includeContent === 'true');
 
     res.json(cadFile);
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to get CAD file', error);
     if (error instanceof Error && error.message.includes('not found')) {
       res.status(404).json({ error: error.message });
@@ -283,7 +284,7 @@ router.put('/files/:fileId/mappings', async (req: Request, res: Response) => {
     const result = await cadService.updateSpaceMappings(fileId, mappings);
 
     res.json(result);
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to update space mappings', error);
     if (error instanceof Error && error.message.includes('not found')) {
       res.status(404).json({ error: error.message });
@@ -384,7 +385,7 @@ router.post('/files/:fileId/floor-plan', async (req: Request, res: Response) => 
       metadata: floorPlan.metadata,
       interactive: floorPlan.interactive,
     });
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to generate floor plan', error);
     if (error instanceof Error && error.message.includes('not found')) {
       res.status(404).json({ error: error.message });
@@ -459,7 +460,7 @@ router.post('/files/:fileId/sync', async (req: Request, res: Response) => {
     const result = await cadService.synchronizeWithBuildingData(fileId, syncOptions);
 
     res.json(result);
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to synchronize CAD file', error);
     if (error instanceof Error && error.message.includes('not found')) {
       res.status(404).json({ error: error.message });
@@ -500,7 +501,7 @@ router.get('/processing/:processingId/status', async (req: Request, res: Respons
     const status = await cadService.getProcessingStatus(processingId);
 
     res.json(status);
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to get processing status', error);
     if (error instanceof Error && error.message.includes('not found')) {
       res.status(404).json({ error: error.message });
@@ -588,7 +589,7 @@ router.get('/analytics/:organizationId', async (req: Request, res: Response) => 
     };
 
     res.json(analytics);
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to get CAD analytics', error);
     res.status(500).json({
       error: 'Failed to get CAD analytics',

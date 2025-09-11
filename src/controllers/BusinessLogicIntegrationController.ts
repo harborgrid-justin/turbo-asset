@@ -26,7 +26,7 @@ export class BusinessLogicIntegrationController {
           apiVersion: '1.0.0'
         }
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Error fetching production metrics:', error);
       res.status(500).json({
         success: false,
@@ -57,7 +57,7 @@ export class BusinessLogicIntegrationController {
           apiVersion: '1.0.0'
         }
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Error performing health check:', error);
       res.status(500).json({
         success: false,
@@ -109,7 +109,7 @@ export class BusinessLogicIntegrationController {
       const statusCode = result.success ? 200 : 400;
       res.status(statusCode).json(result);
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Error executing production operation:', error);
       res.status(500).json({
         success: false,
@@ -150,7 +150,7 @@ export class BusinessLogicIntegrationController {
           apiVersion: '1.0.0'
         }
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Error fetching available bridges:', error);
       res.status(500).json({
         success: false,
@@ -203,7 +203,7 @@ export class BusinessLogicIntegrationController {
           apiVersion: '1.0.0'
         }
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Error adding validation rule:', error);
       res.status(500).json({
         success: false,
@@ -267,7 +267,7 @@ export class BusinessLogicIntegrationController {
           apiVersion: '1.0.0'
         }
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(`Error fetching service metrics for ${req.params.serviceName}:`, error);
       res.status(500).json({
         success: false,
@@ -302,7 +302,7 @@ export class BusinessLogicIntegrationController {
           apiVersion: '1.0.0'
         }
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Error resetting metrics:', error);
       res.status(500).json({
         success: false,

@@ -155,7 +155,7 @@ export class EnergyManagementService extends EventEmitter {
       logger.info(`Energy meter registered successfully: ${meterNumber}`);
       return domainMeter;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(`Failed to register energy meter: ${error}`);
       throw error;
     }
@@ -234,7 +234,7 @@ export class EnergyManagementService extends EventEmitter {
       logger.debug(`Energy reading recorded for meter: ${readingData.meterId}`);
       return domainReading;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(`Failed to record energy reading: ${error}`);
       throw error;
     }
@@ -301,7 +301,7 @@ export class EnergyManagementService extends EventEmitter {
       logger.info(`Sustainability metric recorded: ${metricData.metricName}`);
       return domainMetric;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(`Failed to record sustainability metric: ${error}`);
       throw error;
     }
@@ -370,7 +370,7 @@ export class EnergyManagementService extends EventEmitter {
         costSavingsOpportunities: await this.identifyCostSavingsOpportunities(organizationId),
       };
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(`Failed to get consumption analytics: ${error}`);
       throw error;
     }
@@ -421,7 +421,7 @@ export class EnergyManagementService extends EventEmitter {
         recommendations: await this.generateSustainabilityRecommendations(organizationId),
       };
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(`Failed to get sustainability dashboard: ${error}`);
       throw error;
     }
@@ -510,7 +510,7 @@ export class EnergyManagementService extends EventEmitter {
   }
 
   private determineTrendDirection(metricName: string, percentageChange: number | null): string {
-    if (!percentageChange) return 'STABLE';
+    if (!percentageChange) {return 'STABLE';}
     
     // For energy/emissions metrics, lower is better
     if (metricName.includes('energy') || metricName.includes('emission') || metricName.includes('carbon')) {

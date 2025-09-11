@@ -108,7 +108,7 @@ router.get('/status', async (req, res) => {
       totalServices: 40,
       timestamp: new Date().toISOString()
     });
-  } catch (error) {
+  } catch (error: unknown) {
     res.status(500).json({
       success: false,
       status: 'error',
@@ -193,7 +193,7 @@ router.post('/bulk-execute', async (req, res) => {
           data: result.data,
           metadata: result.metadata
         });
-      } catch (error) {
+      } catch (error: unknown) {
         results.push({
           operationId: operation.id || results.length + 1,
           success: false,
@@ -219,7 +219,7 @@ router.post('/bulk-execute', async (req, res) => {
       timestamp: new Date().toISOString()
     });
 
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Bulk execute error:', error);
     res.status(500).json({
       success: false,
@@ -274,7 +274,7 @@ router.get('/monitoring/live', async (req, res) => {
       data: liveData
     });
 
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Live monitoring error:', error);
     res.status(500).json({
       success: false,

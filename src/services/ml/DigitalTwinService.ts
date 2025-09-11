@@ -142,7 +142,7 @@ export class DigitalTwinService extends EventEmitter {
       logger.info('Digital Twin Service initialized successfully');
       this.emit('service:initialized');
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to initialize Digital Twin Service', error);
       throw error;
     }
@@ -247,7 +247,7 @@ export class DigitalTwinService extends EventEmitter {
 
       return digitalTwin;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create digital twin', { entityId, entityType, error });
       throw error;
     }
@@ -381,7 +381,7 @@ export class DigitalTwinService extends EventEmitter {
 
       return simulation;
 
-    } catch (error) {
+    } catch (error: unknown) {
       const simulation = this.activeSimulations.get(twinId);
       if (simulation) {
         simulation.status = 'FAILED';
@@ -458,7 +458,7 @@ export class DigitalTwinService extends EventEmitter {
 
       return realTimeData;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get real-time twin data', { twinId, error });
       throw error;
     }
@@ -515,7 +515,7 @@ export class DigitalTwinService extends EventEmitter {
         accuracy: twin.accuracy
       });
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to update twin data', { twinId, error });
       throw error;
     }
@@ -619,7 +619,7 @@ export class DigitalTwinService extends EventEmitter {
 
       return optimization;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to optimize twin', { twinId, error });
       throw error;
     }
@@ -746,7 +746,7 @@ export class DigitalTwinService extends EventEmitter {
 
       return prediction;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to predict twin behavior', { twinId, predictionType, error });
       throw error;
     }
@@ -833,7 +833,7 @@ export class DigitalTwinService extends EventEmitter {
 
       return analytics;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate twin analytics', { twinId, error });
       throw error;
     }
@@ -1340,7 +1340,7 @@ export class DigitalTwinService extends EventEmitter {
     const timer = setInterval(async () => {
       try {
         await this.processRealTimeData(twinId);
-      } catch (error) {
+      } catch (error: unknown) {
         logger.error('Real-time data processing failed', { twinId, error });
       }
     }, this.dataStreamInterval);
@@ -1385,7 +1385,7 @@ export class DigitalTwinService extends EventEmitter {
         if (twin.status === 'ACTIVE') {
           try {
             await this.synchronizeTwinData(twin);
-          } catch (error) {
+          } catch (error: unknown) {
             logger.warn('Periodic sync failed for twin', { twinId, error });
           }
         }
@@ -1400,7 +1400,7 @@ export class DigitalTwinService extends EventEmitter {
         if (twin.status === 'ACTIVE') {
           try {
             await this.checkForAnomalies(twinId, twin);
-          } catch (error) {
+          } catch (error: unknown) {
             logger.warn('Anomaly monitoring failed for twin', { twinId, error });
           }
         }

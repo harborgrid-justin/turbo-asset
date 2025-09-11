@@ -152,7 +152,7 @@ export class ReportingService extends EventEmitter {
       });
 
       return schedule;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create report schedule', { reportId, error });
       throw error;
     }
@@ -182,7 +182,7 @@ export class ReportingService extends EventEmitter {
       });
 
       return metrics;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Executive dashboard generation failed', { organizationId, error });
       throw error;
     }
@@ -223,7 +223,7 @@ export class ReportingService extends EventEmitter {
       });
 
       return benchmarkData;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Benchmarking report generation failed', { organizationId, error });
       throw error;
     }
@@ -254,7 +254,7 @@ export class ReportingService extends EventEmitter {
       });
 
       return templateWithId;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Report template creation failed', { template, error });
       throw error;
     }
@@ -289,7 +289,7 @@ export class ReportingService extends EventEmitter {
       });
 
       return reportBuffer;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Report generation from template failed', { templateId, error });
       throw error;
     }
@@ -323,7 +323,7 @@ export class ReportingService extends EventEmitter {
       });
 
       return alertRule;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Alert rule creation failed', { rule, error });
       throw error;
     }
@@ -344,7 +344,7 @@ export class ReportingService extends EventEmitter {
           await this.triggerAlert(rule, currentValue, organizationId);
         }
       }
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Alert rule checking failed', { organizationId, error });
     }
   }
@@ -458,7 +458,7 @@ export class ReportingService extends EventEmitter {
       const job = cron.schedule(cronPattern, async () => {
         try {
           await this.executeScheduledReport(scheduleId);
-        } catch (error) {
+        } catch (error: unknown) {
           logger.error('Scheduled report execution failed', { scheduleId, error });
         }
       }, {
@@ -480,7 +480,7 @@ export class ReportingService extends EventEmitter {
         cronPattern,
         nextRun,
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Report scheduling failed', { scheduleId, error });
       throw error;
     }
@@ -516,7 +516,7 @@ export class ReportingService extends EventEmitter {
         scheduleId,
         recipientCount: schedule.recipients.length,
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Scheduled report execution failed', { scheduleId, error });
       throw error;
     }
@@ -546,7 +546,7 @@ export class ReportingService extends EventEmitter {
         scheduleId: schedule.id,
         recipientCount: recipients.length,
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Report distribution failed', { scheduleId: schedule.id, error });
       throw error;
     }
@@ -575,7 +575,7 @@ export class ReportingService extends EventEmitter {
           period: '30 days',
         },
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Portfolio value calculation failed', { organizationId, error });
       throw error;
     }
@@ -605,7 +605,7 @@ export class ReportingService extends EventEmitter {
           period: '30 days',
         },
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Occupancy rate calculation failed', { organizationId, error });
       throw error;
     }
@@ -636,7 +636,7 @@ export class ReportingService extends EventEmitter {
           period: '30 days',
         },
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('NOI calculation failed', { organizationId, error });
       throw error;
     }
@@ -660,7 +660,7 @@ export class ReportingService extends EventEmitter {
         benchmark: benchmarkCost,
         variance,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Cost per sqft calculation failed', { organizationId, error });
       throw error;
     }
@@ -680,7 +680,7 @@ export class ReportingService extends EventEmitter {
         avgResponseTime: 2.5, // 2.5 hours
         budgetVariance: -5.8, // 5.8% under budget
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Maintenance KPI calculation failed', { organizationId, error });
       throw error;
     }
@@ -700,7 +700,7 @@ export class ReportingService extends EventEmitter {
         carbonFootprint: 1250, // tons CO2 equivalent
         sustainabilityScore: 78.5, // Overall sustainability score
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Sustainability metrics calculation failed', { organizationId, error });
       throw error;
     }
@@ -717,7 +717,7 @@ export class ReportingService extends EventEmitter {
 
     for (const section of sections) {
       try {
-        let sectionData = { ...section } as ReportSection & { data?: any };
+        const sectionData = { ...section } as ReportSection & { data?: any };
 
         if (section.type === 'chart' || section.type === 'table') {
           if (section.reportId) {
@@ -731,7 +731,7 @@ export class ReportingService extends EventEmitter {
         }
 
         processedSections.push(sectionData);
-      } catch (error) {
+      } catch (error: unknown) {
         logger.warn(`Section processing failed: ${section.id}`, { error });
         processedSections.push({
           ...section,
@@ -761,7 +761,7 @@ export class ReportingService extends EventEmitter {
       };
 
       return Buffer.from(JSON.stringify(report, null, 2));
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Report rendering failed', { templateId: template.id, error });
       throw error;
     }
@@ -814,7 +814,7 @@ export class ReportingService extends EventEmitter {
 
   private compareToBenchmark(current: number, benchmark: number): 'above' | 'at' | 'below' {
     const diff = Math.abs(current - benchmark) / benchmark;
-    if (diff < 0.05) return 'at'; // Within 5%
+    if (diff < 0.05) {return 'at';} // Within 5%
     return current > benchmark ? 'above' : 'below';
   }
 
@@ -854,7 +854,7 @@ export class ReportingService extends EventEmitter {
         currentValue,
         threshold: rule.threshold,
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Alert triggering failed', { ruleId: rule.id, error });
     }
   }
@@ -944,7 +944,7 @@ export class ReportingService extends EventEmitter {
       }
 
       logger.info(`Loaded ${schedules.length} scheduled reports`);
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to load scheduled reports', { error });
     }
   }
@@ -954,7 +954,7 @@ export class ReportingService extends EventEmitter {
       // Load alert rules from database
       // For now, this is a placeholder
       logger.info('Alert rules loaded');
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to load alert rules', { error });
     }
   }
@@ -986,7 +986,7 @@ export class ReportingService extends EventEmitter {
       this.scheduledReports.clear();
 
       logger.info('Reporting service shutdown completed');
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Error during shutdown', { error });
     }
   }

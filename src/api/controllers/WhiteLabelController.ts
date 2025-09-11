@@ -1,7 +1,8 @@
+import { toError } from '../../core/utils/validation';
 import { Request, Response } from 'express';
-import { WhiteLabelService } from '../services/WhiteLabelService';
-import { logger } from '../config/logger';
-import { prisma } from '../config/database';
+import { WhiteLabelService } from '../../services/WhiteLabelService';
+import { logger } from '../../config/logger';
+import { prisma } from '../../config/database';
 
 const whiteLabelService = new WhiteLabelService();
 
@@ -35,7 +36,7 @@ export class WhiteLabelController {
           pages: Math.ceil(total / Number(limit)),
         },
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get white label configurations', { error });
       res.status(500).json({ error: 'Failed to get white label configurations' });
     }
@@ -59,7 +60,7 @@ export class WhiteLabelController {
       );
 
       res.status(201).json(config);
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create white label configuration', { error });
       res.status(500).json({ error: 'Failed to create white label configuration' });
     }
@@ -76,7 +77,7 @@ export class WhiteLabelController {
       await whiteLabelService.updateBranding(organizationId, branding);
 
       res.json({ message: 'Branding updated successfully' });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to update branding', { error });
       res.status(500).json({ error: 'Failed to update branding' });
     }
@@ -93,7 +94,7 @@ export class WhiteLabelController {
       await whiteLabelService.applyTheme(organizationId, theme);
 
       res.json({ message: 'Theme applied successfully' });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to apply theme', { error });
       res.status(500).json({ error: 'Failed to apply theme' });
     }
@@ -110,7 +111,7 @@ export class WhiteLabelController {
       const config = await whiteLabelService.setupCustomDomain(organizationId, domainConfig);
 
       res.json(config);
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to setup custom domain', { error });
       res.status(500).json({ error: 'Failed to setup custom domain' });
     }
@@ -127,7 +128,7 @@ export class WhiteLabelController {
       const verified = await whiteLabelService.verifyCustomDomain(organizationId, domain);
 
       res.json({ verified });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to verify custom domain', { error });
       res.status(500).json({ error: 'Failed to verify custom domain' });
     }
@@ -148,7 +149,7 @@ export class WhiteLabelController {
       }
 
       res.json({ organizationId });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get organization by domain', { error });
       res.status(500).json({ error: 'Failed to get organization by domain' });
     }
@@ -170,7 +171,7 @@ export class WhiteLabelController {
       res.setHeader('Content-Type', 'application/octet-stream');
       res.setHeader('Content-Disposition', `attachment; filename=${platform}-bundle.zip`);
       res.send(bundle);
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate bundle', { error });
       res.status(500).json({ error: 'Failed to generate bundle' });
     }
@@ -191,7 +192,7 @@ export class WhiteLabelController {
       );
 
       res.status(201).json(result);
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create subsidiary', { error });
       res.status(500).json({ error: 'Failed to create subsidiary' });
     }
@@ -212,7 +213,7 @@ export class WhiteLabelController {
       });
 
       res.json(subsidiaries);
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get subsidiaries', { error });
       res.status(500).json({ error: 'Failed to get subsidiaries' });
     }
@@ -232,7 +233,7 @@ export class WhiteLabelController {
       );
 
       res.status(201).json(createdTemplate);
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create email template', { error });
       res.status(500).json({ error: 'Failed to create email template' });
     }
@@ -253,7 +254,7 @@ export class WhiteLabelController {
       );
 
       res.json(rendered);
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to render email template', { error });
       res.status(500).json({ error: 'Failed to render email template' });
     }
@@ -270,7 +271,7 @@ export class WhiteLabelController {
       await whiteLabelService.setupFeatureFlags(organizationId, features);
 
       res.json({ message: 'Feature flags configured successfully' });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to setup feature flags', { error });
       res.status(500).json({ error: 'Failed to setup feature flags' });
     }
@@ -291,7 +292,7 @@ export class WhiteLabelController {
       );
 
       res.json({ enabled });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to check feature flag', { error });
       res.status(500).json({ error: 'Failed to check feature flag' });
     }
@@ -307,7 +308,7 @@ export class WhiteLabelController {
       const manifest = await whiteLabelService.generatePWAManifest(organizationId);
 
       res.json(manifest);
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate PWA manifest', { error });
       res.status(500).json({ error: 'Failed to generate PWA manifest' });
     }
@@ -380,7 +381,7 @@ export class WhiteLabelController {
       ];
 
       res.json(themes);
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get available themes', { error });
       res.status(500).json({ error: 'Failed to get available themes' });
     }
@@ -427,7 +428,7 @@ export class WhiteLabelController {
       };
 
       res.json(analytics);
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get branding analytics', { error });
       res.status(500).json({ error: 'Failed to get branding analytics' });
     }
@@ -447,7 +448,7 @@ export class WhiteLabelController {
       });
 
       res.json(config);
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to update white label configuration', { error });
       res.status(500).json({ error: 'Failed to update white label configuration' });
     }
@@ -465,7 +466,7 @@ export class WhiteLabelController {
       });
 
       res.status(204).send();
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to delete white label configuration', { error });
       res.status(500).json({ error: 'Failed to delete white label configuration' });
     }
@@ -492,7 +493,7 @@ export class WhiteLabelController {
       });
 
       res.json({ logoUrl });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to upload logo', { error });
       res.status(500).json({ error: 'Failed to upload logo' });
     }
@@ -560,7 +561,7 @@ export class WhiteLabelController {
 
       res.setHeader('Content-Type', 'text/html');
       res.send(html);
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to preview theme', { error });
       res.status(500).json({ error: 'Failed to preview theme' });
     }
@@ -586,7 +587,7 @@ export class WhiteLabelController {
       res.setHeader('Content-Type', 'application/json');
       res.setHeader('Content-Disposition', `attachment; filename=branding-config-${configId}.json`);
       res.json(config);
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to export configuration', { error });
       res.status(500).json({ error: 'Failed to export configuration' });
     }
@@ -612,7 +613,7 @@ export class WhiteLabelController {
       });
 
       res.status(201).json(importedConfig);
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to import configuration', { error });
       res.status(500).json({ error: 'Failed to import configuration' });
     }

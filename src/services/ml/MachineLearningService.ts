@@ -85,7 +85,7 @@ export class MachineLearningService extends EventEmitter {
       this.emit('model:registered', model);
       
       return model;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to register ML model', { name, type, error });
       throw error;
     }
@@ -139,7 +139,7 @@ export class MachineLearningService extends EventEmitter {
       this.emit('training:started', { modelId, jobId });
       
       return jobId;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to start model training', { modelId, error });
       throw error;
     }
@@ -213,7 +213,7 @@ export class MachineLearningService extends EventEmitter {
       logger.info('Model deployment started', { modelId, deploymentId, environment });
       
       return deploymentId;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to deploy model', { modelId, environment, error });
       throw error;
     }
@@ -261,7 +261,7 @@ export class MachineLearningService extends EventEmitter {
       this.emit('prediction:completed', { modelId, input, result });
       
       return result;
-    } catch (error) {
+    } catch (error: unknown) {
       const deployment = Array.from(this.deployments.values())
         .find(d => d.modelId === modelId && d.status === 'ACTIVE');
       
@@ -313,7 +313,7 @@ export class MachineLearningService extends EventEmitter {
           
           successfulPredictions++;
           totalConfidence += confidence;
-        } catch (error) {
+        } catch (error: unknown) {
           predictions.push({
             input,
             error: error.message,
@@ -347,7 +347,7 @@ export class MachineLearningService extends EventEmitter {
       });
 
       return response;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Batch prediction failed', { modelId: request.modelId, error });
       throw error;
     }
@@ -414,7 +414,7 @@ export class MachineLearningService extends EventEmitter {
       
       logger.info('Model deleted', { modelId });
       this.emit('model:deleted', { modelId });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to delete model', { modelId, error });
       throw error;
     }
@@ -427,7 +427,7 @@ export class MachineLearningService extends EventEmitter {
     const job = this.trainingJobs.get(jobId);
     const model = this.models.get(modelId);
     
-    if (!job || !model) return;
+    if (!job || !model) {return;}
 
     try {
       // Preparing phase
@@ -497,7 +497,7 @@ export class MachineLearningService extends EventEmitter {
       logger.info('Model training completed', { modelId, jobId, accuracy: finalAccuracy });
       this.emit('training:completed', { modelId, jobId, accuracy: finalAccuracy });
 
-    } catch (error) {
+    } catch (error: unknown) {
       job.status = 'FAILED';
       job.logs.push(`[${new Date().toISOString()}] Training failed: ${error.message}`);
       model.status = 'FAILED';
@@ -677,7 +677,7 @@ export class MachineLearningService extends EventEmitter {
    */
   private updateMonitoringMetrics(deploymentId: string, processingTime: number, success: boolean): void {
     const deployment = this.deployments.get(deploymentId);
-    if (!deployment) return;
+    if (!deployment) {return;}
 
     const monitoring = deployment.monitoring;
     

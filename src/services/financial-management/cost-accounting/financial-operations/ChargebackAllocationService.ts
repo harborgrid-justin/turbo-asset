@@ -83,7 +83,7 @@ export class ChargebackAllocationService {
 
       logger.info('Chargeback rule created successfully', { ruleId: rule.id });
       return rule;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create chargeback rule', error);
       throw error;
     }
@@ -152,7 +152,7 @@ export class ChargebackAllocationService {
         allocations,
         totalAllocated: allocations.reduce((sum, a) => sum + a.allocatedAmount, 0)
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to process cost allocation', error);
       throw error;
     }
@@ -207,7 +207,7 @@ export class ChargebackAllocationService {
           where: { id: departmentId }
         });
 
-        if (!department) continue;
+        if (!department) {continue;}
 
         // Group allocations by category
         const categoryGroups = (deptAllocations as any[]).reduce((groups, allocation) => {
@@ -260,7 +260,7 @@ export class ChargebackAllocationService {
       });
 
       return reports;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate chargeback report', error);
       throw error;
     }
