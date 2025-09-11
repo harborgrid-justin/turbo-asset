@@ -594,7 +594,7 @@ export class AdvancedIntelligenceService extends EventEmitter {
    */
   destroy(): void {
     for (const [id, processor] of this.realTimeProcessors.entries()) {
-      clearInterval(processor);
+      clearInterval(processor as NodeJS.Timeout);
     }
     this.realTimeProcessors.clear();
     this.removeAllListeners();
