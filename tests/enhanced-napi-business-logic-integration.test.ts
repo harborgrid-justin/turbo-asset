@@ -5,7 +5,7 @@
 import { 
   EnhancedBusinessLogicIntegrationService,
   ProductionGradeBusinessLogic
-} from '../demo/enhanced-napi-business-logic-demo';
+} from '../src/demo/enhanced-napi-business-logic-demo';
 
 describe('Enhanced NAPI-RS Business Logic Integration', () => {
   let service: EnhancedBusinessLogicIntegrationService;
