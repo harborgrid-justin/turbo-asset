@@ -7,6 +7,8 @@ import {
   advancedFinancialAnalyticsEngine,
   advancedRiskAssessmentEngine,
   advancedComplianceEngine,
+  advancedMLIntegrationEngine,
+  advancedDataProcessingEngine,
   productionGradeBusinessLogicService
 } from '../src/services/enhanced-business-logic-integration';
 
@@ -546,6 +548,122 @@ describe('Production-Grade Business Logic Integration', () => {
         expect(result.esgScore).toBeDefined();
         expect(result.riskProfile).toBeDefined();
         expect(Array.isArray(result.recommendations)).toBe(true);
+      });
+    });
+  });
+
+  describe('AdvancedMLIntegrationEngine', () => {
+    describe('predictAssetFailure', () => {
+      it('should predict asset failure with ML model', () => {
+        const assetData = {
+          assetId: 'HVAC-001',
+          assetType: 'HVAC',
+          age: 8,
+          operatingHours: 35000,
+          temperature: [70, 72, 75, 80, 85, 90, 85, 80],
+          vibration: [0.1, 0.2, 0.15, 0.3, 0.4, 0.5, 0.3, 0.2],
+          pressure: [120, 125, 130, 135, 140, 145, 140, 135],
+          maintenanceHistory: [
+            { date: '2023-01-15', type: 'preventive', cost: 500, downtime: 2 },
+            { date: '2023-06-20', type: 'corrective', cost: 1200, downtime: 8 },
+            { date: '2024-01-10', type: 'emergency', cost: 2500, downtime: 24 }
+          ],
+          performanceMetrics: {
+            efficiency: [0.95, 0.92, 0.88, 0.85, 0.82, 0.80, 0.78, 0.75],
+            throughput: [100, 98, 95, 92, 88, 85, 82, 80],
+            errorRate: [0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08]
+          }
+        };
+
+        const result = advancedMLIntegrationEngine.predictAssetFailure(assetData);
+
+        expect(result.modelId).toContain(assetData.assetType);
+        expect(result.assetType).toBe(assetData.assetType);
+        expect(result.accuracy).toBeGreaterThan(0.5);
+        expect(result.accuracy).toBeLessThanOrEqual(1);
+        expect(result.predictions.failureProbability).toBeGreaterThanOrEqual(0);
+        expect(result.predictions.failureProbability).toBeLessThanOrEqual(1);
+        expect(result.predictions.timeToFailure).toBeGreaterThan(0);
+        expect(['monitor', 'schedule_maintenance', 'immediate_action']).toContain(result.predictions.recommendedAction);
+        expect(result.predictions.confidence).toBeGreaterThan(0);
+        expect(result.predictions.confidence).toBeLessThanOrEqual(1);
+      });
+    });
+
+    describe('detectAnomalies', () => {
+      it('should detect statistical anomalies in time series data', () => {
+        const normalData = [20, 21, 19, 22, 20, 21, 20, 19, 21, 20];
+        const dataWithAnomaly = [...normalData, 50]; // Clear outlier
+        
+        const result = advancedMLIntegrationEngine.detectAnomalies({
+          timestamps: dataWithAnomaly.map((_, i) => new Date(Date.now() - (i * 60000)).toISOString()),
+          values: dataWithAnomaly,
+          metricName: 'temperature',
+          assetId: 'TEST-001'
+        });
+
+        expect(result.isAnomaly).toBe(true);
+        expect(result.anomalyScore).toBeGreaterThan(0.7);
+        expect(result.contributingFactors.length).toBeGreaterThan(0);
+        expect(result.historicalContext.averageValue).toBeCloseTo(22.3, 1);
+        expect(result.historicalContext.standardDeviation).toBeGreaterThan(0);
+      });
+    });
+
+    describe('forecastDemand', () => {
+      it('should forecast demand with trend analysis', () => {
+        const historicalData = {
+          timestamps: Array.from({length: 48}, (_, i) => 
+            new Date(Date.now() - (47 - i) * 24 * 60 * 60 * 1000).toISOString()
+          ),
+          values: Array.from({length: 48}, (_, i) => 100 + i * 0.5),
+          forecastPeriods: 14,
+          includeSeasonality: true
+        };
+
+        const result = advancedMLIntegrationEngine.forecastDemand(historicalData);
+
+        expect(result.forecastedValues).toHaveLength(14);
+        expect(result.forecastedValues.every(val => val >= 0)).toBe(true);
+        expect(result.confidenceIntervals.upper).toHaveLength(14);
+        expect(result.confidenceIntervals.lower).toHaveLength(14);
+        expect(['increasing', 'decreasing', 'stable']).toContain(result.trend.direction);
+        expect(result.trend.strength).toBeGreaterThanOrEqual(0);
+        expect(result.trend.strength).toBeLessThanOrEqual(1);
+      });
+    });
+  });
+
+  describe('AdvancedDataProcessingEngine', () => {
+    describe('configureDataStream', () => {
+      it('should configure valid data stream', () => {
+        const streamConfig = {
+          streamId: 'asset-stream-001',
+          organizationId: 'org-123',
+          sourceSystem: 'facility-sensors',
+          dataType: 'sensor' as const,
+          schema: {
+            version: '1.0',
+            fields: [
+              { name: 'deviceId', type: 'string' as const, required: true },
+              { name: 'value', type: 'number' as const, required: true, validation: { min: 0, max: 100 } }
+            ]
+          },
+          processingRules: {
+            standardization: true,
+            validation: true,
+            enrichment: true,
+            deduplication: false
+          }
+        };
+
+        const result = advancedDataProcessingEngine.configureDataStream(streamConfig);
+
+        expect(result.success).toBe(true);
+        expect(result.streamId).toBe(streamConfig.streamId);
+        expect(result.validationResults.schemaValid).toBe(true);
+        expect(result.validationResults.rulesValid).toBe(true);
+        expect(result.validationResults.errors).toHaveLength(0);
       });
     });
   });

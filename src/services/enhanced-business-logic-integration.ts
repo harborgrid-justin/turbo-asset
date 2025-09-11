@@ -3341,6 +3341,13 @@ export const advancedFinancialAnalyticsEngine = AdvancedFinancialAnalyticsEngine
 export const advancedRiskAssessmentEngine = AdvancedRiskAssessmentEngine.getInstance();
 export const advancedComplianceEngine = AdvancedComplianceEngine.getInstance();
 
+// Import additional advanced engines
+import { AdvancedMLIntegrationEngine } from './advanced-ml-integration';
+import { AdvancedDataProcessingEngine } from './advanced-data-processing';
+
+export const advancedMLIntegrationEngine = AdvancedMLIntegrationEngine.getInstance();
+export const advancedDataProcessingEngine = AdvancedDataProcessingEngine.getInstance();
+
 // Export comprehensive production-grade service integrating all engines
 export const productionGradeBusinessLogicService = {
   // Core integration service
@@ -3352,6 +3359,8 @@ export const productionGradeBusinessLogicService = {
   financialAnalytics: advancedFinancialAnalyticsEngine,
   riskAssessment: advancedRiskAssessmentEngine,
   compliance: advancedComplianceEngine,
+  mlIntegration: advancedMLIntegrationEngine,
+  dataProcessing: advancedDataProcessingEngine,
   
   // Unified API for production-grade calculations
   async performComprehensiveAssetAnalysis(assetData: any): Promise<{
@@ -3493,6 +3502,266 @@ export const productionGradeBusinessLogicService = {
       
     } catch (error) {
       throw new Error(`Organizational assessment failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+  },
+
+  // New AI/ML-powered comprehensive analysis
+  async performPredictiveAssetAnalysis(assetData: {
+    assetId: string;
+    assetType: string;
+    age: number;
+    operatingHours: number;
+    sensorData: {
+      temperature: number[];
+      vibration: number[];
+      pressure: number[];
+    };
+    maintenanceHistory: any[];
+    performanceMetrics: any;
+  }): Promise<{
+    failurePrediction: any;
+    anomalyDetection: any;
+    energyOptimization: any;
+    recommendations: string[];
+    actionPlan: {
+      immediate: string[];
+      shortTerm: string[];
+      longTerm: string[];
+    };
+  }> {
+    try {
+      // Predict asset failure using ML
+      const failurePrediction = this.mlIntegration.predictAssetFailure({
+        ...assetData,
+        temperature: assetData.sensorData.temperature,
+        vibration: assetData.sensorData.vibration,
+        pressure: assetData.sensorData.pressure
+      });
+
+      // Detect anomalies in sensor data
+      const anomalyDetection = this.mlIntegration.detectAnomalies({
+        timestamps: assetData.sensorData.temperature.map((_, i) => new Date(Date.now() - (i * 60000)).toISOString()),
+        values: assetData.sensorData.temperature,
+        metricName: 'temperature',
+        assetId: assetData.assetId
+      });
+
+      // Energy optimization (if applicable)
+      const energyOptimization = assetData.assetType === 'HVAC' || assetData.assetType === 'Lighting' ? 
+        this.mlIntegration.optimizeEnergyConsumption({
+          assetId: assetData.assetId,
+          historicalConsumption: assetData.sensorData.temperature.map(temp => temp * 10), // Simplified
+          operatingSchedule: Array.from({length: 24}, (_, hour) => ({
+            hour,
+            load: 100 - (Math.abs(hour - 12) * 3), // Peak at noon
+            priority: hour >= 8 && hour <= 18 ? 'high' : 'medium'
+          })),
+          energyPricing: Array.from({length: 24}, (_, hour) => ({
+            hour,
+            pricePerKwh: 0.12 + (hour >= 16 && hour <= 20 ? 0.08 : 0), // Peak pricing 4-8pm
+            demandCharge: 15
+          }))
+        }) : null;
+
+      // Generate unified recommendations
+      const recommendations: string[] = [
+        ...failurePrediction.predictions.recommendedAction === 'immediate_action' ? 
+          ['URGENT: Schedule immediate maintenance based on failure prediction'] : [],
+        ...anomalyDetection.isAnomaly ? 
+          [`Temperature anomaly detected: ${anomalyDetection.contributingFactors.map(f => f.description).join(', ')}`] : [],
+        ...energyOptimization?.recommendations || []
+      ];
+
+      // Create action plan
+      const actionPlan = {
+        immediate: [
+          ...failurePrediction.predictions.recommendedAction === 'immediate_action' ? 
+            ['Schedule emergency maintenance', 'Inspect asset condition', 'Review safety protocols'] : [],
+          ...anomalyDetection.isAnomaly && anomalyDetection.anomalyScore > 0.8 ? 
+            ['Investigate sensor anomaly', 'Verify sensor calibration'] : []
+        ],
+        shortTerm: [
+          ...failurePrediction.predictions.recommendedAction === 'schedule_maintenance' ? 
+            ['Plan preventive maintenance', 'Order replacement parts', 'Schedule downtime window'] : [],
+          ...energyOptimization && energyOptimization.implementationPriority === 'short_term' ? 
+            ['Implement energy optimization recommendations'] : []
+        ],
+        longTerm: [
+          ...failurePrediction.predictions.timeToFailure < 365 ? 
+            ['Plan asset replacement', 'Budget for capital expenditure', 'Research replacement options'] : [],
+          ...energyOptimization && energyOptimization.implementationPriority === 'long_term' ? 
+            ['Evaluate energy management system upgrade'] : []
+        ]
+      };
+
+      return {
+        failurePrediction,
+        anomalyDetection,
+        energyOptimization,
+        recommendations,
+        actionPlan
+      };
+
+    } catch (error) {
+      throw new Error(`Predictive asset analysis failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+  },
+
+  // Real-time data processing and quality assessment
+  async processRealTimeDataStream(
+    streamId: string,
+    rawData: any[],
+    organizationId: string
+  ): Promise<{
+    processedData: any;
+    qualityAssessment: {
+      overallScore: number;
+      completeness: number;
+      accuracy: number;
+      timeliness: number;
+      consistency: number;
+    };
+    lineageTracking: {
+      dataSource: string;
+      transformationsApplied: string[];
+      processingTime: number;
+      recordsProcessed: number;
+    };
+    recommendations: string[];
+  }> {
+    try {
+      // Process data with multi-tenant isolation
+      const processedData = await this.dataProcessing.processRealTimeData(
+        streamId,
+        rawData,
+        organizationId
+      );
+
+      // Get data lineage for this processing run
+      const lineage = this.dataProcessing.getDataLineage(organizationId, {
+        startDate: new Date(Date.now() - 5 * 60 * 1000), // Last 5 minutes
+        endDate: new Date()
+      });
+
+      const latestRun = lineage.lineageEntries[lineage.lineageEntries.length - 1];
+
+      // Calculate quality assessment
+      const qualityAssessment = {
+        overallScore: processedData.metadata.dataQualityScore,
+        completeness: latestRun?.qualityMetrics.completeness || 0,
+        accuracy: latestRun?.qualityMetrics.accuracy || 0,
+        timeliness: latestRun?.qualityMetrics.validity || 0,
+        consistency: latestRun?.qualityMetrics.consistency || 0
+      };
+
+      // Generate recommendations based on processing results
+      const recommendations: string[] = [];
+      
+      if (qualityAssessment.overallScore < 0.8) {
+        recommendations.push('Data quality below threshold - review data sources and validation rules');
+      }
+      
+      if (processedData.metadata.errorRecords > processedData.metadata.totalRecords * 0.1) {
+        recommendations.push('High error rate detected - investigate data source issues');
+      }
+      
+      if (lineage.summary.averageQualityScore < 0.85) {
+        recommendations.push('Historical data quality trending downward - implement data governance improvements');
+      }
+
+      // Lineage tracking summary
+      const lineageTracking = {
+        dataSource: latestRun?.sourceSystem || 'unknown',
+        transformationsApplied: latestRun?.transformations.map(t => t.description) || [],
+        processingTime: processedData.metadata.processingTime,
+        recordsProcessed: processedData.metadata.processedRecords
+      };
+
+      return {
+        processedData,
+        qualityAssessment,
+        lineageTracking,
+        recommendations
+      };
+
+    } catch (error) {
+      throw new Error(`Real-time data processing failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+  },
+
+  // Demand forecasting for space and resource planning
+  async performDemandForecasting(forecastingData: {
+    organizationId: string;
+    dataType: 'space_utilization' | 'energy_consumption' | 'maintenance_requests' | 'asset_utilization';
+    historicalData: {
+      timestamps: string[];
+      values: number[];
+    };
+    forecastHorizon: number; // days
+    includeSeasonality: boolean;
+  }): Promise<{
+    forecast: any;
+    insights: {
+      trendDirection: string;
+      seasonalPatterns: string[];
+      predictiveAccuracy: number;
+      confidenceLevel: number;
+    };
+    recommendations: {
+      capacityPlanning: string[];
+      resourceOptimization: string[];
+      riskMitigation: string[];
+    };
+  }> {
+    try {
+      // Generate demand forecast using ML
+      const forecast = this.mlIntegration.forecastDemand({
+        ...forecastingData.historicalData,
+        forecastPeriods: forecastingData.forecastHorizon,
+        includeSeasonality: forecastingData.includeSeasonality
+      });
+
+      // Generate insights
+      const insights = {
+        trendDirection: forecast.trend.direction,
+        seasonalPatterns: forecast.seasonality.detected ? 
+          [`${forecast.seasonality.period}-period seasonality detected with ${(forecast.seasonality.strength * 100).toFixed(1)}% strength`] : 
+          ['No significant seasonal patterns detected'],
+        predictiveAccuracy: (1 - forecast.accuracy.mape) * 100, // Convert MAPE to accuracy percentage
+        confidenceLevel: forecast.trend.strength * 100
+      };
+
+      // Generate recommendations based on forecast
+      const recommendations = {
+        capacityPlanning: [
+          ...forecast.trend.direction === 'increasing' ? 
+            ['Plan for capacity expansion', 'Review resource allocation strategies'] : [],
+          ...forecast.trend.direction === 'decreasing' ? 
+            ['Consider capacity optimization', 'Evaluate cost reduction opportunities'] : []
+        ],
+        resourceOptimization: [
+          ...forecast.seasonality.detected ? 
+            ['Implement seasonal resource planning', 'Adjust staffing for seasonal patterns'] : [],
+          ...forecast.accuracy.mape < 0.15 ? 
+            ['High forecast accuracy - implement automated planning'] : 
+            ['Improve data quality to enhance forecast accuracy']
+        ],
+        riskMitigation: [
+          ...forecast.confidenceIntervals.upper.some((val, i) => val > forecast.forecastedValues[i] * 1.5) ? 
+            ['High variability detected - implement buffer capacity'] : [],
+          'Monitor actual vs. predicted values for model refinement',
+          'Set up alerts for significant deviations from forecast'
+        ]
+      };
+
+      return {
+        forecast,
+        insights,
+        recommendations
+      };
+
+    } catch (error) {
+      throw new Error(`Demand forecasting failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
 };
