@@ -3,6 +3,8 @@ node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
 
 # Build outputs
 dist/
@@ -10,6 +12,7 @@ build/
 *.tsbuildinfo
 frontend/.next/
 .next/
+out/
 
 # NAPI-RS build artifacts
 packages/*/target/
@@ -21,10 +24,15 @@ packages/*/index.js
 .env
 .env.local
 .env.*.local
+.env.test
 
 # Logs
 logs/
 *.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
 
 # Runtime data
 pids/
@@ -35,6 +43,7 @@ pids/
 # Coverage directory used by tools like istanbul
 coverage/
 *.lcov
+.c8_output/
 
 # nyc test coverage
 .nyc_output/
@@ -45,6 +54,9 @@ coverage/
 *.swp
 *.swo
 *~
+.project
+.classpath
+.settings/
 
 # OS generated files
 .DS_Store
@@ -60,6 +72,8 @@ tmp/
 temp/
 uploads/
 exports/
+*.tmp
+*.temp
 
 # Database
 *.sqlite
@@ -80,6 +94,9 @@ dump.rdb
 # Optional eslint cache
 .eslintcache
 
+# Optional prettier cache
+.prettiercache
+
 # Output of 'npm pack'
 *.tgz
 
@@ -93,3 +110,19 @@ prisma/migrations/
 # Cypress
 cypress/screenshots/
 cypress/videos/
+
+# Husky
+.husky/_
+
+# Local development
+.vscode-test/
+.turbo/
+.cache/
+
+# Documentation generated files
+docs/code/
+docs/api.json
+
+# Test artifacts
+test-results/
+playwright-report/
