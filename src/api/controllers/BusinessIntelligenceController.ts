@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
-import { BusinessIntelligenceService } from '../services/BusinessIntelligenceService';
-import { ReportingService } from '../services/ReportingService';
-import { logger } from '../config/logger';
-import { prisma } from '../config/database';
+import { BusinessIntelligenceService } from '../../services/BusinessIntelligenceService';
+import { ReportingService } from '../../services/ReportingService';
+import { logger } from '../../config/logger';
+import { prisma } from '../../config/database';
 
 const biService = new BusinessIntelligenceService();
 const reportingService = new ReportingService();

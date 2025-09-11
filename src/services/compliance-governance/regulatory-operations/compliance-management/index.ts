@@ -279,9 +279,9 @@ export class ComplianceManagementOperationsManager extends EventEmitter {
       const overallScore = (scores.compliance + scores.dataGovernance + scores.emergencyPreparedness) / 3;
       
       let overall: 'HEALTHY' | 'WARNING' | 'CRITICAL';
-      if (overallScore >= 90) overall = 'HEALTHY';
-      else if (overallScore >= 70) overall = 'WARNING';
-      else overall = 'CRITICAL';
+      if (overallScore >= 90) {overall = 'HEALTHY';}
+      else if (overallScore >= 70) {overall = 'WARNING';}
+      else {overall = 'CRITICAL';}
 
       const recommendations = [];
       const urgentActions = [];

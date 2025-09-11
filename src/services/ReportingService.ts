@@ -717,7 +717,7 @@ export class ReportingService extends EventEmitter {
 
     for (const section of sections) {
       try {
-        let sectionData = { ...section } as ReportSection & { data?: any };
+        const sectionData = { ...section } as ReportSection & { data?: any };
 
         if (section.type === 'chart' || section.type === 'table') {
           if (section.reportId) {
@@ -814,7 +814,7 @@ export class ReportingService extends EventEmitter {
 
   private compareToBenchmark(current: number, benchmark: number): 'above' | 'at' | 'below' {
     const diff = Math.abs(current - benchmark) / benchmark;
-    if (diff < 0.05) return 'at'; // Within 5%
+    if (diff < 0.05) {return 'at';} // Within 5%
     return current > benchmark ? 'above' : 'below';
   }
 

@@ -521,7 +521,7 @@ export class AssetDepreciationService {
     maintenanceCosts: number
   ): number {
     const totalInvestment = purchasePrice + maintenanceCosts;
-    if (totalInvestment === 0) return 0;
+    if (totalInvestment === 0) {return 0;}
     
     // Simplified ROI calculation - would need operational benefits data for accurate calculation
     const valueRetained = currentValue / purchasePrice;

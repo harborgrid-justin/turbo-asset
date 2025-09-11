@@ -86,9 +86,9 @@ export const resolvers = {
       
       const whereClause: any = {};
       if (where) {
-        if (where.email) whereClause.email = { contains: where.email };
-        if (where.role) whereClause.role = where.role;
-        if (where.isActive !== undefined) whereClause.isActive = where.isActive;
+        if (where.email) {whereClause.email = { contains: where.email };}
+        if (where.role) {whereClause.role = where.role;}
+        if (where.isActive !== undefined) {whereClause.isActive = where.isActive;}
       }
 
       const users = await prisma.user.findMany({
@@ -171,9 +171,9 @@ export const resolvers = {
       
       const whereClause: any = {};
       if (where) {
-        if (where.name) whereClause.name = { contains: where.name };
-        if (where.type) whereClause.type = where.type;
-        if (where.status) whereClause.status = where.status;
+        if (where.name) {whereClause.name = { contains: where.name };}
+        if (where.type) {whereClause.type = where.type;}
+        if (where.status) {whereClause.status = where.status;}
       }
 
       const properties = await prisma.property.findMany({
@@ -229,8 +229,8 @@ export const resolvers = {
       
       const whereClause: any = {};
       if (where) {
-        if (where.type) whereClause.type = where.type;
-        if (where.status) whereClause.status = where.status;
+        if (where.type) {whereClause.type = where.type;}
+        if (where.status) {whereClause.status = where.status;}
       }
 
       const assets = await prisma.asset.findMany({
@@ -338,8 +338,8 @@ export const resolvers = {
       
       const whereClause: any = {};
       if (where) {
-        if (where.status) whereClause.status = where.status;
-        if (where.priority) whereClause.priority = where.priority;
+        if (where.status) {whereClause.status = where.status;}
+        if (where.priority) {whereClause.priority = where.priority;}
       }
 
       const instances = await prisma.workflowInstance.findMany({
@@ -398,8 +398,8 @@ export const resolvers = {
       
       const whereClause: any = {};
       if (where) {
-        if (where.category) whereClause.category = where.category;
-        if (where.confidentiality) whereClause.confidentiality = where.confidentiality;
+        if (where.category) {whereClause.category = where.category;}
+        if (where.confidentiality) {whereClause.confidentiality = where.confidentiality;}
         if (where.tags && where.tags.length > 0) {
           whereClause.tags = { hasSome: where.tags };
         }
@@ -787,7 +787,7 @@ export const resolvers = {
   // Additional nested resolvers for relationships
   Department: {
     parent: async (parent: any) => {
-      if (!parent.parentId) return null;
+      if (!parent.parentId) {return null;}
       return await prisma.department.findUnique({
         where: { id: parent.parentId },
       });

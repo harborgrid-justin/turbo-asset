@@ -197,7 +197,7 @@ export class CADIntegrationService extends EventEmitter {
   ): Promise<void> {
     try {
       const processing = this.processingQueue.get(processingId);
-      if (!processing) return;
+      if (!processing) {return;}
 
       processing.status = 'PROCESSING';
       processing.progress = 0;
@@ -1266,7 +1266,7 @@ export class CADIntegrationService extends EventEmitter {
         where: { id: drawingId }
       });
 
-      if (!drawing) return null;
+      if (!drawing) {return null;}
 
       return {
         id: drawing.id,

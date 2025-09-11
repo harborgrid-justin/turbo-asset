@@ -711,8 +711,8 @@ export class SpaceStandardsService {
   ): ComplianceRequirement[] {
     return requirements.filter(req => {
       // Filter based on space requirements
-      if (req.severity === 'MANDATORY') return true;
-      if (spaceRequirements.specialRequirements?.includes(req.standard)) return true;
+      if (req.severity === 'MANDATORY') {return true;}
+      if (spaceRequirements.specialRequirements?.includes(req.standard)) {return true;}
       return req.severity === 'RECOMMENDED';
     });
   }

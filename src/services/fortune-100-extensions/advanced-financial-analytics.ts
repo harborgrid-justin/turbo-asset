@@ -153,7 +153,7 @@ export class DerivativesPricingEngine {
       const vega = S * Math.exp(-q * T) * this.normalPDF((Math.log(S / K) + (r - q + 0.5 * sigma * sigma) * T) / (sigma * Math.sqrt(T))) * Math.sqrt(T);
       
       const diff = price - marketPrice;
-      if (Math.abs(diff) < tolerance) break;
+      if (Math.abs(diff) < tolerance) {break;}
       
       sigma = sigma - diff / vega;
     }
@@ -195,8 +195,8 @@ export class DerivativesPricingEngine {
 
   private static boxMullerRandom(): number {
     let u = 0, v = 0;
-    while(u === 0) u = Math.random();
-    while(v === 0) v = Math.random();
+    while(u === 0) {u = Math.random();}
+    while(v === 0) {v = Math.random();}
     return Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
   }
 
@@ -405,11 +405,11 @@ export class CreditRiskEngine {
   private static generateCreditRecommendations(data: CreditRiskData, expectedLoss: number, creditScore: any): string[] {
     const recommendations: string[] = [];
     
-    if (data.probabilityOfDefault > 0.05) recommendations.push("High default probability - consider additional collateral or guarantees");
-    if (expectedLoss / data.exposureAtDefault > 0.02) recommendations.push("Expected loss exceeds 2% - review pricing and terms");
-    if (creditScore.financialScore < 60) recommendations.push("Weak financial metrics - require financial covenant monitoring");
-    if (data.financialMetrics.debtToEquity > 3) recommendations.push("High leverage - implement debt service coverage requirements");
-    if (creditScore.overallScore < 70) recommendations.push("Below-average credit profile - consider risk mitigation measures");
+    if (data.probabilityOfDefault > 0.05) {recommendations.push('High default probability - consider additional collateral or guarantees');}
+    if (expectedLoss / data.exposureAtDefault > 0.02) {recommendations.push('Expected loss exceeds 2% - review pricing and terms');}
+    if (creditScore.financialScore < 60) {recommendations.push('Weak financial metrics - require financial covenant monitoring');}
+    if (data.financialMetrics.debtToEquity > 3) {recommendations.push('High leverage - implement debt service coverage requirements');}
+    if (creditScore.overallScore < 70) {recommendations.push('Below-average credit profile - consider risk mitigation measures');}
     
     return recommendations;
   }
@@ -644,16 +644,16 @@ export class PortfolioRiskEngine {
   private static generatePortfolioRecommendations(data: PortfolioData, sharpeRatio: number, var95: number): string[] {
     const recommendations: string[] = [];
     
-    if (sharpeRatio < 0.5) recommendations.push("Portfolio Sharpe ratio below benchmark - consider rebalancing");
-    if (var95 > 0.15) recommendations.push("High portfolio VaR - consider diversification or hedging");
+    if (sharpeRatio < 0.5) {recommendations.push('Portfolio Sharpe ratio below benchmark - consider rebalancing');}
+    if (var95 > 0.15) {recommendations.push('High portfolio VaR - consider diversification or hedging');}
     
     // Concentration risk check
     const maxWeight = Math.max(...data.assets.map(a => a.weight));
-    if (maxWeight > 0.4) recommendations.push("High concentration risk - consider reducing largest position");
+    if (maxWeight > 0.4) {recommendations.push('High concentration risk - consider reducing largest position');}
     
     // Correlation risk check
     const avgCorrelation = this.calculateAverageCorrelation(data.correlationMatrix);
-    if (avgCorrelation > 0.7) recommendations.push("High correlation among assets - seek uncorrelated diversifiers");
+    if (avgCorrelation > 0.7) {recommendations.push('High correlation among assets - seek uncorrelated diversifiers');}
     
     return recommendations;
   }

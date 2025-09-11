@@ -606,7 +606,7 @@ export class BusinessOperationsManager extends EventEmitter {
 
   private async executeContractRenewalWorkflow(data: any): Promise<any> {
     const contract = await this.contractLifecycleService.getContract(data.contractId);
-    if (!contract) throw new Error('Contract not found');
+    if (!contract) {throw new Error('Contract not found');}
 
     const renewedContract = await this.contractLifecycleService.renewContract(
       data.contractId, 

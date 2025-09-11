@@ -229,7 +229,7 @@ export class Microsoft365IntegrationService {
    */
   async getCalendarEvents(userId: string, startDate?: Date, endDate?: Date): Promise<OutlookEvent[]> {
     try {
-      let url = `/users/${userId}/events`;
+      const url = `/users/${userId}/events`;
       const params: any = {};
 
       if (startDate && endDate) {

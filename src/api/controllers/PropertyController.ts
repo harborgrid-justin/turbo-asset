@@ -1,7 +1,7 @@
 import { Router, Request, Response } from 'express';
-import { prisma } from '../config/database';
-import { logger } from '../config/logger';
-import { CustomFieldService } from '../services/CustomFieldService';
+import { prisma } from '../../config/database';
+import { logger } from '../../config/logger';
+import { CustomFieldService } from '../../services/CustomFieldService';
 
 const router = Router();
 const customFieldService = new CustomFieldService();
@@ -276,16 +276,16 @@ router.put('/:id', async (req: Request, res: Response) => {
 
     // Update property
     const updateData: any = {};
-    if (name !== undefined) updateData.name = name;
-    if (type !== undefined) updateData.type = type;
-    if (address !== undefined) updateData.address = address;
-    if (totalArea !== undefined) updateData.totalArea = totalArea ? parseFloat(totalArea) : null;
-    if (usableArea !== undefined) updateData.usableArea = usableArea ? parseFloat(usableArea) : null;
-    if (acquisitionCost !== undefined) updateData.acquisitionCost = acquisitionCost ? parseFloat(acquisitionCost) : null;
-    if (currentValue !== undefined) updateData.currentValue = currentValue ? parseFloat(currentValue) : null;
-    if (acquisitionDate !== undefined) updateData.acquisitionDate = acquisitionDate ? new Date(acquisitionDate) : null;
-    if (coordinates !== undefined) updateData.coordinates = coordinates;
-    if (timezone !== undefined) updateData.timezone = timezone;
+    if (name !== undefined) {updateData.name = name;}
+    if (type !== undefined) {updateData.type = type;}
+    if (address !== undefined) {updateData.address = address;}
+    if (totalArea !== undefined) {updateData.totalArea = totalArea ? parseFloat(totalArea) : null;}
+    if (usableArea !== undefined) {updateData.usableArea = usableArea ? parseFloat(usableArea) : null;}
+    if (acquisitionCost !== undefined) {updateData.acquisitionCost = acquisitionCost ? parseFloat(acquisitionCost) : null;}
+    if (currentValue !== undefined) {updateData.currentValue = currentValue ? parseFloat(currentValue) : null;}
+    if (acquisitionDate !== undefined) {updateData.acquisitionDate = acquisitionDate ? new Date(acquisitionDate) : null;}
+    if (coordinates !== undefined) {updateData.coordinates = coordinates;}
+    if (timezone !== undefined) {updateData.timezone = timezone;}
 
     const property = await prisma.property.update({
       where: { id },

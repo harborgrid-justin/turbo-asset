@@ -797,7 +797,7 @@ export class BusinessOperationsReportsService extends EventEmitter {
   }
 
   private validateDashboardData(data: Partial<Dashboard>): void {
-    if (!data.name) throw new Error('Dashboard name is required');
+    if (!data.name) {throw new Error('Dashboard name is required');}
     if (data.widgets && data.widgets.length > 20) {
       throw new Error('Maximum 20 widgets allowed per dashboard');
     }
@@ -876,8 +876,8 @@ export class BusinessOperationsReportsService extends EventEmitter {
   }
 
   private determineKPIThreshold(value: number, thresholds: any): any {
-    if (value <= thresholds.green) return { level: 'green', value: thresholds.green };
-    if (value <= thresholds.yellow) return { level: 'yellow', value: thresholds.yellow };
+    if (value <= thresholds.green) {return { level: 'green', value: thresholds.green };}
+    if (value <= thresholds.yellow) {return { level: 'yellow', value: thresholds.yellow };}
     return { level: 'red', value: thresholds.red };
   }
 
@@ -972,12 +972,12 @@ export class BusinessOperationsReportsService extends EventEmitter {
   }
 
   private calculateTrend(values: number[]): string {
-    if (values.length < 2) return 'STABLE';
+    if (values.length < 2) {return 'STABLE';}
     const recent = values.slice(-3).reduce((a, b) => a + b) / 3;
     const older = values.slice(0, -3).reduce((a, b) => a + b) / (values.length - 3);
     
-    if (recent > older * 1.05) return 'IMPROVING';
-    if (recent < older * 0.95) return 'DECLINING';
+    if (recent > older * 1.05) {return 'IMPROVING';}
+    if (recent < older * 0.95) {return 'DECLINING';}
     return 'STABLE';
   }
 

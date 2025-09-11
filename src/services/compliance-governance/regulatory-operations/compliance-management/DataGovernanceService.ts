@@ -268,7 +268,7 @@ export class DataGovernanceService extends EventEmitter {
    * Private helper methods for data quality calculations
    */
   private calculateCompleteness(records: any[]): number {
-    if (records.length === 0) return 0;
+    if (records.length === 0) {return 0;}
     
     let totalFields = 0;
     let completedFields = 0;

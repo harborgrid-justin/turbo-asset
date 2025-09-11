@@ -207,7 +207,7 @@ export class ChargebackAllocationService {
           where: { id: departmentId }
         });
 
-        if (!department) continue;
+        if (!department) {continue;}
 
         // Group allocations by category
         const categoryGroups = (deptAllocations as any[]).reduce((groups, allocation) => {

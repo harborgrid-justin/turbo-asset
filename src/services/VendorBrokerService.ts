@@ -531,7 +531,7 @@ export class VendorBrokerService {
           description: 'Background check has not been completed',
           mitigation: 'Complete background verification before contract execution'
         });
-        if (riskLevel === 'LOW') riskLevel = 'MEDIUM';
+        if (riskLevel === 'LOW') {riskLevel = 'MEDIUM';}
       }
 
       // Payment history analysis
@@ -547,7 +547,7 @@ export class VendorBrokerService {
           description: `${overdueInvoices.length} overdue invoices indicate payment processing issues`,
           mitigation: 'Review payment processes and terms'
         });
-        if (riskLevel === 'LOW') riskLevel = 'MEDIUM';
+        if (riskLevel === 'LOW') {riskLevel = 'MEDIUM';}
       }
 
       // Insurance coverage check
@@ -822,7 +822,7 @@ export class VendorBrokerService {
       orderBy: { evaluationDate: 'desc' }
     });
 
-    if (performances.length === 0) return;
+    if (performances.length === 0) {return;}
 
     const avgOverallScore = performances.reduce((sum, p) => sum + (p.overallScore || 0), 0) / performances.length;
     const totalProjects = performances.reduce((sum, p) => sum + (p.projectsCompleted || 0), 0);
@@ -845,7 +845,7 @@ export class VendorBrokerService {
       orderBy: { evaluationDate: 'desc' }
     });
 
-    if (performances.length === 0) return;
+    if (performances.length === 0) {return;}
 
     const avgOverallScore = performances.reduce((sum, p) => sum + (p.overallScore || 0), 0) / performances.length;
     const totalTransactions = performances.reduce((sum, p) => sum + (p.transactionsCompleted || 0), 0);

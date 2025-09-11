@@ -427,7 +427,7 @@ export class MachineLearningService extends EventEmitter {
     const job = this.trainingJobs.get(jobId);
     const model = this.models.get(modelId);
     
-    if (!job || !model) return;
+    if (!job || !model) {return;}
 
     try {
       // Preparing phase
@@ -677,7 +677,7 @@ export class MachineLearningService extends EventEmitter {
    */
   private updateMonitoringMetrics(deploymentId: string, processingTime: number, success: boolean): void {
     const deployment = this.deployments.get(deploymentId);
-    if (!deployment) return;
+    if (!deployment) {return;}
 
     const monitoring = deployment.monitoring;
     

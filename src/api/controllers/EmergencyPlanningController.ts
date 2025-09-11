@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express';
-import { EmergencyPlanningService } from '../services/EmergencyPlanningService';
-import { logger } from '../config/logger';
+import { EmergencyPlanningService } from '../../services/EmergencyPlanningService';
+import { logger } from '../../config/logger';
 
 const router = express.Router();
 const emergencyService = new EmergencyPlanningService();

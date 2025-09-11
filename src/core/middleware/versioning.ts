@@ -85,8 +85,8 @@ export class APIVersionManager {
       const aPart = aParts[i] || 0;
       const bPart = bParts[i] || 0;
 
-      if (aPart < bPart) return -1;
-      if (aPart > bPart) return 1;
+      if (aPart < bPart) {return -1;}
+      if (aPart > bPart) {return 1;}
     }
 
     return 0;

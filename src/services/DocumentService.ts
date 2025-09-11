@@ -441,7 +441,7 @@ export class DocumentService {
         for (let i = 0; i < Math.max(a.length, b.length); i++) {
           const aVal = a[i] || 0;
           const bVal = b[i] || 0;
-          if (aVal !== bVal) return bVal - aVal;
+          if (aVal !== bVal) {return bVal - aVal;}
         }
         return 0;
       });
@@ -486,9 +486,9 @@ export class DocumentService {
         isDeleted: false,
       };
 
-      if (filters.category) where.category = filters.category;
-      if (filters.entityType) where.entityType = filters.entityType;
-      if (filters.entityId) where.entityId = filters.entityId;
+      if (filters.category) {where.category = filters.category;}
+      if (filters.entityType) {where.entityType = filters.entityType;}
+      if (filters.entityId) {where.entityId = filters.entityId;}
       if (filters.search) {
         where.OR = [
           { title: { contains: filters.search, mode: 'insensitive' } },
@@ -645,7 +645,7 @@ export class DocumentService {
         });
       }
 
-      if (!version) return null;
+      if (!version) {return null;}
 
       return {
         fileName: version.fileName,
@@ -702,7 +702,7 @@ export class DocumentService {
   ): Promise<any> {
     try {
       const downloadInfo = await this.getDownloadInfo(organizationId, documentId, versionId);
-      if (!downloadInfo) return null;
+      if (!downloadInfo) {return null;}
 
       // This is a simplified preview generation
       // In production, you'd integrate with preview services for different file types
@@ -1062,7 +1062,7 @@ export class DocumentService {
         createdAt: { gte: startDate, lte: endDate },
       };
 
-      if (entityType) where.entityType = entityType;
+      if (entityType) {where.entityType = entityType;}
 
       const [
         totalDocuments,

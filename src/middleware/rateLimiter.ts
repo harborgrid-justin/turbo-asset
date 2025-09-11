@@ -11,7 +11,7 @@ class MemoryStore {
 
   async get(key: string): Promise<{ count: number; resetTime: number } | null> {
     const data = this.store.get(key);
-    if (!data) return null;
+    if (!data) {return null;}
 
     // Check if the window has expired
     if (Date.now() > data.resetTime) {
@@ -148,7 +148,7 @@ export class RateLimiter {
         let responseSent = false;
 
         const handleResponse = () => {
-          if (responseSent) return;
+          if (responseSent) {return;}
           responseSent = true;
 
           // Skip counting based on response status
@@ -195,7 +195,7 @@ export class RateLimiter {
    */
   async getStatus(key: string): Promise<{ count: number; remaining: number; resetTime: Date } | null> {
     const data = await this.store.get(key);
-    if (!data) return null;
+    if (!data) {return null;}
 
     return {
       count: data.count,

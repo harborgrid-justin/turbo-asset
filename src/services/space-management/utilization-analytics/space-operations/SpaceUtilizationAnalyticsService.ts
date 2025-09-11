@@ -477,7 +477,7 @@ export class SpaceUtilizationAnalyticsService {
    * Helper method to calculate utilization trend
    */
   private calculateUtilizationTrend(records: any[]): 'INCREASING' | 'DECREASING' | 'STABLE' {
-    if (records.length < 2) return 'STABLE';
+    if (records.length < 2) {return 'STABLE';}
 
     const sortedRecords = records.sort((a, b) => 
       new Date(a.recordDate).getTime() - new Date(b.recordDate).getTime()
@@ -492,8 +492,8 @@ export class SpaceUtilizationAnalyticsService {
     const difference = secondHalfAvg - firstHalfAvg;
     const threshold = firstHalfAvg * 0.1; // 10% threshold
 
-    if (difference > threshold) return 'INCREASING';
-    if (difference < -threshold) return 'DECREASING';
+    if (difference > threshold) {return 'INCREASING';}
+    if (difference < -threshold) {return 'DECREASING';}
     return 'STABLE';
   }
 
@@ -510,8 +510,8 @@ export class SpaceUtilizationAnalyticsService {
     const increasingPct = (trendCounts['INCREASING'] || 0) / totalReports;
     const decreasingPct = (trendCounts['DECREASING'] || 0) / totalReports;
 
-    if (increasingPct > 0.6) return 'INCREASING';
-    if (decreasingPct > 0.6) return 'DECREASING';
+    if (increasingPct > 0.6) {return 'INCREASING';}
+    if (decreasingPct > 0.6) {return 'DECREASING';}
     return 'STABLE';
   }
 
@@ -541,9 +541,9 @@ export class SpaceUtilizationAnalyticsService {
    * Get efficiency rating based on utilization
    */
   private getEfficiencyRating(utilization: number): 'EXCELLENT' | 'GOOD' | 'FAIR' | 'POOR' {
-    if (utilization >= 70 && utilization <= 85) return 'EXCELLENT';
-    if (utilization >= 60 && utilization <= 90) return 'GOOD';
-    if (utilization >= 40 && utilization <= 95) return 'FAIR';
+    if (utilization >= 70 && utilization <= 85) {return 'EXCELLENT';}
+    if (utilization >= 60 && utilization <= 90) {return 'GOOD';}
+    if (utilization >= 40 && utilization <= 95) {return 'FAIR';}
     return 'POOR';
   }
 
@@ -557,7 +557,7 @@ export class SpaceUtilizationAnalyticsService {
         include: { building: true }
       });
 
-      if (!space) return 0;
+      if (!space) {return 0;}
 
       // Simplified calculation - would be more sophisticated in real implementation
       const baseArea = space.area || 100;

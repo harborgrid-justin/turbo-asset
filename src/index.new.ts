@@ -78,7 +78,7 @@ class TurboAssetApplication {
           defaultSrc: ["'self'"],
           styleSrc: ["'self'", "'unsafe-inline'"],
           scriptSrc: ["'self'"],
-          imgSrc: ["'self'", "data:", "https:"],
+          imgSrc: ["'self'", 'data:', 'https:'],
           connectSrc: ["'self'"],
           fontSrc: ["'self'"],
           objectSrc: ["'none'"],
@@ -211,7 +211,7 @@ class TurboAssetApplication {
     const host = config.server.host || '0.0.0.0';
 
     this._server.listen(port, host, () => {
-      logger.info(`Server started successfully`, {
+      logger.info('Server started successfully', {
         port,
         host,
         environment: config.server.env,

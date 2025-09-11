@@ -1,6 +1,6 @@
 import { Router, Request, Response } from 'express';
-import { CriticalDateService } from '../services/CriticalDateService';
-import { logger } from '../config/logger';
+import { CriticalDateService } from '../../services/CriticalDateService';
+import { logger } from '../../config/logger';
 
 const router = Router();
 const criticalDateService = new CriticalDateService();

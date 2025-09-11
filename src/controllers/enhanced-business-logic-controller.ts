@@ -321,10 +321,10 @@ export class EnhancedBusinessLogicIntegrationController {
       // Determine appropriate status code
       let statusCode = 500;
       if (error instanceof Error) {
-        if (error.message.includes('not found')) statusCode = 404;
-        else if (error.message.includes('validation') || error.message.includes('required')) statusCode = 400;
-        else if (error.message.includes('rate limit')) statusCode = 429;
-        else if (error.message.includes('circuit breaker')) statusCode = 503;
+        if (error.message.includes('not found')) {statusCode = 404;}
+        else if (error.message.includes('validation') || error.message.includes('required')) {statusCode = 400;}
+        else if (error.message.includes('rate limit')) {statusCode = 429;}
+        else if (error.message.includes('circuit breaker')) {statusCode = 503;}
       }
 
       res.status(statusCode).json({

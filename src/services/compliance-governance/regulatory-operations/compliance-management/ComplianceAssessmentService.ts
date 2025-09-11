@@ -220,7 +220,7 @@ export class ComplianceAssessmentService extends EventEmitter {
       }
 
       // Initial lease liability equals present value
-      let leaseLiability = presentValue;
+      const leaseLiability = presentValue;
 
       // Calculate monthly depreciation (straight-line over lease term)
       const leaseTermMonths = this.calculateLeaseTermMonths(lease);

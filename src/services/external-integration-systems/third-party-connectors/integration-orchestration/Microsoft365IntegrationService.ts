@@ -205,7 +205,7 @@ export class Microsoft365IntegrationService extends EventEmitter {
    */
   async getCalendarEvents(userId: string, startDate?: Date, endDate?: Date): Promise<OutlookEvent[]> {
     try {
-      let url = `/users/${userId}/events`;
+      const url = `/users/${userId}/events`;
       const params: any = {};
 
       if (startDate && endDate) {
@@ -657,7 +657,7 @@ export class Microsoft365IntegrationService extends EventEmitter {
     try {
       const cacheKey = 'sharepoint_sites';
       const cached = this.integrationCache.get(cacheKey);
-      if (cached) return cached;
+      if (cached) {return cached;}
 
       const response = await this.graphClient.get('/sites');
       const sites = response.data.value.map((site: any) => ({
@@ -688,7 +688,7 @@ export class Microsoft365IntegrationService extends EventEmitter {
     try {
       const cacheKey = `sharepoint_lists_${siteId}`;
       const cached = this.integrationCache.get(cacheKey);
-      if (cached) return cached;
+      if (cached) {return cached;}
 
       const response = await this.graphClient.get(`/sites/${siteId}/lists`);
       const lists = response.data.value.map((list: any) => ({
@@ -861,7 +861,7 @@ export class Microsoft365IntegrationService extends EventEmitter {
     try {
       const cacheKey = `teams_channels_${teamId}`;
       const cached = this.integrationCache.get(cacheKey);
-      if (cached) return cached;
+      if (cached) {return cached;}
 
       const response = await this.graphClient.get(`/teams/${teamId}/channels`);
       const channels = response.data.value.map((channel: any) => ({
@@ -1129,7 +1129,7 @@ export class Microsoft365IntegrationService extends EventEmitter {
 
   private async storeToken(token: Microsoft365Token): Promise<void> {
     try {
-      if (!this.context?.organizationId) return;
+      if (!this.context?.organizationId) {return;}
 
       await prisma.integrationToken.upsert({
         where: {
@@ -1351,7 +1351,7 @@ export class Microsoft365IntegrationService extends EventEmitter {
   }
 
   async revokeToken(): Promise<void> {
-    if (!this.token) return;
+    if (!this.token) {return;}
 
     try {
       // Revoke the token with Microsoft

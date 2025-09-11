@@ -761,7 +761,7 @@ export class InventoryService {
       const recommendations: string[] = [];
 
       for (const item of items) {
-        if (item.transactions.length < 3) continue; // Need minimum transaction history
+        if (item.transactions.length < 3) {continue;} // Need minimum transaction history
 
         // Calculate usage statistics
         const monthlyUsage = this.calculateMonthlyUsage(item.transactions, analysisMonths);
@@ -962,7 +962,7 @@ export class InventoryService {
     newCost: number,
     newQuantity: number
   ): number {
-    if (newQuantity === 0) return currentAvgCost;
+    if (newQuantity === 0) {return currentAvgCost;}
     
     const currentValue = currentAvgCost * currentQuantity;
     const newValue = newCost * newQuantity;
@@ -984,7 +984,7 @@ export class InventoryService {
         },
       });
 
-      if (!item) return;
+      if (!item) {return;}
 
       // Check if we need to create an alert
       let alertType: string | null = null;
@@ -1049,7 +1049,7 @@ export class InventoryService {
   }
 
   private calculateVariabilityIndex(usage: number[]): number {
-    if (usage.length <= 1) return 0;
+    if (usage.length <= 1) {return 0;}
 
     const mean = usage.reduce((sum, val) => sum + val, 0) / usage.length;
     const variance = usage.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / usage.length;

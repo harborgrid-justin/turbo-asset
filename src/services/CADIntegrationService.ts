@@ -603,7 +603,7 @@ export class CADIntegrationService extends EventEmitter {
   ): Promise<void> {
     try {
       const processingInfo = this.processingQueue.get(processingId);
-      if (!processingInfo) return;
+      if (!processingInfo) {return;}
 
       // Simulate processing stages
       await this.updateProcessingProgress(processingInfo.cadFile.id, 'PROCESSING', 10, 'Extracting file contents...');

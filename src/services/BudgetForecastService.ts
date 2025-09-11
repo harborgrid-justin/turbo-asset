@@ -905,7 +905,7 @@ export class BudgetForecastService {
     period: string,
     method: 'HISTORICAL' | 'TREND_ANALYSIS' | 'REGRESSION' | 'MOVING_AVERAGE' | 'SEASONAL' | 'EXPERT_JUDGMENT' | 'MONTE_CARLO'
   ): Promise<any> {
-    if (budgets.length === 0) return null;
+    if (budgets.length === 0) {return null;}
 
     const latestBudget = budgets[0];
     const totalBudgetAmount = latestBudget.totalBudget;
@@ -956,7 +956,7 @@ export class BudgetForecastService {
   }
 
   private calculateTrend(values: number[]): number {
-    if (values.length < 2) return 0;
+    if (values.length < 2) {return 0;}
     
     // Simple linear trend calculation
     const n = values.length;

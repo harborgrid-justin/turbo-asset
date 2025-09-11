@@ -729,7 +729,7 @@ export class AdvancedDataProcessingEngine {
 
   // Standardization helpers
   private standardizeText(text: string): string {
-    if (!text || typeof text !== 'string') return text;
+    if (!text || typeof text !== 'string') {return text;}
     return text.trim().replace(/\s+/g, ' ');
   }
 
@@ -767,7 +767,7 @@ export class AdvancedDataProcessingEngine {
   }
 
   private standardizeNumericValue(value: any): number | null {
-    if (typeof value === 'number') return value;
+    if (typeof value === 'number') {return value;}
     if (typeof value === 'string') {
       const parsed = parseFloat(value);
       return isNaN(parsed) ? null : parsed;
@@ -776,7 +776,7 @@ export class AdvancedDataProcessingEngine {
   }
 
   private standardizeCurrency(amount: any): number | null {
-    if (typeof amount === 'number') return amount;
+    if (typeof amount === 'number') {return amount;}
     if (typeof amount === 'string') {
       const cleaned = amount.replace(/[,$\s]/g, '');
       const parsed = parseFloat(cleaned);
@@ -792,7 +792,7 @@ export class AdvancedDataProcessingEngine {
   // Quality metric calculations
   private calculateCompleteness(data: any, fields: any[]): number {
     const requiredFields = fields.filter(f => f.required);
-    if (requiredFields.length === 0) return 1.0;
+    if (requiredFields.length === 0) {return 1.0;}
     
     const completedFields = requiredFields.filter(field => 
       data[field.name] !== undefined && data[field.name] !== null && data[field.name] !== ''
@@ -832,9 +832,9 @@ export class AdvancedDataProcessingEngine {
       const ageMinutes = (now - dataTime) / (1000 * 60);
       
       // Data is most timely if less than 1 hour old
-      if (ageMinutes < 60) return 1.0;
-      if (ageMinutes < 1440) return 0.8; // 1 day
-      if (ageMinutes < 10080) return 0.6; // 1 week
+      if (ageMinutes < 60) {return 1.0;}
+      if (ageMinutes < 1440) {return 0.8;} // 1 day
+      if (ageMinutes < 10080) {return 0.6;} // 1 week
       return 0.4;
     }
     

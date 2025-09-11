@@ -540,10 +540,10 @@ export class IoTDeviceService {
       const insights: PredictiveMaintenanceInsight[] = [];
 
       for (const device of devices) {
-        if (!device.asset || device.sensorReadings.length < 20) continue;
+        if (!device.asset || device.sensorReadings.length < 20) {continue;}
 
         const latestCondition = device.conditionMonitoring[0];
-        if (!latestCondition) continue;
+        if (!latestCondition) {continue;}
 
         // Perform time series analysis
         const timeSeriesAnalysis = this.performTimeSeriesAnalysis(device.sensorReadings);
@@ -769,7 +769,7 @@ export class IoTDeviceService {
         select: { alertThresholds: true, alertsEnabled: true },
       });
 
-      if (!device || !device.alertsEnabled || !device.alertThresholds) return;
+      if (!device || !device.alertsEnabled || !device.alertThresholds) {return;}
 
       const thresholds = device.alertThresholds as any;
       
@@ -777,7 +777,7 @@ export class IoTDeviceService {
       Object.keys(thresholds).forEach(ruleKey => {
         if (ruleKey.startsWith(`${sensorType}_`)) {
           const rule = thresholds[ruleKey];
-          if (!rule.enabled) return;
+          if (!rule.enabled) {return;}
 
           let alertTriggered = false;
           const condition = ruleKey.split('_')[1];
@@ -850,7 +850,7 @@ export class IoTDeviceService {
     const healthScore = Math.round((qualityScore + variabilityScore) / 2);
 
     // Determine risk and alert level
-    let riskScore = 100 - healthScore;
+    const riskScore = 100 - healthScore;
     let alertLevel = 'NORMAL';
     let recommendedAction = 'NO_ACTION_REQUIRED';
     let urgencyLevel = 'LOW';
@@ -885,7 +885,7 @@ export class IoTDeviceService {
   }
 
   private calculateVariabilityScore(readings: any[]): number {
-    if (readings.length < 2) return 100;
+    if (readings.length < 2) {return 100;}
 
     const values = readings.map(r => r.value);
     const mean = values.reduce((sum, v) => sum + v, 0) / values.length;
@@ -898,10 +898,10 @@ export class IoTDeviceService {
   }
 
   private determineMonitoringType(deviceType: string, sensorTypes: string[]): string {
-    if (sensorTypes.includes('VIBRATION')) return 'VIBRATION_ANALYSIS';
-    if (sensorTypes.includes('TEMPERATURE')) return 'THERMAL_IMAGING';
-    if (sensorTypes.includes('CURRENT') || sensorTypes.includes('VOLTAGE')) return 'ELECTRICAL';
-    if (sensorTypes.includes('PRESSURE')) return 'PERFORMANCE';
+    if (sensorTypes.includes('VIBRATION')) {return 'VIBRATION_ANALYSIS';}
+    if (sensorTypes.includes('TEMPERATURE')) {return 'THERMAL_IMAGING';}
+    if (sensorTypes.includes('CURRENT') || sensorTypes.includes('VOLTAGE')) {return 'ELECTRICAL';}
+    if (sensorTypes.includes('PRESSURE')) {return 'PERFORMANCE';}
     return 'VISUAL_INSPECTION';
   }
 
@@ -971,7 +971,7 @@ export class IoTDeviceService {
   }
 
   private calculateVolatility(values: number[]): number {
-    if (values.length < 2) return 0;
+    if (values.length < 2) {return 0;}
     
     const changes = [];
     for (let i = 1; i < values.length; i++) {
@@ -1068,9 +1068,9 @@ export class IoTDeviceService {
   }
 
   private determineRiskLevel(riskScore: number): 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL' {
-    if (riskScore >= 90) return 'CRITICAL';
-    if (riskScore >= 70) return 'HIGH';
-    if (riskScore >= 40) return 'MEDIUM';
+    if (riskScore >= 90) {return 'CRITICAL';}
+    if (riskScore >= 70) {return 'HIGH';}
+    if (riskScore >= 40) {return 'MEDIUM';}
     return 'LOW';
   }
 }

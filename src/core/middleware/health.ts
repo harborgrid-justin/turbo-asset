@@ -333,10 +333,10 @@ export class HealthCheckService {
       ]);
 
       // Add fulfilled results
-      if (database.status === 'fulfilled') checks.push(database.value);
-      if (redis.status === 'fulfilled') checks.push(redis.value);
-      if (filesystem.status === 'fulfilled') checks.push(filesystem.value);
-      if (externalServices.status === 'fulfilled') checks.push(externalServices.value);
+      if (database.status === 'fulfilled') {checks.push(database.value);}
+      if (redis.status === 'fulfilled') {checks.push(redis.value);}
+      if (filesystem.status === 'fulfilled') {checks.push(filesystem.value);}
+      if (externalServices.status === 'fulfilled') {checks.push(externalServices.value);}
 
       // Add rejected results as unhealthy
       if (database.status === 'rejected') {

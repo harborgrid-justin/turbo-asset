@@ -421,7 +421,7 @@ export class EmergencyPlanningService extends EventEmitter {
 
   private calculateAverageDrillScore(drills: DrillRecord[]): number {
     const completedDrills = drills.filter(d => d.score !== undefined);
-    if (completedDrills.length === 0) return 0;
+    if (completedDrills.length === 0) {return 0;}
     
     const totalScore = completedDrills.reduce((sum, drill) => sum + (drill.score || 0), 0);
     return totalScore / completedDrills.length;

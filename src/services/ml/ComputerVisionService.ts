@@ -872,10 +872,10 @@ export class ComputerVisionService extends EventEmitter {
       const centerX = person.boundingBox.x + person.boundingBox.width / 2;
       const centerY = person.boundingBox.y + person.boundingBox.height / 2;
       
-      if (centerX < 250 && centerY < 150) quadrants.topLeft++;
-      else if (centerX >= 250 && centerY < 150) quadrants.topRight++;
-      else if (centerX < 250 && centerY >= 150) quadrants.bottomLeft++;
-      else quadrants.bottomRight++;
+      if (centerX < 250 && centerY < 150) {quadrants.topLeft++;}
+      else if (centerX >= 250 && centerY < 150) {quadrants.topRight++;}
+      else if (centerX < 250 && centerY >= 150) {quadrants.bottomLeft++;}
+      else {quadrants.bottomRight++;}
     });
 
     return quadrants;
@@ -1178,7 +1178,7 @@ export class ComputerVisionService extends EventEmitter {
       assetId,
       title: `Equipment Maintenance Required - ${inspectionResult.detectedType}`,
       priority: conditionAssessment.urgency,
-      description: `Maintenance required based on computer vision inspection findings`,
+      description: 'Maintenance required based on computer vision inspection findings',
       findings: inspectionResult.findings,
       estimatedCost: inspectionResult.recommendations.reduce((sum: number, rec: any) => sum + rec.estimatedCost, 0),
       createdAt: new Date(),

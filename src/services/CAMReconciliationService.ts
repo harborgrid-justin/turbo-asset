@@ -772,7 +772,7 @@ export class CAMReconciliationService {
     } else if (category.includes('maintenance') && variancePercent > 20) {
       return 'Maintenance variance could indicate deferred maintenance or emergency repairs.';
     } else {
-      return `Variance within acceptable range but should be monitored.`;
+      return 'Variance within acceptable range but should be monitored.';
     }
   }
 

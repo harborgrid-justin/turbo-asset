@@ -93,7 +93,7 @@ export class CAMReconciliationService extends EventEmitter implements ICAMReconc
   async getReconciliation(id: string): Promise<CAMReconciliation | null> {
     try {
       const cached = this.cache.get(id);
-      if (cached) return cached;
+      if (cached) {return cached;}
 
       const reconciliation = await this.loadReconciliation(id);
       if (reconciliation) {
@@ -570,9 +570,9 @@ export class CAMReconciliationService extends EventEmitter implements ICAMReconc
   // === PRIVATE HELPER METHODS ===
 
   private validateReconciliationData(data: Partial<CAMReconciliation>): void {
-    if (!data.propertyId) throw new Error('Property ID is required');
-    if (!data.leaseIds || data.leaseIds.length === 0) throw new Error('Lease IDs are required');
-    if (!data.reconciliationYear) throw new Error('Reconciliation year is required');
+    if (!data.propertyId) {throw new Error('Property ID is required');}
+    if (!data.leaseIds || data.leaseIds.length === 0) {throw new Error('Lease IDs are required');}
+    if (!data.reconciliationYear) {throw new Error('Reconciliation year is required');}
 
     const currentYear = new Date().getFullYear();
     if (data.reconciliationYear < CAM_CONFIG.VALIDATION.MIN_RECONCILIATION_YEAR || 
@@ -588,17 +588,17 @@ export class CAMReconciliationService extends EventEmitter implements ICAMReconc
   }
 
   private validateExpenseData(data: Partial<CAMExpense>): void {
-    if (!data.category) throw new Error('Expense category is required');
-    if (!data.description) throw new Error('Expense description is required');
-    if (!data.amount || data.amount <= 0) throw new Error('Valid expense amount is required');
+    if (!data.category) {throw new Error('Expense category is required');}
+    if (!data.description) {throw new Error('Expense description is required');}
+    if (!data.amount || data.amount <= 0) {throw new Error('Valid expense amount is required');}
   }
 
   private validateDisputeData(data: Partial<CAMDispute>): void {
-    if (!data.leaseId) throw new Error('Lease ID is required');
-    if (!data.tenantName) throw new Error('Tenant name is required');
-    if (!data.disputeType) throw new Error('Dispute type is required');
-    if (!data.description) throw new Error('Dispute description is required');
-    if (!data.disputedAmount || data.disputedAmount <= 0) throw new Error('Valid disputed amount is required');
+    if (!data.leaseId) {throw new Error('Lease ID is required');}
+    if (!data.tenantName) {throw new Error('Tenant name is required');}
+    if (!data.disputeType) {throw new Error('Dispute type is required');}
+    if (!data.description) {throw new Error('Dispute description is required');}
+    if (!data.disputedAmount || data.disputedAmount <= 0) {throw new Error('Valid disputed amount is required');}
   }
 
   private calculateDueDate(year: number): Date {
@@ -736,7 +736,7 @@ export class CAMReconciliationService extends EventEmitter implements ICAMReconc
   async generateReconciliationAnalytics(reconId: string): Promise<any> {
     try {
       const reconciliation = await this.getReconciliation(reconId);
-      if (!reconciliation) throw new Error('Reconciliation not found');
+      if (!reconciliation) {throw new Error('Reconciliation not found');}
 
       const analytics = {
         reconciliationId: reconId,
@@ -858,7 +858,7 @@ export class CAMReconciliationService extends EventEmitter implements ICAMReconc
   async generateDisputeAnalysis(reconId: string): Promise<any> {
     try {
       const reconciliation = await this.getReconciliation(reconId);
-      if (!reconciliation) throw new Error('Reconciliation not found');
+      if (!reconciliation) {throw new Error('Reconciliation not found');}
 
       const disputeAnalysis = {
         reconciliationId: reconId,
@@ -968,7 +968,7 @@ export class CAMReconciliationService extends EventEmitter implements ICAMReconc
   async generateOptimizationRecommendations(reconId: string): Promise<any> {
     try {
       const reconciliation = await this.getReconciliation(reconId);
-      if (!reconciliation) throw new Error('Reconciliation not found');
+      if (!reconciliation) {throw new Error('Reconciliation not found');}
 
       const optimization = {
         reconciliationId: reconId,
@@ -1063,7 +1063,7 @@ export class CAMReconciliationService extends EventEmitter implements ICAMReconc
   // === DETAILED CALCULATION METHODS ===
 
   private calculateRecoveryRate(reconciliation: CAMReconciliation): number {
-    if (reconciliation.totalCAMExpenses === 0) return 0;
+    if (reconciliation.totalCAMExpenses === 0) {return 0;}
     return (reconciliation.totalRecoverableExpenses / reconciliation.totalCAMExpenses) * 100;
   }
 

@@ -534,9 +534,9 @@ export class PortfolioVisualizationService {
   }
 
   private getScoreLabel(score: number): string {
-    if (score >= 85) return 'Excellent';
-    if (score >= 75) return 'Good';
-    if (score >= 60) return 'Fair';
+    if (score >= 85) {return 'Excellent';}
+    if (score >= 75) {return 'Good';}
+    if (score >= 60) {return 'Fair';}
     return 'Poor';
   }
 }

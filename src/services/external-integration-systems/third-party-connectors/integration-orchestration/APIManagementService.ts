@@ -524,7 +524,7 @@ export class APIManagementService extends EventEmitter {
     try {
       const cacheKey = `docs_${format}`;
       const cached = this.documentationCache.get(cacheKey);
-      if (cached) return cached;
+      if (cached) {return cached;}
 
       const endpoints = Array.from(this.endpoints.values()).filter(e => e.status === 'active');
 
@@ -543,7 +543,7 @@ export class APIManagementService extends EventEmitter {
           ],
           paths: endpoints.reduce((paths, endpoint) => {
             const pathKey = endpoint.path.replace(/{([^}]+)}/g, '{$1}');
-            if (!paths[pathKey]) paths[pathKey] = {};
+            if (!paths[pathKey]) {paths[pathKey] = {};}
             
             paths[pathKey][endpoint.method.toLowerCase()] = {
               summary: endpoint.name,
@@ -713,7 +713,7 @@ export class APIManagementService extends EventEmitter {
   }
 
   private async flushMetrics(): Promise<void> {
-    if (this.metricsBuffer.length === 0) return;
+    if (this.metricsBuffer.length === 0) {return;}
 
     try {
       // In real implementation, would batch insert to database
@@ -736,7 +736,7 @@ export class APIManagementService extends EventEmitter {
 
   private async saveEndpoint(endpoint: APIEndpoint): Promise<void> {
     try {
-      if (!this.context?.organizationId) return;
+      if (!this.context?.organizationId) {return;}
 
       // Mock database save
       logger.debug('Endpoint saved to database', { endpointId: endpoint.id });
@@ -747,7 +747,7 @@ export class APIManagementService extends EventEmitter {
 
   private async removeEndpoint(endpointId: string): Promise<void> {
     try {
-      if (!this.context?.organizationId) return;
+      if (!this.context?.organizationId) {return;}
 
       // Mock database removal
       logger.debug('Endpoint removed from database', { endpointId });

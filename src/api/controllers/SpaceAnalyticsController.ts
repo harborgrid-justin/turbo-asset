@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express';
-import { SpaceUtilizationService } from '../services/SpaceUtilizationService';
-import { PortfolioService } from '../services/PortfolioService';
-import { logger } from '../config/logger';
+import { SpaceUtilizationService } from '../../services/SpaceUtilizationService';
+import { PortfolioService } from '../../services/PortfolioService';
+import { logger } from '../../config/logger';
 
 const router = express.Router();
 const utilizationService = new SpaceUtilizationService();

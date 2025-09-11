@@ -4,13 +4,13 @@
  */
 
 import { Request, Response } from 'express';
-import { logger } from '../config/logger';
+import { logger } from '../../config/logger';
 import { 
   ProductionGradeBusinessLogic,
   enhancedBusinessLogicService, 
   advancedBusinessRules,
   dataStandardizationEngine
-} from '../services/enhanced-business-logic-integration';
+} from '../../services/enhanced-business-logic-integration';
 
 export class EnhancedBusinessLogicController {
   /**

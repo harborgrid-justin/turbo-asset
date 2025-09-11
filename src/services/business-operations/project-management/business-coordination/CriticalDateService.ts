@@ -101,7 +101,7 @@ export class CriticalDateService extends EventEmitter implements ICriticalDateSe
   async getCriticalDate(id: string): Promise<CriticalDate | null> {
     try {
       const cached = this.cache.get(id);
-      if (cached) return cached;
+      if (cached) {return cached;}
 
       const criticalDate = await this.loadCriticalDate(id);
       if (criticalDate) {
@@ -212,7 +212,7 @@ export class CriticalDateService extends EventEmitter implements ICriticalDateSe
       // Sort by date and importance
       const sortedDates = criticalDates.sort((a, b) => {
         const dateCompare = a.criticalDate.getTime() - b.criticalDate.getTime();
-        if (dateCompare !== 0) return dateCompare;
+        if (dateCompare !== 0) {return dateCompare;}
         
         // If dates are the same, sort by importance
         const importanceOrder = { 'CRITICAL': 0, 'HIGH': 1, 'MEDIUM': 2, 'LOW': 3 };
@@ -563,13 +563,13 @@ export class CriticalDateService extends EventEmitter implements ICriticalDateSe
   // === PRIVATE HELPER METHODS ===
 
   private validateCriticalDateData(data: Partial<CriticalDate>): void {
-    if (!data.entityType) throw new Error('Entity type is required');
-    if (!data.entityId) throw new Error('Entity ID is required');
-    if (!data.entityName) throw new Error('Entity name is required');
-    if (!data.dateType) throw new Error('Date type is required');
-    if (!data.criticalDate) throw new Error('Critical date is required');
-    if (!data.description) throw new Error('Description is required');
-    if (!data.responsible) throw new Error('Responsible person is required');
+    if (!data.entityType) {throw new Error('Entity type is required');}
+    if (!data.entityId) {throw new Error('Entity ID is required');}
+    if (!data.entityName) {throw new Error('Entity name is required');}
+    if (!data.dateType) {throw new Error('Date type is required');}
+    if (!data.criticalDate) {throw new Error('Critical date is required');}
+    if (!data.description) {throw new Error('Description is required');}
+    if (!data.responsible) {throw new Error('Responsible person is required');}
 
     if (new Date(data.criticalDate) < new Date()) {
       throw new Error('Critical date cannot be in the past');
@@ -583,10 +583,10 @@ export class CriticalDateService extends EventEmitter implements ICriticalDateSe
   }
 
   private validateActionData(data: Partial<CriticalDateAction>): void {
-    if (!data.actionType) throw new Error('Action type is required');
-    if (!data.description) throw new Error('Action description is required');
-    if (!data.assignedTo) throw new Error('Action must be assigned to someone');
-    if (!data.dueDate) throw new Error('Action due date is required');
+    if (!data.actionType) {throw new Error('Action type is required');}
+    if (!data.description) {throw new Error('Action description is required');}
+    if (!data.assignedTo) {throw new Error('Action must be assigned to someone');}
+    if (!data.dueDate) {throw new Error('Action due date is required');}
   }
 
   private generateDefaultNotifications(criticalDate: CriticalDate): CriticalDateNotification[] {

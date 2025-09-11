@@ -1028,7 +1028,7 @@ export class FinancialConsolidationService {
 
     const entityContributions = [];
     for (const statement of statements) {
-      if (filters.entityId && statement.entityId !== filters.entityId) continue;
+      if (filters.entityId && statement.entityId !== filters.entityId) {continue;}
       
       try {
         const analysis = await this.analyzeEntityContribution(organizationId, statement.entityId, period);

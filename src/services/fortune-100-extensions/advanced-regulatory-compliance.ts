@@ -122,13 +122,13 @@ export class SOXComplianceEngine {
     
     // Audit history impact
     const daysSinceLastAudit = (Date.now() - data.auditHistory.lastAuditDate.getTime()) / (1000 * 60 * 60 * 24);
-    if (daysSinceLastAudit > 365) riskScore += 25;
+    if (daysSinceLastAudit > 365) {riskScore += 25;}
     
     // Findings impact
     riskScore += Math.min(50, data.auditHistory.findingsCount * 5);
     
     // Remediation status impact
-    if (data.auditHistory.remediationStatus === 'OVERDUE') riskScore += 25;
+    if (data.auditHistory.remediationStatus === 'OVERDUE') {riskScore += 25;}
     
     return riskScore;
   }
@@ -137,9 +137,9 @@ export class SOXComplianceEngine {
     let readiness = 100;
     
     // Documentation readiness
-    if (!data.financialControls.documentationStandards) readiness -= 30;
-    if (!data.processControls.controlTesting) readiness -= 25;
-    if (data.auditHistory.remediationStatus !== 'COMPLETE') readiness -= 20;
+    if (!data.financialControls.documentationStandards) {readiness -= 30;}
+    if (!data.processControls.controlTesting) {readiness -= 25;}
+    if (data.auditHistory.remediationStatus !== 'COMPLETE') {readiness -= 20;}
     
     return Math.max(0, readiness);
   }
@@ -148,13 +148,13 @@ export class SOXComplianceEngine {
     const materialWeaknesses: string[] = [];
     const significantDeficiencies: string[] = [];
     
-    if (financialScore < 75) materialWeaknesses.push("Financial controls inadequate");
-    if (itScore < 75) materialWeaknesses.push("IT controls insufficient");
-    if (processScore < 75) materialWeaknesses.push("Process controls deficient");
+    if (financialScore < 75) {materialWeaknesses.push('Financial controls inadequate');}
+    if (itScore < 75) {materialWeaknesses.push('IT controls insufficient');}
+    if (processScore < 75) {materialWeaknesses.push('Process controls deficient');}
     
-    if (!data.financialControls.segregationOfDuties) significantDeficiencies.push("Lack of segregation of duties");
-    if (!data.itControls.accessControls) significantDeficiencies.push("Inadequate access controls");
-    if (data.auditHistory.findingsCount > 10) significantDeficiencies.push("High number of prior findings");
+    if (!data.financialControls.segregationOfDuties) {significantDeficiencies.push('Lack of segregation of duties');}
+    if (!data.itControls.accessControls) {significantDeficiencies.push('Inadequate access controls');}
+    if (data.auditHistory.findingsCount > 10) {significantDeficiencies.push('High number of prior findings');}
     
     return { materialWeaknesses, significantDeficiencies };
   }
@@ -162,17 +162,17 @@ export class SOXComplianceEngine {
   private static generateSOXRecommendations(compliance: number, data: SOXComplianceData): string[] {
     const recommendations: string[] = [];
     
-    if (compliance < 95) recommendations.push("Implement comprehensive control remediation program");
-    if (!data.financialControls.segregationOfDuties) recommendations.push("Establish clear segregation of duties policies");
-    if (!data.itControls.changeManagement) recommendations.push("Implement formal IT change management processes");
-    if (data.auditHistory.remediationStatus !== 'COMPLETE') recommendations.push("Prioritize completion of outstanding remediations");
+    if (compliance < 95) {recommendations.push('Implement comprehensive control remediation program');}
+    if (!data.financialControls.segregationOfDuties) {recommendations.push('Establish clear segregation of duties policies');}
+    if (!data.itControls.changeManagement) {recommendations.push('Implement formal IT change management processes');}
+    if (data.auditHistory.remediationStatus !== 'COMPLETE') {recommendations.push('Prioritize completion of outstanding remediations');}
     
     return recommendations;
   }
 
   private static determineCertificationStatus(compliance: number, materialWeaknesses: number): 'COMPLIANT' | 'NON_COMPLIANT' | 'NEEDS_REVIEW' {
-    if (materialWeaknesses > 0) return 'NON_COMPLIANT';
-    if (compliance >= 95) return 'COMPLIANT';
+    if (materialWeaknesses > 0) {return 'NON_COMPLIANT';}
+    if (compliance >= 95) {return 'COMPLIANT';}
     return 'NEEDS_REVIEW';
   }
 }
@@ -300,10 +300,10 @@ export class GDPRComplianceEngine {
   private static calculateBreachRisk(data: GDPRComplianceData): number {
     let riskScore = 0;
     
-    if (!data.dataProtection.dataEncryption) riskScore += 30;
-    if (!data.dataProtection.accessControls) riskScore += 25;
-    if (!data.governance.breachNotificationProcess) riskScore += 20;
-    if (!data.dataProtection.retentionPolicies) riskScore += 15;
+    if (!data.dataProtection.dataEncryption) {riskScore += 30;}
+    if (!data.dataProtection.accessControls) {riskScore += 25;}
+    if (!data.governance.breachNotificationProcess) {riskScore += 20;}
+    if (!data.dataProtection.retentionPolicies) {riskScore += 15;}
     
     return riskScore;
   }
@@ -317,10 +317,10 @@ export class GDPRComplianceEngine {
   private static identifyViolations(data: GDPRComplianceData): string[] {
     const violations: string[] = [];
     
-    if (!data.dataProcessing.lawfulBasisDocumented) violations.push("Article 6: Lack of lawful basis documentation");
-    if (!data.dataProcessing.consentManagement) violations.push("Article 7: Inadequate consent management");
-    if (!data.dataProtection.privacyByDesign) violations.push("Article 25: Privacy by design not implemented");
-    if (!data.governance.dpoAppointed) violations.push("Article 37: Data Protection Officer not appointed");
+    if (!data.dataProcessing.lawfulBasisDocumented) {violations.push('Article 6: Lack of lawful basis documentation');}
+    if (!data.dataProcessing.consentManagement) {violations.push('Article 7: Inadequate consent management');}
+    if (!data.dataProtection.privacyByDesign) {violations.push('Article 25: Privacy by design not implemented');}
+    if (!data.governance.dpoAppointed) {violations.push('Article 37: Data Protection Officer not appointed');}
     
     return violations;
   }
@@ -328,17 +328,17 @@ export class GDPRComplianceEngine {
   private static generateGDPRRecommendations(data: GDPRComplianceData, violations: string[]): string[] {
     const recommendations: string[] = [];
     
-    if (violations.length > 0) recommendations.push("Immediately address identified GDPR violations");
-    if (!data.dataProtection.dataEncryption) recommendations.push("Implement comprehensive data encryption");
-    if (!data.governance.privacyImpactAssessments) recommendations.push("Establish Privacy Impact Assessment procedures");
-    if (!data.dataSubjectRights.accessRights) recommendations.push("Implement data subject access rights procedures");
+    if (violations.length > 0) {recommendations.push('Immediately address identified GDPR violations');}
+    if (!data.dataProtection.dataEncryption) {recommendations.push('Implement comprehensive data encryption');}
+    if (!data.governance.privacyImpactAssessments) {recommendations.push('Establish Privacy Impact Assessment procedures');}
+    if (!data.dataSubjectRights.accessRights) {recommendations.push('Implement data subject access rights procedures');}
     
     return recommendations;
   }
 
   private static determineCertificationStatus(compliance: number, violations: number): 'COMPLIANT' | 'NON_COMPLIANT' | 'NEEDS_REVIEW' {
-    if (violations > 0) return 'NON_COMPLIANT';
-    if (compliance >= 90) return 'COMPLIANT';
+    if (violations > 0) {return 'NON_COMPLIANT';}
+    if (compliance >= 90) {return 'COMPLIANT';}
     return 'NEEDS_REVIEW';
   }
 }
@@ -425,9 +425,9 @@ export class Basel3ComplianceEngine {
     const tier1Ratio = (data.capitalRatios.tier1Capital / data.capitalRatios.riskWeightedAssets) * 100;
     const totalCapitalRatio = (data.capitalRatios.totalCapital / data.capitalRatios.riskWeightedAssets) * 100;
     
-    let complianceStatus = "COMPLIANT";
+    let complianceStatus = 'COMPLIANT';
     if (cet1Ratio < 4.5 || tier1Ratio < 6 || totalCapitalRatio < 8 || data.leverageRatio < 3) {
-      complianceStatus = "NON_COMPLIANT";
+      complianceStatus = 'NON_COMPLIANT';
     }
     
     return {
@@ -444,8 +444,8 @@ export class Basel3ComplianceEngine {
     const nsfrCompliance = data.liquidityMetrics.netStableFundingRatio >= 100;
     
     let liquidityScore = 0;
-    if (lcrCompliance) liquidityScore += 50;
-    if (nsfrCompliance) liquidityScore += 50;
+    if (lcrCompliance) {liquidityScore += 50;}
+    if (nsfrCompliance) {liquidityScore += 50;}
     
     return {
       lcrCompliance,
@@ -470,27 +470,27 @@ export class Basel3ComplianceEngine {
   private static calculateOverallCompliance(capital: any, liquidity: any, buffers: any, stressTest: boolean): number {
     let score = 0;
     
-    if (capital.complianceStatus === "COMPLIANT") score += 40;
-    if (liquidity.lcrCompliance && liquidity.nsfrCompliance) score += 30;
-    if (buffers.conservationBufferMet && buffers.countercyclicalBufferMet && buffers.systemicBufferMet) score += 20;
-    if (stressTest) score += 10;
+    if (capital.complianceStatus === 'COMPLIANT') {score += 40;}
+    if (liquidity.lcrCompliance && liquidity.nsfrCompliance) {score += 30;}
+    if (buffers.conservationBufferMet && buffers.countercyclicalBufferMet && buffers.systemicBufferMet) {score += 20;}
+    if (stressTest) {score += 10;}
     
     return score;
   }
 
   private static determineRiskLevel(compliance: number, data: Basel3ComplianceData): 'LOW' | 'MEDIUM' | 'HIGH' {
-    if (compliance >= 90) return 'LOW';
-    if (compliance >= 70) return 'MEDIUM';
+    if (compliance >= 90) {return 'LOW';}
+    if (compliance >= 70) {return 'MEDIUM';}
     return 'HIGH';
   }
 
   private static generateBasel3Recommendations(data: Basel3ComplianceData, capital: any, liquidity: any): string[] {
     const recommendations: string[] = [];
     
-    if (capital.cet1Ratio < 7) recommendations.push("Increase Common Equity Tier 1 capital to exceed regulatory minimums plus buffers");
-    if (!liquidity.lcrCompliance) recommendations.push("Improve Liquidity Coverage Ratio to meet 100% minimum requirement");
-    if (!liquidity.nsfrCompliance) recommendations.push("Enhance Net Stable Funding Ratio to meet regulatory standards");
-    if (data.leverageRatio < 4) recommendations.push("Strengthen leverage ratio to provide additional buffer above minimum");
+    if (capital.cet1Ratio < 7) {recommendations.push('Increase Common Equity Tier 1 capital to exceed regulatory minimums plus buffers');}
+    if (!liquidity.lcrCompliance) {recommendations.push('Improve Liquidity Coverage Ratio to meet 100% minimum requirement');}
+    if (!liquidity.nsfrCompliance) {recommendations.push('Enhance Net Stable Funding Ratio to meet regulatory standards');}
+    if (data.leverageRatio < 4) {recommendations.push('Strengthen leverage ratio to provide additional buffer above minimum');}
     
     return recommendations;
   }
@@ -503,22 +503,22 @@ export class UnifiedRegulatoryComplianceEngine {
    */
   static comprehensiveComplianceAssessment(industry: string, complianceData: any): StandardResponse<any> {
     try {
-      let results: any = {};
+      const results: any = {};
       
       // Industry-specific compliance assessments
       switch (industry.toLowerCase()) {
         case 'financial':
         case 'banking':
-          if (complianceData.sox) results.soxCompliance = SOXComplianceEngine.assessSOXCompliance(complianceData.sox);
-          if (complianceData.basel3) results.basel3Compliance = Basel3ComplianceEngine.assessBasel3Compliance(complianceData.basel3);
-          if (complianceData.gdpr) results.gdprCompliance = GDPRComplianceEngine.assessGDPRCompliance(complianceData.gdpr);
+          if (complianceData.sox) {results.soxCompliance = SOXComplianceEngine.assessSOXCompliance(complianceData.sox);}
+          if (complianceData.basel3) {results.basel3Compliance = Basel3ComplianceEngine.assessBasel3Compliance(complianceData.basel3);}
+          if (complianceData.gdpr) {results.gdprCompliance = GDPRComplianceEngine.assessGDPRCompliance(complianceData.gdpr);}
           break;
         case 'public':
-          if (complianceData.sox) results.soxCompliance = SOXComplianceEngine.assessSOXCompliance(complianceData.sox);
-          if (complianceData.gdpr) results.gdprCompliance = GDPRComplianceEngine.assessGDPRCompliance(complianceData.gdpr);
+          if (complianceData.sox) {results.soxCompliance = SOXComplianceEngine.assessSOXCompliance(complianceData.sox);}
+          if (complianceData.gdpr) {results.gdprCompliance = GDPRComplianceEngine.assessGDPRCompliance(complianceData.gdpr);}
           break;
         default:
-          if (complianceData.gdpr) results.gdprCompliance = GDPRComplianceEngine.assessGDPRCompliance(complianceData.gdpr);
+          if (complianceData.gdpr) {results.gdprCompliance = GDPRComplianceEngine.assessGDPRCompliance(complianceData.gdpr);}
       }
       
       // Calculate aggregate compliance score
@@ -553,9 +553,9 @@ export class UnifiedRegulatoryComplianceEngine {
   private static calculateAggregateCompliance(results: any): number {
     const scores: number[] = [];
     
-    if (results.soxCompliance) scores.push(results.soxCompliance.overallCompliance);
-    if (results.gdprCompliance) scores.push(results.gdprCompliance.overallCompliance);
-    if (results.basel3Compliance) scores.push(results.basel3Compliance.overallCompliance);
+    if (results.soxCompliance) {scores.push(results.soxCompliance.overallCompliance);}
+    if (results.gdprCompliance) {scores.push(results.gdprCompliance.overallCompliance);}
+    if (results.basel3Compliance) {scores.push(results.basel3Compliance.overallCompliance);}
     
     return scores.length > 0 ? scores.reduce((a, b) => a + b, 0) / scores.length : 0;
   }
@@ -566,23 +566,23 @@ export class UnifiedRegulatoryComplianceEngine {
     
     if (results.soxCompliance) {
       totalAssessments++;
-      if (results.soxCompliance.certificationStatus === 'NON_COMPLIANT') highRiskCount++;
+      if (results.soxCompliance.certificationStatus === 'NON_COMPLIANT') {highRiskCount++;}
     }
     
     if (results.gdprCompliance) {
       totalAssessments++;
-      if (results.gdprCompliance.certificationStatus === 'NON_COMPLIANT') highRiskCount++;
+      if (results.gdprCompliance.certificationStatus === 'NON_COMPLIANT') {highRiskCount++;}
     }
     
     if (results.basel3Compliance) {
       totalAssessments++;
-      if (results.basel3Compliance.riskLevel === 'HIGH') highRiskCount++;
+      if (results.basel3Compliance.riskLevel === 'HIGH') {highRiskCount++;}
     }
     
     const riskPercentage = totalAssessments > 0 ? (highRiskCount / totalAssessments) * 100 : 0;
     
-    if (riskPercentage >= 50) return 'HIGH';
-    if (riskPercentage >= 25) return 'MEDIUM';
+    if (riskPercentage >= 50) {return 'HIGH';}
+    if (riskPercentage >= 25) {return 'MEDIUM';}
     return 'LOW';
   }
 
@@ -591,15 +591,15 @@ export class UnifiedRegulatoryComplianceEngine {
     
     // Prioritize critical compliance issues
     if (results.soxCompliance?.certificationStatus === 'NON_COMPLIANT') {
-      recommendations.push("CRITICAL: Address SOX compliance violations immediately");
+      recommendations.push('CRITICAL: Address SOX compliance violations immediately');
     }
     
     if (results.gdprCompliance?.violations?.length > 0) {
-      recommendations.push("URGENT: Remediate GDPR violations to avoid significant fines");
+      recommendations.push('URGENT: Remediate GDPR violations to avoid significant fines');
     }
     
     if (results.basel3Compliance?.riskLevel === 'HIGH') {
-      recommendations.push("HIGH PRIORITY: Strengthen capital and liquidity positions");
+      recommendations.push('HIGH PRIORITY: Strengthen capital and liquidity positions');
     }
     
     return recommendations;

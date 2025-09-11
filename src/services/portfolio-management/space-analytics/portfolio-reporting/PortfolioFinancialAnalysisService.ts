@@ -685,7 +685,7 @@ export class PortfolioFinancialAnalysisService {
   }
 
   private calculateYearsSinceAcquisition(purchaseDate: Date | null): number {
-    if (!purchaseDate) return 0;
+    if (!purchaseDate) {return 0;}
     const now = new Date();
     const diff = now.getTime() - purchaseDate.getTime();
     return diff / (1000 * 60 * 60 * 24 * 365.25);

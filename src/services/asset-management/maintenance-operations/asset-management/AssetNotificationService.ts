@@ -180,7 +180,7 @@ export class AssetNotificationService extends EventEmitter {
         }
       });
 
-      if (!asset) return;
+      if (!asset) {return;}
 
       const notificationData = {
         assetId,
@@ -240,7 +240,7 @@ export class AssetNotificationService extends EventEmitter {
         }
       });
 
-      if (!asset) return;
+      if (!asset) {return;}
 
       const notificationData = {
         assetId,

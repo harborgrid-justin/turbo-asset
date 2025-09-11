@@ -880,10 +880,10 @@ export class LeaseManagementService {
   }
 
   private determineAmendmentType(updates: any): string {
-    if (updates.baseLease || updates.percentage) return 'RENT_CHANGE';
-    if (updates.endDate) return 'TERM_EXTENSION';
-    if (updates.leasableArea || updates.usableArea) return 'SPACE_MODIFICATION';
-    if (updates.useType) return 'USE_CHANGE';
+    if (updates.baseLease || updates.percentage) {return 'RENT_CHANGE';}
+    if (updates.endDate) {return 'TERM_EXTENSION';}
+    if (updates.leasableArea || updates.usableArea) {return 'SPACE_MODIFICATION';}
+    if (updates.useType) {return 'USE_CHANGE';}
     return 'OTHER';
   }
 

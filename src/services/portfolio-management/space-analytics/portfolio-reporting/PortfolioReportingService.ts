@@ -436,8 +436,8 @@ export class PortfolioReportingService {
 
       if (filters?.startDate || filters?.endDate) {
         whereClause.generatedAt = {};
-        if (filters.startDate) whereClause.generatedAt.gte = filters.startDate;
-        if (filters.endDate) whereClause.generatedAt.lte = filters.endDate;
+        if (filters.startDate) {whereClause.generatedAt.gte = filters.startDate;}
+        if (filters.endDate) {whereClause.generatedAt.lte = filters.endDate;}
       }
 
       const reports = await prisma.portfolioReport.findMany({
@@ -622,7 +622,7 @@ export class PortfolioReportingService {
 
   private calculateRenewalProbability(lease: any): number {
     // Calculate probability of lease renewal based on various factors
-    let probability = 0.5; // Base probability
+    const probability = 0.5; // Base probability
     
     // Adjust based on lease history, tenant credit rating, market conditions, etc.
     

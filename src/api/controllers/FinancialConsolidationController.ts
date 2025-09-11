@@ -1,6 +1,6 @@
 import { Router, Request, Response } from 'express';
-import { FinancialConsolidationService } from '../services/FinancialConsolidationService';
-import { logger } from '../config/logger';
+import { FinancialConsolidationService } from '../../services/FinancialConsolidationService';
+import { logger } from '../../config/logger';
 
 const router = Router();
 const financialConsolidationService = new FinancialConsolidationService();

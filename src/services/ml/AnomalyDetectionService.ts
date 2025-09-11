@@ -391,7 +391,7 @@ export class AnomalyDetectionService extends EventEmitter {
   private async analyzeEnergyData(buildingData: any, realTime: boolean): Promise<Anomaly[]> {
     const anomalies: Anomaly[] = [];
     
-    if (!this.energyAnomalyModel) return anomalies;
+    if (!this.energyAnomalyModel) {return anomalies;}
 
     for (const dataPoint of buildingData.readings) {
       const features = this.prepareEnergyFeatures(dataPoint, buildingData);
@@ -421,7 +421,7 @@ export class AnomalyDetectionService extends EventEmitter {
   private async analyzeUtilizationData(spaceData: any, realTime: boolean): Promise<Anomaly[]> {
     const anomalies: Anomaly[] = [];
     
-    if (!this.utilizationAnomalyModel) return anomalies;
+    if (!this.utilizationAnomalyModel) {return anomalies;}
 
     for (const dataPoint of spaceData.utilizationReadings) {
       const features = this.prepareUtilizationFeatures(dataPoint, spaceData);
@@ -648,17 +648,17 @@ export class AnomalyDetectionService extends EventEmitter {
 
   private determineEnergySeverity(dataPoint: any, prediction: any): AnomalySeverity {
     const score = prediction.prediction.anomalyScore || 0;
-    if (score > 0.9) return 'CRITICAL';
-    if (score > 0.7) return 'HIGH';
-    if (score > 0.5) return 'MEDIUM';
+    if (score > 0.9) {return 'CRITICAL';}
+    if (score > 0.7) {return 'HIGH';}
+    if (score > 0.5) {return 'MEDIUM';}
     return 'LOW';
   }
 
   private determineUtilizationSeverity(dataPoint: any, prediction: any): AnomalySeverity {
     const score = prediction.prediction.anomalyScore || 0;
-    if (score > 0.85) return 'CRITICAL';
-    if (score > 0.65) return 'HIGH';
-    if (score > 0.45) return 'MEDIUM';
+    if (score > 0.85) {return 'CRITICAL';}
+    if (score > 0.65) {return 'HIGH';}
+    if (score > 0.45) {return 'MEDIUM';}
     return 'LOW';
   }
 
@@ -675,9 +675,9 @@ export class AnomalyDetectionService extends EventEmitter {
   }
 
   private inferEnergyRootCause(dataPoint: any, buildingData: any, prediction: any): string | undefined {
-    if (dataPoint.equipmentStatus !== 'NORMAL') return 'Equipment malfunction detected';
-    if (dataPoint.occupancy > buildingData.avgOccupancy * 1.5) return 'Unusually high occupancy';
-    if (Math.abs(dataPoint.temperature - buildingData.avgTemperature) > 5) return 'Extreme temperature variation';
+    if (dataPoint.equipmentStatus !== 'NORMAL') {return 'Equipment malfunction detected';}
+    if (dataPoint.occupancy > buildingData.avgOccupancy * 1.5) {return 'Unusually high occupancy';}
+    if (Math.abs(dataPoint.temperature - buildingData.avgTemperature) > 5) {return 'Extreme temperature variation';}
     return 'Unknown cause - requires investigation';
   }
 

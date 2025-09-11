@@ -510,7 +510,7 @@ export class EnergyManagementService extends EventEmitter {
   }
 
   private determineTrendDirection(metricName: string, percentageChange: number | null): string {
-    if (!percentageChange) return 'STABLE';
+    if (!percentageChange) {return 'STABLE';}
     
     // For energy/emissions metrics, lower is better
     if (metricName.includes('energy') || metricName.includes('emission') || metricName.includes('carbon')) {

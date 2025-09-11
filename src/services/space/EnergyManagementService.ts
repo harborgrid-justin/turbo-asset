@@ -770,13 +770,13 @@ export class EnergyManagementService {
         select: { consumption: true },
       });
 
-      if (historicalReadings.length < 5) return false; // Not enough history
+      if (historicalReadings.length < 5) {return false;} // Not enough history
 
       const consumptions = historicalReadings
         .map(r => r.consumption || 0)
         .filter(c => c > 0);
 
-      if (consumptions.length === 0) return false;
+      if (consumptions.length === 0) {return false;}
 
       // Calculate mean and standard deviation
       const mean = consumptions.reduce((sum, c) => sum + c, 0) / consumptions.length;

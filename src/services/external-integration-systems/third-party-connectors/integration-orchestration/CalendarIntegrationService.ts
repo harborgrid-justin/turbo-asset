@@ -169,7 +169,7 @@ export class CalendarIntegrationService extends EventEmitter {
     try {
       const cacheKey = providerName || 'all';
       const cached = this.calendarsCache.get(cacheKey);
-      if (cached) return cached;
+      if (cached) {return cached;}
 
       const calendars: Calendar[] = [];
       const providersToQuery = providerName 
@@ -208,7 +208,7 @@ export class CalendarIntegrationService extends EventEmitter {
     try {
       const cacheKey = `events_${calendarId}_${startDate.toISOString()}_${endDate.toISOString()}`;
       const cached = this.eventsCache.get(cacheKey);
-      if (cached) return cached;
+      if (cached) {return cached;}
 
       const provider = providerName 
         ? this.providers.get(providerName)
@@ -742,7 +742,7 @@ export class CalendarIntegrationService extends EventEmitter {
 
   private async storeProviderConfig(provider: CalendarProvider): Promise<void> {
     try {
-      if (!this.context?.organizationId) return;
+      if (!this.context?.organizationId) {return;}
 
       await prisma.calendarProvider.upsert({
         where: {
@@ -770,7 +770,7 @@ export class CalendarIntegrationService extends EventEmitter {
 
   private async updateCalendarSyncTime(calendarId: string): Promise<void> {
     try {
-      if (!this.context?.organizationId) return;
+      if (!this.context?.organizationId) {return;}
 
       await prisma.calendarSyncStatus.upsert({
         where: {

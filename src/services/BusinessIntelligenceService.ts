@@ -503,7 +503,7 @@ export class BusinessIntelligenceService {
    * Apply aggregations to data
    */
   private applyAggregations(data: any[], chartConfig: ChartConfiguration): any[] {
-    if (!chartConfig.xAxis?.field) return data;
+    if (!chartConfig.xAxis?.field) {return data;}
 
     const groupedData = data.reduce((acc, row) => {
       const key = row[chartConfig.xAxis.field];
@@ -819,7 +819,7 @@ export class BusinessIntelligenceService {
    * Export to CSV format
    */
   private exportToCSV(data: any[]): Buffer {
-    if (!data.length) return Buffer.from('');
+    if (!data.length) {return Buffer.from('');}
 
     const headers = Object.keys(data[0]);
     const csvContent = [

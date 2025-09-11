@@ -701,7 +701,7 @@ export class NotificationService extends EventEmitter {
    * Initialize WebSocket handlers
    */
   private initializeSocketHandlers(): void {
-    if (!this.socketServer) return;
+    if (!this.socketServer) {return;}
 
     this.socketServer.on('connection', (socket: any) => {
       socket.on('authenticate', async (data: { userId: string; token: string }) => {

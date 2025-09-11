@@ -100,7 +100,7 @@ export const EnhancedBusinessLogicDashboard: React.FC = () => {
   const fetchDashboardData = async () => {
     try {
       const response = await fetch('/api/enhanced-business-logic-integration/dashboard');
-      if (!response.ok) throw new Error('Failed to fetch dashboard data');
+      if (!response.ok) {throw new Error('Failed to fetch dashboard data');}
       
       const result = await response.json();
       if (result.success) {
@@ -118,7 +118,7 @@ export const EnhancedBusinessLogicDashboard: React.FC = () => {
   const fetchServiceBridges = async () => {
     try {
       const response = await fetch('/api/enhanced-business-logic-integration/bridges');
-      if (!response.ok) throw new Error('Failed to fetch service bridges');
+      if (!response.ok) {throw new Error('Failed to fetch service bridges');}
       
       const result = await response.json();
       if (result.success) {
@@ -147,7 +147,7 @@ export const EnhancedBusinessLogicDashboard: React.FC = () => {
 
   // Auto-refresh setup
   useEffect(() => {
-    if (!autoRefresh) return;
+    if (!autoRefresh) {return;}
 
     const interval = setInterval(() => {
       fetchDashboardData();

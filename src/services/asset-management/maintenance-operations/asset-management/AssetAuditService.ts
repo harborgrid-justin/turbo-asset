@@ -494,8 +494,8 @@ export class AssetAuditService {
 
       if (startDate || endDate) {
         whereClause.timestamp = {};
-        if (startDate) whereClause.timestamp.gte = startDate;
-        if (endDate) whereClause.timestamp.lte = endDate;
+        if (startDate) {whereClause.timestamp.gte = startDate;}
+        if (endDate) {whereClause.timestamp.lte = endDate;}
       }
 
       if (actions && actions.length > 0) {
@@ -682,8 +682,8 @@ export class AssetAuditService {
 
       if (filters.startDate || filters.endDate) {
         whereClause.timestamp = {};
-        if (filters.startDate) whereClause.timestamp.gte = filters.startDate;
-        if (filters.endDate) whereClause.timestamp.lte = filters.endDate;
+        if (filters.startDate) {whereClause.timestamp.gte = filters.startDate;}
+        if (filters.endDate) {whereClause.timestamp.lte = filters.endDate;}
       }
 
       if (filters.searchTerm) {

@@ -256,7 +256,7 @@ export class RecommendationEngineService extends EventEmitter {
       const enhancedRecommendations = [];
 
       for (const recommendation of mlRecommendations) {
-        let enhancedRecommendation = { ...recommendation };
+        const enhancedRecommendation = { ...recommendation };
 
         // Add risk assessment if requested
         if (includeRiskAssessment) {
@@ -392,7 +392,7 @@ export class RecommendationEngineService extends EventEmitter {
       const enhancedRecommendations = [];
 
       for (const recommendation of mlRecommendations) {
-        let enhancedRecommendation = { ...recommendation };
+        const enhancedRecommendation = { ...recommendation };
 
         // Add market comparisons if requested
         if (includeMktComparisons) {
@@ -1347,7 +1347,7 @@ export class RecommendationEngineService extends EventEmitter {
     const marketData = this.marketData.get(serviceCategory);
     const vendor = this.vendorDatabase.get(vendorId);
     
-    if (!marketData || !vendor) return 0.5;
+    if (!marketData || !vendor) {return 0.5;}
     
     // Simple market position calculation based on size and reputation
     const sizeScore = Math.min(1, (vendor.employeeCount || 50) / 200);
@@ -1392,7 +1392,7 @@ export class RecommendationEngineService extends EventEmitter {
 
   private calculateValueForMoney(vendorId: string, estimatedCost: number): number {
     const performance = this.performanceMetrics.get(vendorId);
-    if (!performance) return 0.5;
+    if (!performance) {return 0.5;}
     
     const qualityScore = performance.qualityScore / 10;
     const reliabilityScore = performance.onTimePerformance;
@@ -1421,9 +1421,9 @@ export class RecommendationEngineService extends EventEmitter {
   private assessLeaseFlexibility(lease: any): number {
     let flexibility = 0.5;
     
-    if (lease.renewalOptions?.length > 0) flexibility += 0.2;
-    if (lease.sublettingAllowed) flexibility += 0.15;
-    if (lease.expansionRights) flexibility += 0.15;
+    if (lease.renewalOptions?.length > 0) {flexibility += 0.2;}
+    if (lease.sublettingAllowed) {flexibility += 0.15;}
+    if (lease.expansionRights) {flexibility += 0.15;}
     
     return Math.min(1, flexibility);
   }

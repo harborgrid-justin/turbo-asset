@@ -253,7 +253,7 @@ export class NAPIServiceRegistry {
     errorCode?: string
   ): void {
     const config = this.configs.get(serviceName);
-    if (!config?.enableMetrics) return;
+    if (!config?.enableMetrics) {return;}
 
     const metric: ModuleMetrics = {
       moduleId: serviceName,

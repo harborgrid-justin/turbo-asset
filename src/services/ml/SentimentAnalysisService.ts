@@ -900,14 +900,14 @@ export class SentimentAnalysisService extends EventEmitter {
    * Private: Trend analysis methods
    */
   private calculateOverallTrend(feedbackData: EmployeeFeedbackAnalysis[]): TrendDirection {
-    if (feedbackData.length < 2) return 'STABLE';
+    if (feedbackData.length < 2) {return 'STABLE';}
 
     // Sort by timestamp
     const sorted = feedbackData.sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime());
     
     // Calculate moving averages for trend detection
     const windowSize = Math.min(7, Math.floor(sorted.length / 4));
-    if (windowSize < 2) return 'STABLE';
+    if (windowSize < 2) {return 'STABLE';}
 
     const recentAvg = this.calculateMovingAverage(
       sorted.slice(-windowSize).map(f => f.sentiment.overall.score)
@@ -919,9 +919,9 @@ export class SentimentAnalysisService extends EventEmitter {
 
     const change = (recentAvg - earlierAvg) / Math.abs(earlierAvg);
     
-    if (change > 0.1) return 'IMPROVING';
-    if (change < -0.1) return 'DECLINING';
-    if (Math.abs(change) > 0.2) return 'VOLATILE';
+    if (change > 0.1) {return 'IMPROVING';}
+    if (change < -0.1) {return 'DECLINING';}
+    if (Math.abs(change) > 0.2) {return 'VOLATILE';}
     return 'STABLE';
   }
 
@@ -984,7 +984,7 @@ export class SentimentAnalysisService extends EventEmitter {
   }
 
   private calculateSentimentChange(feedbackItems: EmployeeFeedbackAnalysis[]): number {
-    if (feedbackItems.length < 2) return 0;
+    if (feedbackItems.length < 2) {return 0;}
 
     const sorted = feedbackItems.sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime());
     const midPoint = Math.floor(sorted.length / 2);
@@ -1287,12 +1287,12 @@ export class SentimentAnalysisService extends EventEmitter {
   }
 
   private calculateAverageSentiment(feedbackItems: EmployeeFeedbackAnalysis[]): number {
-    if (feedbackItems.length === 0) return 0;
+    if (feedbackItems.length === 0) {return 0;}
     return feedbackItems.reduce((sum, f) => sum + f.sentiment.overall.score, 0) / feedbackItems.length;
   }
 
   private calculateVariation(values: number[]): number {
-    if (values.length < 2) return 0;
+    if (values.length < 2) {return 0;}
     const mean = values.reduce((sum, val) => sum + val, 0) / values.length;
     const variance = values.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / values.length;
     return Math.sqrt(variance);

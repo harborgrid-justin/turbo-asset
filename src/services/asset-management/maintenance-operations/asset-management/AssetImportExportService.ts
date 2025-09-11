@@ -397,9 +397,9 @@ export class AssetImportExportService {
     }
     
     // Set defaults for required fields if not provided
-    if (!assetData.status) assetData.status = 'OPERATIONAL';
-    if (!assetData.condition) assetData.condition = 'GOOD';
-    if (!assetData.criticality) assetData.criticality = 'MEDIUM';
+    if (!assetData.status) {assetData.status = 'OPERATIONAL';}
+    if (!assetData.condition) {assetData.condition = 'GOOD';}
+    if (!assetData.criticality) {assetData.criticality = 'MEDIUM';}
     
     return assetData;
   }
@@ -497,7 +497,7 @@ export class AssetImportExportService {
    * Generate CSV content from data
    */
   private generateCSVContent(data: any[]): string {
-    if (data.length === 0) return '';
+    if (data.length === 0) {return '';}
     
     const headers = Object.keys(data[0]);
     const csvRows = [headers.join(',')];
@@ -671,7 +671,7 @@ export class AssetImportExportService {
         if (value && seen.has(`${field}:${value}`)) {
           duplicates.push({ row: i + 1, field, value });
         }
-        if (value) seen.add(`${field}:${value}`);
+        if (value) {seen.add(`${field}:${value}`);}
       }
     }
     

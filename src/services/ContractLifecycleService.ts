@@ -972,7 +972,7 @@ export class ContractLifecycleService {
       where: { contractId }
     });
 
-    if (milestones.length === 0) return;
+    if (milestones.length === 0) {return;}
 
     const completedMilestones = milestones.filter(m => m.status === 'COMPLETED').length;
     const progressPercentage = (completedMilestones / milestones.length) * 100;

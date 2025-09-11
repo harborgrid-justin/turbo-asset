@@ -1326,7 +1326,7 @@ export class AdvancedForecastingService extends EventEmitter {
   }
 
   private calculateTrendStrength(values: number[]): number {
-    if (values.length < 2) return 0;
+    if (values.length < 2) {return 0;}
     
     const first = values[0];
     const last = values[values.length - 1];
@@ -1340,7 +1340,7 @@ export class AdvancedForecastingService extends EventEmitter {
     
     historicalData.forEach(point => {
       const month = point.date.getMonth();
-      if (!monthlyAvgs[month]) monthlyAvgs[month] = [];
+      if (!monthlyAvgs[month]) {monthlyAvgs[month] = [];}
       monthlyAvgs[month].push(point.value);
     });
     
@@ -1348,7 +1348,7 @@ export class AdvancedForecastingService extends EventEmitter {
       values.reduce((sum, val) => sum + val, 0) / values.length
     );
     
-    if (monthlyMeans.length < 2) return 0;
+    if (monthlyMeans.length < 2) {return 0;}
     
     const overallMean = monthlyMeans.reduce((sum, val) => sum + val, 0) / monthlyMeans.length;
     const variance = monthlyMeans.reduce((sum, val) => sum + Math.pow(val - overallMean, 2), 0) / monthlyMeans.length;
@@ -1357,7 +1357,7 @@ export class AdvancedForecastingService extends EventEmitter {
   }
 
   private calculateVolatility(values: number[]): number {
-    if (values.length < 2) return 0;
+    if (values.length < 2) {return 0;}
     
     const returns = [];
     for (let i = 1; i < values.length; i++) {
@@ -1382,7 +1382,7 @@ export class AdvancedForecastingService extends EventEmitter {
   }
 
   private calculateGrowthRate(historicalData: any[]): number {
-    if (historicalData.length < 2) return 0;
+    if (historicalData.length < 2) {return 0;}
     
     const sorted = historicalData.sort((a, b) => a.date.getTime() - b.date.getTime());
     const first = sorted[0].amount;
@@ -1412,8 +1412,8 @@ export class AdvancedForecastingService extends EventEmitter {
   private calculateOverallRiskLevel(riskFactors: BudgetRiskFactor[]): 'LOW' | 'MEDIUM' | 'HIGH' {
     const totalRisk = riskFactors.reduce((sum, factor) => sum + factor.probability * factor.impact, 0);
     
-    if (totalRisk < 10000) return 'LOW';
-    if (totalRisk < 50000) return 'MEDIUM';
+    if (totalRisk < 10000) {return 'LOW';}
+    if (totalRisk < 50000) {return 'MEDIUM';}
     return 'HIGH';
   }
 

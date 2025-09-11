@@ -752,12 +752,12 @@ export class APIManagementService extends EventEmitter {
   }
 
   private calculateAverage(numbers: number[]): number {
-    if (numbers.length === 0) return 0;
+    if (numbers.length === 0) {return 0;}
     return numbers.reduce((sum, num) => sum + num, 0) / numbers.length;
   }
 
   private calculatePercentile(numbers: number[], percentile: number): number {
-    if (numbers.length === 0) return 0;
+    if (numbers.length === 0) {return 0;}
     const sorted = numbers.sort((a, b) => a - b);
     const index = Math.ceil((percentile / 100) * sorted.length) - 1;
     return sorted[index] || 0;
@@ -815,7 +815,7 @@ export class APIManagementService extends EventEmitter {
 
   private calculateErrorRates(records: any[]): Record<string, number> {
     const total = records.length;
-    if (total === 0) return {};
+    if (total === 0) {return {};}
 
     const errorCounts = records.reduce((acc, record) => {
       if (record.statusCode >= 400) {

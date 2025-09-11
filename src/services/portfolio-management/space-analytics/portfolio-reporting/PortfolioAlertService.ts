@@ -87,8 +87,8 @@ export class PortfolioAlertService {
 
       if (filters?.startDate || filters?.endDate) {
         whereClause.createdAt = {};
-        if (filters.startDate) whereClause.createdAt.gte = filters.startDate;
-        if (filters.endDate) whereClause.createdAt.lte = filters.endDate;
+        if (filters.startDate) {whereClause.createdAt.gte = filters.startDate;}
+        if (filters.endDate) {whereClause.createdAt.lte = filters.endDate;}
       }
 
       const alerts = await prisma.portfolioAlert.findMany({
@@ -407,9 +407,9 @@ export class PortfolioAlertService {
         );
 
         let priority: AlertPriority = 'LOW';
-        if (daysToExpiration <= 30) priority = 'CRITICAL';
-        else if (daysToExpiration <= 60) priority = 'HIGH';
-        else priority = 'MEDIUM';
+        if (daysToExpiration <= 30) {priority = 'CRITICAL';}
+        else if (daysToExpiration <= 60) {priority = 'HIGH';}
+        else {priority = 'MEDIUM';}
 
         alerts.push({
           id: `lease_exp_${lease.id}`,

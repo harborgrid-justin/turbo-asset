@@ -204,7 +204,7 @@ export class WorkflowEngine {
     const roles = step.roles || [];
 
     // Get users by roles if specified
-    let allApprovers = [...approvers];
+    const allApprovers = [...approvers];
     if (roles.length > 0) {
       const usersByRole = await prisma.user.findMany({
         where: {
@@ -316,7 +316,7 @@ export class WorkflowEngine {
    * Calculate due date based on SLA
    */
   private calculateDueDate(step: WorkflowStep): Date | null {
-    if (!step.sla) return null;
+    if (!step.sla) {return null;}
 
     const now = new Date();
     const { duration, unit } = step.sla;

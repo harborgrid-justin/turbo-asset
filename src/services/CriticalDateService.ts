@@ -291,10 +291,10 @@ export class CriticalDateService {
         const latestAlert = cd.alerts[0];
         const escalationLevel = latestAlert?.escalationLevel || 0;
         
-        if (escalationLevel === 0) escalationStatistics.level0++;
-        else if (escalationLevel === 1) escalationStatistics.level1++;
-        else if (escalationLevel === 2) escalationStatistics.level2++;
-        else if (escalationLevel >= 3) escalationStatistics.level3Plus++;
+        if (escalationLevel === 0) {escalationStatistics.level0++;}
+        else if (escalationLevel === 1) {escalationStatistics.level1++;}
+        else if (escalationLevel === 2) {escalationStatistics.level2++;}
+        else if (escalationLevel >= 3) {escalationStatistics.level3Plus++;}
       });
 
       return {
@@ -759,15 +759,15 @@ export class CriticalDateService {
     switch (entityType) {
       case 'lease':
         const lease = await prisma.lease.findUnique({ where: { id: entityId } });
-        if (!lease) throw new Error('Lease not found');
+        if (!lease) {throw new Error('Lease not found');}
         break;
       case 'contract':
         const contract = await prisma.leaseContract.findUnique({ where: { id: entityId } });
-        if (!contract) throw new Error('Contract not found');
+        if (!contract) {throw new Error('Contract not found');}
         break;
       case 'property':
         const property = await prisma.property.findUnique({ where: { id: entityId } });
-        if (!property) throw new Error('Property not found');
+        if (!property) {throw new Error('Property not found');}
         break;
     }
   }

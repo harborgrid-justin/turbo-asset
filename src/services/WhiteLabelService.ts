@@ -747,11 +747,11 @@ export class WhiteLabelService extends EventEmitter {
   }
 
   private applyBrandingToTemplate(template: EmailTemplate, branding: any): EmailTemplate {
-    if (!branding) return template;
+    if (!branding) {return template;}
 
     // Apply branding to email template
     let htmlContent = template.htmlContent;
-    let textContent = template.textContent;
+    const textContent = template.textContent;
 
     // Replace branding placeholders
     htmlContent = htmlContent

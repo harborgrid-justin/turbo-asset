@@ -273,23 +273,23 @@ router.put('/leases/:leaseId', async (req: Request, res: Response) => {
     }
 
     // Convert date strings to Date objects
-    if (updates.startDate) updates.startDate = new Date(updates.startDate);
-    if (updates.endDate) updates.endDate = new Date(updates.endDate);
-    if (updates.expirationDate) updates.expirationDate = new Date(updates.expirationDate);
-    if (updates.commencement) updates.commencement = new Date(updates.commencement);
-    if (updates.rentCommencement) updates.rentCommencement = new Date(updates.rentCommencement);
-    if (updates.optionDeadline) updates.optionDeadline = new Date(updates.optionDeadline);
-    if (updates.renewalNotice) updates.renewalNotice = new Date(updates.renewalNotice);
+    if (updates.startDate) {updates.startDate = new Date(updates.startDate);}
+    if (updates.endDate) {updates.endDate = new Date(updates.endDate);}
+    if (updates.expirationDate) {updates.expirationDate = new Date(updates.expirationDate);}
+    if (updates.commencement) {updates.commencement = new Date(updates.commencement);}
+    if (updates.rentCommencement) {updates.rentCommencement = new Date(updates.rentCommencement);}
+    if (updates.optionDeadline) {updates.optionDeadline = new Date(updates.optionDeadline);}
+    if (updates.renewalNotice) {updates.renewalNotice = new Date(updates.renewalNotice);}
 
     // Convert numeric strings to numbers
-    if (updates.baseLease) updates.baseLease = parseFloat(updates.baseLease);
-    if (updates.percentage) updates.percentage = parseFloat(updates.percentage);
-    if (updates.securityDeposit) updates.securityDeposit = parseFloat(updates.securityDeposit);
-    if (updates.leasableArea) updates.leasableArea = parseFloat(updates.leasableArea);
-    if (updates.usableArea) updates.usableArea = parseFloat(updates.usableArea);
-    if (updates.capex) updates.capex = parseFloat(updates.capex);
-    if (updates.personalProperty) updates.personalProperty = parseFloat(updates.personalProperty);
-    if (updates.originalTerm) updates.originalTerm = parseInt(updates.originalTerm);
+    if (updates.baseLease) {updates.baseLease = parseFloat(updates.baseLease);}
+    if (updates.percentage) {updates.percentage = parseFloat(updates.percentage);}
+    if (updates.securityDeposit) {updates.securityDeposit = parseFloat(updates.securityDeposit);}
+    if (updates.leasableArea) {updates.leasableArea = parseFloat(updates.leasableArea);}
+    if (updates.usableArea) {updates.usableArea = parseFloat(updates.usableArea);}
+    if (updates.capex) {updates.capex = parseFloat(updates.capex);}
+    if (updates.personalProperty) {updates.personalProperty = parseFloat(updates.personalProperty);}
+    if (updates.originalTerm) {updates.originalTerm = parseInt(updates.originalTerm);}
 
     const updatedLease = await leaseManagementService.updateLease(leaseId, updates, amendmentReason);
 

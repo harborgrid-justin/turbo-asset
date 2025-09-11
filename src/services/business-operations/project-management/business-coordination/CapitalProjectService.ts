@@ -107,7 +107,7 @@ export class CapitalProjectService extends EventEmitter implements ICapitalProje
 
   async getProject(id: string): Promise<CapitalProject | null> {
     const cached = this.cache.get(id);
-    if (cached) return cached;
+    if (cached) {return cached;}
     
     const project = await this.loadProject(id);
     if (project) {
@@ -229,9 +229,9 @@ export class CapitalProjectService extends EventEmitter implements ICapitalProje
 
   // Helper methods
   private validateProjectData(data: Partial<CapitalProject>): void {
-    if (!data.projectName) throw new Error('Project name is required');
-    if (!data.plannedStartDate || !data.plannedEndDate) throw new Error('Start and end dates are required');
-    if (!data.projectManager) throw new Error('Project manager is required');
+    if (!data.projectName) {throw new Error('Project name is required');}
+    if (!data.plannedStartDate || !data.plannedEndDate) {throw new Error('Start and end dates are required');}
+    if (!data.projectManager) {throw new Error('Project manager is required');}
   }
 
   private async generateProjectNumber(): Promise<string> {
@@ -290,7 +290,7 @@ export class CapitalProjectService extends EventEmitter implements ICapitalProje
   async generateProjectAnalytics(projectId: string): Promise<any> {
     try {
       const project = await this.getProject(projectId);
-      if (!project) throw new Error('Project not found');
+      if (!project) {throw new Error('Project not found');}
 
       const analytics = {
         projectId,
@@ -428,7 +428,7 @@ export class CapitalProjectService extends EventEmitter implements ICapitalProje
   async generateProjectForecast(projectId: string): Promise<any> {
     try {
       const project = await this.getProject(projectId);
-      if (!project) throw new Error('Project not found');
+      if (!project) {throw new Error('Project not found');}
 
       const forecast = {
         projectId,
@@ -520,7 +520,7 @@ export class CapitalProjectService extends EventEmitter implements ICapitalProje
   async generateOptimizationRecommendations(projectId: string): Promise<any> {
     try {
       const project = await this.getProject(projectId);
-      if (!project) throw new Error('Project not found');
+      if (!project) {throw new Error('Project not found');}
 
       const recommendations = {
         projectId,
@@ -627,7 +627,7 @@ export class CapitalProjectService extends EventEmitter implements ICapitalProje
   // === DETAILED CALCULATION METHODS ===
 
   private calculateBudgetUtilization(project: CapitalProject): number {
-    if (!project.approvedBudget) return 0;
+    if (!project.approvedBudget) {return 0;}
     return ((project.actualCost || 0) / project.approvedBudget) * 100;
   }
 
@@ -934,9 +934,9 @@ export class CapitalProjectService extends EventEmitter implements ICapitalProje
   private assessContingencyRiskLevel(used: number, budgeted: number): string {
     const utilizationRate = budgeted > 0 ? (used / budgeted) * 100 : 0;
     
-    if (utilizationRate < 50) return 'LOW';
-    if (utilizationRate < 75) return 'MEDIUM';
-    if (utilizationRate < 90) return 'HIGH';
+    if (utilizationRate < 50) {return 'LOW';}
+    if (utilizationRate < 75) {return 'MEDIUM';}
+    if (utilizationRate < 90) {return 'HIGH';}
     return 'CRITICAL';
   }
 
@@ -954,7 +954,7 @@ export class CapitalProjectService extends EventEmitter implements ICapitalProje
 
   private calculateAverageMilestoneDelay(milestones: ProjectMilestone[]): number {
     const completedMilestones = milestones.filter(m => m.status === 'COMPLETED' && m.actualDate);
-    if (completedMilestones.length === 0) return 0;
+    if (completedMilestones.length === 0) {return 0;}
     
     const totalDelay = completedMilestones.reduce((sum, milestone) => {
       const planned = new Date(milestone.targetDate);
@@ -967,20 +967,20 @@ export class CapitalProjectService extends EventEmitter implements ICapitalProje
   }
 
   private isTaskOverdue(task: ProjectTask): boolean {
-    if (task.status === 'COMPLETED') return false;
+    if (task.status === 'COMPLETED') {return false;}
     const now = new Date();
     return now > new Date(task.plannedEndDate);
   }
 
   private calculateAverageTaskDuration(tasks: ProjectTask[]): number {
-    if (tasks.length === 0) return 0;
+    if (tasks.length === 0) {return 0;}
     const totalDuration = tasks.reduce((sum, task) => sum + task.duration, 0);
     return totalDuration / tasks.length;
   }
 
   private calculateTaskEfficiency(tasks: ProjectTask[]): number {
     const completedTasks = tasks.filter(t => t.status === 'COMPLETED');
-    if (completedTasks.length === 0) return 0;
+    if (completedTasks.length === 0) {return 0;}
     
     // Calculate efficiency based on planned vs actual duration
     return 85; // Simplified calculation

@@ -796,7 +796,7 @@ export class NLPService extends EventEmitter {
       return {
         level: 'HIGH',
         confidence: Math.min(0.8, highCount * 0.2 + 0.5),
-        reasoning: `High priority indicators detected`
+        reasoning: 'High priority indicators detected'
       };
     } else if (highCount > 0 || text.includes('?')) {
       return {
@@ -995,13 +995,13 @@ export class NLPService extends EventEmitter {
     
     // Length score (prefer medium length sentences)
     const words = sentence.split(/\s+/).length;
-    if (words >= 5 && words <= 20) score += 2;
-    else if (words > 20) score += 1;
+    if (words >= 5 && words <= 20) {score += 2;}
+    else if (words > 20) {score += 1;}
     
     // Keyword score
     const importantKeywords = ['problem', 'issue', 'need', 'help', 'urgent', 'broken', 'not working'];
     importantKeywords.forEach(keyword => {
-      if (sentence.toLowerCase().includes(keyword)) score += 3;
+      if (sentence.toLowerCase().includes(keyword)) {score += 3;}
     });
     
     // Position score (first and last sentences are often important)
@@ -1261,7 +1261,7 @@ export class NLPService extends EventEmitter {
     const seen = new Set<string>();
     return entities.filter(entity => {
       const key = `${entity.type}:${entity.value.toLowerCase()}`;
-      if (seen.has(key)) return false;
+      if (seen.has(key)) {return false;}
       seen.add(key);
       return true;
     });

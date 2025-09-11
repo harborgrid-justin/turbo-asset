@@ -357,7 +357,7 @@ export class Phase3IntegrationService extends EventEmitter {
     try {
       let processedData = sourceData;
       const errors: string[] = [];
-      let inputRecords = Array.isArray(sourceData) ? sourceData.length : 1;
+      const inputRecords = Array.isArray(sourceData) ? sourceData.length : 1;
 
       for (const rule of transformationRules) {
         try {
@@ -604,7 +604,7 @@ export class Phase3IntegrationService extends EventEmitter {
   }
 
   private async applyTransformation(transformation: IntegrationRule['transformation'], data: any): Promise<any> {
-    if (!transformation) return data;
+    if (!transformation) {return data;}
 
     try {
       switch (transformation.language) {
@@ -865,7 +865,7 @@ export class Phase3IntegrationService extends EventEmitter {
 
   // Data transformation methods
   private applyMapTransformation(data: any, config: any): any {
-    if (!Array.isArray(data)) return data;
+    if (!Array.isArray(data)) {return data;}
     
     return data.map(item => {
       const mapped: any = {};
@@ -877,25 +877,25 @@ export class Phase3IntegrationService extends EventEmitter {
   }
 
   private applyFilterTransformation(data: any, config: any): any {
-    if (!Array.isArray(data)) return data;
+    if (!Array.isArray(data)) {return data;}
     
     return data.filter(item => {
       for (const [key, expectedValue] of Object.entries(config.conditions || {})) {
-        if (item[key] !== expectedValue) return false;
+        if (item[key] !== expectedValue) {return false;}
       }
       return true;
     });
   }
 
   private applyAggregateTransformation(data: any, config: any): any {
-    if (!Array.isArray(data)) return data;
+    if (!Array.isArray(data)) {return data;}
     
     const grouped: Record<string, any[]> = {};
     const groupBy = config.groupBy;
     
     for (const item of data) {
       const key = item[groupBy] || 'default';
-      if (!grouped[key]) grouped[key] = [];
+      if (!grouped[key]) {grouped[key] = [];}
       grouped[key].push(item);
     }
     

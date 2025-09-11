@@ -674,7 +674,7 @@ export class PortfolioService {
       },
     });
 
-    if (utilizationData.length === 0) return 0;
+    if (utilizationData.length === 0) {return 0;}
     
     return utilizationData.reduce((sum, u) => sum + u.value, 0) / utilizationData.length;
   }

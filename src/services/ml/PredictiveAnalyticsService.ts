@@ -781,7 +781,7 @@ export class PredictiveAnalyticsService extends EventEmitter {
   }
 
   private calculateTrendFactor(historicalData: any[]): number {
-    if (historicalData.length < 2) return 1.0;
+    if (historicalData.length < 2) {return 1.0;}
     
     const recent = historicalData.slice(0, 10).map((d: any) => d.utilization);
     const older = historicalData.slice(-10).map((d: any) => d.utilization);
@@ -846,7 +846,7 @@ export class PredictiveAnalyticsService extends EventEmitter {
       recommendations.push({
         type: 'CONSOLIDATE',
         priority: 'HIGH',
-        description: `Space showing low utilization. Consider consolidating with adjacent spaces.`,
+        description: 'Space showing low utilization. Consider consolidating with adjacent spaces.',
         expectedSavings: optimizationPotential * 50, // $50 per sq ft saved annually
         implementationCost: optimizationPotential * 25,
         roi: 2.0,

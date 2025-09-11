@@ -1,9 +1,9 @@
 import { Router, Request, Response } from 'express';
-import { logger } from '../config/logger';
-import { PortfolioService } from '../services/PortfolioService';
-import { SpaceUtilizationService } from '../services/SpaceUtilizationService';
-import { MoveManagementService } from '../services/MoveManagementService';
-import { ChargebackService } from '../services/ChargebackService';
+import { logger } from '../../config/logger';
+import { PortfolioService } from '../../services/PortfolioService';
+import { SpaceUtilizationService } from '../../services/SpaceUtilizationService';
+import { MoveManagementService } from '../../services/MoveManagementService';
+import { ChargebackService } from '../../services/ChargebackService';
 
 const router = Router();
 const portfolioService = new PortfolioService();

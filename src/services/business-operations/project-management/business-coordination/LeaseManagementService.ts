@@ -100,7 +100,7 @@ export class LeaseManagementService extends EventEmitter implements ILeaseManage
   async getLease(id: string): Promise<Lease | null> {
     try {
       const cached = this.cache.get(id);
-      if (cached) return cached;
+      if (cached) {return cached;}
 
       const lease = await this.loadLease(id);
       if (lease) {
@@ -313,7 +313,7 @@ export class LeaseManagementService extends EventEmitter implements ILeaseManage
       }
 
       // Update rent if renewal has new rate
-      let updatedRentDetails = lease.rentDetails;
+      const updatedRentDetails = lease.rentDetails;
       if (renewalOption.rentValue) {
         const newScheduleEntry = {
           startDate: new Date(lease.endDate),
@@ -486,14 +486,14 @@ export class LeaseManagementService extends EventEmitter implements ILeaseManage
   // === PRIVATE HELPER METHODS ===
 
   private validateLeaseData(data: Partial<Lease>): void {
-    if (!data.propertyId) throw new Error('Property ID is required');
-    if (!data.leaseType) throw new Error('Lease type is required');
-    if (!data.startDate || !data.endDate) throw new Error('Start and end dates are required');
-    if (!data.rentableArea) throw new Error('Rentable area is required');
-    if (!data.usableArea) throw new Error('Usable area is required');
-    if (!data.rentDetails) throw new Error('Rent details are required');
-    if (!data.assignmentRights) throw new Error('Assignment rights are required');
-    if (!data.subleaseRights) throw new Error('Sublease rights are required');
+    if (!data.propertyId) {throw new Error('Property ID is required');}
+    if (!data.leaseType) {throw new Error('Lease type is required');}
+    if (!data.startDate || !data.endDate) {throw new Error('Start and end dates are required');}
+    if (!data.rentableArea) {throw new Error('Rentable area is required');}
+    if (!data.usableArea) {throw new Error('Usable area is required');}
+    if (!data.rentDetails) {throw new Error('Rent details are required');}
+    if (!data.assignmentRights) {throw new Error('Assignment rights are required');}
+    if (!data.subleaseRights) {throw new Error('Sublease rights are required');}
 
     if (new Date(data.endDate) <= new Date(data.startDate)) {
       throw new Error('End date must be after start date');
@@ -606,7 +606,7 @@ export class LeaseManagementService extends EventEmitter implements ILeaseManage
   async generateLeaseAnalytics(leaseId: string): Promise<any> {
     try {
       const lease = await this.getLease(leaseId);
-      if (!lease) throw new Error('Lease not found');
+      if (!lease) {throw new Error('Lease not found');}
 
       const analytics = {
         leaseId,
@@ -713,7 +713,7 @@ export class LeaseManagementService extends EventEmitter implements ILeaseManage
   async generateLeaseOptimization(leaseId: string): Promise<any> {
     try {
       const lease = await this.getLease(leaseId);
-      if (!lease) throw new Error('Lease not found');
+      if (!lease) {throw new Error('Lease not found');}
 
       const optimization = {
         leaseId,
@@ -811,7 +811,7 @@ export class LeaseManagementService extends EventEmitter implements ILeaseManage
   async generateLeaseForecasting(leaseId: string, scenarios: string[]): Promise<any> {
     try {
       const lease = await this.getLease(leaseId);
-      if (!lease) throw new Error('Lease not found');
+      if (!lease) {throw new Error('Lease not found');}
 
       const forecasting = {
         leaseId,
@@ -922,7 +922,7 @@ export class LeaseManagementService extends EventEmitter implements ILeaseManage
 
   private calculateEscalationRate(lease: Lease): number {
     const escalations = lease.rentDetails.escalations;
-    if (escalations.length === 0) return 0;
+    if (escalations.length === 0) {return 0;}
     
     const totalEscalation = escalations.reduce((sum, esc) => sum + esc.value, 0);
     return totalEscalation / escalations.length;

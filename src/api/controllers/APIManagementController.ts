@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
-import { APIManagementService } from '../services/APIManagementService';
-import { logger } from '../config/logger';
-import { prisma } from '../config/database';
+import { APIManagementService } from '../../services/APIManagementService';
+import { logger } from '../../config/logger';
+import { prisma } from '../../config/database';
 
 const apiManagementService = new APIManagementService();
 
@@ -360,8 +360,8 @@ export class APIManagementController {
           };
         }
         acc[day].requests++;
-        if (u.statusCode < 400) acc[day].successfulRequests++;
-        else acc[day].errorRequests++;
+        if (u.statusCode < 400) {acc[day].successfulRequests++;}
+        else {acc[day].errorRequests++;}
         acc[day].totalResponseTime += u.responseTime;
         acc[day].totalDataTransfer += u.requestSize + u.responseSize;
         return acc;
@@ -541,7 +541,7 @@ export class APIManagementController {
    * Helper method to calculate percentiles
    */
   private calculatePercentile(numbers: number[], percentile: number): number {
-    if (numbers.length === 0) return 0;
+    if (numbers.length === 0) {return 0;}
     const sorted = numbers.sort((a, b) => a - b);
     const index = Math.ceil((percentile / 100) * sorted.length) - 1;
     return sorted[index] || 0;

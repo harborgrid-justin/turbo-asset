@@ -654,7 +654,7 @@ export class EnhancedBusinessLogicIntegrationService extends EventEmitter {
       } catch (napiError) {
         // 5. Fallback to TypeScript business logic
         if (bridge.fallbackEnabled) {
-          logger.warn(`NAPI-RS failed, falling back to TypeScript`, { serviceName, methodName, error: napiError });
+          logger.warn('NAPI-RS failed, falling back to TypeScript', { serviceName, methodName, error: napiError });
           result = await this.executeTypeScriptFallback(serviceName, methodName, params);
           usedFallback = true;
           bridge.metrics.successCount++; // Count fallback success
@@ -715,10 +715,10 @@ export class EnhancedBusinessLogicIntegrationService extends EventEmitter {
 
   private validateInput(bridge: ProductionBusinessLogicBridge, methodName: string, params: any[]): boolean {
     const rules = bridge.validation.rules.get(methodName);
-    if (!rules || !params.length) return true;
+    if (!rules || !params.length) {return true;}
 
     const data = params[0]; // Assume first param contains the data to validate
-    if (!data || typeof data !== 'object') return true;
+    if (!data || typeof data !== 'object') {return true;}
     
     for (const rule of rules) {
       const value = data[rule.field];
@@ -1239,9 +1239,9 @@ export class EnhancedBusinessLogicIntegrationService extends EventEmitter {
     const hours = Math.floor(minutes / 60);
     const days = Math.floor(hours / 24);
 
-    if (days > 0) return `${days}d ${hours % 24}h ${minutes % 60}m`;
-    if (hours > 0) return `${hours}h ${minutes % 60}m ${seconds % 60}s`;
-    if (minutes > 0) return `${minutes}m ${seconds % 60}s`;
+    if (days > 0) {return `${days}d ${hours % 24}h ${minutes % 60}m`;}
+    if (hours > 0) {return `${hours}h ${minutes % 60}m ${seconds % 60}s`;}
+    if (minutes > 0) {return `${minutes}m ${seconds % 60}s`;}
     return `${seconds}s`;
   }
 
@@ -1272,7 +1272,7 @@ export class EnhancedBusinessLogicIntegrationService extends EventEmitter {
    */
   getBridgeInfo(serviceName: string) {
     const bridge = this.bridges.get(serviceName);
-    if (!bridge) return null;
+    if (!bridge) {return null;}
 
     return {
       serviceName,

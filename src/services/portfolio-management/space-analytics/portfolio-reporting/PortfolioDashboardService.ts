@@ -652,7 +652,7 @@ export class PortfolioDashboardService {
 
   private calculateOverallPerformanceScore(scores: number[]): number {
     const validScores = scores.filter(score => !isNaN(score));
-    if (validScores.length === 0) return 0;
+    if (validScores.length === 0) {return 0;}
     
     const average = validScores.reduce((sum, score) => sum + score, 0) / validScores.length;
     return Math.round(average * 100) / 100;
@@ -704,7 +704,7 @@ export class PortfolioDashboardService {
   }
 
   private calculateBenchmarkPerformance(current: number, benchmark: number, direction: string): number {
-    if (benchmark === 0) return 0;
+    if (benchmark === 0) {return 0;}
     
     const variance = ((current - benchmark) / benchmark) * 100;
     

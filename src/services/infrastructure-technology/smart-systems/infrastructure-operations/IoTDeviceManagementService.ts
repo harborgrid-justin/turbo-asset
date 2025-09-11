@@ -309,7 +309,7 @@ export class IoTDeviceManagementService extends EventEmitter {
       insights.sort((a, b) => {
         const riskOrder = { 'CRITICAL': 4, 'HIGH': 3, 'MEDIUM': 2, 'LOW': 1 };
         const riskDiff = riskOrder[b.riskLevel] - riskOrder[a.riskLevel];
-        if (riskDiff !== 0) return riskDiff;
+        if (riskDiff !== 0) {return riskDiff;}
         return a.predictedFailureDate.getTime() - b.predictedFailureDate.getTime();
       });
 

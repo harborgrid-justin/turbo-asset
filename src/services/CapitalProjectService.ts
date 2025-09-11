@@ -786,7 +786,7 @@ export class CapitalProjectService {
         },
       });
 
-      if (!project) return;
+      if (!project) {return;}
 
       // Calculate overall progress
       const totalTasks = project.tasks.length;
@@ -894,7 +894,7 @@ export class CapitalProjectService {
     let totalCostVariance = 0;
     let totalScheduleVariance = 0;
     let successfulProjects = 0;
-    let totalProjects = projects.length;
+    const totalProjects = projects.length;
 
     projects.forEach(project => {
       // Cost variance

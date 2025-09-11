@@ -66,19 +66,19 @@ export class CalendarIntegrationService {
       let authUrl: string;
 
       if (provider === 'OUTLOOK') {
-        authUrl = `https://login.microsoftonline.com/common/oauth2/v2.0/authorize?` +
+        authUrl = 'https://login.microsoftonline.com/common/oauth2/v2.0/authorize?' +
           `client_id=${config.clientId}&` +
-          `response_type=code&` +
+          'response_type=code&' +
           `redirect_uri=${encodeURIComponent(config.redirectUri)}&` +
           `scope=${encodeURIComponent(config.scopes.join(' '))}&` +
           `state=${userId}`;
       } else {
-        authUrl = `https://accounts.google.com/o/oauth2/v2/auth?` +
+        authUrl = 'https://accounts.google.com/o/oauth2/v2/auth?' +
           `client_id=${config.clientId}&` +
-          `response_type=code&` +
+          'response_type=code&' +
           `redirect_uri=${encodeURIComponent(config.redirectUri)}&` +
           `scope=${encodeURIComponent(config.scopes.join(' '))}&` +
-          `access_type=offline&` +
+          'access_type=offline&' +
           `state=${userId}`;
       }
 
@@ -308,11 +308,11 @@ export class CalendarIntegrationService {
       if (auth.provider === 'OUTLOOK') {
         const updateData: any = {};
         
-        if (event.title) updateData.subject = event.title;
-        if (event.description) updateData.body = { contentType: 'text', content: event.description };
-        if (event.startDateTime) updateData.start = { dateTime: event.startDateTime.toISOString(), timeZone: 'UTC' };
-        if (event.endDateTime) updateData.end = { dateTime: event.endDateTime.toISOString(), timeZone: 'UTC' };
-        if (event.location) updateData.location = { displayName: event.location };
+        if (event.title) {updateData.subject = event.title;}
+        if (event.description) {updateData.body = { contentType: 'text', content: event.description };}
+        if (event.startDateTime) {updateData.start = { dateTime: event.startDateTime.toISOString(), timeZone: 'UTC' };}
+        if (event.endDateTime) {updateData.end = { dateTime: event.endDateTime.toISOString(), timeZone: 'UTC' };}
+        if (event.location) {updateData.location = { displayName: event.location };}
 
         await this.outlookClient.patch(`/me/events/${eventId}`, updateData, {
           headers: {
@@ -322,11 +322,11 @@ export class CalendarIntegrationService {
       } else {
         const updateData: any = {};
         
-        if (event.title) updateData.summary = event.title;
-        if (event.description) updateData.description = event.description;
-        if (event.startDateTime) updateData.start = { dateTime: event.startDateTime.toISOString(), timeZone: 'UTC' };
-        if (event.endDateTime) updateData.end = { dateTime: event.endDateTime.toISOString(), timeZone: 'UTC' };
-        if (event.location) updateData.location = event.location;
+        if (event.title) {updateData.summary = event.title;}
+        if (event.description) {updateData.description = event.description;}
+        if (event.startDateTime) {updateData.start = { dateTime: event.startDateTime.toISOString(), timeZone: 'UTC' };}
+        if (event.endDateTime) {updateData.end = { dateTime: event.endDateTime.toISOString(), timeZone: 'UTC' };}
+        if (event.location) {updateData.location = event.location;}
 
         await this.googleClient.patch(`/calendars/primary/events/${eventId}`, updateData, {
           headers: {
@@ -472,8 +472,8 @@ export class CalendarIntegrationService {
 
       if (startDate || endDate) {
         whereClause.startDateTime = {};
-        if (startDate) whereClause.startDateTime.gte = startDate;
-        if (endDate) whereClause.startDateTime.lte = endDate;
+        if (startDate) {whereClause.startDateTime.gte = startDate;}
+        if (endDate) {whereClause.startDateTime.lte = endDate;}
       }
 
       const bookings = await prisma.spaceBooking.findMany({

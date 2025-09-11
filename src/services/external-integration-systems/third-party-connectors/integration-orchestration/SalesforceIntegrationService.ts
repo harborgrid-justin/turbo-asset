@@ -317,7 +317,7 @@ export class SalesforceIntegrationService extends EventEmitter {
     try {
       const cacheKey = `accounts_${limit}_${offset}`;
       const cached = this.integrationCache.get(cacheKey);
-      if (cached) return cached;
+      if (cached) {return cached;}
 
       const soql = `
         SELECT Id, Name, Type, Industry, AnnualRevenue, NumberOfEmployees, 
@@ -403,7 +403,7 @@ export class SalesforceIntegrationService extends EventEmitter {
     try {
       const cacheKey = `contacts_${accountId || 'all'}_${limit}_${offset}`;
       const cached = this.integrationCache.get(cacheKey);
-      if (cached) return cached;
+      if (cached) {return cached;}
 
       let soql = `
         SELECT Id, FirstName, LastName, Email, Phone, Title, AccountId, 
@@ -494,7 +494,7 @@ export class SalesforceIntegrationService extends EventEmitter {
     try {
       const cacheKey = `opportunities_${accountId || 'all'}_${limit}_${offset}`;
       const cached = this.integrationCache.get(cacheKey);
-      if (cached) return cached;
+      if (cached) {return cached;}
 
       let soql = `
         SELECT Id, Name, AccountId, Amount, CloseDate, StageName, 
@@ -582,7 +582,7 @@ export class SalesforceIntegrationService extends EventEmitter {
     try {
       const cacheKey = `leads_${limit}_${offset}`;
       const cached = this.integrationCache.get(cacheKey);
-      if (cached) return cached;
+      if (cached) {return cached;}
 
       const soql = `
         SELECT Id, FirstName, LastName, Company, Email, Phone, Status, 
@@ -669,7 +669,7 @@ export class SalesforceIntegrationService extends EventEmitter {
     try {
       const cacheKey = `cases_${accountId || 'all'}_${limit}_${offset}`;
       const cached = this.integrationCache.get(cacheKey);
-      if (cached) return cached;
+      if (cached) {return cached;}
 
       let soql = `
         SELECT Id, Subject, Description, Status, Priority, Origin, 
@@ -860,7 +860,7 @@ export class SalesforceIntegrationService extends EventEmitter {
     try {
       const cacheKey = `schema_${objectType}`;
       const cached = this.schemaCache.get(cacheKey);
-      if (cached) return cached;
+      if (cached) {return cached;}
 
       const response = await this.client.get(`/services/data/v${this.config.version}/sobjects/${objectType}/describe`);
       
@@ -879,7 +879,7 @@ export class SalesforceIntegrationService extends EventEmitter {
     try {
       const cacheKey = 'available_objects';
       const cached = this.schemaCache.get(cacheKey);
-      if (cached) return cached;
+      if (cached) {return cached;}
 
       const response = await this.client.get(`/services/data/v${this.config.version}/sobjects`);
       
@@ -1064,7 +1064,7 @@ export class SalesforceIntegrationService extends EventEmitter {
 
   private async storeToken(token: { accessToken: string; instanceUrl: string; expiresAt: Date }): Promise<void> {
     try {
-      if (!this.context?.organizationId) return;
+      if (!this.context?.organizationId) {return;}
 
       await prisma.integrationToken.upsert({
         where: {

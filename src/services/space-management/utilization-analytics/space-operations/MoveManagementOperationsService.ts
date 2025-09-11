@@ -685,7 +685,7 @@ export class MoveManagementOperationsService {
       m.status === 'COMPLETED' && m.requestedDate && m.completedAt
     );
 
-    if (completedMoves.length === 0) return 100;
+    if (completedMoves.length === 0) {return 100;}
 
     const onTime = completedMoves.filter(m => 
       m.completedAt <= m.requestedDate
@@ -702,7 +702,7 @@ export class MoveManagementOperationsService {
       m.estimatedCost && m.actualCost
     );
 
-    if (movesWithBudget.length === 0) return 100;
+    if (movesWithBudget.length === 0) {return 100;}
 
     const withinBudget = movesWithBudget.filter(m => 
       m.actualCost <= m.estimatedCost * 1.1 // Allow 10% variance

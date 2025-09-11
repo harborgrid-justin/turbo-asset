@@ -221,9 +221,9 @@ export class ExternalIntegrationSystemsManager extends EventEmitter {
       const errorCount = services.filter(s => s.status === 'error').length;
 
       let overall: 'healthy' | 'warning' | 'critical';
-      if (errorCount > 2) overall = 'critical';
-      else if (errorCount > 0 || healthyCount < services.length) overall = 'warning';
-      else overall = 'healthy';
+      if (errorCount > 2) {overall = 'critical';}
+      else if (errorCount > 0 || healthyCount < services.length) {overall = 'warning';}
+      else {overall = 'healthy';}
 
       return {
         overall,
@@ -1089,10 +1089,10 @@ export class ExternalIntegrationSystemsManager extends EventEmitter {
 
   private calculatePerformanceScore(responseTime: number): number {
     // Convert response time to performance score (0-100)
-    if (responseTime < 500) return 100;
-    if (responseTime < 1000) return 90;
-    if (responseTime < 2000) return 75;
-    if (responseTime < 5000) return 50;
+    if (responseTime < 500) {return 100;}
+    if (responseTime < 1000) {return 90;}
+    if (responseTime < 2000) {return 75;}
+    if (responseTime < 5000) {return 50;}
     return 25;
   }
 
@@ -1185,7 +1185,7 @@ export class ExternalIntegrationSystemsManager extends EventEmitter {
       alerts.push({
         type: 'cost',
         severity: 'medium',
-        message: `Integration costs exceed $10,000`,
+        message: 'Integration costs exceed $10,000',
         platform: 'all',
         timestamp: new Date()
       });

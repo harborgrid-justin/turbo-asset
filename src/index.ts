@@ -84,8 +84,8 @@ class TurboAssetServer {
     this.server = createServer(this.app);
     this.io = new SocketServer(this.server, {
       cors: {
-        origin: "*",
-        methods: ["GET", "POST"]
+        origin: '*',
+        methods: ['GET', 'POST']
       }
     });
     this.healthController = new HealthController();
@@ -109,7 +109,7 @@ class TurboAssetServer {
           defaultSrc: ["'self'"],
           scriptSrc: ["'self'", "'unsafe-inline'"],
           styleSrc: ["'self'", "'unsafe-inline'"],
-          imgSrc: ["'self'", "data:", "https:"],
+          imgSrc: ["'self'", 'data:', 'https:'],
         },
       },
       hsts: {
@@ -504,7 +504,7 @@ class TurboAssetServer {
 
       // Start server
       this.server.listen(config.server.port, () => {
-        logger.info(`🚀 Turbo Asset server started successfully`);
+        logger.info('🚀 Turbo Asset server started successfully');
         logger.info(`📍 Environment: ${config.server.env}`);
         logger.info(`🌐 Port: ${config.server.port}`);
         logger.info(`📖 API Documentation: http://localhost:${config.server.port}/api/docs`);

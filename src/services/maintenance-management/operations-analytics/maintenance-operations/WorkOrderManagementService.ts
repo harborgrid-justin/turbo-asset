@@ -492,7 +492,7 @@ export class WorkOrderManagementService {
   private calculateFirstTimeFixRate(workOrders: any[]): number {
     const completedWorkOrders = workOrders.filter(wo => wo.status === 'COMPLETED');
     
-    if (completedWorkOrders.length === 0) return 100;
+    if (completedWorkOrders.length === 0) {return 100;}
 
     // Count work orders without child work orders (indicating rework)
     const firstTimeFixes = completedWorkOrders.filter(wo => {

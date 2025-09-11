@@ -802,7 +802,7 @@ export class BusinessLogicIntegrationService {
 
   private checkRateLimit(serviceName: string): boolean {
     const bridge = this.bridges.get(serviceName);
-    if (!bridge?.rateLimit) return true;
+    if (!bridge?.rateLimit) {return true;}
 
     const now = Date.now();
     const windowStart = Math.floor(now / 60000) * 60000; // Current minute window
@@ -823,7 +823,7 @@ export class BusinessLogicIntegrationService {
 
   private isCircuitOpen(serviceName: string): boolean {
     const bridge = this.bridges.get(serviceName);
-    if (!bridge?.metrics) return false;
+    if (!bridge?.metrics) {return false;}
 
     const successRate = bridge.metrics.callCount > 0 ? 
       (bridge.metrics.successCount / bridge.metrics.callCount) : 1;
@@ -838,7 +838,7 @@ export class BusinessLogicIntegrationService {
 
   private updateBridgeMetrics(serviceName: string, success: boolean, responseTime: number): void {
     const bridge = this.bridges.get(serviceName);
-    if (!bridge) return;
+    if (!bridge) {return;}
 
     if (!bridge.metrics) {
       bridge.metrics = {
@@ -883,7 +883,7 @@ export class BusinessLogicIntegrationService {
   }
 
   private async checkBusinessLogicHealth(bridge: BusinessLogicBridge): Promise<'HEALTHY' | 'UNHEALTHY' | 'UNKNOWN'> {
-    if (!bridge.businessLogicService) return 'UNKNOWN';
+    if (!bridge.businessLogicService) {return 'UNKNOWN';}
     
     try {
       if (typeof bridge.businessLogicService.healthCheck === 'function') {

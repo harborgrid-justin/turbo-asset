@@ -1,6 +1,6 @@
 import express from 'express';
-import { workOrderService } from '../services/WorkOrderService';
-import { logger } from '../config/logger';
+import { workOrderService } from '../../services/WorkOrderService';
+import { logger } from '../../config/logger';
 
 const router = express.Router();
 

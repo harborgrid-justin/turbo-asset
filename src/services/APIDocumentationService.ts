@@ -107,7 +107,7 @@ export class APIDocumentationService {
       { method: 'POST', path: '/api/workflows/{organizationId}/workflows', description: 'Create workflow' },
     ];
 
-    let documentation = `# Turbo Asset REST API\n\n## Authentication\nUse Bearer token authentication.\n\n## Endpoints\n\n`;
+    let documentation = '# Turbo Asset REST API\n\n## Authentication\nUse Bearer token authentication.\n\n## Endpoints\n\n';
     
     endpoints.forEach(endpoint => {
       documentation += `### ${endpoint.method} ${endpoint.path}\n${endpoint.description}\n\n`;
@@ -201,7 +201,7 @@ export class APIDocumentationService {
    * Generate integration guides
    */
   async generateIntegrationGuides(options: DocumentationOptions): Promise<string> {
-    return `# Integration Guides\n\n## Common Integrations\n\n- SAP Integration\n- Oracle Integration\n- Workday Integration\n- ServiceNow Integration\n`;
+    return '# Integration Guides\n\n## Common Integrations\n\n- SAP Integration\n- Oracle Integration\n- Workday Integration\n- ServiceNow Integration\n';
   }
 
   /**
