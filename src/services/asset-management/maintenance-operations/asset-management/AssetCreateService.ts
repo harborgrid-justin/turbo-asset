@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import { logger } from '../../../../config/logger';
+import { logger } from '@/../../config/logger';
 import { AssetMaintenanceData } from './types/AssetTypes';
 import { AssetValidationService } from './AssetValidationService';
 import { AssetWorkOrderService } from './AssetWorkOrderService';

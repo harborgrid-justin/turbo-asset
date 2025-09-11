@@ -1,7 +1,6 @@
-import { toError } from '../../core/utils/validation';
 import { Router, Request, Response } from 'express';
-import { logger } from '../../config/logger';
-import { MoveManagementService } from '../../services/MoveManagementService';
+import { logger } from '@/config/logger';
+import { MoveManagementService } from '@/services/MoveManagementService';
 
 const router = Router();
 const moveService = new MoveManagementService();

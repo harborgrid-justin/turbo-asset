@@ -3,8 +3,8 @@
  * Comprehensive compliance frameworks for multiple regulatory domains
  */
 
-import { logger } from '../../config/logger';
-import type { StandardResponse } from '../../types/universal-data-standard';
+import { logger } from '@/config/logger';
+import type { StandardResponse } from '@/types/universal-data-standard';
 
 // =================== SOX Compliance Engine ===================
 export interface SOXComplianceData {

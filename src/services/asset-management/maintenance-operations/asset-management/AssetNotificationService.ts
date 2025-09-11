@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import { logger } from '../../../../config/logger';
+import { logger } from '@/../../config/logger';
 import { AssetNotificationSettings, NotificationEscalationRule } from './types/AssetTypes';
 import { EventEmitter } from 'events';
 

@@ -7,8 +7,8 @@
  */
 
 import { EventEmitter } from 'events';
-import { prisma } from '../../../../../config/database';
-import { logger } from '../../../../../config/logger';
+import { prisma } from '@/../../../config/database';
+import { logger } from '@/../../../config/logger';
 import axios, { AxiosInstance } from 'axios';
 
 export interface CalendarProvider {

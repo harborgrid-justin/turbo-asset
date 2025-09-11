@@ -1,4 +1,3 @@
-import { toError } from '../../core/utils/validation';
 /**
  * Enhanced Business Logic Integration API Controller
  * Provides complete frontend-backend integration with production-grade REST endpoints

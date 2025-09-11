@@ -3,8 +3,8 @@
  * Sophisticated financial modeling, risk analytics, and investment analysis
  */
 
-import { logger } from '../../config/logger';
-import type { StandardResponse } from '../../types/universal-data-standard';
+import { logger } from '@/config/logger';
+import type { StandardResponse } from '@/types/universal-data-standard';
 
 // =================== Advanced Derivatives Pricing Engine ===================
 export interface DerivativeInstrument {

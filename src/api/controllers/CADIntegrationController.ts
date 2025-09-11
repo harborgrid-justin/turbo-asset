@@ -1,7 +1,6 @@
-import { toError } from '../../core/utils/validation';
 import express, { Request, Response } from 'express';
-import { CADIntegrationService } from '../../services/CADIntegrationService';
-import { logger } from '../../config/logger';
+import { CADIntegrationService } from '@/services/CADIntegrationService';
+import { logger } from '@/config/logger';
 import multer from 'multer';
 
 const router = express.Router();

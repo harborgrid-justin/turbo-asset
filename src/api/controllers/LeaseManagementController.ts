@@ -1,7 +1,6 @@
-import { toError } from '../../core/utils/validation';
 import { Router, Request, Response } from 'express';
-import { LeaseManagementService } from '../../services/LeaseManagementService';
-import { logger } from '../../config/logger';
+import { LeaseManagementService } from '@/services/LeaseManagementService';
+import { logger } from '@/config/logger';
 
 const router = Router();
 const leaseManagementService = new LeaseManagementService();

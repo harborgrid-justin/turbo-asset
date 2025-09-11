@@ -1,5 +1,5 @@
 import { EventEmitter } from 'events';
-import { logger } from '../../config/logger';
+import { logger } from '@/config/logger';
 import { machineLearningService } from './MachineLearningService';
 import {
   SpaceOptimizationPrediction,
@@ -9,7 +9,7 @@ import {
   CostFactor,
   PredictiveModel,
   MLModel
-} from '../../types/machinelearning';
+} from '@/types/machinelearning';
 
 /**
  * PredictiveAnalyticsService - Advanced predictive analytics for space optimization and cost forecasting

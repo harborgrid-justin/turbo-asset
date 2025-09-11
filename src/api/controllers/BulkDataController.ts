@@ -1,7 +1,6 @@
-import { toError } from '../../core/utils/validation';
 import { Router, Request, Response } from 'express';
-import { BulkDataService } from '../../services/BulkDataService';
-import { logger } from '../../config/logger';
+import { BulkDataService } from '@/services/BulkDataService';
+import { logger } from '@/config/logger';
 import multer from 'multer';
 import path from 'path';
 
@@ -71,7 +70,7 @@ router.post('/import', upload.single('file'), async (req: Request, res: Response
       result = await bulkDataService.importFromExcel(req.file.path, options);
     }
 
-    res.json({
+    return res.json({
       success: true,
       jobId: result.jobId,
       total: result.total,
@@ -79,7 +78,7 @@ router.post('/import', upload.single('file'), async (req: Request, res: Response
     });
   } catch (error: unknown) {
     logger.error('Failed to start import job', error);
-    res.status(500).json({
+    return res.status(500).json({
       error: 'Failed to start import job',
       message: error instanceof Error ? error.message : 'Unknown error',
     });
@@ -123,14 +122,14 @@ router.post('/export', async (req: Request, res: Response) => {
 
     const result = await bulkDataService.exportData(options);
 
-    res.json({
+    return res.json({
       success: true,
       jobId: result.jobId,
       message: 'Export job started successfully',
     });
   } catch (error: unknown) {
     logger.error('Failed to start export job', error);
-    res.status(500).json({
+    return res.status(500).json({
       error: 'Failed to start export job',
       message: error instanceof Error ? error.message : 'Unknown error',
     });
@@ -151,10 +150,10 @@ router.get('/import/:jobId/status', async (req: Request, res: Response) => {
       });
     }
 
-    res.json(result);
+    return res.json(result);
   } catch (error: unknown) {
     logger.error('Failed to get import job status', error);
-    res.status(500).json({
+    return res.status(500).json({
       error: 'Failed to get import job status',
       message: error instanceof Error ? error.message : 'Unknown error',
     });
@@ -175,10 +174,10 @@ router.get('/export/:jobId/status', async (req: Request, res: Response) => {
       });
     }
 
-    res.json(result);
+    return res.json(result);
   } catch (error: unknown) {
     logger.error('Failed to get export job status', error);
-    res.status(500).json({
+    return res.status(500).json({
       error: 'Failed to get export job status',
       message: error instanceof Error ? error.message : 'Unknown error',
     });
@@ -199,10 +198,10 @@ router.get('/export/:jobId/download', async (req: Request, res: Response) => {
       });
     }
 
-    res.download(result.filePath);
+    return res.download(result.filePath);
   } catch (error: unknown) {
     logger.error('Failed to download export file', error);
-    res.status(500).json({
+    return res.status(500).json({
       error: 'Failed to download export file',
       message: error instanceof Error ? error.message : 'Unknown error',
     });

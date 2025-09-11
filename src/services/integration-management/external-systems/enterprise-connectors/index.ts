@@ -12,11 +12,11 @@
  */
 
 // Import existing services to orchestrate them
-import { Microsoft365IntegrationService } from '../../../Microsoft365IntegrationService';
-import { SalesforceIntegrationService } from '../../../SalesforceIntegrationService';
-import { CalendarIntegrationService } from '../../../CalendarIntegrationService';
-import { CADIntegrationService } from '../../../CADIntegrationService';
-import { IntegrationService } from '../../../IntegrationService';
+import { Microsoft365IntegrationService } from '@/../Microsoft365IntegrationService';
+import { SalesforceIntegrationService } from '@/../SalesforceIntegrationService';
+import { CalendarIntegrationService } from '@/../CalendarIntegrationService';
+import { CADIntegrationService } from '@/../CADIntegrationService';
+import { IntegrationService } from '@/../IntegrationService';
 
 /**
  * Main Enterprise Connectors Service - Orchestrates all integration operations

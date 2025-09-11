@@ -1,7 +1,6 @@
-import { toError } from '../../core/utils/validation';
 import { Router, Request, Response } from 'express';
-import { NotificationService } from '../../services/NotificationService';
-import { logger } from '../../config/logger';
+import { NotificationService } from '@/services/NotificationService';
+import { logger } from '@/config/logger';
 
 const router = Router();
 const notificationService = new NotificationService();

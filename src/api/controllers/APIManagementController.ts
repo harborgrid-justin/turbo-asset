@@ -1,9 +1,8 @@
-import { toError } from '../../core/utils/validation';
 import { Request, Response } from 'express';
-import { APIManagementService } from '../../services/APIManagementService';
-import { logger } from '../../config/logger';
-import { prisma } from '../../config/database';
-import { validateOrganizationId, validateRequiredParam, withValidation } from '../../core/utils/validation';
+import { APIManagementService } from '@/services/APIManagementService';
+import { logger } from '@/config/logger';
+import { prisma } from '@/config/database';
+import { validateOrganizationId, validateRequiredParam, withValidation } from '@/utils/validation';
 
 const apiManagementService = new APIManagementService();
 

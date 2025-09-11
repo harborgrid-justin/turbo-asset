@@ -1,5 +1,5 @@
 import { EventEmitter } from 'events';
-import { logger } from '../../config/logger';
+import { logger } from '@/config/logger';
 import { machineLearningService } from './MachineLearningService';
 import {
   RecommendationEngine,
@@ -12,7 +12,7 @@ import {
   LeaseRecommendation,
   LeaseRecommendationDetail,
   MLModel
-} from '../../types/machinelearning';
+} from '@/types/machinelearning';
 
 /**
  * RecommendationEngineService - Intelligent recommendation system for vendor selection and lease negotiations

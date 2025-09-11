@@ -1,5 +1,5 @@
 import { EventEmitter } from 'events';
-import { logger } from '../../config/logger';
+import { logger } from '@/config/logger';
 import { machineLearningService } from './MachineLearningService';
 import {
   ComputerVisionModel,
@@ -9,7 +9,7 @@ import {
   BoundingBox,
   MaintenanceRecommendation,
   MLModel
-} from '../../types/machinelearning';
+} from '@/types/machinelearning';
 
 /**
  * ComputerVisionService - Advanced computer vision for facility condition assessment
