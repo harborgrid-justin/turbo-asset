@@ -564,9 +564,9 @@ describe('Production-Grade Business Logic Integration', () => {
           vibration: [0.1, 0.2, 0.15, 0.3, 0.4, 0.5, 0.3, 0.2],
           pressure: [120, 125, 130, 135, 140, 145, 140, 135],
           maintenanceHistory: [
-            { date: '2023-01-15', type: 'preventive', cost: 500, downtime: 2 },
-            { date: '2023-06-20', type: 'corrective', cost: 1200, downtime: 8 },
-            { date: '2024-01-10', type: 'emergency', cost: 2500, downtime: 24 }
+            { date: '2023-01-15', type: 'preventive' as const, cost: 500, downtime: 2 },
+            { date: '2023-06-20', type: 'corrective' as const, cost: 1200, downtime: 8 },
+            { date: '2024-01-10', type: 'emergency' as const, cost: 2500, downtime: 24 }
           ],
           performanceMetrics: {
             efficiency: [0.95, 0.92, 0.88, 0.85, 0.82, 0.80, 0.78, 0.75],
