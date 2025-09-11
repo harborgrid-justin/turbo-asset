@@ -28,6 +28,24 @@ export {
   NotFoundError
 } from './errorHandler';
 
+// Enterprise error handling utilities
+export {
+  withErrorHandling,
+  createSuccessResponse,
+  createErrorResponse,
+  asyncErrorHandler,
+  validateRequired,
+  ValidationError as ValidationErrorUtil,
+  NotFoundError as NotFoundErrorUtil,
+  UnauthorizedError,
+  ConflictError
+} from '../core/utils/errorHandling';
+export type {
+  APIResponse,
+  SuccessResponse,
+  ErrorResponse
+} from '../core/utils/errorHandling';
+
 // Rate limiting middleware
 export {
   apiRateLimit,
