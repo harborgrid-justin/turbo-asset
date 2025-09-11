@@ -69,7 +69,7 @@ export class PortfolioReportingService {
 
       return report;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate portfolio report', {
         organizationId,
         reportType,
@@ -128,7 +128,7 @@ export class PortfolioReportingService {
 
       return report;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate executive summary report', {
         organizationId,
         timeframe,
@@ -263,7 +263,7 @@ export class PortfolioReportingService {
 
       return report;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate lease expiration report', {
         organizationId,
         lookaheadMonths,
@@ -324,7 +324,7 @@ export class PortfolioReportingService {
 
       return report;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate occupancy analytics report', {
         organizationId,
         timeframe,
@@ -387,7 +387,7 @@ export class PortfolioReportingService {
             reportType: scheduledReport.reportType,
           });
 
-        } catch (error) {
+        } catch (error: unknown) {
           results.push({
             scheduledReportId: scheduledReport.id,
             reportId: null,
@@ -407,7 +407,7 @@ export class PortfolioReportingService {
 
       return results;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate scheduled reports', {
         organizationId,
         error: error.message,
@@ -467,7 +467,7 @@ export class PortfolioReportingService {
         metadata: report.metadata,
       }));
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get report history', {
         organizationId,
         filters,

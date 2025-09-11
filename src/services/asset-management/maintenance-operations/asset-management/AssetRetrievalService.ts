@@ -76,7 +76,7 @@ export class AssetRetrievalService {
         metrics: derivedMetrics,
       };
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get asset by ID', {
         assetId,
         error: error.message,
@@ -112,7 +112,7 @@ export class AssetRetrievalService {
 
       return asset;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get asset by tag', {
         assetTag,
         organizationId,
@@ -241,7 +241,7 @@ export class AssetRetrievalService {
         metrics,
       };
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to search assets', {
         filters,
         error: error.message,
@@ -296,7 +296,7 @@ export class AssetRetrievalService {
 
       return assets;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get assets by location', {
         organizationId,
         location,
@@ -353,7 +353,7 @@ export class AssetRetrievalService {
 
       return filteredAssets;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get assets due for maintenance', {
         organizationId,
         daysAhead,
@@ -403,7 +403,7 @@ export class AssetRetrievalService {
 
       return assets;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get assets with expiring warranties', {
         organizationId,
         daysAhead,
@@ -550,7 +550,7 @@ export class AssetRetrievalService {
         averageAge: Math.round(averageAge),
       };
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get asset summary stats', {
         organizationId,
         error: error.message,
@@ -591,7 +591,7 @@ export class AssetRetrievalService {
 
       return assets;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get recently created assets', {
         organizationId,
         days,
@@ -633,7 +633,7 @@ export class AssetRetrievalService {
 
       return assets;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get recently updated assets', {
         organizationId,
         days,
@@ -749,7 +749,7 @@ export class AssetRetrievalService {
         }, {} as Record<string, number>),
       };
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.warn('Failed to calculate search metrics', { error: error.message });
       return {};
     }

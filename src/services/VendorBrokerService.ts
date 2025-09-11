@@ -236,7 +236,7 @@ export class VendorBrokerService {
       });
 
       return vendor;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create vendor', error);
       throw error;
     }
@@ -293,7 +293,7 @@ export class VendorBrokerService {
       });
 
       return broker;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create broker', error);
       throw error;
     }
@@ -311,7 +311,7 @@ export class VendorBrokerService {
       } else {
         throw new Error('Either vendorId or brokerId must be provided');
       }
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to record performance evaluation', error);
       throw error;
     }
@@ -391,7 +391,7 @@ export class VendorBrokerService {
         performanceMetrics,
         riskAssessment
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get vendor summary', error);
       throw error;
     }
@@ -465,7 +465,7 @@ export class VendorBrokerService {
         performanceMetrics,
         marketAnalysis
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get broker summary', error);
       throw error;
     }
@@ -604,7 +604,7 @@ export class VendorBrokerService {
       });
 
       return assessment;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to perform vendor risk assessment', error);
       throw error;
     }
@@ -631,7 +631,7 @@ export class VendorBrokerService {
         default:
           throw new Error('Invalid report type');
       }
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate vendor performance report', error);
       throw error;
     }
@@ -659,7 +659,7 @@ export class VendorBrokerService {
       });
 
       return vendor;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to update vendor rating', error);
       throw error;
     }
@@ -698,7 +698,7 @@ export class VendorBrokerService {
             newStatus: update.newStatus
           });
 
-        } catch (error) {
+        } catch (error: unknown) {
           results.push({
             vendorId: update.vendorId,
             status: 'ERROR',
@@ -722,7 +722,7 @@ export class VendorBrokerService {
         },
         results
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to bulk update vendor status', error);
       throw error;
     }

@@ -160,7 +160,7 @@ export class ComplianceManagementOperationsManager extends EventEmitter {
         organizationId: options.organizationId,
         frameworks: options.frameworks,
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Compliance provisioning failed', {
         organizationId: options.organizationId,
         error: error instanceof Error ? error.message : 'Unknown error',
@@ -242,7 +242,7 @@ export class ComplianceManagementOperationsManager extends EventEmitter {
       };
 
       return dashboard;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Compliance dashboard generation failed', {
         organizationId,
         error: error instanceof Error ? error.message : 'Unknown error'
@@ -313,7 +313,7 @@ export class ComplianceManagementOperationsManager extends EventEmitter {
         recommendations,
         urgentActions
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Compliance health check failed', {
         organizationId,
         error: error instanceof Error ? error.message : 'Unknown error'
@@ -390,7 +390,7 @@ export class ComplianceManagementOperationsManager extends EventEmitter {
           industry
         });
       }
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to initialize data governance policies', {
         organizationId,
         industry,
@@ -411,7 +411,7 @@ export class ComplianceManagementOperationsManager extends EventEmitter {
           buildingId: building.id
         });
       }
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to initialize emergency planning', {
         organizationId,
         error

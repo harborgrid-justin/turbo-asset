@@ -178,7 +178,7 @@ export class AnomalyDetectionService extends EventEmitter {
       logger.info('Anomaly Detection Service initialized successfully');
       this.emit('service:initialized');
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to initialize Anomaly Detection Service', error);
       throw error;
     }
@@ -248,7 +248,7 @@ export class AnomalyDetectionService extends EventEmitter {
 
       return anomalies;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to detect energy anomalies', { organizationId, error });
       throw error;
     }
@@ -308,7 +308,7 @@ export class AnomalyDetectionService extends EventEmitter {
 
       return filteredAnomalies;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to detect utilization anomalies', { organizationId, error });
       throw error;
     }
@@ -379,7 +379,7 @@ export class AnomalyDetectionService extends EventEmitter {
 
       return dashboard;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate anomaly dashboard', { organizationId, error });
       throw error;
     }
@@ -407,7 +407,7 @@ export class AnomalyDetectionService extends EventEmitter {
           const anomaly = this.createEnergyAnomaly(dataPoint, buildingData, prediction);
           anomalies.push(anomaly);
         }
-      } catch (error) {
+      } catch (error: unknown) {
         logger.debug('Energy anomaly detection failed for data point', { error });
       }
     }
@@ -437,7 +437,7 @@ export class AnomalyDetectionService extends EventEmitter {
           const anomaly = this.createUtilizationAnomaly(dataPoint, spaceData, prediction);
           anomalies.push(anomaly);
         }
-      } catch (error) {
+      } catch (error: unknown) {
         logger.debug('Utilization anomaly detection failed for data point', { error });
       }
     }
@@ -607,7 +607,7 @@ export class AnomalyDetectionService extends EventEmitter {
             this.handleRealTimeAnomalies(orgId, utilizationAnomalies);
           }
         }
-      } catch (error) {
+      } catch (error: unknown) {
         logger.error('Real-time monitoring failed', error);
       }
     }, 60000); // Check every minute

@@ -94,7 +94,7 @@ export class WhiteLabelConfigurationService extends EventEmitter {
       });
 
       return configuration;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create white-label configuration', {
         organizationId,
         name,
@@ -157,7 +157,7 @@ export class WhiteLabelConfigurationService extends EventEmitter {
       });
 
       return updatedConfig;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to update white-label configuration', {
         configId,
         error: error instanceof Error ? error.message : 'Unknown error',
@@ -199,7 +199,7 @@ export class WhiteLabelConfigurationService extends EventEmitter {
       });
 
       return publishedConfig;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to publish white-label configuration', {
         configId,
         error: error instanceof Error ? error.message : 'Unknown error',
@@ -282,7 +282,7 @@ export class WhiteLabelConfigurationService extends EventEmitter {
       });
 
       return clonedConfig;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to clone configuration', {
         configId,
         error: error instanceof Error ? error.message : 'Unknown error',
@@ -316,7 +316,7 @@ export class WhiteLabelConfigurationService extends EventEmitter {
       });
 
       return true;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to delete configuration', {
         configId,
         error: error instanceof Error ? error.message : 'Unknown error',

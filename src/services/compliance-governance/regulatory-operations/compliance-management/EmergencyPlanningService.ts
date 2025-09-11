@@ -223,7 +223,7 @@ export class EmergencyPlanningService extends EventEmitter {
       });
 
       return emergencyPlan;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create emergency plan', error);
       throw error;
     }
@@ -267,7 +267,7 @@ export class EmergencyPlanningService extends EventEmitter {
       });
 
       return drill;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to schedule emergency drill', error);
       throw error;
     }
@@ -311,7 +311,7 @@ export class EmergencyPlanningService extends EventEmitter {
         issues: issues.length,
         participantCount
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to complete drill', error);
       throw error;
     }
@@ -356,7 +356,7 @@ export class EmergencyPlanningService extends EventEmitter {
       });
 
       return complianceData;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate emergency compliance report', { organizationId, error });
       throw error;
     }

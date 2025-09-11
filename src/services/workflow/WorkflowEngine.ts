@@ -37,7 +37,7 @@ export class WorkflowEngine {
       });
 
       return result.id;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create workflow definition', error);
       throw error;
     }
@@ -88,7 +88,7 @@ export class WorkflowEngine {
       });
 
       return instance.id;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to start workflow', error);
       throw error;
     }
@@ -132,7 +132,7 @@ export class WorkflowEngine {
           await this.processNotificationStep(instance, step);
           break;
       }
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to process workflow step', error);
       throw error;
     }
@@ -190,7 +190,7 @@ export class WorkflowEngine {
         decision, 
         approverId 
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to process approval', error);
       throw error;
     }
@@ -380,7 +380,7 @@ export class WorkflowEngine {
       for (const instance of overdueInstances) {
         await this.handleOverdueWorkflow(instance);
       }
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to check overdue workflows', error);
     }
   }
@@ -478,7 +478,7 @@ export class WorkflowEngine {
         approvalMetrics,
         slaCompliance,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get workflow metrics', error);
       throw error;
     }
@@ -633,7 +633,7 @@ export class WorkflowEngine {
       };
 
       return await this.createWorkflowDefinition(organizationId, workflowDefinition);
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create workflow from template', error);
       throw error;
     }
@@ -665,7 +665,7 @@ export class WorkflowEngine {
       };
 
       return await this.createWorkflowDefinition(organizationId, clonedDefinition);
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to clone workflow definition', error);
       throw error;
     }
@@ -691,7 +691,7 @@ export class WorkflowEngine {
           data: updates,
         });
         results.updated++;
-      } catch (error) {
+      } catch (error: unknown) {
         results.failed.push(instanceId);
         logger.error('Failed to update workflow instance', { instanceId, error });
       }
@@ -756,7 +756,7 @@ export class WorkflowEngine {
           approvedAt: approval.approvedAt,
         })),
       }));
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get entity workflow history', error);
       throw error;
     }

@@ -78,7 +78,7 @@ export class InternationalizationService extends EventEmitter {
         supportedLanguages: config.supportedLanguages,
         currency: config.currency,
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Localization setup failed', {
         organizationId,
         error: error instanceof Error ? error.message : 'Unknown error',
@@ -129,7 +129,7 @@ export class InternationalizationService extends EventEmitter {
       }
 
       return translation;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get localized text', {
         organizationId: context.organizationId,
         key,
@@ -178,7 +178,7 @@ export class InternationalizationService extends EventEmitter {
       }
 
       return formatter.format(value);
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Number formatting failed', {
         organizationId: context.organizationId,
         value,
@@ -231,7 +231,7 @@ export class InternationalizationService extends EventEmitter {
       }
 
       return formatter.format(date);
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Date formatting failed', {
         organizationId: context.organizationId,
         date,
@@ -277,7 +277,7 @@ export class InternationalizationService extends EventEmitter {
         currency: targetCurrency,
         rate: updatedRate.rate,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Currency conversion failed', {
         organizationId: context.organizationId,
         amount,
@@ -326,7 +326,7 @@ export class InternationalizationService extends EventEmitter {
         language,
         count: Object.keys(translations).length,
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to update translations', {
         organizationId,
         language,
@@ -528,7 +528,7 @@ export class InternationalizationService extends EventEmitter {
       }
 
       this.translationCache.set(organizationId, orgTranslations);
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to load translations', {
         organizationId,
         languages,
@@ -584,7 +584,7 @@ export class InternationalizationService extends EventEmitter {
       this.currencyRates.set(`${from}_${to}`, currencyRate);
 
       logger.debug('Currency rate updated', { from, to, rate: mockRate });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to update currency rate', {
         from,
         to,

@@ -144,7 +144,7 @@ export class CADIntegrationService extends EventEmitter {
         processingId,
         estimatedProcessingTime: estimatedTime,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to upload CAD file', error);
       throw error;
     }
@@ -212,7 +212,7 @@ export class CADIntegrationService extends EventEmitter {
         spaceMappings,
         versions,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get CAD file', error);
       throw error;
     }
@@ -284,7 +284,7 @@ export class CADIntegrationService extends EventEmitter {
             cadFileId: fileId,
             mapping,
           });
-        } catch (error) {
+        } catch (error: unknown) {
           errors.push({
             spaceId: mapping.spaceId,
             error: error instanceof Error ? error.message : 'Unknown error',
@@ -312,7 +312,7 @@ export class CADIntegrationService extends EventEmitter {
       });
 
       return { updated, created, errors };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to update space mappings', error);
       throw error;
     }
@@ -371,7 +371,7 @@ export class CADIntegrationService extends EventEmitter {
       });
 
       return floorPlanData;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate floor plan', error);
       throw error;
     }
@@ -511,7 +511,7 @@ export class CADIntegrationService extends EventEmitter {
       });
 
       return result;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to synchronize CAD file', error);
       throw error;
     }
@@ -550,7 +550,7 @@ export class CADIntegrationService extends EventEmitter {
         message: cadFile.processingMessage || undefined,
         result: cadFile.status === 'PROCESSED' ? cadFile.metadata : undefined,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get processing status', error);
       throw error;
     }
@@ -667,7 +667,7 @@ export class CADIntegrationService extends EventEmitter {
         processingTime: metadata.processingTime,
       });
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('CAD processing failed', error);
       
       // Update with error status

@@ -61,7 +61,7 @@ export class AssetWorkOrderService {
 
       return this.mapToMaintenanceSchedule(maintenanceSchedule);
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to schedule initial maintenance', {
         assetId,
         error: error.message,
@@ -120,7 +120,7 @@ export class AssetWorkOrderService {
 
       return workOrder;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create work order', {
         assetId: workOrderRequest.assetId,
         error: error.message,
@@ -181,7 +181,7 @@ export class AssetWorkOrderService {
 
       return workOrders;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create emergency work orders', {
         assetId,
         error: error.message,
@@ -246,7 +246,7 @@ export class AssetWorkOrderService {
 
       return clonedSchedules;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to clone maintenance schedules', {
         sourceAssetId,
         targetAssetId,
@@ -295,7 +295,7 @@ export class AssetWorkOrderService {
 
       return workOrder;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to update work order status', {
         workOrderId,
         status,
@@ -375,7 +375,7 @@ export class AssetWorkOrderService {
 
       return generatedWorkOrders;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate scheduled work orders', {
         organizationId,
         error: error.message,
@@ -415,7 +415,7 @@ export class AssetWorkOrderService {
       // TODO: Implement sophisticated technician assignment algorithm
       // considering skills, workload, location, etc.
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.warn('Auto-assignment failed, work order remains unassigned', {
         workOrderId,
         requiredSkills,

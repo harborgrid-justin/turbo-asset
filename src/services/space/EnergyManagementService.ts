@@ -181,7 +181,7 @@ export class EnergyManagementService {
       });
 
       return meter;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create energy meter', error);
       throw error;
     }
@@ -262,7 +262,7 @@ export class EnergyManagementService {
       });
 
       return reading;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to record energy reading', error);
       throw error;
     }
@@ -309,7 +309,7 @@ export class EnergyManagementService {
       });
 
       return metric;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create sustainability metric', error);
       throw error;
     }
@@ -461,7 +461,7 @@ export class EnergyManagementService {
         benchmarking,
         alerts,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get energy metrics', { organizationId, error });
       throw error;
     }
@@ -660,7 +660,7 @@ export class EnergyManagementService {
       });
 
       return recommendations;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate optimization recommendations', { organizationId, error });
       throw error;
     }
@@ -735,7 +735,7 @@ export class EnergyManagementService {
       });
 
       return report;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate energy audit report', { organizationId, error });
       throw error;
     }
@@ -787,7 +787,7 @@ export class EnergyManagementService {
       // Flag as anomaly if reading is more than 3 standard deviations from mean
       const zScore = Math.abs(consumption - mean) / (stdDev || 1);
       return zScore > 3;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to detect reading anomaly', { meterId, error });
       return false;
     }

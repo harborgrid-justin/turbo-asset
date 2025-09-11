@@ -87,7 +87,7 @@ export class BulkDataService {
         failed: 0,
         errors: [],
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to import from CSV', error);
       throw error;
     }
@@ -126,7 +126,7 @@ export class BulkDataService {
         failed: 0,
         errors: [],
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to import from Excel', error);
       throw error;
     }
@@ -148,7 +148,7 @@ export class BulkDataService {
       return {
         jobId: job.id!.toString(),
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create export job', error);
       throw error;
     }
@@ -172,7 +172,7 @@ export class BulkDataService {
       };
 
       return result;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get import job status', error);
       throw error;
     }
@@ -190,7 +190,7 @@ export class BulkDataService {
         status: await job.getState(),
         filePath: job.returnvalue?.filePath,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get export job status', error);
       throw error;
     }
@@ -277,7 +277,7 @@ export class BulkDataService {
         }
 
         result.successful++;
-      } catch (error) {
+      } catch (error: unknown) {
         result.failed++;
         result.errors.push({
           row: i + 1,

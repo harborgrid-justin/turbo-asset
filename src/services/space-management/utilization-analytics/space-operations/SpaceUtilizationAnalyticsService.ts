@@ -102,7 +102,7 @@ export class SpaceUtilizationAnalyticsService {
         validRecords: validRecords.length,
         skippedRecords: records.length - validRecords.length
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to record space utilization data', error);
       throw error;
     }
@@ -208,7 +208,7 @@ export class SpaceUtilizationAnalyticsService {
       });
 
       return reports;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate utilization report', error);
       throw error;
     }
@@ -322,7 +322,7 @@ export class SpaceUtilizationAnalyticsService {
       });
 
       return recommendations;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate optimization recommendations', error);
       throw error;
     }
@@ -467,7 +467,7 @@ export class SpaceUtilizationAnalyticsService {
         spaceTypeMetrics,
         buildingMetrics
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to calculate space efficiency metrics', error);
       throw error;
     }
@@ -573,7 +573,7 @@ export class SpaceUtilizationAnalyticsService {
         default:
           return 0;
       }
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to calculate potential savings', error);
       return 0;
     }

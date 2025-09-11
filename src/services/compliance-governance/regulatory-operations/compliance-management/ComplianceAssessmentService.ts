@@ -261,7 +261,7 @@ export class ComplianceAssessmentService extends EventEmitter {
 
       this.emit(EVENTS.LEASE_CALCULATION_COMPLETED, { leaseId: data.leaseId, result });
       return result;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to calculate lease accounting', error);
       throw error;
     }
@@ -303,7 +303,7 @@ export class ComplianceAssessmentService extends EventEmitter {
       });
 
       return assessment;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create compliance assessment', error);
       throw error;
     }

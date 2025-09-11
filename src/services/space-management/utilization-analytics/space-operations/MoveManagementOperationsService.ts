@@ -182,7 +182,7 @@ export class MoveManagementOperationsService {
       });
 
       return { ...moveRequest, moveReference };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create move request', error);
       throw error;
     }
@@ -235,7 +235,7 @@ export class MoveManagementOperationsService {
       });
 
       return executionPlan;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create execution plan', error);
       throw error;
     }
@@ -267,7 +267,7 @@ export class MoveManagementOperationsService {
 
       logger.info('Vendor added to move request successfully', { vendorId: moveVendor.id });
       return moveVendor;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to add vendor to move request', error);
       throw error;
     }
@@ -331,7 +331,7 @@ export class MoveManagementOperationsService {
 
       logger.info('Move phase execution started', { phaseNumber });
       return { success: true, phaseNumber, status: 'IN_PROGRESS' };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to execute move phase', error);
       throw error;
     }
@@ -406,7 +406,7 @@ export class MoveManagementOperationsService {
 
       logger.info('Move phase completed', { phaseNumber });
       return { success: true, phaseNumber, status: 'COMPLETED', moveCompleted: allCompleted };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to complete move phase', error);
       throw error;
     }
@@ -450,7 +450,7 @@ export class MoveManagementOperationsService {
 
       logger.info('Move costs tracked successfully', { costsCreated: moveCosts.count });
       return { success: true, costsTracked: moveCosts.count, totalActualCost };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to track move costs', error);
       throw error;
     }
@@ -519,7 +519,7 @@ export class MoveManagementOperationsService {
       });
 
       return moveRequests;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to search move requests', error);
       throw error;
     }
@@ -646,7 +646,7 @@ export class MoveManagementOperationsService {
       });
 
       return analytics;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate move analytics report', error);
       throw error;
     }

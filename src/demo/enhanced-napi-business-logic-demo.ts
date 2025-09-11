@@ -681,7 +681,7 @@ export class EnhancedBusinessLogicIntegrationService extends EventEmitter {
         }
       };
 
-    } catch (error) {
+    } catch (error: unknown) {
       // Error handling and metrics update
       const responseTime = Date.now() - startTime;
       this.updateMetrics(bridge, responseTime, false);
@@ -1183,7 +1183,7 @@ export class EnhancedBusinessLogicIntegrationService extends EventEmitter {
             avgResponseTime: Math.round(bridge.metrics.avgResponseTime),
             circuitBreakerStatus: bridge.metrics.circuitBreakerStatus
           };
-        } catch (error) {
+        } catch (error: unknown) {
           return { 
             serviceName: name, 
             healthy: false, 

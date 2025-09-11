@@ -89,7 +89,7 @@ export class PortfolioService {
         alerts,
         recommendations,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get portfolio dashboard', error);
       throw error;
     }
@@ -165,7 +165,7 @@ export class PortfolioService {
         occupancyRate: Math.round(occupancyRate * 10) / 10,
         utilizationRate: Math.round(utilizationRate * 10) / 10,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get portfolio summary', error);
       throw error;
     }
@@ -246,7 +246,7 @@ export class PortfolioService {
         averageCapacity: Math.round(averageCapacity * 10) / 10,
         spaceTypes,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get space metrics', error);
       throw error;
     }
@@ -310,7 +310,7 @@ export class PortfolioService {
         costPerSqFt: Math.round(costPerSqFt * 100) / 100,
         revenuePerSqFt: Math.round(revenuePerSqFt * 100) / 100,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get financial metrics', error);
       throw error;
     }
@@ -364,7 +364,7 @@ export class PortfolioService {
       })).sort((a, b) => a.date.localeCompare(b.date));
 
       return trends;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get utilization trends', error);
       throw error;
     }
@@ -406,7 +406,7 @@ export class PortfolioService {
         category,
         cost: Math.round(cost),
       })).sort((a, b) => b.cost - a.cost);
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get cost breakdown', error);
       throw error;
     }
@@ -459,7 +459,7 @@ export class PortfolioService {
         spaceCount: data.count,
         totalArea: Math.round(data.area),
       })).sort((a, b) => b.totalArea - a.totalArea);
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get space allocation', error);
       throw error;
     }
@@ -553,7 +553,7 @@ export class PortfolioService {
           upcomingBookings: totalBookings,
         },
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get property drill-down', error);
       throw error;
     }
@@ -730,7 +730,7 @@ export class PortfolioService {
         recommendations,
         subsidiaryPerformance,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get executive dashboard', error);
       throw error;
     }
@@ -784,7 +784,7 @@ export class PortfolioService {
         optimization,
         marketInsights,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get advanced portfolio analytics', error);
       throw error;
     }
@@ -825,7 +825,7 @@ export class PortfolioService {
         activeAlerts,
         recentChanges,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get real-time portfolio monitoring', error);
       throw error;
     }
@@ -872,7 +872,7 @@ export class PortfolioService {
         sustainability,
         certifications,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get ESG reporting', error);
       throw error;
     }

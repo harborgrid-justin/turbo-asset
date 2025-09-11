@@ -99,7 +99,7 @@ export class CapitalProjectService extends EventEmitter implements ICapitalProje
 
       return savedProject;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create capital project', error);
       throw new Error(`Failed to create project: ${(error as Error).message}`);
     }
@@ -416,7 +416,7 @@ export class CapitalProjectService extends EventEmitter implements ICapitalProje
 
       return analytics;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate project analytics', { projectId, error });
       throw new Error(`Analytics generation failed: ${(error as Error).message}`);
     }
@@ -508,7 +508,7 @@ export class CapitalProjectService extends EventEmitter implements ICapitalProje
 
       return forecast;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate project forecast', { projectId, error });
       throw new Error(`Forecast generation failed: ${(error as Error).message}`);
     }
@@ -618,7 +618,7 @@ export class CapitalProjectService extends EventEmitter implements ICapitalProje
 
       return recommendations;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate optimization recommendations', { projectId, error });
       throw new Error(`Optimization recommendations failed: ${(error as Error).message}`);
     }

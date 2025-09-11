@@ -153,7 +153,7 @@ export class IoTDeviceManagementService extends EventEmitter {
       logger.info(`IoT device registered successfully: ${deviceId}`);
       return domainDevice;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(`Failed to register IoT device: ${error}`);
       throw error;
     }
@@ -217,7 +217,7 @@ export class IoTDeviceManagementService extends EventEmitter {
       logger.debug(`Sensor reading recorded for device: ${readingData.deviceId}`);
       return domainReading;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(`Failed to record sensor reading: ${error}`);
       throw error;
     }
@@ -272,7 +272,7 @@ export class IoTDeviceManagementService extends EventEmitter {
       logger.info(`Condition monitoring updated for device: ${deviceId}`);
       return domainCondition;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(`Failed to update condition monitoring: ${error}`);
       throw error;
     }
@@ -316,7 +316,7 @@ export class IoTDeviceManagementService extends EventEmitter {
       logger.info(`Generated ${insights.length} predictive maintenance insights`);
       return insights;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(`Failed to generate predictive maintenance insights: ${error}`);
       throw error;
     }
@@ -406,7 +406,7 @@ export class IoTDeviceManagementService extends EventEmitter {
       logger.debug(`IoT metrics calculated for organization: ${organizationId}`);
       return metrics;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(`Failed to get IoT metrics: ${error}`);
       throw error;
     }

@@ -75,7 +75,7 @@ export class AssetNotificationService extends EventEmitter {
         notificationsSent: notifications.length,
       });
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to send asset creation notifications', {
         assetId: asset.id,
         error: error.message,
@@ -110,7 +110,7 @@ export class AssetNotificationService extends EventEmitter {
         assetsProcessed: assets.length,
       });
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to send maintenance due notifications', {
         error: error.message,
       });
@@ -154,7 +154,7 @@ export class AssetNotificationService extends EventEmitter {
         daysAhead,
       });
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to send warranty expiration notifications', {
         error: error.message,
       });
@@ -213,7 +213,7 @@ export class AssetNotificationService extends EventEmitter {
         newCondition,
       });
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to send condition change notifications', {
         assetId,
         error: error.message,
@@ -273,7 +273,7 @@ export class AssetNotificationService extends EventEmitter {
         emergencyType,
       });
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to send emergency notifications', {
         assetId,
         emergencyType,
@@ -320,7 +320,7 @@ export class AssetNotificationService extends EventEmitter {
         failed: results.failed,
       });
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to send bulk operation notifications', {
         operationType,
         organizationId,
@@ -533,7 +533,7 @@ export class AssetNotificationService extends EventEmitter {
           lastName: true,
         }
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.warn('Could not retrieve facilities team members', { organizationId });
       return [];
     }
@@ -561,7 +561,7 @@ export class AssetNotificationService extends EventEmitter {
           lastName: true,
         }
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.warn('Could not retrieve maintenance team members', { organizationId });
       return [];
     }
@@ -589,7 +589,7 @@ export class AssetNotificationService extends EventEmitter {
           lastName: true,
         }
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.warn('Could not retrieve finance team members', { organizationId });
       return [];
     }
@@ -617,7 +617,7 @@ export class AssetNotificationService extends EventEmitter {
           lastName: true,
         }
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.warn('Could not retrieve emergency contacts', { organizationId });
       return [];
     }
@@ -663,7 +663,7 @@ export class AssetNotificationService extends EventEmitter {
 
       // TODO: Integrate with email service, SMS service, etc.
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to send notification', {
         recipient,
         subject,

@@ -47,7 +47,7 @@ export class DocumentRetrievalService {
         documentName: version.document.name,
         documentDescription: version.document.description,
       }));
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get document versions', error);
       throw error;
     }
@@ -92,7 +92,7 @@ export class DocumentRetrievalService {
       await this.logAccess(documentId, userId, 'DOWNLOAD');
 
       return filePath;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to download document', error);
       throw error;
     }
@@ -204,7 +204,7 @@ export class DocumentRetrievalService {
         page,
         totalPages,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get documents', error);
       throw error;
     }
@@ -233,7 +233,7 @@ export class DocumentRetrievalService {
       }
 
       return document;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get document', error);
       throw error;
     }
@@ -388,7 +388,7 @@ export class DocumentRetrievalService {
         totalPages,
         aggregations,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to search documents', error);
       throw error;
     }
@@ -436,7 +436,7 @@ export class DocumentRetrievalService {
         mimeType: document.mimeType,
         expiresAt,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get download info', error);
       throw error;
     }
@@ -486,7 +486,7 @@ export class DocumentRetrievalService {
       }
 
       return false;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to check document permission', error);
       return false;
     }
@@ -511,7 +511,7 @@ export class DocumentRetrievalService {
           accessedAt: new Date(),
         },
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to log document access', error);
       // Don't throw, access logging is not critical
     }
@@ -526,7 +526,7 @@ export class DocumentRetrievalService {
       const crypto = await import('crypto');
       const data = await fs.readFile(filePath);
       return crypto.createHash('sha256').update(data).digest('hex');
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to calculate file checksum', { filePath, error });
       throw error;
     }

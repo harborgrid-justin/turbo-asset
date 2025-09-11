@@ -253,7 +253,7 @@ export class FinancialConsolidationService {
       });
 
       return statement;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create financial statement', error);
       throw error;
     }
@@ -312,7 +312,7 @@ export class FinancialConsolidationService {
       });
 
       return rule;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create consolidation rule', error);
       throw error;
     }
@@ -416,7 +416,7 @@ export class FinancialConsolidationService {
           netIncome: consolidatedData.totals.netIncome
         }
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to perform consolidation', error);
       throw error;
     }
@@ -522,7 +522,7 @@ export class FinancialConsolidationService {
         entityBreakdown,
         periodComparison
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get consolidation summary', error);
       throw error;
     }
@@ -620,7 +620,7 @@ export class FinancialConsolidationService {
           internalBenchmark: Math.round((benchmarks.internalBenchmark || 0) * 100) / 100
         }
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to analyze entity contribution', error);
       throw error;
     }
@@ -678,7 +678,7 @@ export class FinancialConsolidationService {
         keyMetrics,
         varianceAnalysis
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate global consolidation report', error);
       throw error;
     }
@@ -705,7 +705,7 @@ export class FinancialConsolidationService {
         default:
           throw new Error('Invalid report type');
       }
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate consolidated report', error);
       throw error;
     }
@@ -1033,7 +1033,7 @@ export class FinancialConsolidationService {
       try {
         const analysis = await this.analyzeEntityContribution(organizationId, statement.entityId, period);
         entityContributions.push(analysis);
-      } catch (error) {
+      } catch (error: unknown) {
         // Skip entities that can't be analyzed
         continue;
       }

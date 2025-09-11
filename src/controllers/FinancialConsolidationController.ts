@@ -94,7 +94,7 @@ router.post('/statements', async (req: Request, res: Response) => {
       success: true,
       data: statement
     });
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to create financial statement', error);
     res.status(500).json({
       error: 'Failed to create financial statement',
@@ -163,7 +163,7 @@ router.post('/rules', async (req: Request, res: Response) => {
       success: true,
       data: rule
     });
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to create consolidation rule', error);
     res.status(500).json({
       error: 'Failed to create consolidation rule',
@@ -205,7 +205,7 @@ router.post('/consolidate', async (req: Request, res: Response) => {
       success: true,
       data: result
     });
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to perform consolidation', error);
     res.status(500).json({
       error: 'Failed to perform consolidation',
@@ -238,7 +238,7 @@ router.get('/summary/:organizationId', async (req: Request, res: Response) => {
       success: true,
       data: summary
     });
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to get consolidation summary', error);
     res.status(500).json({
       error: 'Failed to get consolidation summary',
@@ -278,7 +278,7 @@ router.get('/entity-contribution/:organizationId/:entityId', async (req: Request
       success: true,
       data: analysis
     });
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to analyze entity contribution', error);
     res.status(500).json({
       error: 'Failed to analyze entity contribution',
@@ -317,7 +317,7 @@ router.get('/global-report/:organizationId', async (req: Request, res: Response)
       success: true,
       data: report
     });
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to generate global consolidation report', error);
     res.status(500).json({
       error: 'Failed to generate global consolidation report',
@@ -370,7 +370,7 @@ router.post('/reports/:organizationId', async (req: Request, res: Response) => {
       success: true,
       data: report
     });
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to generate consolidated report', error);
     res.status(500).json({
       error: 'Failed to generate consolidated report',
@@ -420,7 +420,7 @@ router.get('/statements', async (req: Request, res: Response) => {
         offset: offset || 0
       }
     });
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to get financial statements', error);
     res.status(500).json({
       error: 'Failed to get financial statements',
@@ -449,7 +449,7 @@ router.get('/rules', async (req: Request, res: Response) => {
         offset: offset || 0
       }
     });
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to get consolidation rules', error);
     res.status(500).json({
       error: 'Failed to get consolidation rules',
@@ -493,7 +493,7 @@ router.put('/statements/:statementId/status', async (req: Request, res: Response
       message: 'Update statement status endpoint - implementation pending',
       data: { statementId, status, reviewedBy, approvedBy, notes }
     });
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to update statement status', error);
     res.status(500).json({
       error: 'Failed to update statement status',
@@ -532,7 +532,7 @@ router.put('/rules/:ruleId', async (req: Request, res: Response) => {
       message: 'Update consolidation rule endpoint - implementation pending',
       data: { ruleId, updates }
     });
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to update consolidation rule', error);
     res.status(500).json({
       error: 'Failed to update consolidation rule',
@@ -589,7 +589,7 @@ router.get('/dashboard/:organizationId', async (req: Request, res: Response) => 
       success: true,
       data: dashboardData
     });
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to get consolidation dashboard', error);
     res.status(500).json({
       error: 'Failed to get consolidation dashboard',
@@ -618,7 +618,7 @@ router.delete('/statements/:statementId', async (req: Request, res: Response) =>
       success: true,
       message: 'Delete financial statement endpoint - implementation pending'
     });
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to delete financial statement', error);
     res.status(500).json({
       error: 'Failed to delete financial statement',

@@ -274,7 +274,7 @@ export class SalesforceIntegrationService extends EventEmitter {
         expiresAt: this.tokenExpiresAt,
         organizationId: this.context?.organizationId
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Salesforce authentication failed', { 
         error: error instanceof Error ? error.message : 'Unknown error',
         loginUrl: this.config.loginUrl
@@ -304,7 +304,7 @@ export class SalesforceIntegrationService extends EventEmitter {
       });
 
       return response.data;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Salesforce query failed', { soqlQuery, error });
       throw error;
     }
@@ -342,7 +342,7 @@ export class SalesforceIntegrationService extends EventEmitter {
       });
 
       return accounts;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get Salesforce accounts', { limit, offset, error });
       throw error;
     }
@@ -378,7 +378,7 @@ export class SalesforceIntegrationService extends EventEmitter {
       });
 
       return createdAccount;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create Salesforce account', { accountName: account.Name, error });
       throw error;
     }
@@ -390,7 +390,7 @@ export class SalesforceIntegrationService extends EventEmitter {
     try {
       const response = await this.client.get(`/services/data/v${this.config.version}/sobjects/Account/${accountId}`);
       return this.mapAccountRecord(response.data);
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get Salesforce account by ID', { accountId, error });
       throw error;
     }
@@ -433,7 +433,7 @@ export class SalesforceIntegrationService extends EventEmitter {
       });
 
       return contacts;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get Salesforce contacts', { accountId, limit, offset, error });
       throw error;
     }
@@ -469,7 +469,7 @@ export class SalesforceIntegrationService extends EventEmitter {
       });
 
       return createdContact;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create Salesforce contact', { contact, error });
       throw error;
     }
@@ -481,7 +481,7 @@ export class SalesforceIntegrationService extends EventEmitter {
     try {
       const response = await this.client.get(`/services/data/v${this.config.version}/sobjects/Contact/${contactId}`);
       return this.mapContactRecord(response.data);
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get Salesforce contact by ID', { contactId, error });
       throw error;
     }
@@ -523,7 +523,7 @@ export class SalesforceIntegrationService extends EventEmitter {
       });
 
       return opportunities;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get Salesforce opportunities', { accountId, limit, offset, error });
       throw error;
     }
@@ -557,7 +557,7 @@ export class SalesforceIntegrationService extends EventEmitter {
       });
 
       return createdOpportunity;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create Salesforce opportunity', { opportunity, error });
       throw error;
     }
@@ -569,7 +569,7 @@ export class SalesforceIntegrationService extends EventEmitter {
     try {
       const response = await this.client.get(`/services/data/v${this.config.version}/sobjects/Opportunity/${opportunityId}`);
       return this.mapOpportunityRecord(response.data);
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get Salesforce opportunity by ID', { opportunityId, error });
       throw error;
     }
@@ -606,7 +606,7 @@ export class SalesforceIntegrationService extends EventEmitter {
       });
 
       return leads;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get Salesforce leads', { limit, offset, error });
       throw error;
     }
@@ -644,7 +644,7 @@ export class SalesforceIntegrationService extends EventEmitter {
       });
 
       return createdLead;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create Salesforce lead', { lead, error });
       throw error;
     }
@@ -656,7 +656,7 @@ export class SalesforceIntegrationService extends EventEmitter {
     try {
       const response = await this.client.get(`/services/data/v${this.config.version}/sobjects/Lead/${leadId}`);
       return this.mapLeadRecord(response.data);
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get Salesforce lead by ID', { leadId, error });
       throw error;
     }
@@ -698,7 +698,7 @@ export class SalesforceIntegrationService extends EventEmitter {
       });
 
       return cases;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get Salesforce cases', { accountId, limit, offset, error });
       throw error;
     }
@@ -731,7 +731,7 @@ export class SalesforceIntegrationService extends EventEmitter {
       });
 
       return createdCase;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create Salesforce case', { caseData, error });
       throw error;
     }
@@ -743,7 +743,7 @@ export class SalesforceIntegrationService extends EventEmitter {
     try {
       const response = await this.client.get(`/services/data/v${this.config.version}/sobjects/Case/${caseId}`);
       return this.mapCaseRecord(response.data);
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get Salesforce case by ID', { caseId, error });
       throw error;
     }
@@ -788,7 +788,7 @@ export class SalesforceIntegrationService extends EventEmitter {
       try {
         const accounts = await this.getAccounts(1000);
         syncOperation.results.accounts = accounts.length;
-      } catch (error) {
+      } catch (error: unknown) {
         syncOperation.errors.push(`Accounts sync failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
       }
 
@@ -796,7 +796,7 @@ export class SalesforceIntegrationService extends EventEmitter {
       try {
         const contacts = await this.getContacts(undefined, 1000);
         syncOperation.results.contacts = contacts.length;
-      } catch (error) {
+      } catch (error: unknown) {
         syncOperation.errors.push(`Contacts sync failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
       }
 
@@ -804,7 +804,7 @@ export class SalesforceIntegrationService extends EventEmitter {
       try {
         const opportunities = await this.getOpportunities(undefined, 1000);
         syncOperation.results.opportunities = opportunities.length;
-      } catch (error) {
+      } catch (error: unknown) {
         syncOperation.errors.push(`Opportunities sync failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
       }
 
@@ -812,7 +812,7 @@ export class SalesforceIntegrationService extends EventEmitter {
       try {
         const leads = await this.getLeads(1000);
         syncOperation.results.leads = leads.length;
-      } catch (error) {
+      } catch (error: unknown) {
         syncOperation.errors.push(`Leads sync failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
       }
 
@@ -820,7 +820,7 @@ export class SalesforceIntegrationService extends EventEmitter {
       try {
         const cases = await this.getCases(undefined, 1000);
         syncOperation.results.cases = cases.length;
-      } catch (error) {
+      } catch (error: unknown) {
         syncOperation.errors.push(`Cases sync failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
       }
 
@@ -840,7 +840,7 @@ export class SalesforceIntegrationService extends EventEmitter {
         errorCount: syncOperation.errors.length
       });
 
-    } catch (error) {
+    } catch (error: unknown) {
       syncOperation.status = 'failed';
       syncOperation.completedAt = new Date();
       syncOperation.errors.push(`Sync failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
@@ -867,7 +867,7 @@ export class SalesforceIntegrationService extends EventEmitter {
       this.schemaCache.set(cacheKey, response.data);
       
       return response.data;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get Salesforce object schema', { objectType, error });
       throw error;
     }
@@ -892,7 +892,7 @@ export class SalesforceIntegrationService extends EventEmitter {
       this.schemaCache.set(cacheKey, objects);
       
       return objects;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get available Salesforce objects', { error });
       throw error;
     }
@@ -943,11 +943,11 @@ export class SalesforceIntegrationService extends EventEmitter {
             healthCheck.status = 'warning';
           }
         }
-      } catch (error) {
+      } catch (error: unknown) {
         logger.warn('Failed to get Salesforce API limits', { error });
       }
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Salesforce health check failed', { error });
     }
 
@@ -1087,7 +1087,7 @@ export class SalesforceIntegrationService extends EventEmitter {
           expiresAt: token.expiresAt
         }
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to store Salesforce token', { error });
     }
   }

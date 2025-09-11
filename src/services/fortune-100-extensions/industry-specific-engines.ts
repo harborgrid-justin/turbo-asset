@@ -433,7 +433,7 @@ export class Fortune100IndustryEngine {
           benchmarkingAvailable: true
         }
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(`Fortune 100 industry analysis failed for ${industry}:`, error);
       return {
         success: false,

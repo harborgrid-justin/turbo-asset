@@ -40,7 +40,7 @@ export class DocumentService {
   private async ensureUploadDir(): Promise<void> {
     try {
       await fs.mkdir(this.uploadDir, { recursive: true });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create upload directory', error);
     }
   }
@@ -135,7 +135,7 @@ export class DocumentService {
       });
 
       return document.id;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to upload document', error);
       throw error;
     }
@@ -194,7 +194,7 @@ export class DocumentService {
       });
 
       return version.id;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to upload document version', error);
       throw error;
     }
@@ -265,7 +265,7 @@ export class DocumentService {
       });
 
       return versions;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get document versions', error);
       throw error;
     }
@@ -316,7 +316,7 @@ export class DocumentService {
       } catch {
         throw new Error('File not found on disk');
       }
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to download document', error);
       throw error;
     }
@@ -364,7 +364,7 @@ export class DocumentService {
         entityId, 
         permission 
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to set document permission', error);
       throw error;
     }
@@ -410,7 +410,7 @@ export class DocumentService {
       const requiredLevel = permissionLevels[requiredPermission];
 
       return userLevel >= requiredLevel;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to check document permission', error);
       return false;
     }
@@ -425,7 +425,7 @@ export class DocumentService {
       const hash = crypto.createHash('sha256');
       hash.update(fileBuffer);
       return hash.digest('hex');
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to calculate file checksum', error);
       return '';
     }
@@ -532,7 +532,7 @@ export class DocumentService {
         page: options.page,
         totalPages,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get documents', error);
       throw error;
     }
@@ -584,7 +584,7 @@ export class DocumentService {
       });
 
       return document;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get document', error);
       throw error;
     }
@@ -612,7 +612,7 @@ export class DocumentService {
       });
 
       logger.info('Document updated', { documentId, organizationId });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to update document', error);
       throw error;
     }
@@ -653,7 +653,7 @@ export class DocumentService {
         fileSize: version.fileSize,
         mimeType: version.mimeType,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get download info', error);
       throw error;
     }
@@ -686,7 +686,7 @@ export class DocumentService {
           userAgent: 'System', // Would be populated from request
         },
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to log document access', error);
       // Don't throw - logging access shouldn't fail the main operation
     }
@@ -722,7 +722,7 @@ export class DocumentService {
         mimeType: downloadInfo.mimeType,
         previewUrl: `/api/documents/${organizationId}/documents/${documentId}/download`,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate preview', error);
       throw error;
     }
@@ -751,7 +751,7 @@ export class DocumentService {
         for (const version of versions) {
           try {
             await fs.unlink(version.filePath);
-          } catch (error) {
+          } catch (error: unknown) {
             logger.warn('Failed to delete file', { filePath: version.filePath, error });
           }
         }
@@ -780,7 +780,7 @@ export class DocumentService {
 
         logger.info('Document soft deleted', { documentId, organizationId });
       }
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to delete document', error);
       throw error;
     }
@@ -804,7 +804,7 @@ export class DocumentService {
       });
 
       logger.info('Document restored', { documentId, organizationId });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to restore document', error);
       throw error;
     }
@@ -856,7 +856,7 @@ export class DocumentService {
             success: true,
             permissionId: permission.id,
           });
-        } catch (error) {
+        } catch (error: unknown) {
           shareResults.push({
             userId,
             success: false,
@@ -867,7 +867,7 @@ export class DocumentService {
 
       logger.info('Document shared', { documentId, userIds: userIds.length, organizationId });
       return shareResults;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to share document', error);
       throw error;
     }
@@ -901,7 +901,7 @@ export class DocumentService {
       });
 
       return permissions;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get document permissions', error);
       throw error;
     }
@@ -935,7 +935,7 @@ export class DocumentService {
       }
 
       logger.info('Document permissions updated', { documentId, organizationId });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to update document permissions', error);
       throw error;
     }
@@ -984,7 +984,7 @@ export class DocumentService {
           sizeChange: v2.fileSize - v1.fileSize,
         },
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to compare versions', error);
       throw error;
     }
@@ -1025,7 +1025,7 @@ export class DocumentService {
         page: options.page,
         hasMore: options.page * options.limit < total,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get access history', error);
       throw error;
     }
@@ -1126,7 +1126,7 @@ export class DocumentService {
         recentUploads,
         topDocuments,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get document analytics', error);
       throw error;
     }
@@ -1186,7 +1186,7 @@ export class DocumentService {
         hasMore: options.page * options.limit < total,
         query,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to search documents', error);
       throw error;
     }
@@ -1227,7 +1227,7 @@ export class DocumentService {
               throw new Error(`Unsupported operation: ${operation}`);
           }
           results.success++;
-        } catch (error) {
+        } catch (error: unknown) {
           results.failed++;
           results.errors.push({
             documentId,
@@ -1244,7 +1244,7 @@ export class DocumentService {
       });
 
       return results;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to perform bulk operation', error);
       throw error;
     }
@@ -1355,7 +1355,7 @@ export class DocumentService {
         storageBreakdown: storageByType,
         trends: await this.calculateDocumentTrends(organizationId, startDate, endDate),
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get document analytics', error);
       throw error;
     }
@@ -1440,7 +1440,7 @@ export class DocumentService {
       }
 
       return trends;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to calculate document trends', error);
       return [];
     }
@@ -1529,7 +1529,7 @@ export class DocumentService {
         violations,
         recommendations: this.generateComplianceRecommendations(violations),
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to run compliance check', error);
       throw error;
     }
@@ -1680,7 +1680,7 @@ export class DocumentService {
         suggestedQueries: this.generateSuggestedQueries(query, combinedResults),
         searchTime: Date.now(), // In real implementation, track actual search time
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to perform intelligent search', error);
       throw error;
     }

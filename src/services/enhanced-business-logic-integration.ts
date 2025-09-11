@@ -371,7 +371,7 @@ export class EnhancedBusinessLogicIntegrationService {
         }
       };
 
-    } catch (error) {
+    } catch (error: unknown) {
       // Update metrics on failure
       this.updateMetricsOnFailure(serviceName, Date.now() - startTime);
       
@@ -449,7 +449,7 @@ export class EnhancedBusinessLogicIntegrationService {
 
         throw lastError || new Error('No fallback available');
 
-      } catch (error) {
+      } catch (error: unknown) {
         lastError = error;
         
         if (attempt < maxRetries) {
@@ -712,7 +712,7 @@ export class EnhancedBusinessLogicIntegrationService {
           }
         }
         bridge.metrics.lastHealthCheck = new Date();
-      } catch (error) {
+      } catch (error: unknown) {
         logger.warn(`Health check failed for service ${serviceName}:`, error);
         this.globalMetrics.serviceHealth.set(serviceName, 'UNHEALTHY');
       }
@@ -769,7 +769,7 @@ export class EnhancedBusinessLogicIntegrationService {
           { timeout: 5000 }
         );
         napiServiceHealth = napiResult.success;
-      } catch (error) {
+      } catch (error: unknown) {
         napiServiceHealth = false;
       }
 
@@ -781,7 +781,7 @@ export class EnhancedBusinessLogicIntegrationService {
         } else {
           businessLogicHealth = true; // Assume healthy if no health check available
         }
-      } catch (error) {
+      } catch (error: unknown) {
         businessLogicHealth = false;
       }
 
@@ -935,7 +935,7 @@ export class EnhancedBusinessLogicIntegrationService {
           { timeout: 5000 }
         );
         if (napiResult.success) {napiHealthy++;}
-      } catch (error) {
+      } catch (error: unknown) {
         // NAPI service not healthy
       }
 
@@ -947,7 +947,7 @@ export class EnhancedBusinessLogicIntegrationService {
         } else {
           businessLogicHealthy++; // Assume healthy if no health check
         }
-      } catch (error) {
+      } catch (error: unknown) {
         // Business logic service not healthy
       }
     }
@@ -3427,7 +3427,7 @@ export const productionGradeBusinessLogicService = {
         recommendations
       };
       
-    } catch (error) {
+    } catch (error: unknown) {
       throw new Error(`Comprehensive asset analysis failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   },
@@ -3500,7 +3500,7 @@ export const productionGradeBusinessLogicService = {
         recommendations
       };
       
-    } catch (error) {
+    } catch (error: unknown) {
       throw new Error(`Organizational assessment failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   },
@@ -3602,7 +3602,7 @@ export const productionGradeBusinessLogicService = {
         actionPlan
       };
 
-    } catch (error) {
+    } catch (error: unknown) {
       throw new Error(`Predictive asset analysis failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   },
@@ -3684,7 +3684,7 @@ export const productionGradeBusinessLogicService = {
         recommendations
       };
 
-    } catch (error) {
+    } catch (error: unknown) {
       throw new Error(`Real-time data processing failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   },
@@ -3760,7 +3760,7 @@ export const productionGradeBusinessLogicService = {
         recommendations
       };
 
-    } catch (error) {
+    } catch (error: unknown) {
       throw new Error(`Demand forecasting failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }

@@ -171,7 +171,7 @@ export class AssetLifecycleService {
       });
 
       return depreciations;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to calculate asset depreciation', { assetId: lifecycleData.assetId, error });
       throw error;
     }
@@ -288,7 +288,7 @@ export class AssetLifecycleService {
       });
 
       return replacementPlans;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate replacement plan', { organizationId, error });
       throw error;
     }
@@ -449,7 +449,7 @@ export class AssetLifecycleService {
         totalCostOfOwnership,
         averageROI,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get lifecycle metrics', { organizationId, error });
       throw error;
     }
@@ -501,7 +501,7 @@ export class AssetLifecycleService {
       });
 
       return disposalRecord;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to record asset disposal', { assetId: disposalData.assetId, error });
       throw error;
     }
@@ -629,7 +629,7 @@ export class AssetLifecycleService {
       });
 
       return analyses;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to perform bulk lifecycle analysis', { organizationId, error });
       throw error;
     }

@@ -88,7 +88,7 @@ export class APIDocumentationService {
       });
 
       return documentationPackage;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate API documentation', error);
       throw error;
     }
@@ -123,7 +123,7 @@ export class APIDocumentationService {
     try {
       const schema = print(typeDefs);
       return `# GraphQL API\n\n## Schema\n\n\`\`\`graphql\n${schema}\n\`\`\`\n`;
-    } catch (error) {
+    } catch (error: unknown) {
       return '# GraphQL API\n\nSchema generation failed';
     }
   }

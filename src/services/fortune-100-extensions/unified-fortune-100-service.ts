@@ -171,7 +171,7 @@ export class Fortune100BusinessLogicService {
         data: result
       };
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(`Fortune 100 analysis failed for organization ${request.organizationId}:`, error);
       return {
         success: false,
@@ -211,7 +211,7 @@ export class Fortune100BusinessLogicService {
       }
       
       return industryResult;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Industry analysis failed:', error);
       return {
         success: false,
@@ -257,7 +257,7 @@ export class Fortune100BusinessLogicService {
       }
       
       return complianceResult;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Compliance analysis failed:', error);
       return {
         success: false,
@@ -318,7 +318,7 @@ export class Fortune100BusinessLogicService {
         }
       };
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Financial analysis failed:', error);
       return {
         success: false,
@@ -360,7 +360,7 @@ export class Fortune100BusinessLogicService {
         data: results
       };
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Existing business logic integration failed:', error);
       return {
         success: false,

@@ -175,7 +175,7 @@ export class APIVersionManager {
         });
 
         next();
-      } catch (error) {
+      } catch (error: unknown) {
         next(error);
       }
     };
@@ -324,7 +324,7 @@ export const versionedValidation = (validationRules: { [version: string]: any })
         // if (error) throw new ValidationError(error.details[0].message);
         
         next();
-      } catch (error) {
+      } catch (error: unknown) {
         next(error);
       }
     } else {

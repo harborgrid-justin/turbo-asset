@@ -248,7 +248,7 @@ export class FinancialOperationsManager {
       results.summary = await this.getFinancialOverview(organizationId, period);
 
       return results;
-    } catch (error) {
+    } catch (error: unknown) {
       throw new Error(`Failed to process monthly financial cycle: ${error.message}`);
     }
   }

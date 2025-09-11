@@ -134,7 +134,7 @@ export class AssetCreateService {
       });
 
       return result;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create maintenance asset', {
         assetTag: assetData.assetTag,
         organizationId: assetData.organizationId,
@@ -166,7 +166,7 @@ export class AssetCreateService {
         try {
           await this.createMaintenanceAsset(assetData);
           results.successful++;
-        } catch (error) {
+        } catch (error: unknown) {
           results.failed++;
           results.errors.push({
             index: i + batchIndex,
@@ -263,7 +263,7 @@ export class AssetCreateService {
       await this.auditService.logAssetCloning(sourceAssetId, clonedAsset.id, createdBy);
 
       return clonedAsset;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to clone asset', {
         sourceAssetId,
         error: error.message,
@@ -286,7 +286,7 @@ export class AssetCreateService {
       // Initialize asset manual and documentation folder
       await this.initializeAssetDocumentation(asset);
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.warn('Failed to generate asset documentation', {
         assetId: asset.id,
         error: error.message,

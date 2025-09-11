@@ -136,7 +136,7 @@ export class MaintenanceService {
 
       logger.info('Maintenance asset created', { assetId: asset.id });
       return asset;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create maintenance asset', error);
       throw error;
     }
@@ -179,7 +179,7 @@ export class MaintenanceService {
       }
 
       return asset;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get maintenance asset', { assetId, error });
       throw error;
     }
@@ -279,7 +279,7 @@ export class MaintenanceService {
         totalPages,
         currentPage: page,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to search assets', { filters, error });
       throw error;
     }
@@ -446,7 +446,7 @@ export class MaintenanceService {
         utilizationRate,
         availabilityRate,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get maintenance metrics', { organizationId, error });
       throw error;
     }
@@ -527,7 +527,7 @@ export class MaintenanceService {
 
       logger.info('Asset condition updated', { assetId, condition: conditionData.condition });
       return { conditionRecord, updatedAsset };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to update asset condition', { assetId, error });
       throw error;
     }
@@ -577,7 +577,7 @@ export class MaintenanceService {
           nextInspectionDue: nextInspection,
         };
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get asset condition summary', { assetIds, error });
       throw error;
     }
@@ -657,7 +657,7 @@ export class MaintenanceService {
           roi,
         };
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to perform lifecycle analysis', { assetIds, error });
       throw error;
     }
@@ -700,7 +700,7 @@ export class MaintenanceService {
               } as any,
             });
             success++;
-          } catch (error) {
+          } catch (error: unknown) {
             failed++;
             errors.push(`Asset ${update.assetId}: ${error instanceof Error ? error.message : 'Unknown error'}`);
           }
@@ -711,7 +711,7 @@ export class MaintenanceService {
 
       logger.info('Bulk asset update completed', { success, failed, total: updates.length });
       return { success, failed, errors };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to perform bulk asset update', { organizationId, error });
       throw error;
     }
@@ -835,7 +835,7 @@ export class MaintenanceService {
         correctiveCost,
         emergencyCost,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get maintenance cost analytics', { organizationId, error });
       throw error;
     }
@@ -870,7 +870,7 @@ export class MaintenanceService {
 
       await Promise.all(workOrderPromises);
       logger.info('Created urgent work orders', { assetId, count: urgentIssues.length });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create urgent work orders', { assetId, error });
       throw error;
     }

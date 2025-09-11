@@ -1,3 +1,4 @@
+import { toError } from '../../core/utils/validation';
 import express, { Request, Response } from 'express';
 import { SpaceUtilizationService } from '../../services/SpaceUtilizationService';
 import { PortfolioService } from '../../services/PortfolioService';
@@ -43,7 +44,7 @@ router.get('/utilization/:organizationId/predictive', async (req: Request, res: 
     );
 
     res.json(analytics);
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to get predictive space analytics', error);
     res.status(500).json({
       error: 'Failed to get predictive space analytics',
@@ -127,7 +128,7 @@ router.post('/sensor-data', async (req: Request, res: Response) => {
     const result = await utilizationService.processRealtimeSensorData(processedData);
 
     res.json(result);
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to process sensor data', error);
     res.status(500).json({
       error: 'Failed to process sensor data',
@@ -193,7 +194,7 @@ router.get('/enterprise/:organizationId/insights', async (req: Request, res: Res
     const insights = await utilizationService.getEnterpriseOccupancyInsights(organizationId, options);
 
     res.json(insights);
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to get enterprise insights', error);
     res.status(500).json({
       error: 'Failed to get enterprise insights',
@@ -257,7 +258,7 @@ router.get('/portfolio/:organizationId/executive', async (req: Request, res: Res
     const dashboard = await portfolioService.getExecutiveDashboard(organizationId, options);
 
     res.json(dashboard);
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to get executive dashboard', error);
     res.status(500).json({
       error: 'Failed to get executive dashboard',
@@ -321,7 +322,7 @@ router.get('/portfolio/:organizationId/advanced', async (req: Request, res: Resp
     const analytics = await portfolioService.getAdvancedPortfolioAnalytics(organizationId, options);
 
     res.json(analytics);
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to get advanced portfolio analytics', error);
     res.status(500).json({
       error: 'Failed to get advanced portfolio analytics',
@@ -356,7 +357,7 @@ router.get('/portfolio/:organizationId/realtime', async (req: Request, res: Resp
     const monitoring = await portfolioService.getRealTimePortfolioMonitoring(organizationId);
 
     res.json(monitoring);
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to get real-time portfolio monitoring', error);
     res.status(500).json({
       error: 'Failed to get real-time portfolio monitoring',
@@ -402,7 +403,7 @@ router.get('/esg/:organizationId', async (req: Request, res: Response) => {
     );
 
     res.json(esgReport);
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to get ESG reporting', error);
     res.status(500).json({
       error: 'Failed to get ESG reporting',
@@ -519,7 +520,7 @@ router.get('/benchmarking/:organizationId', async (req: Request, res: Response) 
     };
 
     res.json(benchmarking);
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to get benchmarking data', error);
     res.status(500).json({
       error: 'Failed to get benchmarking data',
@@ -692,7 +693,7 @@ router.post('/optimization/:organizationId', async (req: Request, res: Response)
     };
 
     res.json(optimization);
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to generate optimization recommendations', error);
     res.status(500).json({
       error: 'Failed to generate optimization recommendations',

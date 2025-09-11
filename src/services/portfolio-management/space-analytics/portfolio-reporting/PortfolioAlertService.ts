@@ -63,7 +63,7 @@ export class PortfolioAlertService {
 
       return alerts;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate portfolio alerts', {
         organizationId,
         error: error.message,
@@ -102,7 +102,7 @@ export class PortfolioAlertService {
 
       return alerts.map(alert => this.mapToPortfolioAlert(alert));
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get active alerts', {
         organizationId,
         error: error.message,
@@ -140,7 +140,7 @@ export class PortfolioAlertService {
 
       return this.mapToPortfolioAlert(alert);
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to acknowledge alert', {
         alertId,
         error: error.message,
@@ -184,7 +184,7 @@ export class PortfolioAlertService {
 
       return this.mapToPortfolioAlert(alert);
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to resolve alert', {
         alertId,
         error: error.message,
@@ -246,7 +246,7 @@ export class PortfolioAlertService {
 
       return statistics;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get alert statistics', {
         organizationId,
         timeframe,
@@ -313,7 +313,7 @@ export class PortfolioAlertService {
 
       return configuredRules;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to configure alert rules', {
         organizationId,
         error: error.message,
@@ -363,7 +363,7 @@ export class PortfolioAlertService {
         }
       }
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to send alert notifications', {
         alertId: alert.id,
         error: error.message,

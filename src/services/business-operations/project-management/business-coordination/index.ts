@@ -175,7 +175,7 @@ export class BusinessOperationsManager extends EventEmitter {
 
       return dashboard;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate dashboard', error);
       throw new Error(`Failed to generate dashboard: ${(error as Error).message}`);
     }
@@ -231,7 +231,7 @@ export class BusinessOperationsManager extends EventEmitter {
 
       return result;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to execute integrated workflow', { workflowType, error });
       throw new Error(`Workflow failed: ${(error as Error).message}`);
     }
@@ -283,7 +283,7 @@ export class BusinessOperationsManager extends EventEmitter {
 
       return results;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to execute global search', { query, error });
       throw new Error(`Global search failed: ${(error as Error).message}`);
     }
@@ -329,7 +329,7 @@ export class BusinessOperationsManager extends EventEmitter {
 
       return report;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate comprehensive report', { reportType, error });
       throw new Error(`Report generation failed: ${(error as Error).message}`);
     }

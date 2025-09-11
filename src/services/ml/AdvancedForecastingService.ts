@@ -178,7 +178,7 @@ export class AdvancedForecastingService extends EventEmitter {
       logger.info('Advanced Forecasting Service initialized successfully');
       this.emit('service:initialized');
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to initialize Advanced Forecasting Service', error);
       throw error;
     }
@@ -313,7 +313,7 @@ export class AdvancedForecastingService extends EventEmitter {
 
       return portfolioForecast;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate portfolio forecast', { organizationId, forecastType, error });
       throw error;
     }
@@ -467,7 +467,7 @@ export class AdvancedForecastingService extends EventEmitter {
 
       return budgetForecast;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate budget forecast', { organizationId, budgetPeriod, error });
       throw error;
     }
@@ -600,7 +600,7 @@ export class AdvancedForecastingService extends EventEmitter {
 
       return demandForecast;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to forecast space demand', { organizationId, error });
       throw error;
     }
@@ -661,7 +661,7 @@ export class AdvancedForecastingService extends EventEmitter {
           modelPredictions[modelType] = prediction.forecast;
           modelAccuracies[modelType] = prediction.accuracy;
           
-        } catch (error) {
+        } catch (error: unknown) {
           logger.warn(`Failed to generate ${modelType} forecast, skipping`, error);
         }
       }
@@ -741,7 +741,7 @@ export class AdvancedForecastingService extends EventEmitter {
 
       return forecast;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate ensemble forecast', { organizationId, dataType, targetVariable, error });
       throw error;
     }
@@ -820,7 +820,7 @@ export class AdvancedForecastingService extends EventEmitter {
 
       return metrics;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to calculate forecast accuracy metrics', { organizationId, forecastType, error });
       throw error;
     }
@@ -848,7 +848,7 @@ export class AdvancedForecastingService extends EventEmitter {
       }
 
       logger.info('All forecasting models trained successfully');
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to train forecasting models', error);
       throw error;
     }
@@ -996,7 +996,7 @@ export class AdvancedForecastingService extends EventEmitter {
         methodology: 'ML_MODEL',
         features_used: Object.keys(features)
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.warn('Base forecast generation failed, using fallback', error);
       return this.generateFallbackForecast(features, horizon);
     }
@@ -1053,7 +1053,7 @@ export class AdvancedForecastingService extends EventEmitter {
         methodology: 'ENSEMBLE_ENHANCED',
         ensemble_contribution: enhancedPrediction.prediction.ensemble_weight || 0.3
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.warn('Ensemble enhancement failed, using base forecast', error);
       return baseForecast;
     }

@@ -81,7 +81,7 @@ export class SDKGeneratorService {
 
       this.generatedSDKs.set(cacheKey, JSON.stringify(result));
       return result;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate SDK', { language, error });
       throw error;
     }

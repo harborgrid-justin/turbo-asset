@@ -192,7 +192,7 @@ export class WorkOrderManagementService {
       });
 
       return workOrder;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create work order', error);
       throw error;
     }
@@ -269,7 +269,7 @@ export class WorkOrderManagementService {
       });
 
       return { workOrder: updatedWorkOrder, execution };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to execute work order', error);
       throw error;
     }
@@ -387,7 +387,7 @@ export class WorkOrderManagementService {
       });
 
       return analytics;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate maintenance analytics', error);
       throw error;
     }
@@ -432,7 +432,7 @@ export class WorkOrderManagementService {
 
       logger.info('Maintenance schedule created successfully', { scheduleId: schedule.id });
       return schedule;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create maintenance schedule', error);
       throw error;
     }

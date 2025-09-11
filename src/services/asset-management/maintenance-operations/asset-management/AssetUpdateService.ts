@@ -100,7 +100,7 @@ export class AssetUpdateService {
 
       return updatedAsset;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to update asset', {
         assetId,
         error: error.message,
@@ -166,7 +166,7 @@ export class AssetUpdateService {
 
       return updatedAsset;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to update asset status', {
         assetId,
         newStatus,
@@ -238,7 +238,7 @@ export class AssetUpdateService {
 
       return updatedAsset;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to update asset condition', {
         assetId,
         newCondition,
@@ -321,7 +321,7 @@ export class AssetUpdateService {
 
       return updatedAsset;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to update asset location', {
         assetId,
         newLocation,
@@ -392,7 +392,7 @@ export class AssetUpdateService {
 
       return updatedAsset;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to update asset financials', {
         assetId,
         error: error.message,
@@ -428,7 +428,7 @@ export class AssetUpdateService {
         try {
           await this.updateAsset(assetId, { ...updateData, updatedBy });
           results.successful++;
-        } catch (error) {
+        } catch (error: unknown) {
           results.failed++;
           results.errors.push({
             assetId,

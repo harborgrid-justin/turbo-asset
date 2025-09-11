@@ -73,7 +73,7 @@ export class WorkflowService extends EventEmitter {
       });
 
       return result.id;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create workflow definition', error);
       throw error;
     }
@@ -96,7 +96,7 @@ export class WorkflowService extends EventEmitter {
       }
 
       return definition.definition as WorkflowDefinition;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get workflow definition', error);
       throw error;
     }
@@ -152,7 +152,7 @@ export class WorkflowService extends EventEmitter {
       });
 
       return instance.id;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to start workflow', error);
       throw error;
     }
@@ -215,7 +215,7 @@ export class WorkflowService extends EventEmitter {
         stepType: step.type,
         timestamp: new Date(),
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to process workflow step', error);
       throw error;
     }
@@ -266,7 +266,7 @@ export class WorkflowService extends EventEmitter {
         approved: approval.approved,
         approvedBy: approval.approvedBy 
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to approve workflow step', error);
       throw error;
     }
@@ -304,7 +304,7 @@ export class WorkflowService extends EventEmitter {
         completedAt: instance.completedAt || undefined,
         dueDate: instance.dueDate || undefined,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get workflow instance', error);
       throw error;
     }
@@ -339,7 +339,7 @@ export class WorkflowService extends EventEmitter {
         completedAt: instance.completedAt || undefined,
         dueDate: instance.dueDate || undefined,
       }));
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get active workflows', error);
       throw error;
     }
@@ -380,7 +380,7 @@ export class WorkflowService extends EventEmitter {
         cancelledBy: this.context.userId,
         timestamp: new Date(),
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to cancel workflow', error);
       throw error;
     }
@@ -412,7 +412,7 @@ export class WorkflowService extends EventEmitter {
         averageCompletionTime: avgTime,
         slaCompliance,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get workflow metrics', error);
       throw error;
     }
@@ -601,7 +601,7 @@ export class WorkflowService extends EventEmitter {
       for (const instance of overdueInstances) {
         await this.handleEscalation(instance.id);
       }
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to check escalations', error);
     }
   }
@@ -621,7 +621,7 @@ export class WorkflowService extends EventEmitter {
         instanceId,
         escalatedAt: new Date(),
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to handle escalation', error);
     }
   }
@@ -644,7 +644,7 @@ export class WorkflowService extends EventEmitter {
         cutoffDate,
         organizationId: this.context.organizationId 
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to cleanup old workflows', error);
     }
   }

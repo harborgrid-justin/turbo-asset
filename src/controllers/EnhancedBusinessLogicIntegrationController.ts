@@ -63,7 +63,7 @@ export class EnhancedBusinessLogicIntegrationController {
           source: 'enhanced-business-logic-integration'
         }
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Error fetching enhanced production metrics:', error);
       res.status(500).json({
         success: false,
@@ -110,7 +110,7 @@ export class EnhancedBusinessLogicIntegrationController {
           source: 'enhanced-business-logic-integration'
         }
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Error performing enhanced health check:', error);
       res.status(500).json({
         success: false,
@@ -161,7 +161,7 @@ export class EnhancedBusinessLogicIntegrationController {
         }
       });
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Error executing enhanced production operation:', error);
       res.status(500).json({
         success: false,
@@ -225,7 +225,7 @@ export class EnhancedBusinessLogicIntegrationController {
           source: 'enhanced-business-logic-integration'
         }
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Error fetching enhanced available bridges:', error);
       res.status(500).json({
         success: false,
@@ -290,7 +290,7 @@ export class EnhancedBusinessLogicIntegrationController {
         });
       }
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Error adding enhanced validation rule:', error);
       res.status(500).json({
         success: false,
@@ -350,7 +350,7 @@ export class EnhancedBusinessLogicIntegrationController {
         });
       }
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Error resetting enhanced service metrics:', error);
       res.status(500).json({
         success: false,
@@ -441,7 +441,7 @@ export class EnhancedBusinessLogicIntegrationController {
         }
       });
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Error fetching enhanced service metrics:', error);
       res.status(500).json({
         success: false,
@@ -519,7 +519,7 @@ export class EnhancedBusinessLogicIntegrationController {
         }
       });
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Error fetching enhanced system dashboard:', error);
       res.status(500).json({
         success: false,
@@ -612,7 +612,7 @@ export class EnhancedBusinessLogicIntegrationController {
         }
       });
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Error fetching enhanced service configuration:', error);
       res.status(500).json({
         success: false,

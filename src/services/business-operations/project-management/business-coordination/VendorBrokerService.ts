@@ -91,7 +91,7 @@ export class VendorBrokerService extends EventEmitter implements IVendorBrokerSe
 
       return savedVendor;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create vendor', error);
       throw new Error(`Failed to create vendor: ${(error as Error).message}`);
     }
@@ -147,7 +147,7 @@ export class VendorBrokerService extends EventEmitter implements IVendorBrokerSe
 
       return savedBroker;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create broker', error);
       throw new Error(`Failed to create broker: ${(error as Error).message}`);
     }
@@ -167,7 +167,7 @@ export class VendorBrokerService extends EventEmitter implements IVendorBrokerSe
       }
       return vendor;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get vendor', { vendorId: id, error });
       throw new Error(`Failed to get vendor: ${(error as Error).message}`);
     }
@@ -187,7 +187,7 @@ export class VendorBrokerService extends EventEmitter implements IVendorBrokerSe
       }
       return broker;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get broker', { brokerId: id, error });
       throw new Error(`Failed to get broker: ${(error as Error).message}`);
     }
@@ -227,7 +227,7 @@ export class VendorBrokerService extends EventEmitter implements IVendorBrokerSe
       logger.info('Vendor updated', { vendorId: id });
       return savedVendor;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to update vendor', { vendorId: id, error });
       throw new Error(`Failed to update vendor: ${(error as Error).message}`);
     }
@@ -267,7 +267,7 @@ export class VendorBrokerService extends EventEmitter implements IVendorBrokerSe
       logger.info('Broker updated', { brokerId: id });
       return savedBroker;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to update broker', { brokerId: id, error });
       throw new Error(`Failed to update broker: ${(error as Error).message}`);
     }
@@ -338,7 +338,7 @@ export class VendorBrokerService extends EventEmitter implements IVendorBrokerSe
 
       return vendors;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to search vendors', error);
       throw new Error(`Failed to search vendors: ${(error as Error).message}`);
     }
@@ -409,7 +409,7 @@ export class VendorBrokerService extends EventEmitter implements IVendorBrokerSe
 
       return brokers;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to search brokers', error);
       throw new Error(`Failed to search brokers: ${(error as Error).message}`);
     }
@@ -465,7 +465,7 @@ export class VendorBrokerService extends EventEmitter implements IVendorBrokerSe
 
       return vendorRating;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to rate vendor', { vendorId, error });
       throw new Error(`Failed to rate vendor: ${(error as Error).message}`);
     }
@@ -529,7 +529,7 @@ export class VendorBrokerService extends EventEmitter implements IVendorBrokerSe
 
       return performance;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to calculate vendor performance', { vendorId, error });
       throw new Error(`Failed to calculate performance: ${(error as Error).message}`);
     }
@@ -584,7 +584,7 @@ export class VendorBrokerService extends EventEmitter implements IVendorBrokerSe
 
       return brokerDeal;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to add broker deal', { brokerId, error });
       throw new Error(`Failed to add deal: ${(error as Error).message}`);
     }
@@ -681,7 +681,7 @@ export class VendorBrokerService extends EventEmitter implements IVendorBrokerSe
       logger.info('Vendor performance report generated', { vendorId });
       return report;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate vendor report', { vendorId, error });
       throw new Error(`Failed to generate report: ${(error as Error).message}`);
     }
@@ -766,7 +766,7 @@ export class VendorBrokerService extends EventEmitter implements IVendorBrokerSe
       logger.info('Broker performance report generated', { brokerId });
       return report;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate broker report', { brokerId, error });
       throw new Error(`Failed to generate report: ${(error as Error).message}`);
     }

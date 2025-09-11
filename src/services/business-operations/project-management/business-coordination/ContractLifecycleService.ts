@@ -91,7 +91,7 @@ export class ContractLifecycleService extends EventEmitter implements IContractL
 
       return savedContract;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create contract', error);
       throw new Error(`Failed to create contract: ${(error as Error).message}`);
     }
@@ -111,7 +111,7 @@ export class ContractLifecycleService extends EventEmitter implements IContractL
       }
       return contract;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get contract', { contractId: id, error });
       throw new Error(`Failed to get contract: ${(error as Error).message}`);
     }
@@ -151,7 +151,7 @@ export class ContractLifecycleService extends EventEmitter implements IContractL
       logger.info('Contract updated', { contractId: id });
       return savedContract;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to update contract', { contractId: id, error });
       throw new Error(`Failed to update contract: ${(error as Error).message}`);
     }
@@ -187,7 +187,7 @@ export class ContractLifecycleService extends EventEmitter implements IContractL
       logger.info('Contract deleted', { contractId: id });
       return true;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to delete contract', { contractId: id, error });
       throw new Error(`Failed to delete contract: ${(error as Error).message}`);
     }
@@ -244,7 +244,7 @@ export class ContractLifecycleService extends EventEmitter implements IContractL
 
       return filteredContracts;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to search contracts', error);
       throw new Error(`Failed to search contracts: ${(error as Error).message}`);
     }
@@ -263,7 +263,7 @@ export class ContractLifecycleService extends EventEmitter implements IContractL
         expirationDateBefore: cutoffDate.toISOString()
       });
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get expiring contracts', { days, error });
       throw new Error(`Failed to get expiring contracts: ${(error as Error).message}`);
     }
@@ -340,7 +340,7 @@ export class ContractLifecycleService extends EventEmitter implements IContractL
 
       return updatedContract;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to renew contract', { contractId: id, error });
       throw new Error(`Failed to renew contract: ${(error as Error).message}`);
     }
@@ -386,7 +386,7 @@ export class ContractLifecycleService extends EventEmitter implements IContractL
 
       return updatedContract;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to terminate contract', { contractId: id, error });
       throw new Error(`Failed to terminate contract: ${(error as Error).message}`);
     }
@@ -447,7 +447,7 @@ export class ContractLifecycleService extends EventEmitter implements IContractL
 
       return updatedMilestones;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to track contract milestones', { contractId, error });
       throw new Error(`Failed to track milestones: ${(error as Error).message}`);
     }
@@ -495,7 +495,7 @@ export class ContractLifecycleService extends EventEmitter implements IContractL
 
       return milestone;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to add milestone', { contractId, error });
       throw new Error(`Failed to add milestone: ${(error as Error).message}`);
     }
@@ -542,7 +542,7 @@ export class ContractLifecycleService extends EventEmitter implements IContractL
 
       return contract.milestones[milestoneIndex];
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to complete milestone', { contractId, milestoneId, error });
       throw new Error(`Failed to complete milestone: ${(error as Error).message}`);
     }
@@ -640,7 +640,7 @@ export class ContractLifecycleService extends EventEmitter implements IContractL
       logger.info('Contract performance report generated', { contractId });
       return report;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate performance report', { contractId, error });
       throw new Error(`Failed to generate report: ${(error as Error).message}`);
     }
@@ -891,7 +891,7 @@ export class ContractLifecycleService extends EventEmitter implements IContractL
 
       return analytics;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate contract performance analytics', { contractId, error });
       throw new Error(`Analytics generation failed: ${(error as Error).message}`);
     }

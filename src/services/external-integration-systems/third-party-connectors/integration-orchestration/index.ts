@@ -146,7 +146,7 @@ export class ExternalIntegrationSystemsManager extends EventEmitter {
               break;
           }
           results.push({ integration, status: 'success' });
-        } catch (error) {
+        } catch (error: unknown) {
           logger.error(`Failed to provision ${integration}`, { error });
           results.push({ 
             integration, 
@@ -166,7 +166,7 @@ export class ExternalIntegrationSystemsManager extends EventEmitter {
         successCount: results.filter(r => r.status === 'success').length,
         failureCount: results.filter(r => r.status === 'failed').length
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Integration systems provisioning failed', {
         organizationId: options.organizationId,
         error: error instanceof Error ? error.message : 'Unknown error'
@@ -230,7 +230,7 @@ export class ExternalIntegrationSystemsManager extends EventEmitter {
         services,
         lastChecked: new Date()
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Integration health check failed', { error });
       return {
         overall: 'critical',
@@ -278,7 +278,7 @@ export class ExternalIntegrationSystemsManager extends EventEmitter {
           recordsProcessed: Object.values(m365Sync.results).reduce((sum, count) => sum + count, 0),
           errors: m365Sync.errors
         });
-      } catch (error) {
+      } catch (error: unknown) {
         syncOperation.results.push({
           service: 'Microsoft 365',
           status: 'failed',
@@ -295,7 +295,7 @@ export class ExternalIntegrationSystemsManager extends EventEmitter {
           recordsProcessed: Object.values(salesforceSync.results).reduce((sum, count) => sum + count, 0),
           errors: salesforceSync.errors
         });
-      } catch (error) {
+      } catch (error: unknown) {
         syncOperation.results.push({
           service: 'Salesforce',
           status: 'failed',
@@ -312,7 +312,7 @@ export class ExternalIntegrationSystemsManager extends EventEmitter {
           recordsProcessed: calendarSync.eventsProcessed,
           errors: calendarSync.errors
         });
-      } catch (error) {
+      } catch (error: unknown) {
         syncOperation.results.push({
           service: 'Calendar',
           status: 'failed',
@@ -334,7 +334,7 @@ export class ExternalIntegrationSystemsManager extends EventEmitter {
         failureCount: syncOperation.results.filter(r => r.status === 'failed').length
       });
 
-    } catch (error) {
+    } catch (error: unknown) {
       syncOperation.completedAt = new Date();
       logger.error('Comprehensive integration sync failed', { syncId, error });
     }
@@ -436,7 +436,7 @@ export class ExternalIntegrationSystemsManager extends EventEmitter {
   private async checkMicrosoft365Health(): Promise<any> {
     try {
       return await this.microsoft365Service.checkIntegrationHealth();
-    } catch (error) {
+    } catch (error: unknown) {
       return { status: 'error', error: error instanceof Error ? error.message : 'Unknown error' };
     }
   }
@@ -444,7 +444,7 @@ export class ExternalIntegrationSystemsManager extends EventEmitter {
   private async checkSalesforceHealth(): Promise<any> {
     try {
       return await this.salesforceService.checkIntegrationHealth();
-    } catch (error) {
+    } catch (error: unknown) {
       return { status: 'error', error: error instanceof Error ? error.message : 'Unknown error' };
     }
   }
@@ -452,7 +452,7 @@ export class ExternalIntegrationSystemsManager extends EventEmitter {
   private async checkCalendarHealth(): Promise<any> {
     try {
       return await this.calendarService.checkIntegrationHealth();
-    } catch (error) {
+    } catch (error: unknown) {
       return { status: 'error', error: error instanceof Error ? error.message : 'Unknown error' };
     }
   }
@@ -460,7 +460,7 @@ export class ExternalIntegrationSystemsManager extends EventEmitter {
   private async checkAPIManagementHealth(): Promise<any> {
     try {
       return await this.apiManagementService.healthCheck();
-    } catch (error) {
+    } catch (error: unknown) {
       return { status: 'error', error: error instanceof Error ? error.message : 'Unknown error' };
     }
   }
@@ -468,7 +468,7 @@ export class ExternalIntegrationSystemsManager extends EventEmitter {
   private async checkPhase3Health(): Promise<any> {
     try {
       return this.phase3Service.getServiceHealth();
-    } catch (error) {
+    } catch (error: unknown) {
       return { status: 'error', error: error instanceof Error ? error.message : 'Unknown error' };
     }
   }
@@ -565,7 +565,7 @@ export class ExternalIntegrationSystemsManager extends EventEmitter {
         })),
         recentActivity: [] // Would be populated from activity log
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate integration dashboard', { error });
       throw error;
     }
@@ -622,7 +622,7 @@ export class ExternalIntegrationSystemsManager extends EventEmitter {
             processedRecords += result.processedRecords;
             failedRecords += result.failedRecords;
             conflicts += result.conflicts;
-          } catch (error) {
+          } catch (error: unknown) {
             logger.error('Platform sync failed', { platform, dataType, error });
             results.push({
               platform,
@@ -655,7 +655,7 @@ export class ExternalIntegrationSystemsManager extends EventEmitter {
         executionTime,
         results
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Batch synchronization failed', { organizationId, error });
       throw error;
     }
@@ -805,7 +805,7 @@ export class ExternalIntegrationSystemsManager extends EventEmitter {
         trends,
         alerts
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Advanced analytics generation failed', { organizationId, error });
       throw error;
     }
@@ -884,7 +884,7 @@ export class ExternalIntegrationSystemsManager extends EventEmitter {
             status: 'success',
             result
           });
-        } catch (error) {
+        } catch (error: unknown) {
           logger.error('Workflow action failed', { 
             workflowId, 
             actionId: action.platform + '-' + action.action, 
@@ -933,7 +933,7 @@ export class ExternalIntegrationSystemsManager extends EventEmitter {
         executionTime,
         results
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Workflow automation failed', { organizationId, error });
       throw error;
     }
@@ -972,7 +972,7 @@ export class ExternalIntegrationSystemsManager extends EventEmitter {
         try {
           const health = await this.checkIntegrationsHealth();
           await this.evaluateHealthAlerts(organizationId, health, config, monitoringId);
-        } catch (error) {
+        } catch (error: unknown) {
           logger.error('Health check failed', { monitoringId, error });
         }
       }, config.healthCheckInterval);
@@ -989,7 +989,7 @@ export class ExternalIntegrationSystemsManager extends EventEmitter {
         monitoringId,
         status: 'started'
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to start real-time monitoring', { organizationId, error });
       throw error;
     }
@@ -1048,7 +1048,7 @@ export class ExternalIntegrationSystemsManager extends EventEmitter {
         default:
           errors.push(`Unsupported platform: ${platform}`);
       }
-    } catch (error) {
+    } catch (error: unknown) {
       errors.push(error instanceof Error ? error.message : 'Unknown error');
       failedRecords = totalRecords;
       processedRecords = 0;
@@ -1270,7 +1270,7 @@ export class ExternalIntegrationSystemsManager extends EventEmitter {
           default:
             throw new Error(`Unsupported platform: ${action.platform}`);
         }
-      } catch (error) {
+      } catch (error: unknown) {
         lastError = error instanceof Error ? error : new Error('Unknown error');
         logger.warn(`Workflow action attempt ${attempt + 1} failed`, {
           platform: action.platform,

@@ -177,7 +177,7 @@ export class RateLimiter {
         };
 
         next();
-      } catch (error) {
+      } catch (error: unknown) {
         next(error);
       }
     };
@@ -302,7 +302,7 @@ export const createAPIKeyRateLimit = (getAPIKeyLimits: (apiKey: string) => { win
       });
 
       return rateLimiter.middleware()(req, res, next);
-    } catch (error) {
+    } catch (error: unknown) {
       // If we can't get limits, use default
       return apiRateLimit.middleware()(req, res, next);
     }

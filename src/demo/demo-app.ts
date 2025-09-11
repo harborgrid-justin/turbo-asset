@@ -153,7 +153,7 @@ app.get('/demo/asset-lifecycle', async (req, res) => {
     console.log('Asset Lifecycle Demo Results:', JSON.stringify(demoResults, null, 2));
     res.json(demoResults);
 
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Asset Lifecycle Demo Error:', error);
     res.status(500).json({
       error: 'Asset Lifecycle Demo Failed',
@@ -248,7 +248,7 @@ app.get('/demo/financial-consolidation', async (req, res) => {
     console.log('Financial Consolidation Demo Results:', JSON.stringify(demoResults, null, 2));
     res.json(demoResults);
 
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Financial Consolidation Demo Error:', error);
     res.status(500).json({
       error: 'Financial Consolidation Demo Failed',
@@ -317,7 +317,7 @@ app.get('/demo/space-analytics', async (req, res) => {
     console.log('Space Analytics Demo Results:', JSON.stringify(demoResults, null, 2));
     res.json(demoResults);
 
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Space Analytics Demo Error:', error);
     res.status(500).json({
       error: 'Space Analytics Demo Failed',
@@ -395,7 +395,7 @@ app.get('/demo/predictive-analysis', async (req, res) => {
     console.log('Predictive Analysis Demo Results:', JSON.stringify(demoResults, null, 2));
     res.json(demoResults);
 
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Predictive Analysis Demo Error:', error);
     res.status(500).json({
       error: 'Predictive Analysis Demo Failed',
@@ -511,7 +511,7 @@ app.get('/demo/load-test', async (req, res) => {
     console.log('Load Test Demo Results:', JSON.stringify(loadTestResults, null, 2));
     res.json(loadTestResults);
 
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Load Test Demo Error:', error);
     res.status(500).json({
       error: 'Load Test Demo Failed',

@@ -1,3 +1,4 @@
+import { toError } from '../../core/utils/validation';
 import { Router, Request, Response } from 'express';
 import { DocumentService } from '../../services/DocumentService';
 import { logger } from '../../config/logger';
@@ -82,7 +83,7 @@ export class DocumentController {
         success: true,
         data: result,
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get documents', error);
       res.status(500).json({ error: 'Failed to get documents' });
     }
@@ -118,7 +119,7 @@ export class DocumentController {
         data: { id: documentId },
         message: 'Document uploaded successfully',
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to upload document', error);
       res.status(500).json({ error: 'Failed to upload document' });
     }
@@ -151,7 +152,7 @@ export class DocumentController {
         data: { versionId },
         message: 'Document version uploaded successfully',
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to upload document version', error);
       res.status(500).json({ error: 'Failed to upload document version' });
     }
@@ -183,7 +184,7 @@ export class DocumentController {
         success: true,
         data: document,
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get document', error);
       res.status(500).json({ error: 'Failed to get document' });
     }
@@ -208,7 +209,7 @@ export class DocumentController {
         success: true,
         message: 'Document updated successfully',
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to update document', error);
       res.status(500).json({ error: 'Failed to update document' });
     }
@@ -249,7 +250,7 @@ export class DocumentController {
         req.user?.id || 'anonymous',
         'DOWNLOAD'
       );
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to download document', error);
       res.status(500).json({ error: 'Failed to download document' });
     }
@@ -286,7 +287,7 @@ export class DocumentController {
         req.user?.id || 'anonymous',
         'PREVIEW'
       );
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate document preview', error);
       res.status(500).json({ error: 'Failed to generate preview' });
     }
@@ -310,7 +311,7 @@ export class DocumentController {
         success: true,
         message: permanent === 'true' ? 'Document permanently deleted' : 'Document moved to trash',
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to delete document', error);
       res.status(500).json({ error: 'Failed to delete document' });
     }
@@ -329,7 +330,7 @@ export class DocumentController {
         success: true,
         message: 'Document restored successfully',
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to restore document', error);
       res.status(500).json({ error: 'Failed to restore document' });
     }
@@ -365,7 +366,7 @@ export class DocumentController {
         data: shareResults,
         message: 'Document shared successfully',
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to share document', error);
       res.status(500).json({ error: 'Failed to share document' });
     }
@@ -387,7 +388,7 @@ export class DocumentController {
         success: true,
         data: permissions,
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get document permissions', error);
       res.status(500).json({ error: 'Failed to get document permissions' });
     }
@@ -416,7 +417,7 @@ export class DocumentController {
         success: true,
         message: 'Document permissions updated successfully',
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to update document permissions', error);
       res.status(500).json({ error: 'Failed to update document permissions' });
     }
@@ -438,7 +439,7 @@ export class DocumentController {
         success: true,
         data: versions,
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get document versions', error);
       res.status(500).json({ error: 'Failed to get document versions' });
     }
@@ -468,7 +469,7 @@ export class DocumentController {
         success: true,
         data: comparison,
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to compare document versions', error);
       res.status(500).json({ error: 'Failed to compare versions' });
     }
@@ -495,7 +496,7 @@ export class DocumentController {
         success: true,
         data: history,
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get document access history', error);
       res.status(500).json({ error: 'Failed to get access history' });
     }
@@ -519,7 +520,7 @@ export class DocumentController {
         success: true,
         data: analytics,
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get document analytics', error);
       res.status(500).json({ error: 'Failed to get analytics' });
     }
@@ -559,7 +560,7 @@ export class DocumentController {
         success: true,
         data: results,
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to search documents', error);
       res.status(500).json({ error: 'Failed to search documents' });
     }
@@ -590,7 +591,7 @@ export class DocumentController {
         data: results,
         message: `Bulk ${operation} completed`,
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to perform bulk operation', error);
       res.status(500).json({ error: 'Failed to perform bulk operation' });
     }

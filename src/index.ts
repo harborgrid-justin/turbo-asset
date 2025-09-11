@@ -536,7 +536,7 @@ class TurboAssetServer {
         process.exit(1);
       });
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to start server', error);
       process.exit(1);
     }

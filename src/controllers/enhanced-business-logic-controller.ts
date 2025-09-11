@@ -65,7 +65,7 @@ export class EnhancedBusinessLogicIntegrationController {
         timestamp: new Date().toISOString()
       });
 
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Dashboard error:', error);
       res.status(500).json({
         success: false,
@@ -110,7 +110,7 @@ export class EnhancedBusinessLogicIntegrationController {
         timestamp: new Date().toISOString()
       });
 
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Health check error:', error);
       res.status(500).json({
         success: false,
@@ -156,7 +156,7 @@ export class EnhancedBusinessLogicIntegrationController {
         timestamp: new Date().toISOString()
       });
 
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Metrics error:', error);
       res.status(500).json({
         success: false,
@@ -190,7 +190,7 @@ export class EnhancedBusinessLogicIntegrationController {
         timestamp: new Date().toISOString()
       });
 
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Bridges error:', error);
       res.status(500).json({
         success: false,
@@ -229,7 +229,7 @@ export class EnhancedBusinessLogicIntegrationController {
         timestamp: new Date().toISOString()
       });
 
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Service metrics error:', error);
       res.status(500).json({
         success: false,
@@ -268,7 +268,7 @@ export class EnhancedBusinessLogicIntegrationController {
         timestamp: new Date().toISOString()
       });
 
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Service config error:', error);
       res.status(500).json({
         success: false,
@@ -315,7 +315,7 @@ export class EnhancedBusinessLogicIntegrationController {
         timestamp: new Date().toISOString()
       });
 
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Service execution error:', error);
       
       // Determine appropriate status code
@@ -366,7 +366,7 @@ export class EnhancedBusinessLogicIntegrationController {
         }
       });
 
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Validation rules error:', error);
       res.status(500).json({
         success: false,
@@ -404,7 +404,7 @@ export class EnhancedBusinessLogicIntegrationController {
         }
       });
 
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Reset metrics error:', error);
       res.status(500).json({
         success: false,
@@ -431,7 +431,7 @@ export class EnhancedBusinessLogicIntegrationController {
         }
       });
 
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Reset all metrics error:', error);
       res.status(500).json({
         success: false,
@@ -477,7 +477,7 @@ export class EnhancedBusinessLogicIntegrationController {
         timestamp: new Date().toISOString()
       });
 
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Analytics error:', error);
       res.status(500).json({
         success: false,

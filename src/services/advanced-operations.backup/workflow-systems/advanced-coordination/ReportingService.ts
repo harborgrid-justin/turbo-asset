@@ -68,7 +68,7 @@ export class ReportingService extends EventEmitter {
       });
 
       return result.id;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create report template', error);
       throw error;
     }
@@ -147,7 +147,7 @@ export class ReportingService extends EventEmitter {
         downloadUrl: `/api/v1/reports/${reportId}/download`,
         expiresAt,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate report', error);
       throw error;
     }
@@ -183,7 +183,7 @@ export class ReportingService extends EventEmitter {
         createdBy: template.createdBy,
         isPublic: template.isPublic,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get report template', error);
       throw error;
     }
@@ -231,7 +231,7 @@ export class ReportingService extends EventEmitter {
       });
 
       return result.id;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to schedule report', error);
       throw error;
     }
@@ -262,7 +262,7 @@ export class ReportingService extends EventEmitter {
       };
 
       return metrics;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get executive dashboard metrics', error);
       throw error;
     }
@@ -283,7 +283,7 @@ export class ReportingService extends EventEmitter {
       }
 
       return benchmarkData;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get benchmarking data', error);
       throw error;
     }
@@ -317,7 +317,7 @@ export class ReportingService extends EventEmitter {
         downloadUrl: report.status === 'COMPLETED' ? `/api/v1/reports/${report.id}/download` : null,
         errorMessage: report.errorMessage,
       }));
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get report history', error);
       throw error;
     }
@@ -349,7 +349,7 @@ export class ReportingService extends EventEmitter {
         mostUsedTemplates: topTemplates,
         formatDistribution: formatDist,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get report analytics', error);
       throw error;
     }
@@ -454,7 +454,7 @@ export class ReportingService extends EventEmitter {
         generationTime,
         timestamp: new Date(),
       });
-    } catch (error) {
+    } catch (error: unknown) {
       // Update status to failed
       await prisma.generatedReport.update({
         where: { id: reportId },
@@ -554,7 +554,7 @@ export class ReportingService extends EventEmitter {
         scheduleId, 
         reportId: result.reportId 
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to execute scheduled report', { scheduleId, error });
     }
   }
@@ -608,7 +608,7 @@ export class ReportingService extends EventEmitter {
         cutoffDate,
         organizationId: this.context.organizationId 
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to cleanup old reports', error);
     }
   }

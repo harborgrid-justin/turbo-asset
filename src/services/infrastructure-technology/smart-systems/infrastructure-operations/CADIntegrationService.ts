@@ -180,7 +180,7 @@ export class CADIntegrationService extends EventEmitter {
         processingId,
         estimatedProcessingTime: this.estimateProcessingTime(uploadData.fileSize, uploadData.fileType)
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('CAD file upload failed', error);
       throw error;
     }
@@ -262,7 +262,7 @@ export class CADIntegrationService extends EventEmitter {
         duration: processing.completedAt - processing.startedAt
       });
 
-    } catch (error) {
+    } catch (error: unknown) {
       const processing = this.processingQueue.get(processingId);
       if (processing) {
         processing.status = 'FAILED';
@@ -340,7 +340,7 @@ export class CADIntegrationService extends EventEmitter {
         downloadUrl: exportUrl,
         expiresAt
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('CAD file export failed', error);
       throw error;
     }
@@ -570,7 +570,7 @@ export class CADIntegrationService extends EventEmitter {
       }
 
       return result;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('CAD drawing import failed', {
         fileName: options.fileName,
         error: error instanceof Error ? error.message : 'Unknown error'
@@ -651,7 +651,7 @@ export class CADIntegrationService extends EventEmitter {
         annotations,
         processingTime
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('CAD drawing processing failed', {
         drawingId,
         error: error instanceof Error ? error.message : 'Unknown error'
@@ -786,7 +786,7 @@ export class CADIntegrationService extends EventEmitter {
         efficiencyMetrics,
         recommendations
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Space analysis report generation failed', {
         organizationId,
         buildingId,
@@ -846,7 +846,7 @@ export class CADIntegrationService extends EventEmitter {
         format: options.format,
         expiresAt
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('CAD drawing export failed', {
         drawingId: options.drawingId,
         format: options.format,
@@ -874,7 +874,7 @@ export class CADIntegrationService extends EventEmitter {
       }
 
       return drawing;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get CAD drawing', { drawingId, error });
       return null;
     }
@@ -932,7 +932,7 @@ export class CADIntegrationService extends EventEmitter {
       }
 
       return result;
-    } catch (error) {
+    } catch (error: unknown) {
       result.isValid = false;
       result.errors.push(`Validation error: ${error instanceof Error ? error.message : 'Unknown error'}`);
       return result;
@@ -998,7 +998,7 @@ export class CADIntegrationService extends EventEmitter {
       });
 
       return drawing;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create drawing record', { drawingId, error });
       throw error;
     }
@@ -1125,7 +1125,7 @@ export class CADIntegrationService extends EventEmitter {
       if (data.spaceAnalysis) {
         this.analysisCache.set(drawingId, data.spaceAnalysis);
       }
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to update drawing with processed data', { drawingId, error });
     }
   }
@@ -1152,7 +1152,7 @@ export class CADIntegrationService extends EventEmitter {
         annotations: [],
         metadata: d.metadata ? JSON.parse(d.metadata as string) : {}
       }));
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get building drawings', { organizationId, buildingId, error });
       return [];
     }
@@ -1281,7 +1281,7 @@ export class CADIntegrationService extends EventEmitter {
         annotations: [],
         metadata: drawing.metadata ? JSON.parse(drawing.metadata as string) : {}
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to load drawing from database', { drawingId, error });
       return null;
     }

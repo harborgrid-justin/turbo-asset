@@ -205,7 +205,7 @@ export class BudgetForecastService {
       });
 
       return budget;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create budget', error);
       throw error;
     }
@@ -264,7 +264,7 @@ export class BudgetForecastService {
       });
 
       return forecast;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create forecast', error);
       throw error;
     }
@@ -344,7 +344,7 @@ export class BudgetForecastService {
         varianceAnalysis,
         upcomingBudgetCycles
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get budget summary', error);
       throw error;
     }
@@ -397,7 +397,7 @@ export class BudgetForecastService {
         confidenceLevels,
         forecastVariance
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get forecast analysis', error);
       throw error;
     }
@@ -454,7 +454,7 @@ export class BudgetForecastService {
       });
 
       return variances;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to process budget variances', error);
       throw error;
     }
@@ -541,7 +541,7 @@ export class BudgetForecastService {
       });
 
       return scenarioResults;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate scenario analysis', error);
       throw error;
     }
@@ -588,7 +588,7 @@ export class BudgetForecastService {
             if (forecast) {
               results.push(forecast);
             }
-          } catch (error) {
+          } catch (error: unknown) {
             logger.error('Failed to generate forecast', {
               period,
               method,
@@ -611,7 +611,7 @@ export class BudgetForecastService {
         },
         forecasts: results
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate automated forecasts', error);
       throw error;
     }
@@ -638,7 +638,7 @@ export class BudgetForecastService {
         default:
           throw new Error('Invalid report type');
       }
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate budget report', error);
       throw error;
     }
@@ -725,7 +725,7 @@ export class BudgetForecastService {
         where: { id: budgetId },
         include: { lineItems: true }
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to update budget', error);
       throw error;
     }

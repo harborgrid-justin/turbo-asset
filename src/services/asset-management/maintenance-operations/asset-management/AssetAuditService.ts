@@ -62,7 +62,7 @@ export class AssetAuditService {
 
       return this.mapToAuditRecord(auditRecord);
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to log asset creation audit', {
         assetId,
         error: error.message,
@@ -121,7 +121,7 @@ export class AssetAuditService {
 
       return this.mapToAuditRecord(auditRecord);
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to log asset cloning audit', {
         sourceAssetId,
         clonedAssetId,
@@ -174,7 +174,7 @@ export class AssetAuditService {
 
       return this.mapToAuditRecord(auditRecord);
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to log asset update audit', {
         assetId,
         error: error.message,
@@ -220,7 +220,7 @@ export class AssetAuditService {
 
       return this.mapToAuditRecord(auditRecord);
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to log status change audit', {
         assetId,
         error: error.message,
@@ -267,7 +267,7 @@ export class AssetAuditService {
 
       return this.mapToAuditRecord(auditRecord);
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to log condition change audit', {
         assetId,
         error: error.message,
@@ -319,7 +319,7 @@ export class AssetAuditService {
 
       return this.mapToAuditRecord(auditRecord);
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to log maintenance scheduled audit', {
         assetId,
         error: error.message,
@@ -370,7 +370,7 @@ export class AssetAuditService {
 
       return this.mapToAuditRecord(auditRecord);
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to log maintenance completed audit', {
         assetId,
         error: error.message,
@@ -426,7 +426,7 @@ export class AssetAuditService {
 
       return this.mapToAuditRecord(auditRecord);
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to log asset move audit', {
         assetId,
         error: error.message,
@@ -471,7 +471,7 @@ export class AssetAuditService {
 
       return this.mapToAuditRecord(auditRecord);
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to log depreciation calculation audit', {
         assetId,
         error: error.message,
@@ -518,7 +518,7 @@ export class AssetAuditService {
 
       return auditRecords.map(record => this.mapToAuditRecord(record));
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get asset audit trail', {
         assetId,
         error: error.message,
@@ -633,7 +633,7 @@ export class AssetAuditService {
 
       return report;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate compliance report', {
         organizationId,
         error: error.message,
@@ -738,7 +738,7 @@ export class AssetAuditService {
         totalPages: Math.ceil(totalCount / limit),
       };
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to search audit records', {
         organizationId,
         error: error.message,

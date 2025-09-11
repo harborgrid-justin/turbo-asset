@@ -77,7 +77,7 @@ export class EnterpriseConnectorsService {
         try {
           results.m365 = await this.microsoft365Service.syncData(organizationId);
           successful++;
-        } catch (error) {
+        } catch (error: unknown) {
           failed++;
           results.m365 = { error: error.message };
         }
@@ -87,7 +87,7 @@ export class EnterpriseConnectorsService {
         try {
           results.salesforce = await this.salesforceService.syncContacts(organizationId);
           successful++;
-        } catch (error) {
+        } catch (error: unknown) {
           failed++;
           results.salesforce = { error: error.message };
         }
@@ -97,7 +97,7 @@ export class EnterpriseConnectorsService {
         try {
           results.calendar = await this.calendarService.syncCalendarEvents(organizationId);
           successful++;
-        } catch (error) {
+        } catch (error: unknown) {
           failed++;
           results.calendar = { error: error.message };
         }
@@ -107,12 +107,12 @@ export class EnterpriseConnectorsService {
         try {
           results.cad = await this.cadService.syncDrawings(organizationId);
           successful++;
-        } catch (error) {
+        } catch (error: unknown) {
           failed++;
           results.cad = { error: error.message };
         }
       }
-    } catch (error) {
+    } catch (error: unknown) {
       failed++;
     }
 
@@ -186,7 +186,7 @@ export class EnterpriseConnectorsService {
       }
 
       return health;
-    } catch (error) {
+    } catch (error: unknown) {
       return {
         ...health,
         overall: 'failed',
@@ -219,7 +219,7 @@ export class EnterpriseConnectorsService {
         default:
           return 'failed';
       }
-    } catch (error) {
+    } catch (error: unknown) {
       // If methods don't exist or fail, consider it degraded rather than failed
       return 'degraded';
     }

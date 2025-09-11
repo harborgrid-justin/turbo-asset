@@ -294,7 +294,7 @@ export class BusinessOperationsReportsService extends EventEmitter {
 
       return report;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate executive summary report', error);
       throw new Error(`Failed to generate report: ${(error as Error).message}`);
     }
@@ -366,7 +366,7 @@ export class BusinessOperationsReportsService extends EventEmitter {
       logger.info('Operational performance report generated', { reportId });
       return report;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate operational report', error);
       throw new Error(`Failed to generate operational report: ${(error as Error).message}`);
     }
@@ -418,7 +418,7 @@ export class BusinessOperationsReportsService extends EventEmitter {
 
       return savedDashboard;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create dashboard', error);
       throw new Error(`Failed to create dashboard: ${(error as Error).message}`);
     }
@@ -487,7 +487,7 @@ export class BusinessOperationsReportsService extends EventEmitter {
 
       return insights;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate insights', error);
       throw new Error(`Failed to generate insights: ${(error as Error).message}`);
     }
@@ -536,7 +536,7 @@ export class BusinessOperationsReportsService extends EventEmitter {
             });
           }
 
-        } catch (error) {
+        } catch (error: unknown) {
           logger.error('Failed to calculate KPI', { kpiId: kpi.id, error });
         }
       }
@@ -566,7 +566,7 @@ export class BusinessOperationsReportsService extends EventEmitter {
 
       return monitoringResult;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to monitor KPIs', error);
       throw new Error(`Failed to monitor KPIs: ${(error as Error).message}`);
     }

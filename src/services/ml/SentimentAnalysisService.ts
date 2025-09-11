@@ -183,7 +183,7 @@ export class SentimentAnalysisService extends EventEmitter {
       logger.info('Sentiment Analysis Service initialized successfully');
       this.emit('service:initialized');
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to initialize Sentiment Analysis Service', error);
       throw error;
     }
@@ -301,7 +301,7 @@ export class SentimentAnalysisService extends EventEmitter {
 
       return analysis;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to analyze feedback', { feedbackId, error });
       throw error;
     }
@@ -420,7 +420,7 @@ export class SentimentAnalysisService extends EventEmitter {
 
       return trends;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to analyze sentiment trends', { organizationId, error });
       throw error;
     }
@@ -495,7 +495,7 @@ export class SentimentAnalysisService extends EventEmitter {
               }
             );
             return { success: true, analysis };
-          } catch (error) {
+          } catch (error: unknown) {
             return {
               success: false,
               error: {
@@ -556,7 +556,7 @@ export class SentimentAnalysisService extends EventEmitter {
         errors
       };
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to batch analyze feedback', { error });
       throw error;
     }
@@ -647,7 +647,7 @@ export class SentimentAnalysisService extends EventEmitter {
 
       return dashboard;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate sentiment dashboard', { organizationId, error });
       throw error;
     }
@@ -711,7 +711,7 @@ export class SentimentAnalysisService extends EventEmitter {
         confidence: prediction.confidence
       };
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.warn('ML sentiment analysis failed, using fallback', error);
       return this.performBasicSentimentAnalysis(content, language);
     }
@@ -767,7 +767,7 @@ export class SentimentAnalysisService extends EventEmitter {
 
       return this.processTopicPrediction(prediction.prediction, content);
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.warn('Topic extraction failed, using fallback', error);
       return this.extractBasicTopics(content);
     }
@@ -820,7 +820,7 @@ export class SentimentAnalysisService extends EventEmitter {
 
       return this.processEmotionPrediction(prediction.prediction);
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.warn('Emotion analysis failed, using fallback', error);
       return this.extractBasicEmotions(content);
     }
@@ -1178,7 +1178,7 @@ export class SentimentAnalysisService extends EventEmitter {
       }
 
       logger.info('All sentiment analysis models trained successfully');
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to train sentiment models', error);
       throw error;
     }

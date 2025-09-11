@@ -108,7 +108,7 @@ router.post('/', async (req: Request, res: Response) => {
     });
 
     res.status(201).json(standard);
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to create space standard', error);
     if (error instanceof Error && error.message.includes('validation')) {
       res.status(400).json({ error: error.message });
@@ -177,7 +177,7 @@ router.get('/:organizationId', async (req: Request, res: Response) => {
     const standards = await standardsService.getSpaceStandards(organizationId, filters);
 
     res.json(standards);
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to get space standards', error);
     res.status(500).json({
       error: 'Failed to get space standards',
@@ -271,7 +271,7 @@ router.post('/:standardId/configuration', async (req: Request, res: Response) =>
     const result = await standardsService.generateSpaceConfiguration(standardId, requirements);
 
     res.json(result);
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to generate space configuration', error);
     if (error instanceof Error && error.message.includes('not found')) {
       res.status(404).json({ error: error.message });
@@ -325,7 +325,7 @@ router.post('/configuration/validate', async (req: Request, res: Response) => {
     const validation = await standardsService.validateSpaceConfiguration(configuration, standardId);
 
     res.json(validation);
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to validate space configuration', error);
     res.status(500).json({
       error: 'Failed to validate space configuration',
@@ -416,7 +416,7 @@ router.post('/:organizationId/templates', async (req: Request, res: Response) =>
     const result = await standardsService.generatePlanningTemplates(organizationId, parameters);
 
     res.json(result);
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to generate planning templates', error);
     res.status(500).json({
       error: 'Failed to generate planning templates',
@@ -532,7 +532,7 @@ router.get('/analytics/:organizationId', async (req: Request, res: Response) => 
     };
 
     res.json(analytics);
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to get space standards analytics', error);
     res.status(500).json({
       error: 'Failed to get space standards analytics',
@@ -617,7 +617,7 @@ router.post('/:standardId/clone', async (req: Request, res: Response) => {
     const newStandard = await standardsService.createSpaceStandard(clonedStandard);
 
     res.status(201).json(newStandard);
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to clone space standard', error);
     res.status(500).json({
       error: 'Failed to clone space standard',

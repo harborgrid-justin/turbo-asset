@@ -66,7 +66,7 @@ export class AssetDepreciationService {
 
       return this.mapToDepreciationRecord(depreciationRecord);
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to initialize depreciation', {
         assetId,
         error: error.message,
@@ -143,7 +143,7 @@ export class AssetDepreciationService {
 
       return financialData;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to calculate current depreciation', {
         assetId,
         error: error.message,
@@ -191,7 +191,7 @@ export class AssetDepreciationService {
             results.processed++;
             results.totalDepreciation += depreciation.depreciationAmount;
           }
-        } catch (error) {
+        } catch (error: unknown) {
           results.errors.push({
             assetId: asset.id,
             assetTag: asset.assetTag,
@@ -209,7 +209,7 @@ export class AssetDepreciationService {
 
       return results;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to process monthly depreciation', {
         organizationId,
         error: error.message,
@@ -279,7 +279,7 @@ export class AssetDepreciationService {
 
       return this.mapToDepreciationRecord(adjustmentRecord);
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to adjust asset value', {
         assetId,
         newValue,
@@ -379,7 +379,7 @@ export class AssetDepreciationService {
 
       return report;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate depreciation report', {
         organizationId,
         error: error.message,
@@ -507,7 +507,7 @@ export class AssetDepreciationService {
 
       return { total, average };
 
-    } catch (error) {
+    } catch (error: unknown) {
       return { total: 0, average: 0 };
     }
   }

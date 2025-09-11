@@ -135,7 +135,7 @@ export class AssetManagementService {
         },
       };
 
-    } catch (error) {
+    } catch (error: unknown) {
       return {
         status: 'unhealthy',
         services: {},

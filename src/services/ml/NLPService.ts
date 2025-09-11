@@ -133,7 +133,7 @@ export class NLPService extends EventEmitter {
       logger.info('NLP Service initialized successfully');
       this.emit('service:initialized');
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to initialize NLP Service', error);
       throw error;
     }
@@ -249,7 +249,7 @@ export class NLPService extends EventEmitter {
 
       return classification;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to classify ticket', { ticketId, error });
       throw error;
     }
@@ -339,7 +339,7 @@ export class NLPService extends EventEmitter {
 
       return results;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to batch classify tickets', { error });
       throw error;
     }
@@ -405,7 +405,7 @@ export class NLPService extends EventEmitter {
 
       return sentimentScore;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to analyze sentiment', { error });
       throw error;
     }
@@ -470,7 +470,7 @@ export class NLPService extends EventEmitter {
         extractedEntities.sort((a, b) => b.confidence - a.confidence)
       );
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to extract entities', { error });
       return [];
     }
@@ -529,7 +529,7 @@ export class NLPService extends EventEmitter {
 
       return summary;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to summarize text', { error });
       return text.substring(0, 150) + '...';
     }
@@ -564,7 +564,7 @@ export class NLPService extends EventEmitter {
         confidence: detectedLanguage ? detectedLanguage[1] : 0.5
       };
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to detect language', { error });
       return { language: 'en', confidence: 0.5 };
     }
@@ -627,7 +627,7 @@ export class NLPService extends EventEmitter {
         confidence
       };
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.debug('Classification failed, using keyword fallback', { error });
       return this.classifyByKeywords(text);
     }
@@ -665,7 +665,7 @@ export class NLPService extends EventEmitter {
         reasoning
       };
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.debug('Priority classification failed, using heuristics', { error });
       return this.classifyPriorityByHeuristics(text);
     }
@@ -1213,7 +1213,7 @@ export class NLPService extends EventEmitter {
       }
 
       logger.info('All NLP models trained successfully');
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to train NLP models', error);
       throw error;
     }

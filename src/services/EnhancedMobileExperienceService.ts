@@ -404,7 +404,7 @@ export class EnhancedMobileExperienceService extends EventEmitter {
         totalFeatures: Object.keys(features).length
       });
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to initialize mobile features', { error });
     }
   }
@@ -467,7 +467,7 @@ export class EnhancedMobileExperienceService extends EventEmitter {
 
       return device;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to register mobile device', { error, userId, deviceInfo });
       throw error;
     }
@@ -571,7 +571,7 @@ export class EnhancedMobileExperienceService extends EventEmitter {
 
       return workOrder;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create mobile work order', { error, workOrderData, assignedUserId });
       throw error;
     }
@@ -641,7 +641,7 @@ export class EnhancedMobileExperienceService extends EventEmitter {
 
       return updatedWorkOrder;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to update mobile work order', { error, workOrderId, updates, userId });
       throw error;
     }
@@ -715,7 +715,7 @@ export class EnhancedMobileExperienceService extends EventEmitter {
 
       return photo;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to capture enhanced photo', { error, workOrderId, userId });
       throw error;
     }
@@ -782,7 +782,7 @@ export class EnhancedMobileExperienceService extends EventEmitter {
 
       return inspection;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to start mobile inspection', { error, inspectionData, userId });
       throw error;
     }
@@ -840,7 +840,7 @@ export class EnhancedMobileExperienceService extends EventEmitter {
           } else {
             errors++;
           }
-        } catch (error) {
+        } catch (error: unknown) {
           errors++;
           logger.error('Sync item processing failed', { error, syncItem });
         }
@@ -875,7 +875,7 @@ export class EnhancedMobileExperienceService extends EventEmitter {
 
       return { synced, conflicts, errors, duration };
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to perform intelligent sync', { error, deviceId });
       throw error;
     }
@@ -978,7 +978,7 @@ export class EnhancedMobileExperienceService extends EventEmitter {
 
       return dashboard;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate mobile dashboard', { error, userId, deviceId });
       throw error;
     }

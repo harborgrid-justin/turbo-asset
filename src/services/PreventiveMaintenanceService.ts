@@ -162,7 +162,7 @@ export class PreventiveMaintenanceService {
       });
 
       return pm;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create preventive maintenance task', error);
       throw error;
     }
@@ -189,7 +189,7 @@ export class PreventiveMaintenanceService {
       }
 
       return pm;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get preventive maintenance task', { pmId, error });
       throw error;
     }
@@ -288,7 +288,7 @@ export class PreventiveMaintenanceService {
         totalPages,
         currentPage: page,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to search PM tasks', { filters, error });
       throw error;
     }
@@ -366,7 +366,7 @@ export class PreventiveMaintenanceService {
       });
 
       return workOrder;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate work order for PM task', { pmId, error });
       throw error;
     }
@@ -410,7 +410,7 @@ export class PreventiveMaintenanceService {
         setTimeout(async () => {
           try {
             await this.generateWorkOrderForPM(pmId);
-          } catch (error) {
+          } catch (error: unknown) {
             logger.error('Failed to auto-generate next PM work order', { pmId, error });
           }
         }, 1000); // Small delay to ensure transaction completes
@@ -423,7 +423,7 @@ export class PreventiveMaintenanceService {
       });
 
       return updatedPM;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to complete PM task', { pmId, error });
       throw error;
     }
@@ -616,7 +616,7 @@ export class PreventiveMaintenanceService {
       });
 
       return result;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to optimize PM scheduling', { organizationId, error });
       throw error;
     }
@@ -799,7 +799,7 @@ export class PreventiveMaintenanceService {
         assetCoverage,
         resourceUtilization,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get PM metrics', { organizationId, error });
       throw error;
     }
@@ -855,7 +855,7 @@ export class PreventiveMaintenanceService {
           });
           
           success++;
-        } catch (error) {
+        } catch (error: unknown) {
           failed++;
           errors.push(`PM ${pmId}: ${error instanceof Error ? error.message : 'Unknown error'}`);
         }
@@ -863,7 +863,7 @@ export class PreventiveMaintenanceService {
 
       logger.info('Bulk PM update completed', { success, failed, total: pmIds.length });
       return { success, failed, errors };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to perform bulk PM update', { organizationId, error });
       throw error;
     }
@@ -995,7 +995,7 @@ export class PreventiveMaintenanceService {
             availableHours,
           };
         });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get resource utilization', { organizationId, error });
       return [];
     }

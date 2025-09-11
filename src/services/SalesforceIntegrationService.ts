@@ -72,7 +72,7 @@ export class SalesforceIntegrationService {
         instanceUrl: this.instanceUrl,
         expiresAt: this.tokenExpiresAt,
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Salesforce authentication failed', { error });
       throw error;
     }
@@ -93,7 +93,7 @@ export class SalesforceIntegrationService {
       );
 
       return response.data;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Salesforce query failed', { soqlQuery, error });
       throw error;
     }
@@ -117,7 +117,7 @@ export class SalesforceIntegrationService {
       });
 
       return { ...record, Id: response.data.id };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Salesforce record creation failed', { objectType, record, error });
       throw error;
     }
@@ -143,7 +143,7 @@ export class SalesforceIntegrationService {
         objectType,
         recordId,
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Salesforce record update failed', {
         objectType,
         recordId,
@@ -169,7 +169,7 @@ export class SalesforceIntegrationService {
         objectType,
         recordId,
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Salesforce record deletion failed', {
         objectType,
         recordId,
@@ -191,7 +191,7 @@ export class SalesforceIntegrationService {
 
       const response = await this.client.get(url, { params });
       return response.data;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Salesforce record retrieval failed', {
         objectType,
         recordId,
@@ -224,7 +224,7 @@ export class SalesforceIntegrationService {
           },
         });
       }
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Property to Salesforce sync failed', { propertyData, error });
       throw error;
     }
@@ -253,7 +253,7 @@ export class SalesforceIntegrationService {
           },
         });
       }
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Space to Salesforce sync failed', { spaceData, error });
       throw error;
     }
@@ -282,7 +282,7 @@ export class SalesforceIntegrationService {
           },
         });
       }
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('User to Salesforce sync failed', { userData, error });
       throw error;
     }
@@ -300,7 +300,7 @@ export class SalesforceIntegrationService {
       );
 
       return response.data;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Salesforce report data retrieval failed', { reportId, error });
       throw error;
     }
@@ -320,7 +320,7 @@ export class SalesforceIntegrationService {
       });
 
       return response.data;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Salesforce Apex REST execution failed', { endpoint, method, error });
       throw error;
     }
@@ -418,7 +418,7 @@ export class SalesforceIntegrationService {
       }
 
       logger.info('Salesforce bulk sync completed', { operationCount: operations.length });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Salesforce bulk sync failed', { operations, error });
       throw error;
     }

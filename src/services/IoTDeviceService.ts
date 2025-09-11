@@ -182,7 +182,7 @@ export class IoTDeviceService {
       });
 
       return device;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to register IoT device', error);
       throw error;
     }
@@ -255,7 +255,7 @@ export class IoTDeviceService {
       });
 
       return reading;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to record sensor reading', error);
       throw error;
     }
@@ -315,7 +315,7 @@ export class IoTDeviceService {
       });
 
       return conditionMonitoring;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to update condition monitoring', { deviceId, error });
       throw error;
     }
@@ -493,7 +493,7 @@ export class IoTDeviceService {
         },
         sensorCoverage: sensorCounts,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get IoT metrics', { organizationId, error });
       throw error;
     }
@@ -591,7 +591,7 @@ export class IoTDeviceService {
       });
 
       return insights;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate predictive maintenance insights', { organizationId, error });
       throw error;
     }
@@ -631,7 +631,7 @@ export class IoTDeviceService {
         deviceId: device.deviceId,
         rulesCount: rules.length,
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to configure alert rules', { deviceId, error });
       throw error;
     }
@@ -662,7 +662,7 @@ export class IoTDeviceService {
             quality: reading.quality,
           });
           processed++;
-        } catch (error) {
+        } catch (error: unknown) {
           failed++;
           errors.push(`Reading from ${reading.deviceId}: ${error instanceof Error ? error.message : 'Unknown error'}`);
         }
@@ -675,7 +675,7 @@ export class IoTDeviceService {
       });
 
       return { processed, failed, errors };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to process batch sensor data', error);
       throw error;
     }
@@ -806,7 +806,7 @@ export class IoTDeviceService {
           }
         }
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to check alert conditions', { deviceId, sensorType, error });
     }
   }

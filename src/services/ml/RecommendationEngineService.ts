@@ -166,7 +166,7 @@ export class RecommendationEngineService extends EventEmitter {
       logger.info('Recommendation Engine Service initialized successfully');
       this.emit('service:initialized');
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to initialize Recommendation Engine Service', error);
       throw error;
     }
@@ -324,7 +324,7 @@ export class RecommendationEngineService extends EventEmitter {
 
       return finalRecommendations;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate vendor recommendations', { organizationId, serviceCategory, error });
       throw error;
     }
@@ -457,7 +457,7 @@ export class RecommendationEngineService extends EventEmitter {
 
       return enhancedRecommendations;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate lease recommendations', { organizationId, propertyId, error });
       throw error;
     }
@@ -574,7 +574,7 @@ export class RecommendationEngineService extends EventEmitter {
 
       return analysis;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to analyze contract', { organizationId, contractId, error });
       throw error;
     }
@@ -706,7 +706,7 @@ export class RecommendationEngineService extends EventEmitter {
 
       return priceOptimization;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to optimize pricing', { organizationId, serviceCategory, error });
       throw error;
     }
@@ -802,7 +802,7 @@ export class RecommendationEngineService extends EventEmitter {
 
       return insights;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate recommendation insights', { organizationId, error });
       throw error;
     }
@@ -960,7 +960,7 @@ export class RecommendationEngineService extends EventEmitter {
       }
 
       logger.info('All recommendation models trained successfully');
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to train recommendation models', error);
       throw error;
     }
@@ -1126,7 +1126,7 @@ export class RecommendationEngineService extends EventEmitter {
 
       return recommendations.sort((a, b) => b.score - a.score);
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.warn('ML vendor recommendation failed, using fallback', error);
       return this.generateFallbackVendorRecommendations(candidates, maxRecommendations);
     }
@@ -1230,7 +1230,7 @@ export class RecommendationEngineService extends EventEmitter {
         mitigationStrategies: this.generateMitigationStrategies(riskFactors)
       };
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.warn('Risk assessment failed, using fallback', error);
       return this.generateFallbackRiskAssessment();
     }

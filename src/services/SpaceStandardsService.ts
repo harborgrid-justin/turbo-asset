@@ -246,7 +246,7 @@ export class SpaceStandardsService {
       });
 
       return standard as SpaceStandard;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create space standard', error);
       throw error;
     }
@@ -287,7 +287,7 @@ export class SpaceStandardsService {
       });
 
       return standards as SpaceStandard[];
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get space standards', error);
       throw error;
     }
@@ -357,7 +357,7 @@ export class SpaceStandardsService {
         implementationPlan,
         recommendations,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate space configuration', error);
       throw error;
     }
@@ -440,7 +440,7 @@ export class SpaceStandardsService {
         recommendations,
         complianceScore,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to validate space configuration', error);
       throw error;
     }
@@ -534,7 +534,7 @@ export class SpaceStandardsService {
         recommendations,
         costComparison,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate planning templates', error);
       throw error;
     }

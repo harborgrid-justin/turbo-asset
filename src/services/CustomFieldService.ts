@@ -36,7 +36,7 @@ export class CustomFieldService {
       });
 
       return result.id;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create custom field definition', error);
       throw error;
     }
@@ -76,7 +76,7 @@ export class CustomFieldService {
         displayOrder: def.displayOrder,
         isActive: def.isActive,
       }));
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get custom field definitions', error);
       throw error;
     }
@@ -136,7 +136,7 @@ export class CustomFieldService {
         entityId, 
         entityType 
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to set custom field value', error);
       throw error;
     }
@@ -176,7 +176,7 @@ export class CustomFieldService {
       }
 
       return result;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get custom field values', error);
       throw error;
     }
@@ -207,7 +207,7 @@ export class CustomFieldService {
         if (value !== undefined && value !== null && value !== '') {
           try {
             await this.validateFieldValue(fieldDef, value);
-          } catch (error) {
+          } catch (error: unknown) {
             errors[fieldDef.name] = error instanceof Error ? error.message : 'Invalid value';
           }
         }
@@ -227,7 +227,7 @@ export class CustomFieldService {
         isValid: Object.keys(errors).length === 0,
         errors,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to validate entity fields', error);
       throw error;
     }
@@ -424,7 +424,7 @@ export class CustomFieldService {
         fieldId, 
         organizationId 
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to update custom field definition', error);
       throw error;
     }
@@ -455,7 +455,7 @@ export class CustomFieldService {
         fieldId, 
         organizationId 
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to delete custom field definition', error);
       throw error;
     }
@@ -506,7 +506,7 @@ export class CustomFieldService {
       });
 
       return copiedField.id;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to copy custom field definition', error);
       throw error;
     }
@@ -530,7 +530,7 @@ export class CustomFieldService {
         try {
           await this.setFieldValue(organizationId, entityId, entityType, fieldValues);
           successCount++;
-        } catch (error) {
+        } catch (error: unknown) {
           errorCount++;
           errors.push({
             entityId,
@@ -547,7 +547,7 @@ export class CustomFieldService {
       });
 
       return { successCount, errorCount, errors };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to bulk update field values', error);
       throw error;
     }
@@ -610,7 +610,7 @@ export class CustomFieldService {
         mostCommonValues,
         usageByEntity,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get field usage stats', error);
       throw error;
     }
@@ -656,7 +656,7 @@ export class CustomFieldService {
       }
 
       return exportData;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to export fields', error);
       throw error;
     }
@@ -702,7 +702,7 @@ export class CustomFieldService {
             }
 
             imported++;
-          } catch (error) {
+          } catch (error: unknown) {
             errors++;
             logger.error('Failed to import field definition', { name: def.name, error });
           }
@@ -740,7 +740,7 @@ export class CustomFieldService {
                 },
               });
             }
-          } catch (error) {
+          } catch (error: unknown) {
             errors++;
             logger.error('Failed to import field value', { entityId: val.entityId, error });
           }
@@ -755,7 +755,7 @@ export class CustomFieldService {
       });
 
       return { imported, skipped, errors };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to import fields', error);
       throw error;
     }
@@ -828,7 +828,7 @@ export class CustomFieldService {
       return category 
         ? templates.filter(t => t.category === category)
         : templates;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get field templates', error);
       throw error;
     }
@@ -917,7 +917,7 @@ export class CustomFieldService {
         errors,
         warnings,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to validate field values', error);
       throw error;
     }
@@ -1056,7 +1056,7 @@ export class CustomFieldService {
       });
 
       return appliedFieldIds;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to apply field template', error);
       throw error;
     }

@@ -43,7 +43,7 @@ router.get('/dashboard', async (req: Request, res: Response) => {
     const dashboard = await portfolioService.getPortfolioDashboard(query);
 
     res.json(dashboard);
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to get portfolio dashboard', error);
     res.status(500).json({
       error: 'Failed to get portfolio dashboard',
@@ -72,7 +72,7 @@ router.get('/properties/:id/drilldown', async (req: Request, res: Response) => {
     );
 
     res.json(drillDown);
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to get property drill-down', error);
     res.status(500).json({
       error: 'Failed to get property drill-down',
@@ -117,7 +117,7 @@ router.get('/utilization/analytics', async (req: Request, res: Response) => {
     const analytics = await utilizationService.getUtilizationAnalytics(query);
 
     res.json(analytics);
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to get utilization analytics', error);
     res.status(500).json({
       error: 'Failed to get utilization analytics',
@@ -149,7 +149,7 @@ router.get('/occupancy/realtime', async (req: Request, res: Response) => {
     );
 
     res.json(realTimeData);
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to get real-time occupancy', error);
     res.status(500).json({
       error: 'Failed to get real-time occupancy',
@@ -182,7 +182,7 @@ router.get('/moves/analytics', async (req: Request, res: Response) => {
     );
 
     res.json(analytics);
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to get move analytics', error);
     res.status(500).json({
       error: 'Failed to get move analytics',
@@ -210,7 +210,7 @@ router.get('/chargeback/analytics', async (req: Request, res: Response) => {
     );
 
     res.json(analytics);
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to get chargeback analytics', error);
     res.status(500).json({
       error: 'Failed to get chargeback analytics',
@@ -246,7 +246,7 @@ router.get('/chargeback/report', async (req: Request, res: Response) => {
     );
 
     res.json(report);
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to generate chargeback report', error);
     res.status(500).json({
       error: 'Failed to generate chargeback report',
@@ -291,7 +291,7 @@ router.get('/utilization/report', async (req: Request, res: Response) => {
     const report = await utilizationService.generateUtilizationReport(query);
 
     res.json(report);
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to get utilization report', error);
     res.status(500).json({
       error: 'Failed to get utilization report',
@@ -319,7 +319,7 @@ router.post('/utilization/record', async (req: Request, res: Response) => {
       message: 'Utilization data recorded successfully',
       recordCount: records.length,
     });
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to record utilization data', error);
     res.status(500).json({
       error: 'Failed to record utilization data',
@@ -356,7 +356,7 @@ router.post('/utilization/sensor-data', async (req: Request, res: Response) => {
       message: 'Sensor data processed successfully',
       sensorCount: sensorData.length,
     });
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to process sensor data', error);
     res.status(500).json({
       error: 'Failed to process sensor data',
@@ -391,7 +391,7 @@ router.get('/summary', async (req: Request, res: Response) => {
     const summary = await portfolioService.getPortfolioSummary(query);
 
     res.json(summary);
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to get portfolio summary', error);
     res.status(500).json({
       error: 'Failed to get portfolio summary',

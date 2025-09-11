@@ -149,7 +149,7 @@ export class DataGovernanceService extends EventEmitter {
       });
 
       return rule;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create governance rule', { name, error });
       throw error;
     }
@@ -186,7 +186,7 @@ export class DataGovernanceService extends EventEmitter {
       });
 
       return record;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create master data record', { entityType, entityId, error });
       throw error;
     }
@@ -224,7 +224,7 @@ export class DataGovernanceService extends EventEmitter {
       });
 
       return lineage;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Data lineage tracking failed', { entityId, entityType, error });
       throw error;
     }
@@ -277,7 +277,7 @@ export class DataGovernanceService extends EventEmitter {
       });
 
       return metrics;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Data quality calculation failed', { entityType, entityId, error });
       throw error;
     }
@@ -307,7 +307,7 @@ export class DataGovernanceService extends EventEmitter {
         level: classification.level,
         categories: classification.categories,
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Data classification failed', { entityType, entityId, error });
       throw error;
     }
@@ -332,7 +332,7 @@ export class DataGovernanceService extends EventEmitter {
         name: steward.name,
         domains: domains.length,
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Data steward assignment failed', { steward, error });
       throw error;
     }
@@ -363,7 +363,7 @@ export class DataGovernanceService extends EventEmitter {
       });
 
       return violations;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Policy violation detection failed', { organizationId, error });
       throw error;
     }
@@ -423,7 +423,7 @@ export class DataGovernanceService extends EventEmitter {
       }
 
       return masterDataManagement;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Master data management failed', { entityType, error });
       throw error;
     }
@@ -490,7 +490,7 @@ export class DataGovernanceService extends EventEmitter {
         action,
         authorized: isAuthorized,
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Data access auditing failed', {
         userId,
         entityType,
@@ -521,7 +521,7 @@ export class DataGovernanceService extends EventEmitter {
           expiredAt: item.expiredAt,
         });
       }
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Retention policy monitoring failed', { organizationId, error });
     }
   }
@@ -565,7 +565,7 @@ export class DataGovernanceService extends EventEmitter {
       });
 
       return report;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Governance report generation failed', { organizationId, reportType, error });
       throw error;
     }

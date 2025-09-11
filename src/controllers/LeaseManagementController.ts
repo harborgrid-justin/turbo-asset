@@ -86,7 +86,7 @@ router.post('/leases', async (req: Request, res: Response) => {
       success: true,
       data: lease
     });
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to create lease', error);
     res.status(500).json({
       error: 'Failed to create lease',
@@ -115,7 +115,7 @@ router.get('/portfolio/summary/:organizationId', async (req: Request, res: Respo
       success: true,
       data: summary
     });
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to get portfolio summary', error);
     res.status(500).json({
       error: 'Failed to get portfolio summary',
@@ -173,7 +173,7 @@ router.get('/leases/search', async (req: Request, res: Response) => {
         total: leases.length
       }
     });
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to search leases', error);
     res.status(500).json({
       error: 'Failed to search leases',
@@ -204,7 +204,7 @@ router.get('/metrics/:organizationId', async (req: Request, res: Response) => {
       success: true,
       data: metrics
     });
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to get lease metrics', error);
     res.status(500).json({
       error: 'Failed to get lease metrics',
@@ -242,7 +242,7 @@ router.get('/renewals/analyze/:organizationId', async (req: Request, res: Respon
           Math.round(renewalAnalyses.reduce((sum, r) => sum + r.renewalProbability, 0) / renewalAnalyses.length) : 0
       }
     });
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to analyze renewal opportunities', error);
     res.status(500).json({
       error: 'Failed to analyze renewal opportunities',
@@ -297,7 +297,7 @@ router.put('/leases/:leaseId', async (req: Request, res: Response) => {
       success: true,
       data: updatedLease
     });
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to update lease', error);
     res.status(500).json({
       error: 'Failed to update lease',
@@ -340,7 +340,7 @@ router.post('/reports/:organizationId', async (req: Request, res: Response) => {
       success: true,
       data: report
     });
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to generate lease report', error);
     res.status(500).json({
       error: 'Failed to generate lease report',
@@ -369,7 +369,7 @@ router.get('/leases/:leaseId', async (req: Request, res: Response) => {
       success: true,
       message: 'Get lease by ID endpoint - implementation pending'
     });
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to get lease', error);
     res.status(500).json({
       error: 'Failed to get lease',
@@ -398,7 +398,7 @@ router.delete('/leases/:leaseId', async (req: Request, res: Response) => {
       success: true,
       message: 'Delete lease endpoint - implementation pending'
     });
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to delete lease', error);
     res.status(500).json({
       error: 'Failed to delete lease',
@@ -443,7 +443,7 @@ router.get('/dashboard/:organizationId', async (req: Request, res: Response) => 
       success: true,
       data: dashboardData
     });
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to get lease dashboard', error);
     res.status(500).json({
       error: 'Failed to get lease dashboard',

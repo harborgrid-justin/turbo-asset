@@ -55,7 +55,7 @@ export class DocumentPermissionService {
       });
 
       logger.info('Document permission set', { documentId, userId, permission });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to set document permission', error);
       throw error;
     }
@@ -94,7 +94,7 @@ export class DocumentPermissionService {
         expiresAt: p.expiresAt,
         user: p.user,
       }));
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get document permissions', error);
       throw error;
     }
@@ -139,7 +139,7 @@ export class DocumentPermissionService {
       }
 
       logger.info('Document permissions updated', { documentId, organizationId, count: permissions.length });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to update document permissions', error);
       throw error;
     }
@@ -198,7 +198,7 @@ export class DocumentPermissionService {
         userCount: sharingRequest.userIds.length,
         permission: sharingRequest.permissions,
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to share document', error);
       throw error;
     }
@@ -283,7 +283,7 @@ export class DocumentPermissionService {
         page,
         totalPages,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get access history', error);
       throw error;
     }
@@ -338,7 +338,7 @@ export class DocumentPermissionService {
       }
 
       return false;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to check document permission', error);
       return false;
     }

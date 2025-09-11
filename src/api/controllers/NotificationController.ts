@@ -1,3 +1,4 @@
+import { toError } from '../../core/utils/validation';
 import { Router, Request, Response } from 'express';
 import { NotificationService } from '../../services/NotificationService';
 import { logger } from '../../config/logger';
@@ -41,7 +42,7 @@ router.get('/', async (req: Request, res: Response) => {
         totalPages: Math.ceil(result.total / Number(limit)),
       },
     });
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to get notifications', error);
     res.status(500).json({
       error: 'Failed to get notifications',
@@ -69,7 +70,7 @@ router.put('/:id/read', async (req: Request, res: Response) => {
     res.json({
       message: 'Notification marked as read',
     });
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to mark notification as read', error);
     res.status(500).json({
       error: 'Failed to mark notification as read',
@@ -104,7 +105,7 @@ router.post('/', async (req: Request, res: Response) => {
       id: notificationId,
       message: 'Notification created successfully',
     });
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to create notification', error);
     res.status(500).json({
       error: 'Failed to create notification',

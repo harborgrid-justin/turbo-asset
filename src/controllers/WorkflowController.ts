@@ -35,7 +35,7 @@ router.post('/definitions', async (req: Request, res: Response) => {
       id: definitionId,
       message: 'Workflow definition created successfully',
     });
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to create workflow definition', error);
     res.status(500).json({
       error: 'Failed to create workflow definition',
@@ -68,7 +68,7 @@ router.post('/instances', async (req: Request, res: Response) => {
       id: instanceId,
       message: 'Workflow instance started successfully',
     });
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to start workflow instance', error);
     res.status(500).json({
       error: 'Failed to start workflow instance',
@@ -107,7 +107,7 @@ router.post('/approvals/:approvalId/process', async (req: Request, res: Response
     res.json({
       message: 'Approval processed successfully',
     });
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to process approval', error);
     res.status(500).json({
       error: 'Failed to process approval',

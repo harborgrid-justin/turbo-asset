@@ -195,7 +195,7 @@ class TurboAssetApplication {
       logger.info('Health check service initialized');
 
       logger.info('Application initialized successfully');
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to initialize application', { error });
       throw error;
     }
@@ -247,7 +247,7 @@ class TurboAssetApplication {
 
       logger.info('Graceful shutdown completed');
       process.exit(0);
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Error during graceful shutdown', { error });
       process.exit(1);
     }

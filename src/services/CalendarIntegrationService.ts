@@ -84,7 +84,7 @@ export class CalendarIntegrationService {
 
       logger.info('Calendar OAuth initiated', { userId, provider });
       return authUrl;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to initiate calendar auth', error);
       throw error;
     }
@@ -149,7 +149,7 @@ export class CalendarIntegrationService {
 
       logger.info('Calendar auth completed', { userId, provider, email });
       return authData;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to complete calendar auth', error);
       throw error;
     }
@@ -205,7 +205,7 @@ export class CalendarIntegrationService {
               location: this.formatSpaceLocation(booking.space),
               attendees: users.map(u => u.email),
             });
-          } catch (error) {
+          } catch (error: unknown) {
             logger.error('Failed to sync booking to calendar', { 
               userId: user.id, 
               provider: auth.provider,
@@ -216,7 +216,7 @@ export class CalendarIntegrationService {
       }
 
       logger.info('Booking synced to calendars', { bookingId });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to sync booking to calendar', error);
       throw error;
     }
@@ -292,7 +292,7 @@ export class CalendarIntegrationService {
       });
 
       return event.externalId!;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create calendar event', error);
       throw error;
     }
@@ -339,7 +339,7 @@ export class CalendarIntegrationService {
         provider: auth.provider,
         eventId,
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to update calendar event', error);
       throw error;
     }
@@ -370,7 +370,7 @@ export class CalendarIntegrationService {
         provider: auth.provider,
         eventId,
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to delete calendar event', error);
       throw error;
     }
@@ -435,7 +435,7 @@ export class CalendarIntegrationService {
               schedule: response.data,
             });
           }
-        } catch (error) {
+        } catch (error: unknown) {
           logger.error('Failed to get free/busy data', {
             userId,
             provider: auth.provider,
@@ -445,7 +445,7 @@ export class CalendarIntegrationService {
       }
 
       return freeBusyData;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get user free/busy', error);
       throw error;
     }
@@ -502,7 +502,7 @@ export class CalendarIntegrationService {
         organizationId,
         bookingCount: bookings.length,
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to bulk sync bookings', error);
       throw error;
     }
@@ -555,7 +555,7 @@ export class CalendarIntegrationService {
         });
         return response.data.email;
       }
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get user email', error);
       throw error;
     }
@@ -612,7 +612,7 @@ export class CalendarIntegrationService {
         accessToken: access_token,
         expiresAt,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to refresh token', error);
       throw error;
     }

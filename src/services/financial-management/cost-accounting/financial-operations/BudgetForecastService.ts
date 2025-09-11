@@ -118,7 +118,7 @@ export class BudgetForecastService {
 
       logger.info('Budget created successfully', { budgetId: budget.id });
       return budget;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create budget', error);
       throw error;
     }
@@ -156,7 +156,7 @@ export class BudgetForecastService {
 
       logger.info('Forecast created successfully', { forecastId: forecast.id });
       return forecast;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create forecast', error);
       throw error;
     }
@@ -212,7 +212,7 @@ export class BudgetForecastService {
         budgetsByProperty,
         variance
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get budget summary', error);
       throw error;
     }
@@ -256,7 +256,7 @@ export class BudgetForecastService {
         totalVariance: varianceAnalysis.reduce((sum, item) => sum + item.variance, 0),
         lineItemVariances: varianceAnalysis
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to analyze budget variance', error);
       throw error;
     }

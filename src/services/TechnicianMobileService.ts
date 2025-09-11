@@ -256,7 +256,7 @@ export class TechnicianMobileService {
           offlineMode: false,
         },
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get technician profile', { technicianId, error });
       throw error;
     }
@@ -454,7 +454,7 @@ export class TechnicianMobileService {
           onTimeRate: Math.round(onTimeRate),
         },
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get mobile dashboard', { technicianId, error });
       throw error;
     }
@@ -578,7 +578,7 @@ export class TechnicianMobileService {
           url: `/api/attachments/${att.id}`, // Would be actual file URL
         })),
       }));
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get mobile work orders', { technicianId, error });
       throw error;
     }
@@ -636,7 +636,7 @@ export class TechnicianMobileService {
       });
 
       return entry;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to record mobile time entry', error);
       throw error;
     }
@@ -712,7 +712,7 @@ export class TechnicianMobileService {
       });
 
       return workOrder;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to update work order from mobile', error);
       throw error;
     }
@@ -783,7 +783,7 @@ export class TechnicianMobileService {
       });
 
       return requestRecord;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to submit inventory request from mobile', error);
       throw error;
     }
@@ -851,7 +851,7 @@ export class TechnicianMobileService {
       });
 
       return offlineData;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate offline data package', { technicianId, error });
       throw error;
     }
@@ -890,7 +890,7 @@ export class TechnicianMobileService {
           try {
             await this.recordMobileTimeEntry(timeEntry);
             syncedTimeEntries++;
-          } catch (error) {
+          } catch (error: unknown) {
             conflicts.push({
               type: 'TIME_ENTRY',
               data: timeEntry,
@@ -906,7 +906,7 @@ export class TechnicianMobileService {
           try {
             await this.updateWorkOrderFromMobile(update);
             syncedWorkOrderUpdates++;
-          } catch (error) {
+          } catch (error: unknown) {
             conflicts.push({
               type: 'WORK_ORDER_UPDATE',
               data: update,
@@ -922,7 +922,7 @@ export class TechnicianMobileService {
           try {
             await this.submitInventoryRequest(request);
             syncedInventoryRequests++;
-          } catch (error) {
+          } catch (error: unknown) {
             conflicts.push({
               type: 'INVENTORY_REQUEST',
               data: request,
@@ -955,7 +955,7 @@ export class TechnicianMobileService {
         conflicts,
         newData,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to sync mobile data', { technicianId, error });
       throw error;
     }
@@ -1046,7 +1046,7 @@ export class TechnicianMobileService {
         totalTravelTime,
         estimatedCompletion,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to optimize route', { technicianId, error });
       throw error;
     }
@@ -1167,7 +1167,7 @@ export class TechnicianMobileService {
         achievements,
         goals,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get technician performance analytics', { technicianId, error });
       throw error;
     }

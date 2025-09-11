@@ -1,3 +1,4 @@
+import { toError } from '../../core/utils/validation';
 import { Request, Response } from 'express';
 import { DataGovernanceService } from '../../services/DataGovernanceService';
 import { logger } from '../../config/logger';
@@ -37,7 +38,7 @@ export class DataGovernanceController {
           pages: Math.ceil(total / Number(limit)),
         },
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get governance rules', { error });
       res.status(500).json({ error: 'Failed to get governance rules' });
     }
@@ -71,7 +72,7 @@ export class DataGovernanceController {
       );
 
       res.status(201).json(rule);
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create governance rule', { error });
       res.status(500).json({ error: 'Failed to create governance rule' });
     }
@@ -91,7 +92,7 @@ export class DataGovernanceController {
       });
 
       res.json(rule);
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to update governance rule', { error });
       res.status(500).json({ error: 'Failed to update governance rule' });
     }
@@ -109,7 +110,7 @@ export class DataGovernanceController {
       });
 
       res.status(204).send();
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to delete governance rule', { error });
       res.status(500).json({ error: 'Failed to delete governance rule' });
     }
@@ -149,7 +150,7 @@ export class DataGovernanceController {
           pages: Math.ceil(total / Number(limit)),
         },
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get master data records', { error });
       res.status(500).json({ error: 'Failed to get master data records' });
     }
@@ -173,7 +174,7 @@ export class DataGovernanceController {
       );
 
       res.status(201).json(record);
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create master data record', { error });
       res.status(500).json({ error: 'Failed to create master data record' });
     }
@@ -195,7 +196,7 @@ export class DataGovernanceController {
       );
 
       res.json(lineage);
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to track data lineage', { error });
       res.status(500).json({ error: 'Failed to track data lineage' });
     }
@@ -216,7 +217,7 @@ export class DataGovernanceController {
       }
 
       res.json(lineage);
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get data lineage', { error });
       res.status(500).json({ error: 'Failed to get data lineage' });
     }
@@ -237,7 +238,7 @@ export class DataGovernanceController {
       );
 
       res.json(metrics);
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get data quality metrics', { error });
       res.status(500).json({ error: 'Failed to get data quality metrics' });
     }
@@ -259,7 +260,7 @@ export class DataGovernanceController {
       );
 
       res.json({ message: 'Data classified successfully' });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to classify data', { error });
       res.status(500).json({ error: 'Failed to classify data' });
     }
@@ -276,7 +277,7 @@ export class DataGovernanceController {
       await dataGovernanceService.assignDataSteward(organizationId, steward, domains);
 
       res.json({ message: 'Data steward assigned successfully' });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to assign data steward', { error });
       res.status(500).json({ error: 'Failed to assign data steward' });
     }
@@ -292,7 +293,7 @@ export class DataGovernanceController {
       const violations = await dataGovernanceService.detectPolicyViolations(organizationId);
 
       res.json(violations);
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to detect policy violations', { error });
       res.status(500).json({ error: 'Failed to detect policy violations' });
     }
@@ -314,7 +315,7 @@ export class DataGovernanceController {
       );
 
       res.json(management);
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to manage master data', { error });
       res.status(500).json({ error: 'Failed to manage master data' });
     }
@@ -339,7 +340,7 @@ export class DataGovernanceController {
       );
 
       res.json({ message: 'Data access audited successfully' });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to audit data access', { error });
       res.status(500).json({ error: 'Failed to audit data access' });
     }
@@ -355,7 +356,7 @@ export class DataGovernanceController {
       await dataGovernanceService.monitorRetentionPolicies(organizationId);
 
       res.json({ message: 'Retention policies monitored successfully' });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to monitor retention policies', { error });
       res.status(500).json({ error: 'Failed to monitor retention policies' });
     }
@@ -375,7 +376,7 @@ export class DataGovernanceController {
       );
 
       res.json(report);
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate governance report', { error });
       res.status(500).json({ error: 'Failed to generate governance report' });
     }
@@ -431,7 +432,7 @@ export class DataGovernanceController {
       };
 
       res.json(analytics);
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get governance analytics', { error });
       res.status(500).json({ error: 'Failed to get governance analytics' });
     }
@@ -469,7 +470,7 @@ export class DataGovernanceController {
       ];
 
       res.json(stewards);
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get data stewards', { error });
       res.status(500).json({ error: 'Failed to get data stewards' });
     }
@@ -553,7 +554,7 @@ export class DataGovernanceController {
           pages: Math.ceil(filteredCatalog.length / Number(limit)),
         },
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get data catalog', { error });
       res.status(500).json({ error: 'Failed to get data catalog' });
     }
@@ -604,7 +605,7 @@ export class DataGovernanceController {
       };
 
       res.json(report);
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get privacy compliance report', { error });
       res.status(500).json({ error: 'Failed to get privacy compliance report' });
     }

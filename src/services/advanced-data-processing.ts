@@ -260,7 +260,7 @@ export class AdvancedDataProcessingEngine {
         
         totalQualityScore += recordQualityScore;
         
-      } catch (error) {
+      } catch (error: unknown) {
         errors.push({
           recordId: record.id || 'unknown',
           error: error instanceof Error ? error.message : 'Unknown processing error'

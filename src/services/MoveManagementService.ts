@@ -192,7 +192,7 @@ export class MoveManagementService {
       });
 
       return this.getMoveRequest(moveRequest.id, data.organizationId);
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create move request', error);
       throw error;
     }
@@ -275,7 +275,7 @@ export class MoveManagementService {
       }
 
       return moveRequest;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get move request', error);
       throw error;
     }
@@ -365,7 +365,7 @@ export class MoveManagementService {
       });
 
       return moveRequests;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to search move requests', error);
       throw error;
     }
@@ -436,7 +436,7 @@ export class MoveManagementService {
       });
 
       return this.getMoveRequest(id, organizationId);
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to process move request', error);
       throw error;
     }
@@ -473,7 +473,7 @@ export class MoveManagementService {
       });
 
       return vendor;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to add vendor to move request', error);
       throw error;
     }
@@ -522,7 +522,7 @@ export class MoveManagementService {
       });
 
       return selectedVendor;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to select vendor', error);
       throw error;
     }
@@ -578,7 +578,7 @@ export class MoveManagementService {
       });
 
       return cost;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to add cost to move request', error);
       throw error;
     }
@@ -624,7 +624,7 @@ export class MoveManagementService {
       });
 
       return this.getMoveRequest(id, organizationId);
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to update move status', error);
       throw error;
     }
@@ -730,7 +730,7 @@ export class MoveManagementService {
           totalCost: data.totalCost,
         })),
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get move analytics', error);
       throw error;
     }
@@ -827,7 +827,7 @@ export class MoveManagementService {
         bottlenecks,
         recommendations,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get advanced move analytics', error);
       throw error;
     }
@@ -891,7 +891,7 @@ export class MoveManagementService {
         efficiency,
         cost,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to optimize move scheduling', error);
       throw error;
     }
@@ -960,7 +960,7 @@ export class MoveManagementService {
         benchmarks,
         recommendations,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate comprehensive move report', error);
       throw error;
     }
@@ -1040,7 +1040,7 @@ export class MoveManagementService {
         autoApproved,
         escalated,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to manage move approvals', error);
       throw error;
     }
@@ -1112,7 +1112,7 @@ export class MoveManagementService {
         sustainabilityScore,
         recommendations,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to track move sustainability', error);
       throw error;
     }

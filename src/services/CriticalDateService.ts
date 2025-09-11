@@ -128,7 +128,7 @@ export class CriticalDateService {
       });
 
       return criticalDate;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create critical date', error);
       throw error;
     }
@@ -311,7 +311,7 @@ export class CriticalDateService {
         alertsByImportance,
         escalationStatistics
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get critical date dashboard', error);
       throw error;
     }
@@ -380,7 +380,7 @@ export class CriticalDateService {
           results.alertsSent += alertsProcessed.alertsSent;
           results.escalationsTriggered += alertsProcessed.escalations;
           results.processedDates++;
-        } catch (error) {
+        } catch (error: unknown) {
           logger.error('Failed to process alerts for critical date', {
             criticalDateId: criticalDate.id,
             error: error instanceof Error ? error.message : 'Unknown error'
@@ -395,7 +395,7 @@ export class CriticalDateService {
       });
 
       return results;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to process daily alerts', error);
       throw error;
     }
@@ -510,7 +510,7 @@ export class CriticalDateService {
         propertyName: alert.criticalDate.lease?.property?.name || 
           alert.criticalDate.contract?.lease?.property?.name
       }));
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to search alerts', error);
       throw error;
     }
@@ -563,7 +563,7 @@ export class CriticalDateService {
       });
 
       return updatedAlert;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to acknowledge alert', error);
       throw error;
     }
@@ -607,7 +607,7 @@ export class CriticalDateService {
       });
 
       return criticalDate;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to complete critical date', error);
       throw error;
     }
@@ -666,7 +666,7 @@ export class CriticalDateService {
       });
 
       return updatedDate;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to update critical date', error);
       throw error;
     }
@@ -693,7 +693,7 @@ export class CriticalDateService {
         default:
           throw new Error('Invalid report type');
       }
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate critical date report', error);
       throw error;
     }
@@ -723,7 +723,7 @@ export class CriticalDateService {
             status: 'SUCCESS',
             updatedDate
           });
-        } catch (error) {
+        } catch (error: unknown) {
           results.push({
             criticalDateId: update.criticalDateId,
             status: 'ERROR',
@@ -747,7 +747,7 @@ export class CriticalDateService {
         },
         results
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to bulk update critical dates', error);
       throw error;
     }

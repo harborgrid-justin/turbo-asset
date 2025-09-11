@@ -169,7 +169,7 @@ export class APIManagementService extends EventEmitter {
       });
 
       return endpoint;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create API endpoint', {
         path: endpointData.path,
         method: endpointData.method,
@@ -203,7 +203,7 @@ export class APIManagementService extends EventEmitter {
       });
 
       return updated;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to update API endpoint', { endpointId, error });
       throw error;
     }
@@ -227,7 +227,7 @@ export class APIManagementService extends EventEmitter {
       });
 
       logger.info('API endpoint deleted', { endpointId });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to delete API endpoint', { endpointId, error });
       throw error;
     }
@@ -260,7 +260,7 @@ export class APIManagementService extends EventEmitter {
       }
 
       return endpoints.sort((a, b) => a.path.localeCompare(b.path));
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get API endpoints', { filters, error });
       throw error;
     }
@@ -290,7 +290,7 @@ export class APIManagementService extends EventEmitter {
       });
 
       return apiKey;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create API key', {
         keyName: keyData.name,
         error: error instanceof Error ? error.message : 'Unknown error'
@@ -317,7 +317,7 @@ export class APIManagementService extends EventEmitter {
       });
 
       logger.info('API key revoked', { keyId, keyName: apiKey.name });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to revoke API key', { keyId, error });
       throw error;
     }
@@ -348,7 +348,7 @@ export class APIManagementService extends EventEmitter {
       this.apiKeys.set(apiKey.id, apiKey);
 
       return { isValid: true, keyData: apiKey };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to validate API key', { error });
       return { isValid: false, error: 'Validation error' };
     }
@@ -417,7 +417,7 @@ export class APIManagementService extends EventEmitter {
         ),
         resetTime: new Date(Math.ceil(now.getTime() / 60000) * 60000)
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to check rate limit', { keyId, endpointId, error });
       // Allow request if rate limit check fails
       return {
@@ -448,7 +448,7 @@ export class APIManagementService extends EventEmitter {
       if (this.metricsBuffer.length >= 1000) {
         await this.flushMetrics();
       }
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to record API metrics', { error });
     }
   }
@@ -514,7 +514,7 @@ export class APIManagementService extends EventEmitter {
       });
 
       return analytics;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get API analytics', { startDate, endDate, endpointId, error });
       throw error;
     }
@@ -626,7 +626,7 @@ export class APIManagementService extends EventEmitter {
       });
 
       return documentation;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate API documentation', { format, error });
       throw error;
     }
@@ -680,7 +680,7 @@ export class APIManagementService extends EventEmitter {
         healthCheck.status = failedChecks === Object.keys(healthCheck.checks).length ? 'error' : 'warning';
       }
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('API Management health check failed', { error });
       healthCheck.status = 'error';
       healthCheck.checks = {
@@ -727,7 +727,7 @@ export class APIManagementService extends EventEmitter {
         count: metrics.length,
         organizationId: this.context?.organizationId
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to flush API metrics', { error });
       // Put metrics back in buffer on failure
       this.metricsBuffer.unshift(...this.metricsBuffer);
@@ -740,7 +740,7 @@ export class APIManagementService extends EventEmitter {
 
       // Mock database save
       logger.debug('Endpoint saved to database', { endpointId: endpoint.id });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to save endpoint', { endpointId: endpoint.id, error });
     }
   }
@@ -751,7 +751,7 @@ export class APIManagementService extends EventEmitter {
 
       // Mock database removal
       logger.debug('Endpoint removed from database', { endpointId });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to remove endpoint', { endpointId, error });
     }
   }
@@ -760,7 +760,7 @@ export class APIManagementService extends EventEmitter {
     try {
       // Mock database save
       logger.debug('API key saved to database', { keyId: apiKey.id });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to save API key', { keyId: apiKey.id, error });
     }
   }

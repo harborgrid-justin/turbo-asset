@@ -705,7 +705,7 @@ export class Fortune100FinancialAnalyticsEngine {
           modelVersion: '1.0'
         }
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(`Advanced financial analysis failed for ${analysisType}:`, error);
       return {
         success: false,

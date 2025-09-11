@@ -388,7 +388,7 @@ export class BusinessLogicIntegrationService {
         }
       };
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(`Error executing integrated operation ${serviceName}.${methodName}:`, error);
       
       return {
@@ -436,7 +436,7 @@ export class BusinessLogicIntegrationService {
         if (napiResult.success) {
           napiHealthy++;
         }
-      } catch (error) {
+      } catch (error: unknown) {
         // NAPI service not available
       }
 
@@ -445,7 +445,7 @@ export class BusinessLogicIntegrationService {
         try {
           await bridge.businessLogicService.healthCheck();
           businessLogicHealthy++;
-        } catch (error) {
+        } catch (error: unknown) {
           // Business logic service not healthy
         }
       }
@@ -572,7 +572,7 @@ export class BusinessLogicIntegrationService {
               await this.delay(Math.pow(2, attempt - 1) * 1000); // Exponential backoff
             }
           }
-        } catch (error) {
+        } catch (error: unknown) {
           lastError = error;
           if (attempt < maxRetries) {
             await this.delay(Math.pow(2, attempt - 1) * 1000);
@@ -599,7 +599,7 @@ export class BusinessLogicIntegrationService {
         }
       };
 
-    } catch (error) {
+    } catch (error: unknown) {
       this.metrics.failedRequests++;
       logger.error(`Production operation failed: ${serviceName}.${methodName}`, error);
       
@@ -877,7 +877,7 @@ export class BusinessLogicIntegrationService {
         { timeout: 3000 }
       );
       return result.success ? 'HEALTHY' : 'UNHEALTHY';
-    } catch (error) {
+    } catch (error: unknown) {
       return 'UNKNOWN';
     }
   }
@@ -892,7 +892,7 @@ export class BusinessLogicIntegrationService {
       } else {
         return 'UNKNOWN';
       }
-    } catch (error) {
+    } catch (error: unknown) {
       return 'UNHEALTHY';
     }
   }
@@ -941,7 +941,7 @@ export class BusinessLogicIntegrationService {
         this.metrics.napiSuccessRate = this.calculateNapiSuccessRate();
         this.metrics.fallbackUsageRate = this.calculateFallbackUsageRate();
         
-      } catch (error) {
+      } catch (error: unknown) {
         logger.error('Health check monitoring failed:', error);
       }
     }, this.healthCheckInterval);

@@ -30,7 +30,7 @@ export class AssetImportExportService {
       
       return await this.processImportData(csvData, organizationId, userId, mappingConfig);
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to import assets from CSV', {
         filePath,
         organizationId,
@@ -58,7 +58,7 @@ export class AssetImportExportService {
       
       return await this.processImportData(excelData, organizationId, userId, mappingConfig);
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to import assets from Excel', {
         filePath,
         organizationId,
@@ -100,7 +100,7 @@ export class AssetImportExportService {
       
       return filePath;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to export assets to CSV', {
         organizationId,
         error: error.message,
@@ -154,7 +154,7 @@ export class AssetImportExportService {
       
       return filePath;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to export assets to Excel', {
         organizationId,
         error: error.message,
@@ -213,7 +213,7 @@ export class AssetImportExportService {
       
       return filePath;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate import template', {
         format,
         error: error.message,
@@ -308,7 +308,7 @@ export class AssetImportExportService {
         totalRows: data.length,
       };
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to validate import file', {
         filePath,
         error: error.message,
@@ -349,7 +349,7 @@ export class AssetImportExportService {
         await prisma.maintenanceAsset.create({ data: assetData });
         results.successful++;
         
-      } catch (error) {
+      } catch (error: unknown) {
         results.failed++;
         results.errors.push({
           index: i + 1,

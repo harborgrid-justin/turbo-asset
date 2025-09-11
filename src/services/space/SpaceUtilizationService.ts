@@ -74,7 +74,7 @@ export class SpaceUtilizationService {
         recordCount: validRecords.length,
         invalidCount: records.length - validRecords.length,
       });
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to record space utilization', error);
       throw error;
     }
@@ -152,7 +152,7 @@ export class SpaceUtilizationService {
       });
 
       return utilizationData;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get utilization data', error);
       throw error;
     }
@@ -201,7 +201,7 @@ export class SpaceUtilizationService {
       }
 
       return reports.sort((a, b) => b.averageUtilization - a.averageUtilization);
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate utilization report', error);
       throw error;
     }
@@ -290,7 +290,7 @@ export class SpaceUtilizationService {
       );
 
       return enrichedData;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get real-time occupancy', error);
       throw error;
     }
@@ -378,7 +378,7 @@ export class SpaceUtilizationService {
           recordCount: utilizationRecords.length 
         });
       }
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to process sensor data', error);
       throw error;
     }
@@ -463,7 +463,7 @@ export class SpaceUtilizationService {
         heatmap,
         recommendations,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get utilization analytics', error);
       throw error;
     }
@@ -557,7 +557,7 @@ export class SpaceUtilizationService {
         optimizationSuggestions,
         riskAssessment,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get predictive space planning', error);
       throw error;
     }
@@ -628,7 +628,7 @@ export class SpaceUtilizationService {
         alerts,
         recommendations,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to process realtime sensor data', error);
       throw error;
     }
@@ -708,7 +708,7 @@ export class SpaceUtilizationService {
         expansionNeeds,
         costOptimization,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get enterprise occupancy insights', error);
       throw error;
     }

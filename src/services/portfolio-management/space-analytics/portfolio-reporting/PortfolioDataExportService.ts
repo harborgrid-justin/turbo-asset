@@ -81,7 +81,7 @@ export class PortfolioDataExportService {
       
       return result;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to export portfolio data to Excel', {
         organizationId,
         error: error.message,
@@ -158,7 +158,7 @@ export class PortfolioDataExportService {
       
       return result;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to export portfolio data to CSV', {
         organizationId,
         error: error.message,
@@ -220,7 +220,7 @@ export class PortfolioDataExportService {
       
       return result;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to export portfolio data to JSON', {
         organizationId,
         error: error.message,
@@ -280,7 +280,7 @@ export class PortfolioDataExportService {
       
       return result;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to export dashboard data', {
         organizationId,
         dashboardName: dashboardConfig.dashboardName,
@@ -329,7 +329,7 @@ export class PortfolioDataExportService {
         status: exp.status,
       }));
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get export history', {
         organizationId,
         error: error.message,
@@ -373,7 +373,7 @@ export class PortfolioDataExportService {
         createdAt: scheduledExport.createdAt,
       };
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to schedule recurring export', {
         organizationId,
         error: error.message,
@@ -522,7 +522,7 @@ export class PortfolioDataExportService {
     try {
       const stats = await fs.stat(filePath);
       return stats.size;
-    } catch (error) {
+    } catch (error: unknown) {
       return 0;
     }
   }

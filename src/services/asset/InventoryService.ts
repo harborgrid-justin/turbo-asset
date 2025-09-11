@@ -202,7 +202,7 @@ export class InventoryService {
       });
 
       return inventoryItem;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create inventory item', error);
       throw error;
     }
@@ -316,7 +316,7 @@ export class InventoryService {
       });
 
       return transaction;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create inventory transaction', error);
       throw error;
     }
@@ -402,7 +402,7 @@ export class InventoryService {
         totalPages,
         currentPage: page,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to search inventory items', { filters, error });
       throw error;
     }
@@ -608,7 +608,7 @@ export class InventoryService {
         valueByLocation: locationValueBreakdown,
         monthlyTransactions,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get inventory metrics', { organizationId, error });
       throw error;
     }
@@ -722,7 +722,7 @@ export class InventoryService {
       });
 
       return recommendations;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate reorder recommendations', { organizationId, error });
       throw error;
     }
@@ -852,7 +852,7 @@ export class InventoryService {
       });
 
       return result;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to optimize stock levels', { organizationId, error });
       throw error;
     }
@@ -918,7 +918,7 @@ export class InventoryService {
               reorderPoint: item.reorderPoint,
             });
           }
-        } catch (error) {
+        } catch (error: unknown) {
           errors.push(`Item ${item.itemName}: ${error instanceof Error ? error.message : 'Unknown error'}`);
         }
       }
@@ -931,7 +931,7 @@ export class InventoryService {
       });
 
       return { processed, created, errors };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to process auto reorders', { organizationId, error });
       throw error;
     }
@@ -1026,7 +1026,7 @@ export class InventoryService {
           });
         }
       }
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to check reorder alert', { inventoryItemId, error });
     }
   }

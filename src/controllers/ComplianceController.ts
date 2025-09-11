@@ -69,7 +69,7 @@ router.post('/calculate-lease-accounting', async (req: Request, res: Response) =
       success: true,
       data: result
     });
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to calculate lease accounting', error);
     res.status(500).json({
       error: 'Failed to calculate lease accounting',
@@ -116,7 +116,7 @@ router.post('/lease-accounting-records', async (req: Request, res: Response) => 
       success: true,
       data: record
     });
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to create lease accounting record', error);
     res.status(500).json({
       error: 'Failed to create lease accounting record',
@@ -157,7 +157,7 @@ router.post('/bulk-lease-accounting', async (req: Request, res: Response) => {
       success: true,
       data: result
     });
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to process bulk lease accounting', error);
     res.status(500).json({
       error: 'Failed to process bulk lease accounting',
@@ -204,7 +204,7 @@ router.get('/reports/:organizationId', async (req: Request, res: Response) => {
       success: true,
       data: report
     });
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to generate compliance report', error);
     res.status(500).json({
       error: 'Failed to generate compliance report',
@@ -257,7 +257,7 @@ router.post('/update-discount-rates', async (req: Request, res: Response) => {
       success: true,
       data: result
     });
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to update discount rates', error);
     res.status(500).json({
       error: 'Failed to update discount rates',
@@ -304,7 +304,7 @@ router.get('/disclosure-notes/:organizationId', async (req: Request, res: Respon
       success: true,
       data: disclosureNotes
     });
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to generate disclosure notes', error);
     res.status(500).json({
       error: 'Failed to generate disclosure notes',
@@ -352,7 +352,7 @@ router.get('/lease-accounting-records', async (req: Request, res: Response) => {
         offset: offset || 0
       }
     });
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to get lease accounting records', error);
     res.status(500).json({
       error: 'Failed to get lease accounting records',
@@ -400,7 +400,7 @@ router.get('/journal-entries', async (req: Request, res: Response) => {
         offset: offset || 0
       }
     });
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to get journal entries', error);
     res.status(500).json({
       error: 'Failed to get journal entries',
@@ -444,7 +444,7 @@ router.put('/lease-accounting-records/:recordId/status', async (req: Request, re
       message: 'Update accounting record status endpoint - implementation pending',
       data: { recordId, status, notes }
     });
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to update accounting record status', error);
     res.status(500).json({
       error: 'Failed to update accounting record status',
@@ -481,7 +481,7 @@ router.post('/journal-entries/:entryId/approve', async (req: Request, res: Respo
       message: 'Approve journal entry endpoint - implementation pending',
       data: { entryId, approvedBy, notes }
     });
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to approve journal entry', error);
     res.status(500).json({
       error: 'Failed to approve journal entry',
@@ -538,7 +538,7 @@ router.get('/dashboard/:organizationId', async (req: Request, res: Response) => 
       success: true,
       data: dashboardData
     });
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to get compliance dashboard', error);
     res.status(500).json({
       error: 'Failed to get compliance dashboard',

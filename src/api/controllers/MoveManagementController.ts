@@ -1,3 +1,4 @@
+import { toError } from '../../core/utils/validation';
 import { Router, Request, Response } from 'express';
 import { logger } from '../../config/logger';
 import { MoveManagementService } from '../../services/MoveManagementService';
@@ -41,7 +42,7 @@ router.get('/', async (req: Request, res: Response) => {
     const moveRequests = await moveService.searchMoveRequests(query);
 
     res.json(moveRequests);
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to get move requests', error);
     res.status(500).json({
       error: 'Failed to get move requests',
@@ -70,7 +71,7 @@ router.get('/:id', async (req: Request, res: Response) => {
     );
 
     res.json(moveRequest);
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to get move request', error);
     if (error instanceof Error && error.message === 'Move request not found') {
       res.status(404).json({ error: error.message });
@@ -140,7 +141,7 @@ router.post('/', async (req: Request, res: Response) => {
     });
 
     res.status(201).json(moveRequest);
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to create move request', error);
     res.status(500).json({
       error: 'Failed to create move request',
@@ -192,7 +193,7 @@ router.patch('/:id/process', async (req: Request, res: Response) => {
     );
 
     res.json(processedRequest);
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to process move request', error);
     if (error instanceof Error && error.message.includes('not found')) {
       res.status(404).json({ error: error.message });
@@ -237,7 +238,7 @@ router.patch('/:id/status', async (req: Request, res: Response) => {
     );
 
     res.json(updatedRequest);
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to update move status', error);
     if (error instanceof Error && error.message.includes('not found')) {
       res.status(404).json({ error: error.message });
@@ -282,7 +283,7 @@ router.post('/:id/vendors', async (req: Request, res: Response) => {
     });
 
     res.status(201).json(vendor);
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to add vendor', error);
     if (error instanceof Error && error.message.includes('not found')) {
       res.status(404).json({ error: error.message });
@@ -324,7 +325,7 @@ router.patch('/:id/vendors/:vendorId/select', async (req: Request, res: Response
     );
 
     res.json(selectedVendor);
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to select vendor', error);
     if (error instanceof Error && error.message.includes('not found')) {
       res.status(404).json({ error: error.message });
@@ -371,7 +372,7 @@ router.post('/:id/costs', async (req: Request, res: Response) => {
     });
 
     res.status(201).json(cost);
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to add cost', error);
     if (error instanceof Error && error.message.includes('not found')) {
       res.status(404).json({ error: error.message });
@@ -408,7 +409,7 @@ router.get('/analytics/summary', async (req: Request, res: Response) => {
     );
 
     res.json(analytics);
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to get move analytics', error);
     res.status(500).json({
       error: 'Failed to get move analytics',

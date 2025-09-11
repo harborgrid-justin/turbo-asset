@@ -66,7 +66,7 @@ router.get('/', async (req: Request, res: Response) => {
         total: properties.length,
       },
     });
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to get properties', error);
     res.status(500).json({
       error: 'Failed to get properties',
@@ -123,7 +123,7 @@ router.get('/:id', async (req: Request, res: Response) => {
     (property as any).customFields = customFields;
 
     res.json(property);
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to get property', error);
     res.status(500).json({
       error: 'Failed to get property',
@@ -214,7 +214,7 @@ router.post('/', async (req: Request, res: Response) => {
     logger.info('Property created', { propertyId: property.id, organizationId });
 
     res.status(201).json(property);
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to create property', error);
     res.status(500).json({
       error: 'Failed to create property',
@@ -316,7 +316,7 @@ router.put('/:id', async (req: Request, res: Response) => {
     logger.info('Property updated', { propertyId: property.id, organizationId });
 
     res.json(property);
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to update property', error);
     res.status(500).json({
       error: 'Failed to update property',
@@ -355,7 +355,7 @@ router.delete('/:id', async (req: Request, res: Response) => {
     logger.info('Property deleted', { propertyId: id, organizationId });
 
     res.json({ message: 'Property deleted successfully' });
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Failed to delete property', error);
     res.status(500).json({
       error: 'Failed to delete property',

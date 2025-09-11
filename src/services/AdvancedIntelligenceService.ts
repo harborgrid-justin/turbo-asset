@@ -190,7 +190,7 @@ export class AdvancedIntelligenceService extends EventEmitter {
         avgAccuracy: models.reduce((acc, m) => acc + m.accuracy, 0) / models.length
       });
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to initialize AI models', { error });
     }
   }
@@ -243,7 +243,7 @@ export class AdvancedIntelligenceService extends EventEmitter {
 
       return intelligence;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate real-time intelligence', { organizationId, error });
       throw error;
     }
@@ -380,7 +380,7 @@ export class AdvancedIntelligenceService extends EventEmitter {
         // Simulate running the ML model (in real implementation, this would call actual ML services)
         const prediction = await this.runModel(model, organizationId);
         results.push(prediction);
-      } catch (error) {
+      } catch (error: unknown) {
         logger.error('Failed to run predictive model', { modelId, error });
       }
     }
@@ -549,7 +549,7 @@ export class AdvancedIntelligenceService extends EventEmitter {
       try {
         // Real-time data processing would happen here
         this.emit('real-time-update', { timestamp: new Date() });
-      } catch (error) {
+      } catch (error: unknown) {
         logger.error('Real-time processing error', { error });
       }
     }, 10000); // Every 10 seconds

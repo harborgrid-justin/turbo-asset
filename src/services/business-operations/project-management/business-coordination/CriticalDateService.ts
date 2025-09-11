@@ -92,7 +92,7 @@ export class CriticalDateService extends EventEmitter implements ICriticalDateSe
 
       return savedCriticalDate;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create critical date', error);
       throw new Error(`Failed to create critical date: ${(error as Error).message}`);
     }
@@ -109,7 +109,7 @@ export class CriticalDateService extends EventEmitter implements ICriticalDateSe
       }
       return criticalDate;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get critical date', { criticalDateId: id, error });
       throw new Error(`Failed to get critical date: ${(error as Error).message}`);
     }
@@ -152,7 +152,7 @@ export class CriticalDateService extends EventEmitter implements ICriticalDateSe
       logger.info('Critical date updated', { criticalDateId: id });
       return savedCriticalDate;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to update critical date', { criticalDateId: id, error });
       throw new Error(`Failed to update critical date: ${(error as Error).message}`);
     }
@@ -188,7 +188,7 @@ export class CriticalDateService extends EventEmitter implements ICriticalDateSe
       logger.info('Critical date deleted', { criticalDateId: id });
       return true;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to delete critical date', { criticalDateId: id, error });
       throw new Error(`Failed to delete critical date: ${(error as Error).message}`);
     }
@@ -226,7 +226,7 @@ export class CriticalDateService extends EventEmitter implements ICriticalDateSe
 
       return sortedDates;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get upcoming dates', { days, error });
       throw new Error(`Failed to get upcoming dates: ${(error as Error).message}`);
     }
@@ -257,7 +257,7 @@ export class CriticalDateService extends EventEmitter implements ICriticalDateSe
 
       return overdueDates;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get overdue dates', error);
       throw new Error(`Failed to get overdue dates: ${(error as Error).message}`);
     }
@@ -283,7 +283,7 @@ export class CriticalDateService extends EventEmitter implements ICriticalDateSe
           notification.status = 'SENT';
           notification.sentDate = new Date();
           successCount++;
-        } catch (error) {
+        } catch (error: unknown) {
           logger.error('Failed to send notification', {
             notificationId: notification.id,
             error
@@ -320,7 +320,7 @@ export class CriticalDateService extends EventEmitter implements ICriticalDateSe
 
       return successCount > 0;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to send notifications', { dateId, error });
       throw new Error(`Failed to send notifications: ${(error as Error).message}`);
     }
@@ -386,7 +386,7 @@ export class CriticalDateService extends EventEmitter implements ICriticalDateSe
       logger.info('Critical date escalated', { criticalDateId: dateId });
       return true;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to escalate overdue date', { dateId, error });
       throw new Error(`Failed to escalate: ${(error as Error).message}`);
     }
@@ -432,7 +432,7 @@ export class CriticalDateService extends EventEmitter implements ICriticalDateSe
       logger.info('Critical date marked completed', { criticalDateId: dateId });
       return updatedCriticalDate;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to mark critical date completed', { dateId, error });
       throw new Error(`Failed to mark completed: ${(error as Error).message}`);
     }
@@ -485,7 +485,7 @@ export class CriticalDateService extends EventEmitter implements ICriticalDateSe
 
       return action;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to add action', { dateId, error });
       throw new Error(`Failed to add action: ${(error as Error).message}`);
     }
@@ -554,7 +554,7 @@ export class CriticalDateService extends EventEmitter implements ICriticalDateSe
 
       return dashboard;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate dashboard', error);
       throw new Error(`Failed to generate dashboard: ${(error as Error).message}`);
     }
@@ -685,7 +685,7 @@ export class CriticalDateService extends EventEmitter implements ICriticalDateSe
     setInterval(async () => {
       try {
         await this.monitorOverdueDates();
-      } catch (error) {
+      } catch (error: unknown) {
         logger.error('Background monitoring error', error);
       }
     }, 60 * 60 * 1000); // 1 hour
@@ -874,7 +874,7 @@ export class CriticalDateService extends EventEmitter implements ICriticalDateSe
 
       return intelligence;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate critical date intelligence', { organizationId, error });
       throw new Error(`Intelligence generation failed: ${(error as Error).message}`);
     }
@@ -966,7 +966,7 @@ export class CriticalDateService extends EventEmitter implements ICriticalDateSe
 
       return optimization;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate optimization strategy', { organizationId, error });
       throw new Error(`Optimization strategy failed: ${(error as Error).message}`);
     }

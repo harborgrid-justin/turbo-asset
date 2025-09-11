@@ -91,7 +91,7 @@ export class LeaseManagementService extends EventEmitter implements ILeaseManage
 
       return savedLease;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create lease', error);
       throw new Error(`Failed to create lease: ${(error as Error).message}`);
     }
@@ -108,7 +108,7 @@ export class LeaseManagementService extends EventEmitter implements ILeaseManage
       }
       return lease;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get lease', { leaseId: id, error });
       throw new Error(`Failed to get lease: ${(error as Error).message}`);
     }
@@ -145,7 +145,7 @@ export class LeaseManagementService extends EventEmitter implements ILeaseManage
       logger.info('Lease updated', { leaseId: id });
       return savedLease;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to update lease', { leaseId: id, error });
       throw new Error(`Failed to update lease: ${(error as Error).message}`);
     }
@@ -178,7 +178,7 @@ export class LeaseManagementService extends EventEmitter implements ILeaseManage
       logger.info('Lease deleted', { leaseId: id });
       return true;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to delete lease', { leaseId: id, error });
       throw new Error(`Failed to delete lease: ${(error as Error).message}`);
     }
@@ -232,7 +232,7 @@ export class LeaseManagementService extends EventEmitter implements ILeaseManage
 
       return filteredLeases;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to search leases', error);
       throw new Error(`Failed to search leases: ${(error as Error).message}`);
     }
@@ -248,7 +248,7 @@ export class LeaseManagementService extends EventEmitter implements ILeaseManage
         endDateBefore: cutoffDate.toISOString()
       });
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get expiring leases', { days, error });
       throw new Error(`Failed to get expiring leases: ${(error as Error).message}`);
     }
@@ -286,7 +286,7 @@ export class LeaseManagementService extends EventEmitter implements ILeaseManage
       logger.info('Rent calculated', { leaseId, date, totalRent });
       return totalRent;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to calculate rent', { leaseId, date, error });
       throw new Error(`Failed to calculate rent: ${(error as Error).message}`);
     }
@@ -350,7 +350,7 @@ export class LeaseManagementService extends EventEmitter implements ILeaseManage
       logger.info('Lease renewed', { leaseId, optionNumber, newEndDate });
       return updatedLease;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to renew lease', { leaseId, optionNumber, error });
       throw new Error(`Failed to renew lease: ${(error as Error).message}`);
     }
@@ -389,7 +389,7 @@ export class LeaseManagementService extends EventEmitter implements ILeaseManage
       logger.info('Lease terminated', { leaseId, reason });
       return updatedLease;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to terminate lease', { leaseId, error });
       throw new Error(`Failed to terminate lease: ${(error as Error).message}`);
     }
@@ -435,7 +435,7 @@ export class LeaseManagementService extends EventEmitter implements ILeaseManage
       logger.info('Lease abstract generated', { leaseId });
       return abstract;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate lease abstract', { leaseId, error });
       throw new Error(`Failed to generate abstract: ${(error as Error).message}`);
     }
@@ -477,7 +477,7 @@ export class LeaseManagementService extends EventEmitter implements ILeaseManage
       logger.info('Lease payment processed', { leaseId, paymentId: payment.id });
       return payment;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to process lease payment', { leaseId, error });
       throw new Error(`Failed to process payment: ${(error as Error).message}`);
     }
@@ -701,7 +701,7 @@ export class LeaseManagementService extends EventEmitter implements ILeaseManage
 
       return analytics;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate lease analytics', { leaseId, error });
       throw new Error(`Analytics generation failed: ${(error as Error).message}`);
     }
@@ -799,7 +799,7 @@ export class LeaseManagementService extends EventEmitter implements ILeaseManage
 
       return optimization;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate lease optimization', { leaseId, error });
       throw new Error(`Optimization generation failed: ${(error as Error).message}`);
     }
@@ -888,7 +888,7 @@ export class LeaseManagementService extends EventEmitter implements ILeaseManage
 
       return forecasting;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate lease forecasting', { leaseId, error });
       throw new Error(`Forecasting generation failed: ${(error as Error).message}`);
     }

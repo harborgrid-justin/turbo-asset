@@ -168,7 +168,7 @@ export class BusinessIntelligenceService extends EventEmitter {
       });
 
       return dashboard;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Dashboard creation failed', error);
       throw error;
     }
@@ -230,7 +230,7 @@ export class BusinessIntelligenceService extends EventEmitter {
       });
 
       return report;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Report generation failed', error);
       throw error;
     }
@@ -294,7 +294,7 @@ export class BusinessIntelligenceService extends EventEmitter {
         organizationId,
         false
       );
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Infrastructure analytics dashboard generation failed', error);
       throw error;
     }
@@ -338,7 +338,7 @@ export class BusinessIntelligenceService extends EventEmitter {
         { date: '2024-01-02', consumption: 1180.2 },
         { date: '2024-01-03', consumption: 1320.8 }
       ];
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Query execution failed', { query, organizationId, error });
       throw error;
     }

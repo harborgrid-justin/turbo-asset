@@ -84,7 +84,7 @@ export class CAMReconciliationService extends EventEmitter implements ICAMReconc
 
       return savedReconciliation;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create CAM reconciliation', error);
       throw new Error(`Failed to create reconciliation: ${(error as Error).message}`);
     }
@@ -101,7 +101,7 @@ export class CAMReconciliationService extends EventEmitter implements ICAMReconc
       }
       return reconciliation;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get CAM reconciliation', { reconciliationId: id, error });
       throw new Error(`Failed to get reconciliation: ${(error as Error).message}`);
     }
@@ -138,7 +138,7 @@ export class CAMReconciliationService extends EventEmitter implements ICAMReconc
       logger.info('CAM reconciliation updated', { reconciliationId: id });
       return savedReconciliation;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to update CAM reconciliation', { reconciliationId: id, error });
       throw new Error(`Failed to update reconciliation: ${(error as Error).message}`);
     }
@@ -197,7 +197,7 @@ export class CAMReconciliationService extends EventEmitter implements ICAMReconc
 
       return expense;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to add CAM expense', { reconciliationId, error });
       throw new Error(`Failed to add expense: ${(error as Error).message}`);
     }
@@ -255,7 +255,7 @@ export class CAMReconciliationService extends EventEmitter implements ICAMReconc
 
       return tenantAllocations;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to calculate tenant allocations', { reconId, error });
       throw new Error(`Failed to calculate allocations: ${(error as Error).message}`);
     }
@@ -310,7 +310,7 @@ export class CAMReconciliationService extends EventEmitter implements ICAMReconc
 
       return camDispute;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to submit CAM dispute', { reconId, error });
       throw new Error(`Failed to submit dispute: ${(error as Error).message}`);
     }
@@ -386,7 +386,7 @@ export class CAMReconciliationService extends EventEmitter implements ICAMReconc
 
       return dispute;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to resolve CAM dispute', { reconId, disputeId, error });
       throw new Error(`Failed to resolve dispute: ${(error as Error).message}`);
     }
@@ -432,7 +432,7 @@ export class CAMReconciliationService extends EventEmitter implements ICAMReconc
       logger.info('CAM reconciliation finalized', { reconId });
       return updatedReconciliation;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to finalize CAM reconciliation', { reconId, error });
       throw new Error(`Failed to finalize reconciliation: ${(error as Error).message}`);
     }
@@ -485,7 +485,7 @@ export class CAMReconciliationService extends EventEmitter implements ICAMReconc
       logger.info('CAM statement generated', { reconId, leaseId });
       return statementBuffer;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate CAM statement', { reconId, leaseId, error });
       throw new Error(`Failed to generate statement: ${(error as Error).message}`);
     }
@@ -561,7 +561,7 @@ export class CAMReconciliationService extends EventEmitter implements ICAMReconc
       logger.info('CAM reconciliation report generated', { reconId });
       return report;
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate reconciliation report', { reconId, error });
       throw new Error(`Failed to generate report: ${(error as Error).message}`);
     }
@@ -846,7 +846,7 @@ export class CAMReconciliationService extends EventEmitter implements ICAMReconc
 
       return analytics;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate CAM analytics', { reconId, error });
       throw new Error(`Analytics generation failed: ${(error as Error).message}`);
     }
@@ -956,7 +956,7 @@ export class CAMReconciliationService extends EventEmitter implements ICAMReconc
 
       return disputeAnalysis;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate dispute analysis', { reconId, error });
       throw new Error(`Dispute analysis failed: ${(error as Error).message}`);
     }
@@ -1054,7 +1054,7 @@ export class CAMReconciliationService extends EventEmitter implements ICAMReconc
 
       return optimization;
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate optimization recommendations', { reconId, error });
       throw new Error(`Optimization failed: ${(error as Error).message}`);
     }

@@ -537,7 +537,7 @@ export class UnifiedRegulatoryComplianceEngine {
           assessmentDate: new Date().toISOString()
         }
       };
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error(`Regulatory compliance assessment failed for ${industry}:`, error);
       return {
         success: false,
