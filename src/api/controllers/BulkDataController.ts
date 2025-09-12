@@ -33,8 +33,6 @@ router.post('/import', upload.single('file'), async (req: Request, res: Response
       res.status(400).json({
         error: 'File is required',
       });
-
-      return;
       return;
     }
 
@@ -52,8 +50,6 @@ router.post('/import', upload.single('file'), async (req: Request, res: Response
       res.status(400).json({
         error: 'Entity type, organization ID, user ID, and mapping are required',
       });
-
-      return;
       return;
     }
 
@@ -76,7 +72,7 @@ router.post('/import', upload.single('file'), async (req: Request, res: Response
       result = await bulkDataService.importFromExcel(req.file.path, options);
     }
 
-    return res.json({
+    res.json({
       success: true,
       jobId: result.jobId,
       total: result.total,
@@ -88,9 +84,6 @@ router.post('/import', upload.single('file'), async (req: Request, res: Response
       error: 'Failed to start import job',
       message: error instanceof Error ? (error as Error).message : 'Unknown error',
     });
-
-    return;
-      return;
   }
 });
 
@@ -112,8 +105,6 @@ router.post('/export', async (req: Request, res: Response): Promise<void> => {
       res.status(400).json({
         error: 'Entity type, organization ID, and format are required',
       });
-
-      return;
       return;
     }
 
@@ -121,8 +112,6 @@ router.post('/export', async (req: Request, res: Response): Promise<void> => {
       res.status(400).json({
         error: 'Format must be csv or xlsx',
       });
-
-      return;
       return;
     }
 
@@ -137,7 +126,7 @@ router.post('/export', async (req: Request, res: Response): Promise<void> => {
 
     const result = await bulkDataService.exportData(options);
 
-    return res.json({
+    res.json({
       success: true,
       jobId: result.jobId,
       message: 'Export job started successfully',
@@ -148,9 +137,6 @@ router.post('/export', async (req: Request, res: Response): Promise<void> => {
       error: 'Failed to start export job',
       message: error instanceof Error ? (error as Error).message : 'Unknown error',
     });
-
-    return;
-      return;
   }
 });
 
@@ -166,21 +152,16 @@ router.get('/import/:jobId/status', async (req: Request, res: Response): Promise
       res.status(404).json({
         error: 'Job not found',
       });
-
-      return;
       return;
     }
 
-    return res.json(result);
+    res.json(result);
   } catch (error: unknown) {
     logger.error('Failed to get import job status', error);
     res.status(500).json({
       error: 'Failed to get import job status',
       message: error instanceof Error ? (error as Error).message : 'Unknown error',
     });
-
-    return;
-      return;
   }
 });
 
@@ -196,21 +177,16 @@ router.get('/export/:jobId/status', async (req: Request, res: Response): Promise
       res.status(404).json({
         error: 'Job not found',
       });
-
-      return;
       return;
     }
 
-    return res.json(result);
+    res.json(result);
   } catch (error: unknown) {
     logger.error('Failed to get export job status', error);
     res.status(500).json({
       error: 'Failed to get export job status',
       message: error instanceof Error ? (error as Error).message : 'Unknown error',
     });
-
-    return;
-      return;
   }
 });
 
@@ -226,21 +202,16 @@ router.get('/export/:jobId/download', async (req: Request, res: Response): Promi
       res.status(404).json({
         error: 'Export file not found',
       });
-
-      return;
       return;
     }
 
-    return res.download(result.filePath);
+    res.download(result.filePath);
   } catch (error: unknown) {
     logger.error('Failed to download export file', error);
     res.status(500).json({
       error: 'Failed to download export file',
       message: error instanceof Error ? (error as Error).message : 'Unknown error',
     });
-
-    return;
-      return;
   }
 });
 
