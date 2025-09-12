@@ -1,5 +1,5 @@
-import { prisma } from '@/../../config/database';
-import { logger } from '@/../../config/logger';
+import { prisma } from '../../config/database';
+import { logger } from '@/config/logger';
 
 /**
  * Document Retrieval Service - Handles document querying and access operations

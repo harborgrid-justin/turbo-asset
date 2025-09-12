@@ -40,4 +40,30 @@ if (process.env.NODE_ENV === 'development') {
   globalThis.__prisma = prisma;
 }
 
+/**
+ * Connect to the database
+ */
+export async function connectDatabase(): Promise<void> {
+  try {
+    await prisma.$connect();
+    logger.info('Database connected successfully');
+  } catch (error) {
+    logger.error('Failed to connect to database:', error);
+    throw error;
+  }
+}
+
+/**
+ * Disconnect from the database
+ */
+export async function disconnectDatabase(): Promise<void> {
+  try {
+    await prisma.$disconnect();
+    logger.info('Database disconnected successfully');
+  } catch (error) {
+    logger.error('Failed to disconnect from database:', error);
+    throw error;
+  }
+}
+
 export default prisma;

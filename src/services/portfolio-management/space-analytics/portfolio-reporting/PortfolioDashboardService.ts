@@ -1,5 +1,5 @@
-import { prisma } from '@/../../config/database';
-import { logger } from '@/../../config/logger';
+import { prisma } from '../../config/database';
+import { logger } from '@/config/logger';
 
 /**
  * Portfolio Dashboard Service - Executive and operational portfolio dashboards

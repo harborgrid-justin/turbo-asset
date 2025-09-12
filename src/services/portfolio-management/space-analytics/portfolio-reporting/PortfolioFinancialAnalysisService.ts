@@ -1,5 +1,5 @@
-import { prisma } from '@/../../config/database';
-import { logger } from '@/../../config/logger';
+import { prisma } from '../../config/database';
+import { logger } from '@/config/logger';
 
 /**
  * Portfolio Financial Analysis Service - Financial metrics and analysis for portfolio management
