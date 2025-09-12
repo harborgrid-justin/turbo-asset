@@ -67,6 +67,9 @@ import { BusinessLogicIntegrationController } from '@/controllers/BusinessLogicI
 // Enhanced NAPI-RS Integration
 import enhancedBusinessLogicRoutes from '@/routes/enhanced-business-logic-integration';
 
+// Real-World Phase 3 Business Logic Routes
+import realWorldPhase3Routes from '@/routes/realWorldPhase3Routes';
+
 class TurboAssetServer {
   private app: express.Application;
   private server: any;
@@ -364,6 +367,9 @@ class TurboAssetServer {
 
     // Enhanced Business Logic Integration routes - Production-grade features
     apiRouter.use('/enhanced-business-logic-integration', requireOrganizationAccess, enhancedBusinessLogicRoutes);
+
+    // Real-World Phase 3 Business Logic routes - Fortune 500 enterprise scenarios
+    apiRouter.use('/real-world', requireOrganizationAccess, requirePermissions(['enterprise:read']), realWorldPhase3Routes);
 
     // Mount API router
     this.app.use('/api', apiRouter);

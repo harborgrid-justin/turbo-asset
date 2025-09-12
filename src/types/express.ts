@@ -1,13 +1,26 @@
 import { Request } from 'express';
 
+export interface UserPayload {
+  id: string;
+  email: string;
+  organizationId: string;
+  roles: string[];
+  permissions: string[];
+  tier?: 'free' | 'premium' | 'enterprise';
+}
+
 declare global {
   namespace Express {
     interface Request {
-      user?: {
+      user?: UserPayload;
+      apiKey?: {
         id: string;
-        email: string;
         organizationId: string;
-        role: string;
+        permissions: string[];
+        rateLimit?: {
+          windowMs: number;
+          max: number;
+        };
       };
     }
   }
