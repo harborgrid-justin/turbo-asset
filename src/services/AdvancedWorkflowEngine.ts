@@ -1000,14 +1000,3 @@ interface ParticipantActivity {
   duration: number;
   aiAssisted: boolean;
 }
-
-export {
-  WorkflowDefinition,
-  WorkflowInstance,
-  WorkflowAnalytics,
-  WorkflowStep,
-  WorkflowTrigger,
-  WorkflowCondition,
-  WorkflowAutomation,
-  WorkflowIntegration
-};

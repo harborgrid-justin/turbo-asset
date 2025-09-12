@@ -366,8 +366,10 @@ export class EnhancedBusinessLogicIntegrationService {
         ...result,
         metadata: {
           ...result.metadata,
+          timestamp: new Date(),
           requestId,
           executionTime: Date.now() - startTime,
+          apiVersion: '1.0.0'
         }
       };
 
@@ -379,7 +381,7 @@ export class EnhancedBusinessLogicIntegrationService {
         success: false,
         error: {
           code: 'EXECUTION_ERROR',
-          message: error.message || 'Unknown error occurred',
+          message: (error as Error).message || 'Unknown error occurred',
           details: { serviceName, methodName }
         },
         metadata: {
@@ -1048,6 +1050,7 @@ export class AdvancedBusinessRulesEngine {
       case 'double-declining':
         const rate = acceleratedRatePercent / 100 / usefulLifeYears;
         let remainingValue = initialValue;
+        annualDepreciation = 0; // Initialize default value
         
         for (let year = 1; year <= Math.min(currentAge, usefulLifeYears); year++) {
           const yearlyDepreciation = Math.max(
@@ -1072,6 +1075,8 @@ export class AdvancedBusinessRulesEngine {
         
         if (currentAge === 0) {
           annualDepreciation = Math.min(initialValue * rate, initialValue - salvageValue);
+        } else if (currentAge > usefulLifeYears) {
+          annualDepreciation = 0; // Asset fully depreciated
         }
         break;
 
@@ -1843,7 +1848,7 @@ export class AdvancedDataStandardizationEngine {
       id: standardizedId,
       name: standardizedName,
       type: standardizedType || 'Unknown',
-      category: this.getAssetCategory(standardizedType),
+      category: this.getAssetCategory(standardizedType || 'Unknown'),
       location: standardizedLocation,
       specifications: {
         manufacturer: this.cleanAndFormatText(rawAssetData.manufacturer || rawAssetData.make || ''),

@@ -1332,3 +1332,6 @@ export class EnhancedBusinessLogicIntegrationService extends EventEmitter {
 
 // Export singleton instance
 export const enhancedBusinessLogicService = EnhancedBusinessLogicIntegrationService.getInstance();
+
+// Alias for backward compatibility
+export const ProductionGradeBusinessLogic = EnhancedBusinessLogicIntegrationService.getInstance();

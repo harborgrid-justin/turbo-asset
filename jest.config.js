@@ -9,7 +9,7 @@ module.exports = {
   transform: {
     '^.+\\.ts$': 'ts-jest',
   },
-  moduleNameMapping: {
+  moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
     '^@/types/(.*)$': '<rootDir>/src/shared/types/$1',
     '^@/interfaces/(.*)$': '<rootDir>/src/shared/interfaces/$1',

@@ -395,7 +395,7 @@ export class BusinessLogicIntegrationService {
         success: false,
         error: {
           code: 'EXECUTION_ERROR',
-          message: error.message || 'Unknown error occurred',
+          message: (error as Error).message || 'Unknown error occurred',
           details: { serviceName, methodName }
         }
       };
@@ -561,9 +561,11 @@ export class BusinessLogicIntegrationService {
               ...result,
               metadata: {
                 ...result.metadata,
+                timestamp: new Date(),
                 requestId,
                 attempt,
-                executionTime: Date.now() - startTime
+                executionTime: Date.now() - startTime,
+                apiVersion: '1.0.0'
               }
             };
           } else {
@@ -607,7 +609,7 @@ export class BusinessLogicIntegrationService {
         success: false,
         error: {
           code: 'PRODUCTION_EXECUTION_ERROR',
-          message: error.message || 'Unknown production error occurred',
+          message: (error as Error).message || 'Unknown production error occurred',
           details: { serviceName, methodName, requestId }
         },
         metadata: {

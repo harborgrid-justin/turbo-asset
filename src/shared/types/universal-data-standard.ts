@@ -19,17 +19,17 @@ export interface BaseEntity {
 // Standard response structure for all API operations
 export interface StandardResponse<T = any> {
   success: boolean;
-  data?: T;
+  data?: T | null;
   error?: {
     code: string;
     message: string;
     details?: Record<string, any>;
   };
   metadata?: {
-    timestamp: Date;
+    timestamp?: Date;
     requestId: string;
     executionTime: number;
-    apiVersion: string;
+    apiVersion?: string;
     attempt?: number;
     attempts?: number;
     [key: string]: any;
