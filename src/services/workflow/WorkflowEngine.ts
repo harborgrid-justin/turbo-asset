@@ -1,5 +1,5 @@
 import { prisma } from '../config/database';
-import { logger } from '../config/logger';
+import { logger } from '@/config/logger';
 import { WorkflowDefinition, WorkflowInstanceData, ApprovalData, WorkflowStep } from '../types/workflow';
 import { NotificationService } from './NotificationService';
 import cron from 'node-cron';

@@ -6,5 +6,5 @@ export { PreventiveMaintenanceService } from './PreventiveMaintenanceService';
 export { InventoryService } from './InventoryService';
 
 // Types and interfaces
-export * from './types';
-export * from './interfaces';
+// export * from './types';
+// export * from './interfaces';

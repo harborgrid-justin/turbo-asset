@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { APIManagementService } from '../services/APIManagementService';
-import { logger } from '../config/logger';
+import { logger } from '@/config/logger';
 import { prisma } from '../config/database';
 
 const apiManagementService = new APIManagementService();

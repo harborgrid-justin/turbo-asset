@@ -1,4 +1,4 @@
-import { logger } from '@/../../config/logger';
+import { logger } from '@/config/logger';
 
 /**
  * Portfolio Visualization Service - Generate charts and visualizations for portfolio analytics

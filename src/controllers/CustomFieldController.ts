@@ -1,6 +1,6 @@
 import { Router, Request, Response } from 'express';
 import { CustomFieldService } from '../services/CustomFieldService';
-import { logger } from '../config/logger';
+import { logger } from '@/config/logger';
 import { prisma } from '../config/database';
 import Joi from 'joi';
 

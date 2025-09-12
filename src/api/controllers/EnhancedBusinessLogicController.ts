@@ -16,7 +16,7 @@ export class EnhancedBusinessLogicController {
   /**
    * Execute business logic with advanced features
    */
-  static async executeAdvancedBusinessLogic(req: Request, res: Response): Promise<Response> {
+  static async executeAdvancedBusinessLogic(req: Request, res: Response): Promise<void> {
     try {
       const { serviceName, methodName, params = [], options = {} } = req.body;
 
@@ -28,9 +28,6 @@ export class EnhancedBusinessLogicController {
             message: 'serviceName and methodName are required',
           },
         });
-
-        return;
-      return;
       }
 
       const result = await ProductionGradeBusinessLogic.executeWithAdvancedLogic(
@@ -45,7 +42,7 @@ export class EnhancedBusinessLogicController {
         }
       );
 
-      return res.json(result);
+      res.json(result);
     } catch (error: unknown) {
       logger.error('Error executing advanced business logic:', error);
       res.status(500).json({
@@ -56,19 +53,16 @@ export class EnhancedBusinessLogicController {
           details: error instanceof Error ? (error as Error).message : 'Unknown error',
         },
       });
-
-      return;
-      return;
     }
   }
 
   /**
    * Get comprehensive system health status
    */
-  static async getHealthStatus(req: Request, res: Response): Promise<Response> {
+  static async getHealthStatus(req: Request, res: Response): Promise<void> {
     try {
       const healthStatus = await ProductionGradeBusinessLogic.getComprehensiveHealthStatus();
-      return res.json(healthStatus);
+      res.json(healthStatus);
     } catch (error: unknown) {
       logger.error('Error getting health status:', error);
       res.status(500).json({
@@ -78,16 +72,13 @@ export class EnhancedBusinessLogicController {
           message: 'Failed to get health status',
         },
       });
-
-      return;
-      return;
     }
   }
 
   /**
    * Get production metrics
    */
-  static async getMetrics(req: Request, res: Response): Promise<Response> {
+  static async getMetrics(req: Request, res: Response): Promise<void> {
     try {
       const metrics = await ProductionGradeBusinessLogic.getProductionMetrics();
       
@@ -108,7 +99,7 @@ export class EnhancedBusinessLogicController {
         ),
       };
 
-      return res.json(serializedMetrics);
+      res.json(serializedMetrics);
     } catch (error: unknown) {
       logger.error('Error getting production metrics:', error);
       res.status(500).json({
@@ -119,15 +110,13 @@ export class EnhancedBusinessLogicController {
         },
       });
 
-      return;
-      return;
     }
   }
 
   /**
    * Calculate asset depreciation using advanced business rules
    */
-  static async calculateAssetDepreciation(req: Request, res: Response): Promise<Response> {
+  static async calculateAssetDepreciation(req: Request, res: Response): Promise<void> {
     try {
       const { assetData } = req.body;
 
@@ -140,8 +129,6 @@ export class EnhancedBusinessLogicController {
           },
         });
 
-        return;
-      return;
       }
 
       const depreciationResult = advancedBusinessRules.calculateAssetDepreciation({
@@ -153,7 +140,7 @@ export class EnhancedBusinessLogicController {
         acceleratedRatePercent: assetData.acceleratedRatePercent,
       });
 
-      return res.json({
+      res.json({
         success: true,
         data: depreciationResult,
         metadata: {
@@ -172,15 +159,13 @@ export class EnhancedBusinessLogicController {
         },
       });
 
-      return;
-      return;
     }
   }
 
   /**
    * Calculate lease accounting (ASC 842/IFRS 16)
    */
-  static async calculateLeaseAccounting(req: Request, res: Response): Promise<Response> {
+  static async calculateLeaseAccounting(req: Request, res: Response): Promise<void> {
     try {
       const { leaseData } = req.body;
 
@@ -193,8 +178,6 @@ export class EnhancedBusinessLogicController {
           },
         });
 
-        return;
-      return;
       }
 
       const leaseAccountingResult = advancedBusinessRules.calculateLeaseAccounting({
@@ -207,7 +190,7 @@ export class EnhancedBusinessLogicController {
         variablePayments: leaseData.variablePayments,
       });
 
-      return res.json({
+      res.json({
         success: true,
         data: leaseAccountingResult,
         metadata: {
@@ -227,15 +210,13 @@ export class EnhancedBusinessLogicController {
         },
       });
 
-      return;
-      return;
     }
   }
 
   /**
    * Optimize space utilization
    */
-  static async optimizeSpaceUtilization(req: Request, res: Response): Promise<Response> {
+  static async optimizeSpaceUtilization(req: Request, res: Response): Promise<void> {
     try {
       const { spaceData } = req.body;
 
@@ -248,13 +229,11 @@ export class EnhancedBusinessLogicController {
           },
         });
 
-        return;
-      return;
       }
 
       const optimizationResult = advancedBusinessRules.optimizeSpaceUtilization(spaceData);
 
-      return res.json({
+      res.json({
         success: true,
         data: optimizationResult,
         metadata: {
@@ -274,15 +253,13 @@ export class EnhancedBusinessLogicController {
         },
       });
 
-      return;
-      return;
     }
   }
 
   /**
    * Optimize maintenance costs
    */
-  static async optimizeMaintenanceCosts(req: Request, res: Response): Promise<Response> {
+  static async optimizeMaintenanceCosts(req: Request, res: Response): Promise<void> {
     try {
       const { maintenanceData } = req.body;
 
@@ -295,13 +272,11 @@ export class EnhancedBusinessLogicController {
           },
         });
 
-        return;
-      return;
       }
 
       const optimizationResult = advancedBusinessRules.optimizeMaintenanceCosts(maintenanceData);
 
-      return res.json({
+      res.json({
         success: true,
         data: optimizationResult,
         metadata: {
@@ -321,15 +296,13 @@ export class EnhancedBusinessLogicController {
         },
       });
 
-      return;
-      return;
     }
   }
 
   /**
    * Perform financial consolidation
    */
-  static async performFinancialConsolidation(req: Request, res: Response): Promise<Response> {
+  static async performFinancialConsolidation(req: Request, res: Response): Promise<void> {
     try {
       const { financialData } = req.body;
 
@@ -342,13 +315,11 @@ export class EnhancedBusinessLogicController {
           },
         });
 
-        return;
-      return;
       }
 
       const consolidationResult = advancedBusinessRules.performFinancialConsolidation(financialData);
 
-      return res.json({
+      res.json({
         success: true,
         data: consolidationResult,
         metadata: {
@@ -369,15 +340,13 @@ export class EnhancedBusinessLogicController {
         },
       });
 
-      return;
-      return;
     }
   }
 
   /**
    * Standardize asset data
    */
-  static async standardizeAssetData(req: Request, res: Response): Promise<Response> {
+  static async standardizeAssetData(req: Request, res: Response): Promise<void> {
     try {
       const { rawAssetData, sourceSystem } = req.body;
 
@@ -390,13 +359,11 @@ export class EnhancedBusinessLogicController {
           },
         });
 
-        return;
-      return;
       }
 
       const standardizationResult = dataStandardizationEngine.standardizeAssetData(rawAssetData, sourceSystem);
 
-      return res.json({
+      res.json({
         success: true,
         data: standardizationResult,
         metadata: {
@@ -416,15 +383,13 @@ export class EnhancedBusinessLogicController {
         },
       });
 
-      return;
-      return;
     }
   }
 
   /**
    * Standardize space data
    */
-  static async standardizeSpaceData(req: Request, res: Response): Promise<Response> {
+  static async standardizeSpaceData(req: Request, res: Response): Promise<void> {
     try {
       const { rawSpaceData, sourceSystem } = req.body;
 
@@ -437,13 +402,11 @@ export class EnhancedBusinessLogicController {
           },
         });
 
-        return;
-      return;
       }
 
       const standardizationResult = dataStandardizationEngine.standardizeSpaceData(rawSpaceData, sourceSystem);
 
-      return res.json({
+      res.json({
         success: true,
         data: standardizationResult,
         metadata: {
@@ -463,15 +426,13 @@ export class EnhancedBusinessLogicController {
         },
       });
 
-      return;
-      return;
     }
   }
 
   /**
    * Add validation rules
    */
-  static async addValidationRules(req: Request, res: Response): Promise<Response> {
+  static async addValidationRules(req: Request, res: Response): Promise<void> {
     try {
       const { serviceName, methodName, rules } = req.body;
 
@@ -484,13 +445,11 @@ export class EnhancedBusinessLogicController {
           },
         });
 
-        return;
-      return;
       }
 
       const result = ProductionGradeBusinessLogic.addValidationRule(serviceName, methodName, rules);
 
-      return res.json({
+      res.json({
         success: result,
         message: result ? 'Validation rules added successfully' : 'Failed to add validation rules',
       });
@@ -504,15 +463,13 @@ export class EnhancedBusinessLogicController {
         },
       });
 
-      return;
-      return;
     }
   }
 
   /**
    * Reset service metrics
    */
-  static async resetServiceMetrics(req: Request, res: Response): Promise<Response> {
+  static async resetServiceMetrics(req: Request, res: Response): Promise<void> {
     try {
       const { serviceName } = req.params;
 
@@ -525,13 +482,11 @@ export class EnhancedBusinessLogicController {
           },
         });
 
-        return;
-      return;
       }
 
       const result = ProductionGradeBusinessLogic.resetServiceMetrics(serviceName);
 
-      return res.json({
+      res.json({
         success: result,
         message: result ? 'Service metrics reset successfully' : 'Failed to reset service metrics',
       });
@@ -545,19 +500,17 @@ export class EnhancedBusinessLogicController {
         },
       });
 
-      return;
-      return;
     }
   }
 
   /**
    * List available services
    */
-  static async listServices(req: Request, res: Response): Promise<Response> {
+  static async listServices(req: Request, res: Response): Promise<void> {
     try {
       const services = ProductionGradeBusinessLogic.listAvailableServices();
 
-      return res.json({
+      res.json({
         success: true,
         data: {
           services,
@@ -577,8 +530,6 @@ export class EnhancedBusinessLogicController {
         },
       });
 
-      return;
-      return;
     }
   }
 }

@@ -1,5 +1,5 @@
 import { prisma } from '../config/database';
-import { logger } from '../config/logger';
+import { logger } from '@/config/logger';
 import { EventEmitter } from 'events';
 // Note: In production, install nodemailer with: npm install nodemailer @types/nodemailer
 // import { createTransport } from 'nodemailer';

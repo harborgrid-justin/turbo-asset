@@ -1,5 +1,5 @@
-import { prisma } from '@/../../config/database';
-import { logger } from '@/../../config/logger';
+import { prisma } from '@/config/database';
+import { logger } from '@/config/logger';
 
 /**
  * Portfolio Metrics Service - Calculate and track portfolio KPIs and performance metrics

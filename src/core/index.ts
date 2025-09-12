@@ -15,7 +15,7 @@ export * from './config';
 export * from './middleware';
 
 // Re-export commonly used core functionality
-export { logger } from '../config/logger';
+export { logger } from '@/config/logger';
 export { prisma } from '../config/database';
 export { config } from '../config';
 

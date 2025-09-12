@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { ValidationError } from './errorHandler';
-import { logger } from '../config/logger';
+import { logger } from '@/config/logger';
 
 export interface VersionConfig {
   current: string;

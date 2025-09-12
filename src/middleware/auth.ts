@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { config } from '../config';
 import { AuthenticationError, AuthorizationError } from './errorHandler';
-import { logger } from '../config/logger';
+import { logger } from '@/config/logger';
 
 export interface UserPayload {
   id: string;
@@ -29,7 +29,7 @@ export interface AuthRequest extends Request {
 /**
  * JWT Authentication middleware
  */
-export const authenticateJWT = (req: AuthRequest, res: Response, next: NextFunction): void => {
+export const authenticateJWT = (req: Request, res: Response, next: NextFunction): void => {
   try {
     const authHeader = req.headers.authorization;
     
@@ -70,7 +70,7 @@ export const authenticateJWT = (req: AuthRequest, res: Response, next: NextFunct
 /**
  * API Key authentication middleware
  */
-export const authenticateAPIKey = (req: AuthRequest, res: Response, next: NextFunction): void => {
+export const authenticateAPIKey = (req: Request, res: Response, next: NextFunction): void => {
   try {
     const apiKey = req.headers['x-api-key'] as string;
     
@@ -106,7 +106,7 @@ export const authenticateAPIKey = (req: AuthRequest, res: Response, next: NextFu
 /**
  * Combined authentication middleware (JWT or API Key)
  */
-export const authenticate = (req: AuthRequest, res: Response, next: NextFunction): void => {
+export const authenticate = (req: Request, res: Response, next: NextFunction): void => {
   const hasJWTToken = req.headers.authorization?.startsWith('Bearer ');
   const hasAPIKey = req.headers['x-api-key'];
 
@@ -122,7 +122,7 @@ export const authenticate = (req: AuthRequest, res: Response, next: NextFunction
 /**
  * Optional authentication middleware
  */
-export const optionalAuth = (req: AuthRequest, res: Response, next: NextFunction): void => {
+export const optionalAuth = (req: Request, res: Response, next: NextFunction): void => {
   const hasJWTToken = req.headers.authorization?.startsWith('Bearer ');
   const hasAPIKey = req.headers['x-api-key'];
 
@@ -140,7 +140,7 @@ export const optionalAuth = (req: AuthRequest, res: Response, next: NextFunction
 export const requireRoles = (roles: string | string[]) => {
   const requiredRoles = Array.isArray(roles) ? roles : [roles];
   
-  return (req: AuthRequest, res: Response, next: NextFunction): void => {
+  return (req: Request, res: Response, next: NextFunction): void => {
     try {
       if (!req.user) {
         throw new AuthenticationError('User not authenticated');
@@ -177,7 +177,7 @@ export const requireRoles = (roles: string | string[]) => {
 export const requirePermissions = (permissions: string | string[]) => {
   const requiredPermissions = Array.isArray(permissions) ? permissions : [permissions];
   
-  return (req: AuthRequest, res: Response, next: NextFunction): void => {
+  return (req: Request, res: Response, next: NextFunction): void => {
     try {
       const userPermissions = req.user?.permissions || req.apiKey?.permissions || [];
       
@@ -211,7 +211,7 @@ export const requirePermissions = (permissions: string | string[]) => {
 /**
  * Organization ownership middleware
  */
-export const requireOrganizationAccess = (req: AuthRequest, res: Response, next: NextFunction): void => {
+export const requireOrganizationAccess = (req: Request, res: Response, next: NextFunction): void => {
   try {
     const { organizationId } = req.params;
     
@@ -250,7 +250,7 @@ export const requireOrganizationAccess = (req: AuthRequest, res: Response, next:
  * Resource ownership middleware
  */
 export const requireResourceOwnership = (resourceIdParam: string = 'id') => {
-  return async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
+  return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const resourceId = req.params[resourceIdParam];
       const userId = req.user?.id;
@@ -291,7 +291,7 @@ export const requireResourceOwnership = (resourceIdParam: string = 'id') => {
 export const requireTier = (minimumTier: 'free' | 'premium' | 'enterprise') => {
   const tierLevels = { free: 0, premium: 1, enterprise: 2 };
   
-  return (req: AuthRequest, res: Response, next: NextFunction): void => {
+  return (req: Request, res: Response, next: NextFunction): void => {
     try {
       const userTier = req.user?.tier || 'free';
       const requiredLevel = tierLevels[minimumTier];
@@ -321,7 +321,7 @@ export const requireTier = (minimumTier: 'free' | 'premium' | 'enterprise') => {
  * Feature flag middleware
  */
 export const requireFeature = (featureName: string) => {
-  return async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
+  return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       // TODO: Implement actual feature flag checking
       // This is a placeholder implementation
@@ -348,7 +348,7 @@ export const requireFeature = (featureName: string) => {
 /**
  * Time-based access middleware (e.g., business hours only)
  */
-export const requireBusinessHours = (req: AuthRequest, res: Response, next: NextFunction): void => {
+export const requireBusinessHours = (req: Request, res: Response, next: NextFunction): void => {
   try {
     const now = new Date();
     const hour = now.getHours();
@@ -377,7 +377,7 @@ export const requireBusinessHours = (req: AuthRequest, res: Response, next: Next
  * IP whitelist middleware
  */
 export const requireWhitelistedIP = (allowedIPs: string[]) => {
-  return (req: AuthRequest, res: Response, next: NextFunction): void => {
+  return (req: Request, res: Response, next: NextFunction): void => {
     try {
       const clientIP = req.ip;
       

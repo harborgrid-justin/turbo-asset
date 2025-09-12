@@ -1,5 +1,5 @@
 import { prisma } from '../config/database';
-import { logger } from '../config/logger';
+import { logger } from '@/config/logger';
 import { CustomFieldDefinition, CustomFieldValue, ValidationRule, FieldDependency } from '../types/customFields';
 import Joi from 'joi';
 

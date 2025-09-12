@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import { logger } from '@/../../config/logger';
+import { logger } from '@/config/logger';
 import { AssetExportOptions, AssetImportMapping, BulkAssetOperationResult } from './types/AssetTypes';
 import fs from 'fs/promises';
 import path from 'path';

@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { createHash } from 'crypto';
-import { logger } from '../config/logger';
+import { logger } from '@/config/logger';
 
 /**
  * In-memory cache store

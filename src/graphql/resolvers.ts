@@ -1,7 +1,7 @@
 import { GraphQLResolveInfo, GraphQLScalarType, Kind } from 'graphql';
 import { Upload } from 'graphql-upload';
 import { prisma } from '../config/database';
-import { logger } from '../config/logger';
+import { logger } from '@/config/logger';
 import { WorkflowEngine } from '../services/WorkflowEngine';
 import { DocumentService } from '../services/DocumentService';
 import { CustomFieldService } from '../services/CustomFieldService';

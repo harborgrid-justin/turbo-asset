@@ -6,8 +6,8 @@
  */
 
 import { EventEmitter } from 'events';
-import { logger } from '@/../../config/logger';
-import { prisma } from '@/../../config/database';
+import { logger } from '@/config/logger';
+import { prisma } from '@/config/database';
 import {
   Contract,
   ContractMilestone,

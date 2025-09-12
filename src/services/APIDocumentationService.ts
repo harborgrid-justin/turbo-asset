@@ -1,4 +1,4 @@
-import { logger } from '../config/logger';
+import { logger } from '@/config/logger';
 import { typeDefs } from '../graphql/schema';
 import { print } from 'graphql';
 import fs from 'fs/promises';

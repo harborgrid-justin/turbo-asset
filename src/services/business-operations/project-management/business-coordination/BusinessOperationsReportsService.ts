@@ -6,8 +6,8 @@
  */
 
 import { EventEmitter } from 'events';
-import { logger } from '@/../../config/logger';
-import { prisma } from '@/../../config/database';
+import { logger } from '@/config/logger';
+import { prisma } from '@/config/database';
 import { BusinessOperationsContext } from './types';
 import { BUSINESS_OPERATIONS_CONFIG, ERROR_MESSAGES, SUCCESS_MESSAGES } from './constants';
 

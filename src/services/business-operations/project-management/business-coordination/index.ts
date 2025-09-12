@@ -7,7 +7,7 @@
  */
 
 import { EventEmitter } from 'events';
-import { logger } from '@/../../config/logger';
+import { logger } from '@/config/logger';
 import { CapitalProjectService } from './CapitalProjectService';
 import { ContractLifecycleService } from './ContractLifecycleService';
 import { VendorBrokerService } from './VendorBrokerService';

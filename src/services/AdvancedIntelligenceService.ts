@@ -6,7 +6,7 @@
  */
 
 import { EventEmitter } from 'events';
-import { logger } from '../config/logger';
+import { logger } from '@/config/logger';
 
 export interface IntelligenceInsight {
   id: string;

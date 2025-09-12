@@ -1,6 +1,6 @@
 import { Router, Request, Response } from 'express';
 import { LeaseManagementService } from '../services/LeaseManagementService';
-import { logger } from '../config/logger';
+import { logger } from '@/config/logger';
 
 const router = Router();
 const leaseManagementService = new LeaseManagementService();
