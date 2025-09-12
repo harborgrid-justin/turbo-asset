@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { logger } from '@/config/logger';
-import { enhancedBusinessLogicIntegration } from '@/services/enhanced-business-logic-integration';
+import { EnhancedBusinessLogicIntegrationService } from '@/services/enhanced-business-logic-integration';
 
 /**
  * Enhanced Business Logic Integration Controller
@@ -15,7 +15,8 @@ export class EnhancedBusinessLogicIntegrationController {
     try {
       logger.info('Fetching enhanced production metrics');
 
-      const metrics = enhancedBusinessLogicIntegration.getProductionMetrics();
+      const enhancedService = EnhancedBusinessLogicIntegrationService.getInstance();
+      const metrics = enhancedService.getProductionMetrics();
 
       // Convert Map objects to plain objects for JSON serialization
       const serializedMetrics = {

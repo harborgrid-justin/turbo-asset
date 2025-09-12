@@ -313,6 +313,77 @@ export class BusinessLogicIntegrationService {
       integrationMethods: ['planMove', 'allocateResources', 'coordinateLogistics', 'trackCosts'],
       fallbackEnabled: true
     });
+
+    // Additional 10 Core Business Services for 32 Total
+    this.bridges.set('inventory', {
+      napiServiceName: 'inventory',
+      businessLogicService: managers.assetManager?.inventoryService || null,
+      integrationMethods: ['trackInventory', 'optimizeLevels', 'processReorders', 'generateReports'],
+      fallbackEnabled: true
+    });
+
+    this.bridges.set('maintenance', {
+      napiServiceName: 'maintenance', 
+      businessLogicService: null, // Direct NAPI implementation
+      integrationMethods: ['scheduleService', 'trackRequests', 'optimizeResources', 'reportMetrics'],
+      fallbackEnabled: true
+    });
+
+    this.bridges.set('work-order', {
+      napiServiceName: 'work-order',
+      businessLogicService: null, // Direct NAPI implementation
+      integrationMethods: ['createWorkOrder', 'assignTechnician', 'trackProgress', 'completeTasks'],
+      fallbackEnabled: true
+    });
+
+    this.bridges.set('iot-device', {
+      napiServiceName: 'iot-device',
+      businessLogicService: managers.infrastructureManager?.iotDeviceService || null,
+      integrationMethods: ['monitorDevices', 'processData', 'triggerAlerts', 'optimizePerformance'],
+      fallbackEnabled: true
+    });
+
+    this.bridges.set('energy-management', {
+      napiServiceName: 'energy-management',
+      businessLogicService: managers.infrastructureManager?.energyManagementService || null,
+      integrationMethods: ['monitorConsumption', 'optimizeUsage', 'trackCosts', 'reportEfficiency'],
+      fallbackEnabled: true
+    });
+
+    this.bridges.set('lease-management', {
+      napiServiceName: 'lease-management',
+      businessLogicService: null, // Direct NAPI implementation
+      integrationMethods: ['manageLease', 'trackPayments', 'processRenewals', 'handleTerminations'],
+      fallbackEnabled: true
+    });
+
+    this.bridges.set('space-utilization', {
+      napiServiceName: 'space-utilization',
+      businessLogicService: managers.spaceManager?.spaceUtilizationService || null,
+      integrationMethods: ['analyzeOccupancy', 'optimizeAllocation', 'trackMetrics', 'generateInsights'],
+      fallbackEnabled: true
+    });
+
+    this.bridges.set('compliance', {
+      napiServiceName: 'compliance',
+      businessLogicService: managers.complianceManager?.complianceService || null,
+      integrationMethods: ['trackCompliance', 'auditProcesses', 'manageReporting', 'handleViolations'],
+      fallbackEnabled: true
+    });
+
+    this.bridges.set('cad-integration', {
+      napiServiceName: 'cad-integration',
+      businessLogicService: managers.infrastructureManager?.cadIntegrationService || null,
+      integrationMethods: ['processCadFiles', 'extractMetadata', 'convertFormats', 'generateVisuals'],
+      fallbackEnabled: true
+    });
+
+    this.bridges.set('chargeback', {
+      napiServiceName: 'chargeback',
+      businessLogicService: managers.financialOpsManager?.chargebackService || null,
+      integrationMethods: ['calculateCharges', 'allocateCosts', 'processInvoicing', 'trackRecovery'],
+      fallbackEnabled: true
+    });
   }
 
   /**
