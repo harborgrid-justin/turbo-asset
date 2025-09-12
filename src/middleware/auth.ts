@@ -3,28 +3,7 @@ import jwt from 'jsonwebtoken';
 import { config } from '../config';
 import { AuthenticationError, AuthorizationError } from './errorHandler';
 import { logger } from '@/config/logger';
-
-export interface UserPayload {
-  id: string;
-  email: string;
-  organizationId: string;
-  roles: string[];
-  permissions: string[];
-  tier?: 'free' | 'premium' | 'enterprise';
-}
-
-export interface AuthRequest extends Request {
-  user?: UserPayload;
-  apiKey?: {
-    id: string;
-    organizationId: string;
-    permissions: string[];
-    rateLimit?: {
-      windowMs: number;
-      max: number;
-    };
-  };
-}
+import { UserPayload } from '../types/express';
 
 /**
  * JWT Authentication middleware
