@@ -98,7 +98,7 @@ router.get('/analytics', async (req, res) => {
 // Quick status check endpoint (lightweight)
 router.get('/status', async (req, res) => {
   try {
-    const metrics = enhancedBusinessLogicController.getProductionMetrics?.() || 
+    const metrics = (enhancedBusinessLogicController.constructor as any).getProductionMetrics?.() || 
       require('../demo/enhanced-napi-business-logic-demo').enhancedBusinessLogicService.getProductionMetrics();
     
     res.json({

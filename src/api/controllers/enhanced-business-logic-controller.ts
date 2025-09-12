@@ -23,7 +23,7 @@ export class EnhancedBusinessLogicIntegrationController {
    * GET /api/enhanced-business-logic-integration/dashboard
    * Get comprehensive dashboard data for frontend
    */
-  async getDashboard(req: ApiRequest, res: Response) {
+  async getDashboard(req: Request, res: Response) {
     try {
       const [healthStatus, metrics] = await Promise.all([
         enhancedBusinessLogicService.getComprehensiveHealthStatus(),
@@ -81,7 +81,7 @@ export class EnhancedBusinessLogicIntegrationController {
    * GET /api/enhanced-business-logic-integration/health
    * Get detailed health status of all services
    */
-  async getHealthStatus(req: ApiRequest, res: Response) {
+  async getHealthStatus(req: Request, res: Response) {
     try {
       const healthStatus = await enhancedBusinessLogicService.getComprehensiveHealthStatus();
 
@@ -96,7 +96,7 @@ export class EnhancedBusinessLogicIntegrationController {
             unhealthyServices: healthStatus.unhealthyServices,
             uptime: healthStatus.uptimeFormatted
           },
-          services: healthStatus.services.map(service => ({
+          services: healthStatus.services.map((service: any) => ({
             name: service.serviceName,
             healthy: service.healthy,
             lastCheck: service.lastCheck,
@@ -128,7 +128,7 @@ export class EnhancedBusinessLogicIntegrationController {
    * GET /api/enhanced-business-logic-integration/metrics
    * Get production metrics
    */
-  async getMetrics(req: ApiRequest, res: Response) {
+  async getMetrics(req: Request, res: Response) {
     try {
       const metrics = enhancedBusinessLogicService.getProductionMetrics();
 
@@ -176,7 +176,7 @@ export class EnhancedBusinessLogicIntegrationController {
    * GET /api/enhanced-business-logic-integration/bridges
    * List all service bridges
    */
-  async getBridges(req: ApiRequest, res: Response) {
+  async getBridges(req: Request, res: Response) {
     try {
       const bridges = enhancedBusinessLogicService.listBridges();
       const bridgeDetails = bridges.map(serviceName => {
@@ -212,7 +212,7 @@ export class EnhancedBusinessLogicIntegrationController {
    * GET /api/enhanced-business-logic-integration/services/:serviceName/metrics
    * Get metrics for a specific service
    */
-  async getServiceMetrics(req: ApiRequest, res: Response) {
+  async getServiceMetrics(req: Request, res: Response) {
     try {
       const { serviceName } = req.params;
       const bridgeInfo = enhancedBusinessLogicService.getBridgeInfo(serviceName);
@@ -256,7 +256,7 @@ export class EnhancedBusinessLogicIntegrationController {
    * GET /api/enhanced-business-logic-integration/services/:serviceName/config
    * Get configuration for a specific service
    */
-  async getServiceConfig(req: ApiRequest, res: Response) {
+  async getServiceConfig(req: Request, res: Response) {
     try {
       const { serviceName } = req.params;
       const bridgeInfo = enhancedBusinessLogicService.getBridgeInfo(serviceName);
@@ -300,7 +300,7 @@ export class EnhancedBusinessLogicIntegrationController {
    * POST /api/enhanced-business-logic-integration/execute
    * Execute a service method with production-grade features
    */
-  async executeService(req: ApiRequest, res: Response) {
+  async executeService(req: Request, res: Response) {
     try {
       const { serviceName, methodName, parameters, options = {} } = req.body;
 
@@ -361,7 +361,7 @@ export class EnhancedBusinessLogicIntegrationController {
    * POST /api/enhanced-business-logic-integration/validation-rules
    * Add or update validation rules for a service method
    */
-  async updateValidationRules(req: ApiRequest, res: Response) {
+  async updateValidationRules(req: Request, res: Response) {
     try {
       const { serviceName, methodName, rules } = req.body;
 
@@ -406,7 +406,7 @@ export class EnhancedBusinessLogicIntegrationController {
    * POST /api/enhanced-business-logic-integration/services/:serviceName/reset-metrics
    * Reset metrics for a specific service
    */
-  async resetServiceMetrics(req: ApiRequest, res: Response) {
+  async resetServiceMetrics(req: Request, res: Response) {
     try {
       const { serviceName } = req.params;
       const bridgeInfo = enhancedBusinessLogicService.getBridgeInfo(serviceName);
@@ -449,7 +449,7 @@ export class EnhancedBusinessLogicIntegrationController {
    * POST /api/enhanced-business-logic-integration/reset-all-metrics
    * Reset all service metrics
    */
-  async resetAllMetrics(req: ApiRequest, res: Response) {
+  async resetAllMetrics(req: Request, res: Response) {
     try {
       enhancedBusinessLogicService.resetMetrics();
 
@@ -478,7 +478,7 @@ export class EnhancedBusinessLogicIntegrationController {
    * GET /api/enhanced-business-logic-integration/analytics
    * Get advanced analytics and insights
    */
-  async getAnalytics(req: ApiRequest, res: Response) {
+  async getAnalytics(req: Request, res: Response) {
     try {
       const { timeframe = '24h' } = req.query;
       const metrics = enhancedBusinessLogicService.getProductionMetrics();
@@ -732,6 +732,13 @@ export class EnhancedBusinessLogicIntegrationController {
     }
 
     return recommendations;
+  }
+
+  /**
+   * Static method to get production metrics
+   */
+  static getProductionMetrics() {
+    return enhancedBusinessLogicService.getProductionMetrics();
   }
 }
 
