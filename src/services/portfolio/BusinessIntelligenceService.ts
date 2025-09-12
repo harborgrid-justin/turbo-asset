@@ -1,5 +1,6 @@
 import { prisma } from '../config/database';
 import { logger } from '@/config/logger';
+import { mockDataProvider } from '../data/MockDataProvider.js';
 
 export interface ChartConfiguration {
   type: 'bar' | 'line' | 'pie' | 'doughnut' | 'area' | 'scatter' | 'heatmap' | 'gauge' | 'table';
@@ -425,8 +426,8 @@ export class BusinessIntelligenceService {
   private async executeQuery(connectionString: string, sql: string): Promise<any[]> {
     try {
       // This would connect to the actual data warehouse
-      // For now, return mock data
-      const mockData = this.generateMockData(sql);
+      // For now, return mock data from centralized provider
+      const mockData = mockDataProvider.generateDataForQuery(sql);
       return mockData;
     } catch (error: unknown) {
       logger.error('Query execution failed', { sql, error });
@@ -559,117 +560,6 @@ export class BusinessIntelligenceService {
       default:
         return 0;
     }
-  }
-
-  /**
-   * Generate mock data for development/testing
-   */
-  private generateMockData(sql: string): any[] {
-    // Generate appropriate mock data based on the SQL query
-    if (sql.toLowerCase().includes('asset')) {
-      return this.generateAssetMockData();
-    } else if (sql.toLowerCase().includes('space')) {
-      return this.generateSpaceMockData();
-    } else if (sql.toLowerCase().includes('maintenance')) {
-      return this.generateMaintenanceMockData();
-    } else {
-      return this.generateGenericMockData();
-    }
-  }
-
-  /**
-   * Generate mock asset data
-   */
-  private generateAssetMockData(): any[] {
-    const categories = ['Office Equipment', 'HVAC', 'Lighting', 'Security', 'Furniture'];
-    const statuses = ['Active', 'Maintenance', 'Retired'];
-    const data = [];
-
-    for (let i = 0; i < 100; i++) {
-      data.push({
-        id: `asset_${i + 1}`,
-        name: `Asset ${i + 1}`,
-        category: categories[Math.floor(Math.random() * categories.length)],
-        status: statuses[Math.floor(Math.random() * statuses.length)],
-        purchase_price: Math.floor(Math.random() * 10000) + 1000,
-        purchase_date: new Date(2020, Math.floor(Math.random() * 48), 1),
-        maintenance_cost: Math.floor(Math.random() * 1000),
-        utilization: Math.floor(Math.random() * 100),
-      });
-    }
-
-    return data;
-  }
-
-  /**
-   * Generate mock space data
-   */
-  private generateSpaceMockData(): any[] {
-    const spaceTypes = ['Office', 'Conference Room', 'Lobby', 'Storage', 'Kitchen'];
-    const data = [];
-
-    for (let i = 0; i < 50; i++) {
-      data.push({
-        id: `space_${i + 1}`,
-        name: `Space ${i + 1}`,
-        type: spaceTypes[Math.floor(Math.random() * spaceTypes.length)],
-        square_footage: Math.floor(Math.random() * 1000) + 100,
-        capacity: Math.floor(Math.random() * 50) + 5,
-        occupancy_rate: Math.floor(Math.random() * 100),
-        monthly_cost: Math.floor(Math.random() * 5000) + 500,
-        utilization_score: Math.floor(Math.random() * 100),
-      });
-    }
-
-    return data;
-  }
-
-  /**
-   * Generate mock maintenance data
-   */
-  private generateMaintenanceMockData(): any[] {
-    const priorities = ['Low', 'Medium', 'High', 'Critical'];
-    const statuses = ['Pending', 'In Progress', 'Completed', 'Cancelled'];
-    const data = [];
-
-    for (let i = 0; i < 200; i++) {
-      const createdDate = new Date(2024, Math.floor(Math.random() * 12), Math.floor(Math.random() * 28) + 1);
-      data.push({
-        id: `wo_${i + 1}`,
-        work_order_number: `WO-2024-${String(i + 1).padStart(4, '0')}`,
-        priority: priorities[Math.floor(Math.random() * priorities.length)],
-        status: statuses[Math.floor(Math.random() * statuses.length)],
-        created_date: createdDate,
-        estimated_cost: Math.floor(Math.random() * 5000) + 100,
-        actual_cost: Math.floor(Math.random() * 6000) + 100,
-        estimated_hours: Math.floor(Math.random() * 40) + 1,
-        actual_hours: Math.floor(Math.random() * 50) + 1,
-        completion_rate: Math.floor(Math.random() * 100),
-      });
-    }
-
-    return data;
-  }
-
-  /**
-   * Generate generic mock data
-   */
-  private generateGenericMockData(): any[] {
-    const data = [];
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-
-    for (let i = 0; i < 12; i++) {
-      data.push({
-        month: months[i],
-        revenue: Math.floor(Math.random() * 100000) + 50000,
-        expenses: Math.floor(Math.random() * 80000) + 30000,
-        profit: Math.floor(Math.random() * 50000) + 10000,
-        occupancy: Math.floor(Math.random() * 30) + 70,
-        satisfaction: Math.floor(Math.random() * 20) + 80,
-      });
-    }
-
-    return data;
   }
 
   /**

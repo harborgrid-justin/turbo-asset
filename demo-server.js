@@ -9,6 +9,10 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 
+// Import centralized mock data provider
+// Note: Using require for CommonJS compatibility
+const { mockDataProvider } = require('./src/services/data/index.js');
+
 const app = express();
 const PORT = process.env.PORT || 3001;
 
@@ -17,51 +21,11 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static('public'));
 
-// Mock data for demonstrations
-const mockAssets = Array.from({ length: 100 }, (_, i) => ({
-  id: `A-${String(i + 1).padStart(5, '0')}`,
-  name: `Asset ${i + 1}`,
-  category: ['HVAC', 'Electrical', 'Mechanical', 'IT Equipment', 'Vehicles', 'Furniture'][i % 6],
-  value: Math.floor(Math.random() * 100000) + 10000,
-  condition: ['Excellent', 'Good', 'Fair', 'Poor', 'Critical'][Math.floor(Math.random() * 5)],
-  status: ['Active', 'Inactive', 'Under Maintenance', 'Retired'][Math.floor(Math.random() * 4)],
-  criticality: ['Critical', 'High', 'Medium', 'Low'][Math.floor(Math.random() * 4)],
-  lastMaintenanceDate: new Date(Date.now() - Math.random() * 365 * 24 * 60 * 60 * 1000),
-  nextMaintenanceDate: new Date(Date.now() + Math.random() * 90 * 24 * 60 * 60 * 1000)
-}));
-
-const mockWorkOrders = Array.from({ length: 50 }, (_, i) => ({
-  id: `WO-${String(i + 1).padStart(5, '0')}`,
-  title: `Work Order ${i + 1}`,
-  assetId: mockAssets[Math.floor(Math.random() * mockAssets.length)].id,
-  priority: ['Critical', 'High', 'Medium', 'Low'][Math.floor(Math.random() * 4)],
-  status: ['Open', 'In Progress', 'Completed', 'On Hold', 'Cancelled'][Math.floor(Math.random() * 5)],
-  type: ['Preventive', 'Corrective', 'Emergency', 'Inspection'][Math.floor(Math.random() * 4)],
-  assignedTo: `Technician ${Math.floor(Math.random() * 10) + 1}`,
-  createdDate: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000),
-  dueDate: new Date(Date.now() + Math.random() * 7 * 24 * 60 * 60 * 1000),
-  description: `Maintenance required for asset ${i + 1}`,
-  estimatedHours: Math.floor(Math.random() * 8) + 1,
-  actualHours: Math.random() < 0.7 ? Math.floor(Math.random() * 8) + 1 : null
-}));
-
-const mockServiceHealth = [
-  { name: 'contract-lifecycle', napiStatus: 'HEALTHY', businessLogic: 'HEALTHY', circuitBreaker: 'CLOSED' },
-  { name: 'budget-forecast', napiStatus: 'HEALTHY', businessLogic: 'HEALTHY', circuitBreaker: 'CLOSED' },
-  { name: 'asset-lifecycle', napiStatus: 'HEALTHY', businessLogic: 'HEALTHY', circuitBreaker: 'CLOSED' },
-  { name: 'document', napiStatus: 'HEALTHY', businessLogic: 'HEALTHY', circuitBreaker: 'CLOSED' },
-  { name: 'vendor-broker', napiStatus: 'UNHEALTHY', businessLogic: 'HEALTHY', circuitBreaker: 'CLOSED' },
-  { name: 'financial-consolidation', napiStatus: 'UNHEALTHY', businessLogic: 'UNHEALTHY', circuitBreaker: 'OPEN' }
-];
-
-const mockServiceMetrics = [
-  { name: 'contract-lifecycle', callCount: 1250, successRate: 98.4, avgResponseTime: 180, healthStatus: 'HEALTHY' },
-  { name: 'budget-forecast', callCount: 850, successRate: 96.8, avgResponseTime: 320, healthStatus: 'HEALTHY' },
-  { name: 'asset-lifecycle', callCount: 2100, successRate: 99.1, avgResponseTime: 150, healthStatus: 'HEALTHY' },
-  { name: 'document', callCount: 3200, successRate: 97.2, avgResponseTime: 280, healthStatus: 'HEALTHY' },
-  { name: 'vendor-broker', callCount: 720, successRate: 92.1, avgResponseTime: 410, healthStatus: 'HEALTHY' },
-  { name: 'financial-consolidation', callCount: 540, successRate: 89.3, avgResponseTime: 520, healthStatus: 'UNHEALTHY' }
-];
+// Initialize mock data from centralized provider
+const mockAssets = mockDataProvider.generateAssets();
+const mockWorkOrders = mockDataProvider.generateWorkOrders(mockAssets);
+const mockServiceHealth = mockDataProvider.generateServiceHealth();
+const mockServiceMetrics = mockDataProvider.generateServiceMetrics();
 
 // API Routes
 
@@ -204,7 +168,7 @@ app.get('/api/work-orders/stats', (req, res) => {
         totalOrders,
         completionRate: parseFloat(completionRate),
         avgCompletionTime: `${avgCompletionTime}h`,
-        totalCost: '$487,650'
+        totalCost: process.env.MOCK_TOTAL_COST || '$487,650'
       },
       priorities: priorityStats,
       statuses: statusStats,
@@ -242,17 +206,7 @@ app.get('/api/monitoring/metrics', (req, res) => {
 
 // Audit Trail API
 app.get('/api/audit', (req, res) => {
-  const mockAuditEntries = Array.from({ length: 20 }, (_, i) => ({
-    id: `audit-${i + 1}`,
-    timestamp: new Date(Date.now() - Math.random() * 24 * 60 * 60 * 1000),
-    user: `user${Math.floor(Math.random() * 10) + 1}@company.com`,
-    action: ['CREATE', 'UPDATE', 'DELETE', 'VIEW'][Math.floor(Math.random() * 4)],
-    resource: ['Asset', 'Work Order', 'User', 'Report'][Math.floor(Math.random() * 4)],
-    resourceId: `RES-${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}`,
-    ipAddress: `192.168.1.${Math.floor(Math.random() * 255)}`,
-    userAgent: 'Mozilla/5.0 (compatible; TurboAsset/1.0)',
-    changes: i % 3 === 0 ? { status: { from: 'Active', to: 'Inactive' } } : null
-  }));
+  const mockAuditEntries = mockDataProvider.generateAuditEntries();
   
   res.json({
     success: true,

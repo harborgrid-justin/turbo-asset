@@ -2,6 +2,9 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 
+// Import centralized mock data provider
+const { mockDataProvider } = require('./src/services/data/index.js');
+
 const app = express();
 const port = process.env.PORT || 3001;
 
@@ -20,59 +23,7 @@ app.get('/api/portfolio/dashboard', (req, res) => {
   const { organizationId } = req.query;
   console.log(`Portfolio dashboard requested for org: ${organizationId}`);
   
-  const mockDashboard = {
-    totalProperties: 42,
-    totalSpaces: 2847,
-    occupancyRate: 87.3,
-    utilizationRate: 73.8,
-    totalRevenue: 8750000,
-    netOperatingIncome: 6825000,
-    properties: [
-      {
-        id: '1',
-        name: 'Tower A - Downtown',
-        type: 'Office',
-        totalArea: 450000,
-        occupiedArea: 392000,
-        status: 'Active',
-        revenue: 1250000
-      },
-      {
-        id: '2',
-        name: 'Corporate Center B',
-        type: 'Mixed Use',
-        totalArea: 680000,
-        occupiedArea: 598000,
-        status: 'Active',
-        revenue: 1890000
-      },
-      {
-        id: '3',
-        name: 'Tech Campus C',
-        type: 'Office',
-        totalArea: 850000,
-        occupiedArea: 731000,
-        status: 'Active',
-        revenue: 2340000
-      }
-    ],
-    alerts: [
-      {
-        id: '1',
-        type: 'warning',
-        title: 'HVAC System Alert',
-        description: 'HVAC system in Tower A requires immediate attention',
-        priority: 'High'
-      },
-      {
-        id: '2',
-        type: 'info',
-        title: 'Low Occupancy Alert',
-        description: 'Tech Campus C occupancy below 75% threshold',
-        priority: 'Medium'
-      }
-    ]
-  };
+  const mockDashboard = mockDataProvider.generatePortfolioDashboard();
   
   res.json({
     data: mockDashboard,
@@ -85,51 +36,7 @@ app.get('/api/move-management', (req, res) => {
   const { organizationId } = req.query;
   console.log(`Move management data requested for org: ${organizationId}`);
   
-  const mockMoveData = {
-    requests: [
-      {
-        id: '1',
-        requestNumber: 'MR-2025-001',
-        type: 'Internal',
-        employee: {
-          name: 'John Smith',
-          department: 'Engineering',
-          email: 'john.smith@company.com',
-          phone: '+1 (555) 0123'
-        },
-        fromLocation: {
-          building: 'Tower A',
-          floor: '3rd Floor',
-          space: 'Cubicle 312'
-        },
-        toLocation: {
-          building: 'Tower B',
-          floor: '5th Floor',
-          space: 'Office 502'
-        },
-        requestedBy: 'Sarah Johnson',
-        requestDate: '2025-01-10',
-        scheduledDate: '2025-01-20',
-        status: 'Approved',
-        priority: 'Medium',
-        estimatedCost: 2500,
-        actualCost: null,
-        notes: 'Employee promotion to Senior Engineer'
-      }
-    ],
-    vendors: [
-      {
-        id: '1',
-        name: 'Professional Movers Inc.',
-        contact: 'Mike Wilson',
-        email: 'mike@promovers.com',
-        phone: '+1 (555) 0456',
-        rating: 4.8,
-        specialties: ['Office Moves', 'IT Equipment'],
-        status: 'Active'
-      }
-    ]
-  };
+  const mockMoveData = mockDataProvider.generateMoveManagement();
   
   res.json({
     data: mockMoveData,
@@ -142,41 +49,7 @@ app.get('/api/api-management/:organizationId/endpoints', (req, res) => {
   const { organizationId } = req.params;
   console.log(`API endpoints requested for org: ${organizationId}`);
   
-  const mockEndpoints = {
-    endpoints: [
-      {
-        id: 1,
-        name: 'Portfolio Dashboard',
-        method: 'GET',
-        path: '/api/v1/portfolio/dashboard',
-        status: 'Active',
-        version: 'v1.2.0',
-        description: 'Get comprehensive portfolio metrics and property data',
-        responseTime: 245,
-        requestCount: 15420,
-        errorRate: 0.02,
-        lastUpdated: '2025-01-15 11:30:00',
-        category: 'Portfolio'
-      },
-      {
-        id: 2,
-        name: 'Financial Reports',
-        method: 'POST',
-        path: '/api/v2/financial/reports',
-        status: 'Active',
-        version: 'v2.1.0',
-        description: 'Generate financial reports and analytics',
-        responseTime: 850,
-        requestCount: 8960,
-        errorRate: 0.05,
-        lastUpdated: '2025-01-15 09:15:00',
-        category: 'Financial'
-      }
-    ],
-    totalEndpoints: 2,
-    activeEndpoints: 2,
-    deprecatedEndpoints: 0
-  };
+  const mockEndpoints = mockDataProvider.generateAPIEndpoints();
   
   res.json({
     data: mockEndpoints,
@@ -188,30 +61,7 @@ app.get('/api/api-management/:organizationId/keys', (req, res) => {
   const { organizationId } = req.params;
   console.log(`API keys requested for org: ${organizationId}`);
   
-  const mockKeys = {
-    keys: [
-      {
-        id: 1,
-        name: 'Production Dashboard',
-        key: 'api_key_prod_***********abc123',
-        description: 'Main production dashboard API access',
-        status: 'Active',
-        permissions: ['read', 'write'],
-        usage: 25420,
-        limit: 50000,
-        rateLimits: {
-          requestsPerHour: 10000,
-          burstLimit: 100
-        },
-        lastUsed: '2025-01-15 11:45:00',
-        createdAt: '2024-11-15 09:30:00',
-        expiresAt: '2025-06-15'
-      }
-    ],
-    totalKeys: 1,
-    activeKeys: 1,
-    expiredKeys: 0
-  };
+  const mockKeys = mockDataProvider.generateAPIKeys();
   
   res.json({
     data: mockKeys,
