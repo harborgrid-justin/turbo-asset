@@ -1,4 +1,4 @@
-import { logger } from '../config/logger';
+import { logger } from '@/config/logger';
 import { IntrospectionQuery, getIntrospectionQuery, buildClientSchema, printSchema } from 'graphql';
 import fs from 'fs/promises';
 import path from 'path';

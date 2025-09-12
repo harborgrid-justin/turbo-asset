@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { ReportingService } from '../services/ReportingService';
-import { logger } from '../config/logger';
+import { logger } from '@/config/logger';
 
 export class ReportingController {
   private reportingService: ReportingService;

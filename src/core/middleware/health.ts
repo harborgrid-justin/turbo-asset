@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { PrismaClient } from '@prisma/client';
-import { logger } from '../config/logger';
+import { logger } from '@/config/logger';
 import * as os from 'os';
 import * as fs from 'fs';
 import * as path from 'path';

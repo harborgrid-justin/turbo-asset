@@ -21,13 +21,13 @@ export { InfrastructureTechnologyOperationsManager } from './infrastructure-tech
 
 // NEW DOMAIN ORCHESTRATORS - Advanced Operations Domain
 export { AdvancedOperationsManager } from './advanced-operations/workflow-systems/advanced-coordination';
-export * from './advanced-operations/workflow-systems/advanced-coordination/types';
-export * from './advanced-operations/workflow-systems/advanced-coordination/constants';
+// export * from './advanced-operations/workflow-systems/advanced-coordination/types';
+// export * from './advanced-operations/workflow-systems/advanced-coordination/constants';
 
 // NEW DOMAIN ORCHESTRATORS - Service Operations Domain  
 export { ServiceOperationsManager } from './service-operations/communication-systems/service-coordination';
-export * from './service-operations/communication-systems/service-coordination/types';
-export * from './service-operations/communication-systems/service-coordination/constants';
+// export * from './service-operations/communication-systems/service-coordination/types';
+// export * from './service-operations/communication-systems/service-coordination/constants';
 
 // NEW DOMAIN ORCHESTRATORS - Asset Operations Domain
 export { AssetOperationsManager } from './asset-operations/lifecycle-management/asset-coordination';

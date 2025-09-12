@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import { logger } from '../config/logger';
+import { logger } from '@/config/logger';
 import { workOrderService } from './WorkOrderService';
 
 const prisma = new PrismaClient();

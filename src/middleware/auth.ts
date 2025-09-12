@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { config } from '../config';
 import { AuthenticationError, AuthorizationError } from './errorHandler';
-import { logger } from '../config/logger';
+import { logger } from '@/config/logger';
 
 export interface UserPayload {
   id: string;

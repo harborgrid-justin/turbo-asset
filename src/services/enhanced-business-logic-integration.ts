@@ -3,7 +3,7 @@
  * This service extends the NAPI-RS modules with comprehensive business logic integration
  */
 
-import { logger } from '../config/logger';
+import { logger } from '@/config/logger';
 import { napiRegistry } from './napi-integration';
 import type { 
   BaseEntity, 

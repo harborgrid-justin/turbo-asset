@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { RateLimitError } from './errorHandler';
-import { logger } from '../config/logger';
+import { logger } from '@/config/logger';
 
 /**
  * In-memory rate limiter store

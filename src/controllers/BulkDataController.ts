@@ -1,6 +1,6 @@
 import { Router, Request, Response } from 'express';
 import { BulkDataService } from '../services/BulkDataService';
-import { logger } from '../config/logger';
+import { logger } from '@/config/logger';
 import multer from 'multer';
 import path from 'path';
 

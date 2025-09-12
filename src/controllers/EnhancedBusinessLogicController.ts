@@ -4,7 +4,7 @@
  */
 
 import { Request, Response } from 'express';
-import { logger } from '../config/logger';
+import { logger } from '@/config/logger';
 import { 
   ProductionGradeBusinessLogic,
   enhancedBusinessLogicService, 

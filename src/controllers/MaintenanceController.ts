@@ -1,6 +1,6 @@
 import express from 'express';
 import { maintenanceService } from '../services/MaintenanceService';
-import { logger } from '../config/logger';
+import { logger } from '@/config/logger';
 
 const router = express.Router();
 
