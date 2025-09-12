@@ -194,16 +194,17 @@ export class NAPIServiceRegistry {
 
     } catch (error: unknown) {
       const executionTime = Date.now() - startTime;
+      const errorObj = error as any;
       
       // Record metrics
-      this.recordMetrics(serviceName, methodName, executionTime, false, error.code);
+      this.recordMetrics(serviceName, methodName, executionTime, false, errorObj?.code || 'UNKNOWN_ERROR');
 
       logger.error(`Error executing ${serviceName}.${methodName}:`, error);
 
       return {
         success: false,
         error: {
-          code: error.code || 'EXECUTION_ERROR',
+          code: errorObj?.code || 'EXECUTION_ERROR',
           message: (error as Error).message || 'Unknown error occurred',
           details: { serviceName, methodName, args: JSON.stringify(args) }
         },

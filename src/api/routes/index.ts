@@ -39,6 +39,9 @@ import { WhiteLabelController } from '@/controllers/WhiteLabelController';
 // Machine Learning and Analytics controllers
 import { MLAnalyticsController } from '@/controllers/ml/MLAnalyticsController';
 
+// Enhanced Business Logic Integration controller
+import { EnhancedBusinessLogicIntegrationController } from '@/controllers/EnhancedBusinessLogicIntegrationController';
+
 // Middleware
 import { authenticate, optionalAuth } from '@/middleware/auth';
 import { apiRateLimit } from '@/middleware/rateLimiter';
@@ -117,6 +120,48 @@ export function setupRoutes(app: Application): void {
 
   // Mount the API router
   app.use('/api', apiRateLimit, apiRouter);
+
+  // Enhanced Business Logic Integration API routes (Production-Grade NAPI-RS Integration)
+  apiRouter.get('/enhanced-business-logic-integration/metrics', 
+    authenticate, 
+    EnhancedBusinessLogicIntegrationController.getProductionMetrics
+  );
+  apiRouter.get('/enhanced-business-logic-integration/health', 
+    authenticate, 
+    EnhancedBusinessLogicIntegrationController.getProductionHealthStatus
+  );
+  apiRouter.get('/enhanced-business-logic-integration/dashboard', 
+    authenticate, 
+    EnhancedBusinessLogicIntegrationController.getDashboardData
+  );
+  apiRouter.get('/enhanced-business-logic-integration/bridges', 
+    authenticate, 
+    EnhancedBusinessLogicIntegrationController.getServiceBridges
+  );
+  apiRouter.get('/enhanced-business-logic-integration/services/:serviceName/metrics', 
+    authenticate, 
+    EnhancedBusinessLogicIntegrationController.getServiceMetrics
+  );
+  apiRouter.get('/enhanced-business-logic-integration/services/:serviceName/config', 
+    authenticate, 
+    EnhancedBusinessLogicIntegrationController.getServiceConfiguration
+  );
+  apiRouter.post('/enhanced-business-logic-integration/execute', 
+    authenticate, 
+    EnhancedBusinessLogicIntegrationController.executeOperation
+  );
+  apiRouter.post('/enhanced-business-logic-integration/validation-rules', 
+    authenticate, 
+    EnhancedBusinessLogicIntegrationController.updateValidationRules
+  );
+  apiRouter.post('/enhanced-business-logic-integration/services/:serviceName/reset-metrics', 
+    authenticate, 
+    EnhancedBusinessLogicIntegrationController.resetServiceMetrics
+  );
+  apiRouter.get('/enhanced-business-logic-integration/analytics', 
+    authenticate, 
+    EnhancedBusinessLogicIntegrationController.getAdvancedAnalytics
+  );
 
   // Default route
   app.get('/', (req, res) => {
