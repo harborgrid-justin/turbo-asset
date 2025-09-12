@@ -1,25 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-
-interface Asset {
-  id: string;
-  assetTag: string;
-  assetName: string;
-  category: string;
-  status: string;
-  condition: string;
-  criticality: string;
-  location: string;
-  building: string;
-  manufacturer: string;
-  model: string;
-  purchasePrice: number;
-  purchaseDate: string;
-  warrantyExpiry: string;
-  lastMaintenanceDate: string;
-  nextMaintenanceDate: string;
-}
+import { frontendAPIService, Asset } from '../../services/FrontendAPIService';
 
 interface SearchFilters {
   query: string;
@@ -57,72 +39,21 @@ const AssetSearchPage = () => {
     warrantyExpiring: false
   });
 
-  // Mock data
-  const mockAssets: Asset[] = [
-    {
-      id: '1',
-      assetTag: 'HVAC-001',
-      assetName: 'Central Air Conditioning Unit A',
-      category: 'HVAC',
-      status: 'Active',
-      condition: 'Good',
-      criticality: 'High',
-      location: 'Main Building',
-      building: 'Building A',
-      manufacturer: 'Carrier',
-      model: 'CA-2500',
-      purchasePrice: 25000,
-      purchaseDate: '2020-01-15',
-      warrantyExpiry: '2025-01-15',
-      lastMaintenanceDate: '2024-10-15',
-      nextMaintenanceDate: '2025-04-15'
-    },
-    {
-      id: '2',
-      assetTag: 'ELEC-002',
-      assetName: 'Emergency Generator B',
-      category: 'Electrical',
-      status: 'Active',
-      condition: 'Excellent',
-      criticality: 'Critical',
-      location: 'Power Room',
-      building: 'Building A',
-      manufacturer: 'Generac',
-      model: 'G-150',
-      purchasePrice: 45000,
-      purchaseDate: '2021-03-20',
-      warrantyExpiry: '2026-03-20',
-      lastMaintenanceDate: '2024-12-01',
-      nextMaintenanceDate: '2025-06-01'
-    },
-    {
-      id: '3',
-      assetTag: 'MECH-003',
-      assetName: 'Water Pump System C',
-      category: 'Mechanical',
-      status: 'Under Maintenance',
-      condition: 'Fair',
-      criticality: 'Medium',
-      location: 'Basement',
-      building: 'Building B',
-      manufacturer: 'Grundfos',
-      model: 'GF-300',
-      purchasePrice: 12000,
-      purchaseDate: '2019-07-10',
-      warrantyExpiry: '2024-07-10',
-      lastMaintenanceDate: '2024-11-20',
-      nextMaintenanceDate: '2025-01-20'
-    }
-  ];
-
   useEffect(() => {
-    // Simulate loading data
+    // Load assets from centralized API service
     setLoading(true);
-    setTimeout(() => {
-      setAssets(mockAssets);
-      setFilteredAssets(mockAssets);
-      setLoading(false);
-    }, 1000);
+    
+    frontendAPIService.getAssets({ limit: 100 })
+      .then(response => {
+        setAssets(response.data);
+        setFilteredAssets(response.data);
+        setLoading(false);
+      })
+      .catch(error => {
+        console.error('Error loading assets:', error);
+        setLoading(false);
+        // Fallback to minimal mock data is already handled in the service
+      });
   }, []);
 
   useEffect(() => {

@@ -78,4 +78,21 @@ export const config = {
     currency: process.env.DEFAULT_CURRENCY || 'USD',
     timezone: process.env.DEFAULT_TIMEZONE || 'America/New_York',
   },
+
+  // Mock Data Configuration
+  mockData: {
+    assetCount: parseInt(process.env.MOCK_ASSET_COUNT || '100'),
+    workOrderCount: parseInt(process.env.MOCK_WORK_ORDER_COUNT || '50'),
+    spaceCount: parseInt(process.env.MOCK_SPACE_COUNT || '50'),
+    maintenanceRecordCount: parseInt(process.env.MOCK_MAINTENANCE_COUNT || '200'),
+    auditEntryCount: parseInt(process.env.MOCK_AUDIT_ENTRY_COUNT || '20'),
+    enableRandomization: process.env.MOCK_ENABLE_RANDOMIZATION !== 'false',
+    seed: parseInt(process.env.MOCK_SEED || '12345'),
+    // Business Intelligence specific
+    biDefaultRecordCount: parseInt(process.env.MOCK_BI_DEFAULT_RECORDS || '100'),
+    // API Management
+    mockTotalCost: process.env.MOCK_TOTAL_COST || '$487,650',
+    // Service health check intervals
+    healthCheckInterval: parseInt(process.env.MOCK_HEALTH_CHECK_INTERVAL || '30000'), // 30 seconds
+  },
 };
