@@ -702,7 +702,7 @@ export class MaintenanceService {
             success++;
           } catch (error: unknown) {
             failed++;
-            errors.push(`Asset ${update.assetId}: ${error instanceof Error ? error.message : 'Unknown error'}`);
+            errors.push(`Asset ${update.assetId}: ${error instanceof Error ? (error as Error).message : 'Unknown error'}`);
           }
         });
 

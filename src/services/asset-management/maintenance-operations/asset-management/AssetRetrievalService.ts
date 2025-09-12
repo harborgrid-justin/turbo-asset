@@ -79,7 +79,7 @@ export class AssetRetrievalService {
     } catch (error: unknown) {
       logger.error('Failed to get asset by ID', {
         assetId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -116,7 +116,7 @@ export class AssetRetrievalService {
       logger.error('Failed to get asset by tag', {
         assetTag,
         organizationId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -244,7 +244,7 @@ export class AssetRetrievalService {
     } catch (error: unknown) {
       logger.error('Failed to search assets', {
         filters,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -303,7 +303,7 @@ export class AssetRetrievalService {
         building,
         floor,
         room,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -357,7 +357,7 @@ export class AssetRetrievalService {
       logger.error('Failed to get assets due for maintenance', {
         organizationId,
         daysAhead,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -407,7 +407,7 @@ export class AssetRetrievalService {
       logger.error('Failed to get assets with expiring warranties', {
         organizationId,
         daysAhead,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -553,7 +553,7 @@ export class AssetRetrievalService {
     } catch (error: unknown) {
       logger.error('Failed to get asset summary stats', {
         organizationId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -595,7 +595,7 @@ export class AssetRetrievalService {
       logger.error('Failed to get recently created assets', {
         organizationId,
         days,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -637,7 +637,7 @@ export class AssetRetrievalService {
       logger.error('Failed to get recently updated assets', {
         organizationId,
         days,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -750,7 +750,7 @@ export class AssetRetrievalService {
       };
 
     } catch (error: unknown) {
-      logger.warn('Failed to calculate search metrics', { error: error.message });
+      logger.warn('Failed to calculate search metrics', { error: (error as Error).message });
       return {};
     }
   }

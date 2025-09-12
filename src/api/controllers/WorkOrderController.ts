@@ -32,7 +32,10 @@ router.get('/', async (req, res) => {
     const organizationId = req.headers['x-organization-id'] as string;
 
     if (!organizationId) {
-      return res.status(400).json({ error: 'Organization ID required' });
+      res.status(400).json({ error: 'Organization ID required' });
+
+      return;
+      return;
     }
 
     const filters = {
@@ -65,8 +68,10 @@ router.get('/', async (req, res) => {
     logger.error('Failed to search work orders', error);
     res.status(500).json({
       error: 'Failed to search work orders',
-      message: error instanceof Error ? error.message : 'Unknown error',
+      message: error instanceof Error ? (error as Error).message : 'Unknown error',
     });
+
+    return;
   }
 });
 
@@ -101,7 +106,10 @@ router.post('/', async (req, res) => {
     const createdBy = req.headers['x-user-id'] as string;
 
     if (!organizationId || !createdBy) {
-      return res.status(400).json({ error: 'Organization ID and User ID required' });
+      res.status(400).json({ error: 'Organization ID and User ID required' });
+
+      return;
+      return;
     }
 
     const workOrderData = {
@@ -117,12 +125,17 @@ router.post('/', async (req, res) => {
       success: true,
       data: workOrder,
     });
+
+
+    return;
   } catch (error: unknown) {
     logger.error('Failed to create work order', error);
     res.status(500).json({
       error: 'Failed to create work order',
-      message: error instanceof Error ? error.message : 'Unknown error',
+      message: error instanceof Error ? (error as Error).message : 'Unknown error',
     });
+
+    return;
   }
 });
 
@@ -152,9 +165,9 @@ router.get('/:id', async (req, res) => {
     });
   } catch (error: unknown) {
     logger.error('Failed to get work order', error);
-    res.status(error instanceof Error && error.message === 'Work order not found' ? 404 : 500).json({
+    res.status(error instanceof Error && (error as Error).message === 'Work order not found' ? 404 : 500).json({
       error: 'Failed to get work order',
-      message: error instanceof Error ? error.message : 'Unknown error',
+      message: error instanceof Error ? (error as Error).message : 'Unknown error',
     });
   }
 });
@@ -193,11 +206,17 @@ router.put('/:id/status', async (req, res) => {
     const { status, notes } = req.body;
 
     if (!updatedBy) {
-      return res.status(400).json({ error: 'User ID required' });
+      res.status(400).json({ error: 'User ID required' });
+
+      return;
+      return;
     }
 
     if (!status) {
-      return res.status(400).json({ error: 'Status is required' });
+      res.status(400).json({ error: 'Status is required' });
+
+      return;
+      return;
     }
 
     const workOrder = await workOrderService.updateWorkOrderStatus(workOrderId, status, updatedBy, notes);
@@ -210,8 +229,10 @@ router.put('/:id/status', async (req, res) => {
     logger.error('Failed to update work order status', error);
     res.status(500).json({
       error: 'Failed to update work order status',
-      message: error instanceof Error ? error.message : 'Unknown error',
+      message: error instanceof Error ? (error as Error).message : 'Unknown error',
     });
+
+    return;
   }
 });
 
@@ -259,12 +280,17 @@ router.post('/:id/tasks', async (req, res) => {
       success: true,
       data: task,
     });
+
+
+    return;
   } catch (error: unknown) {
     logger.error('Failed to add work order task', error);
     res.status(500).json({
       error: 'Failed to add work order task',
-      message: error instanceof Error ? error.message : 'Unknown error',
+      message: error instanceof Error ? (error as Error).message : 'Unknown error',
     });
+
+    return;
   }
 });
 
@@ -311,12 +337,17 @@ router.post('/:id/materials', async (req, res) => {
       success: true,
       data: material,
     });
+
+
+    return;
   } catch (error: unknown) {
     logger.error('Failed to add work order material', error);
     res.status(500).json({
       error: 'Failed to add work order material',
-      message: error instanceof Error ? error.message : 'Unknown error',
+      message: error instanceof Error ? (error as Error).message : 'Unknown error',
     });
+
+    return;
   }
 });
 
@@ -366,12 +397,17 @@ router.post('/:id/time-entries', async (req, res) => {
       success: true,
       data: timeEntry,
     });
+
+
+    return;
   } catch (error: unknown) {
     logger.error('Failed to record time entry', error);
     res.status(500).json({
       error: 'Failed to record time entry',
-      message: error instanceof Error ? error.message : 'Unknown error',
+      message: error instanceof Error ? (error as Error).message : 'Unknown error',
     });
+
+    return;
   }
 });
 
@@ -409,11 +445,17 @@ router.put('/tasks/:taskId/status', async (req, res) => {
     const { status, actualHours, notes } = req.body;
 
     if (!updatedBy) {
-      return res.status(400).json({ error: 'User ID required' });
+      res.status(400).json({ error: 'User ID required' });
+
+      return;
+      return;
     }
 
     if (!status) {
-      return res.status(400).json({ error: 'Status is required' });
+      res.status(400).json({ error: 'Status is required' });
+
+      return;
+      return;
     }
 
     const task = await workOrderService.updateTaskStatus(taskId, status, updatedBy, actualHours, notes);
@@ -426,8 +468,10 @@ router.put('/tasks/:taskId/status', async (req, res) => {
     logger.error('Failed to update task status', error);
     res.status(500).json({
       error: 'Failed to update task status',
-      message: error instanceof Error ? error.message : 'Unknown error',
+      message: error instanceof Error ? (error as Error).message : 'Unknown error',
     });
+
+    return;
   }
 });
 
@@ -466,11 +510,17 @@ router.put('/:id/assign', async (req, res) => {
     const { technicianId, scheduledDate } = req.body;
 
     if (!assignedBy) {
-      return res.status(400).json({ error: 'User ID required' });
+      res.status(400).json({ error: 'User ID required' });
+
+      return;
+      return;
     }
 
     if (!technicianId) {
-      return res.status(400).json({ error: 'Technician ID is required' });
+      res.status(400).json({ error: 'Technician ID is required' });
+
+      return;
+      return;
     }
 
     const workOrder = await workOrderService.assignWorkOrder(
@@ -488,8 +538,10 @@ router.put('/:id/assign', async (req, res) => {
     logger.error('Failed to assign work order', error);
     res.status(500).json({
       error: 'Failed to assign work order',
-      message: error instanceof Error ? error.message : 'Unknown error',
+      message: error instanceof Error ? (error as Error).message : 'Unknown error',
     });
+
+    return;
   }
 });
 
@@ -521,7 +573,10 @@ router.get('/metrics', async (req, res) => {
     const organizationId = req.headers['x-organization-id'] as string;
 
     if (!organizationId) {
-      return res.status(400).json({ error: 'Organization ID required' });
+      res.status(400).json({ error: 'Organization ID required' });
+
+      return;
+      return;
     }
 
     const startDate = req.query.startDate ? new Date(req.query.startDate as string) : undefined;
@@ -537,8 +592,10 @@ router.get('/metrics', async (req, res) => {
     logger.error('Failed to get work order metrics', error);
     res.status(500).json({
       error: 'Failed to get work order metrics',
-      message: error instanceof Error ? error.message : 'Unknown error',
+      message: error instanceof Error ? (error as Error).message : 'Unknown error',
     });
+
+    return;
   }
 });
 
@@ -576,7 +633,10 @@ router.get('/technician/:technicianId/schedule', async (req, res) => {
     const { technicianId } = req.params;
 
     if (!organizationId) {
-      return res.status(400).json({ error: 'Organization ID required' });
+      res.status(400).json({ error: 'Organization ID required' });
+
+      return;
+      return;
     }
 
     const startDate = req.query.startDate 
@@ -602,8 +662,10 @@ router.get('/technician/:technicianId/schedule', async (req, res) => {
     logger.error('Failed to get technician schedule', error);
     res.status(500).json({
       error: 'Failed to get technician schedule',
-      message: error instanceof Error ? error.message : 'Unknown error',
+      message: error instanceof Error ? (error as Error).message : 'Unknown error',
     });
+
+    return;
   }
 });
 

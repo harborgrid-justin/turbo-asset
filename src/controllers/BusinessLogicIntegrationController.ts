@@ -33,9 +33,11 @@ export class BusinessLogicIntegrationController {
         error: {
           code: 'METRICS_FETCH_ERROR',
           message: 'Failed to fetch production metrics',
-          details: error.message
+          details: (error as Error).message
         }
       });
+
+      return;
     }
   }
 
@@ -64,9 +66,11 @@ export class BusinessLogicIntegrationController {
         error: {
           code: 'HEALTH_CHECK_ERROR',
           message: 'Failed to perform health check',
-          details: error.message
+          details: (error as Error).message
         }
       });
+
+      return;
     }
   }
 
@@ -85,6 +89,8 @@ export class BusinessLogicIntegrationController {
             message: 'serviceName and methodName are required'
           }
         });
+
+        return;
         return;
       }
 
@@ -116,9 +122,11 @@ export class BusinessLogicIntegrationController {
         error: {
           code: 'EXECUTION_ERROR',
           message: 'Failed to execute production operation',
-          details: error.message
+          details: (error as Error).message
         }
       });
+
+      return;
     }
   }
 
@@ -157,9 +165,11 @@ export class BusinessLogicIntegrationController {
         error: {
           code: 'BRIDGES_FETCH_ERROR',
           message: 'Failed to fetch available bridges',
-          details: error.message
+          details: (error as Error).message
         }
       });
+
+      return;
     }
   }
 
@@ -178,6 +188,8 @@ export class BusinessLogicIntegrationController {
             message: 'serviceName, methodName, and rules array are required'
           }
         });
+
+        return;
         return;
       }
 
@@ -210,9 +222,11 @@ export class BusinessLogicIntegrationController {
         error: {
           code: 'VALIDATION_RULE_ERROR',
           message: 'Failed to add validation rule',
-          details: error.message
+          details: (error as Error).message
         }
       });
+
+      return;
     }
   }
 
@@ -231,6 +245,8 @@ export class BusinessLogicIntegrationController {
             message: 'serviceName parameter is required'
           }
         });
+
+        return;
         return;
       }
 
@@ -251,6 +267,8 @@ export class BusinessLogicIntegrationController {
             message: `Service ${serviceName} not found`
           }
         });
+
+        return;
         return;
       }
 
@@ -274,9 +292,11 @@ export class BusinessLogicIntegrationController {
         error: {
           code: 'SERVICE_METRICS_ERROR',
           message: 'Failed to fetch service metrics',
-          details: error.message
+          details: (error as Error).message
         }
       });
+
+      return;
     }
   }
 
@@ -309,9 +329,11 @@ export class BusinessLogicIntegrationController {
         error: {
           code: 'RESET_ERROR',
           message: 'Failed to reset metrics',
-          details: error.message
+          details: (error as Error).message
         }
       });
+
+      return;
     }
   }
 }

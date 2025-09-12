@@ -14,9 +14,11 @@ router.get('/', async (req: Request, res: Response) => {
     const { organizationId, limit = 50, offset = 0 } = req.query;
 
     if (!organizationId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Organization ID is required',
       });
+
+      return;
     }
 
     const properties = await prisma.property.findMany({
@@ -70,8 +72,10 @@ router.get('/', async (req: Request, res: Response) => {
     logger.error('Failed to get properties', error);
     res.status(500).json({
       error: 'Failed to get properties',
-      message: error instanceof Error ? error.message : 'Unknown error',
+      message: error instanceof Error ? (error as Error).message : 'Unknown error',
     });
+
+    return;
   }
 });
 
@@ -109,9 +113,11 @@ router.get('/:id', async (req: Request, res: Response) => {
     });
 
     if (!property) {
-      return res.status(404).json({
+      res.status(404).json({
         error: 'Property not found',
       });
+
+      return;
     }
 
     // Get custom field values
@@ -127,8 +133,10 @@ router.get('/:id', async (req: Request, res: Response) => {
     logger.error('Failed to get property', error);
     res.status(500).json({
       error: 'Failed to get property',
-      message: error instanceof Error ? error.message : 'Unknown error',
+      message: error instanceof Error ? (error as Error).message : 'Unknown error',
     });
+
+    return;
   }
 });
 
@@ -154,9 +162,11 @@ router.post('/', async (req: Request, res: Response) => {
 
     // Validate required fields
     if (!organizationId || !name || !type) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Organization ID, name, and type are required',
       });
+
+      return;
     }
 
     // Validate custom fields
@@ -167,10 +177,12 @@ router.post('/', async (req: Request, res: Response) => {
     );
 
     if (!customFieldValidation.isValid) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Custom field validation failed',
         errors: customFieldValidation.errors,
       });
+
+      return;
     }
 
     // Create property
@@ -214,12 +226,17 @@ router.post('/', async (req: Request, res: Response) => {
     logger.info('Property created', { propertyId: property.id, organizationId });
 
     res.status(201).json(property);
+
+
+    return;
   } catch (error: unknown) {
     logger.error('Failed to create property', error);
     res.status(500).json({
       error: 'Failed to create property',
-      message: error instanceof Error ? error.message : 'Unknown error',
+      message: error instanceof Error ? (error as Error).message : 'Unknown error',
     });
+
+    return;
   }
 });
 
@@ -253,9 +270,11 @@ router.put('/:id', async (req: Request, res: Response) => {
     });
 
     if (!existingProperty) {
-      return res.status(404).json({
+      res.status(404).json({
         error: 'Property not found',
       });
+
+      return;
     }
 
     // Validate custom fields
@@ -267,10 +286,12 @@ router.put('/:id', async (req: Request, res: Response) => {
       );
 
       if (!customFieldValidation.isValid) {
-        return res.status(400).json({
+        res.status(400).json({
           error: 'Custom field validation failed',
           errors: customFieldValidation.errors,
         });
+
+        return;
       }
     }
 
@@ -320,8 +341,10 @@ router.put('/:id', async (req: Request, res: Response) => {
     logger.error('Failed to update property', error);
     res.status(500).json({
       error: 'Failed to update property',
-      message: error instanceof Error ? error.message : 'Unknown error',
+      message: error instanceof Error ? (error as Error).message : 'Unknown error',
     });
+
+    return;
   }
 });
 
@@ -341,9 +364,11 @@ router.delete('/:id', async (req: Request, res: Response) => {
     });
 
     if (!property) {
-      return res.status(404).json({
+      res.status(404).json({
         error: 'Property not found',
       });
+
+      return;
     }
 
     // Soft delete - mark as inactive
@@ -359,8 +384,10 @@ router.delete('/:id', async (req: Request, res: Response) => {
     logger.error('Failed to delete property', error);
     res.status(500).json({
       error: 'Failed to delete property',
-      message: error instanceof Error ? error.message : 'Unknown error',
+      message: error instanceof Error ? (error as Error).message : 'Unknown error',
     });
+
+    return;
   }
 });
 

@@ -794,7 +794,7 @@ export class EnterpriseServiceBusService extends EventEmitter {
     } catch (error: unknown) {
       return {
         status: 'unhealthy',
-        details: { error: error.message },
+        details: { error: (error as Error).message },
       };
     }
   }

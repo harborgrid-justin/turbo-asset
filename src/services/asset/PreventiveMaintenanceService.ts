@@ -857,7 +857,7 @@ export class PreventiveMaintenanceService {
           success++;
         } catch (error: unknown) {
           failed++;
-          errors.push(`PM ${pmId}: ${error instanceof Error ? error.message : 'Unknown error'}`);
+          errors.push(`PM ${pmId}: ${error instanceof Error ? (error as Error).message : 'Unknown error'}`);
         }
       }
 

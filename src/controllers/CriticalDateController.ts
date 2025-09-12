@@ -27,27 +27,35 @@ router.post('/', async (req: Request, res: Response) => {
 
     // Validate required fields
     if (!entityType || !entityId || !dateType || !dateValue || !description || !importance) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Required fields missing: entityType, entityId, dateType, dateValue, description, importance'
       });
+
+      return;
     }
 
     if (!['lease', 'contract', 'property', 'compliance'].includes(entityType)) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Invalid entityType. Must be one of: lease, contract, property, compliance'
       });
+
+      return;
     }
 
     if (!['LOW', 'MEDIUM', 'HIGH', 'CRITICAL'].includes(importance)) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Invalid importance. Must be one of: LOW, MEDIUM, HIGH, CRITICAL'
       });
+
+      return;
     }
 
     if (!Array.isArray(alertDays) || alertDays.length === 0) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'alertDays must be a non-empty array of numbers'
       });
+
+      return;
     }
 
     const criticalDateData = {
@@ -70,12 +78,17 @@ router.post('/', async (req: Request, res: Response) => {
       success: true,
       data: criticalDate
     });
+
+
+    return;
   } catch (error: unknown) {
     logger.error('Failed to create critical date', error);
     res.status(500).json({
       error: 'Failed to create critical date',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      message: error instanceof Error ? (error as Error).message : 'Unknown error'
     });
+
+    return;
   }
 });
 
@@ -88,9 +101,11 @@ router.get('/dashboard/:organizationId', async (req: Request, res: Response) => 
     const { organizationId } = req.params;
 
     if (!organizationId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Organization ID is required'
       });
+
+      return;
     }
 
     const dashboard = await criticalDateService.getCriticalDateDashboard(organizationId);
@@ -103,8 +118,10 @@ router.get('/dashboard/:organizationId', async (req: Request, res: Response) => 
     logger.error('Failed to get critical date dashboard', error);
     res.status(500).json({
       error: 'Failed to get critical date dashboard',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      message: error instanceof Error ? (error as Error).message : 'Unknown error'
     });
+
+    return;
   }
 });
 
@@ -117,9 +134,11 @@ router.post('/process-alerts/:organizationId', async (req: Request, res: Respons
     const { organizationId } = req.params;
 
     if (!organizationId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Organization ID is required'
       });
+
+      return;
     }
 
     const result = await criticalDateService.processDailyAlerts(organizationId);
@@ -132,8 +151,10 @@ router.post('/process-alerts/:organizationId', async (req: Request, res: Respons
     logger.error('Failed to process daily alerts', error);
     res.status(500).json({
       error: 'Failed to process daily alerts',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      message: error instanceof Error ? (error as Error).message : 'Unknown error'
     });
+
+    return;
   }
 });
 
@@ -157,9 +178,11 @@ router.get('/alerts/search', async (req: Request, res: Response) => {
     } = req.query;
 
     if (!organizationId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Organization ID is required'
       });
+
+      return;
     }
 
     const query = {
@@ -190,8 +213,10 @@ router.get('/alerts/search', async (req: Request, res: Response) => {
     logger.error('Failed to search alerts', error);
     res.status(500).json({
       error: 'Failed to search alerts',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      message: error instanceof Error ? (error as Error).message : 'Unknown error'
     });
+
+    return;
   }
 });
 
@@ -205,15 +230,19 @@ router.post('/alerts/:alertId/acknowledge', async (req: Request, res: Response) 
     const { acknowledgedBy, notes } = req.body;
 
     if (!alertId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Alert ID is required'
       });
+
+      return;
     }
 
     if (!acknowledgedBy) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'acknowledgedBy is required'
       });
+
+      return;
     }
 
     const alert = await criticalDateService.acknowledgeAlert(alertId, acknowledgedBy, notes);
@@ -226,8 +255,10 @@ router.post('/alerts/:alertId/acknowledge', async (req: Request, res: Response) 
     logger.error('Failed to acknowledge alert', error);
     res.status(500).json({
       error: 'Failed to acknowledge alert',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      message: error instanceof Error ? (error as Error).message : 'Unknown error'
     });
+
+    return;
   }
 });
 
@@ -241,15 +272,19 @@ router.post('/:criticalDateId/complete', async (req: Request, res: Response) => 
     const { completedBy, completionNotes } = req.body;
 
     if (!criticalDateId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Critical Date ID is required'
       });
+
+      return;
     }
 
     if (!completedBy) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'completedBy is required'
       });
+
+      return;
     }
 
     const criticalDate = await criticalDateService.completeCriticalDate(
@@ -266,8 +301,10 @@ router.post('/:criticalDateId/complete', async (req: Request, res: Response) => 
     logger.error('Failed to complete critical date', error);
     res.status(500).json({
       error: 'Failed to complete critical date',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      message: error instanceof Error ? (error as Error).message : 'Unknown error'
     });
+
+    return;
   }
 });
 
@@ -281,9 +318,11 @@ router.put('/:criticalDateId', async (req: Request, res: Response) => {
     const updates = req.body;
 
     if (!criticalDateId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Critical Date ID is required'
       });
+
+      return;
     }
 
     // Convert date fields
@@ -306,8 +345,10 @@ router.put('/:criticalDateId', async (req: Request, res: Response) => {
     logger.error('Failed to update critical date', error);
     res.status(500).json({
       error: 'Failed to update critical date',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      message: error instanceof Error ? (error as Error).message : 'Unknown error'
     });
+
+    return;
   }
 });
 
@@ -321,15 +362,19 @@ router.post('/reports/:organizationId', async (req: Request, res: Response) => {
     const { reportType, filters } = req.body;
 
     if (!organizationId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Organization ID is required'
       });
+
+      return;
     }
 
     if (!reportType) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Report type is required'
       });
+
+      return;
     }
 
     const validReportTypes = [
@@ -340,9 +385,11 @@ router.post('/reports/:organizationId', async (req: Request, res: Response) => {
     ];
 
     if (!validReportTypes.includes(reportType)) {
-      return res.status(400).json({
+      res.status(400).json({
         error: `Invalid report type. Must be one of: ${validReportTypes.join(', ')}`
       });
+
+      return;
     }
 
     const report = await criticalDateService.generateCriticalDateReport(
@@ -359,8 +406,10 @@ router.post('/reports/:organizationId', async (req: Request, res: Response) => {
     logger.error('Failed to generate critical date report', error);
     res.status(500).json({
       error: 'Failed to generate critical date report',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      message: error instanceof Error ? (error as Error).message : 'Unknown error'
     });
+
+    return;
   }
 });
 
@@ -374,23 +423,29 @@ router.post('/bulk-update/:organizationId', async (req: Request, res: Response) 
     const { updates } = req.body;
 
     if (!organizationId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Organization ID is required'
       });
+
+      return;
     }
 
     if (!updates || !Array.isArray(updates)) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Updates array is required'
       });
+
+      return;
     }
 
     // Validate updates format
     for (const update of updates) {
       if (!update.criticalDateId || !update.changes) {
-        return res.status(400).json({
+        res.status(400).json({
           error: 'Each update must have criticalDateId and changes'
         });
+
+        return;
       }
     }
 
@@ -421,8 +476,10 @@ router.post('/bulk-update/:organizationId', async (req: Request, res: Response) 
     logger.error('Failed to bulk update critical dates', error);
     res.status(500).json({
       error: 'Failed to bulk update critical dates',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      message: error instanceof Error ? (error as Error).message : 'Unknown error'
     });
+
+    return;
   }
 });
 
@@ -435,9 +492,11 @@ router.get('/:criticalDateId', async (req: Request, res: Response) => {
     const { criticalDateId } = req.params;
 
     if (!criticalDateId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Critical Date ID is required'
       });
+
+      return;
     }
 
     // This would be implemented in the service
@@ -450,8 +509,10 @@ router.get('/:criticalDateId', async (req: Request, res: Response) => {
     logger.error('Failed to get critical date', error);
     res.status(500).json({
       error: 'Failed to get critical date',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      message: error instanceof Error ? (error as Error).message : 'Unknown error'
     });
+
+    return;
   }
 });
 
@@ -464,9 +525,11 @@ router.delete('/:criticalDateId', async (req: Request, res: Response) => {
     const { criticalDateId } = req.params;
 
     if (!criticalDateId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Critical Date ID is required'
       });
+
+      return;
     }
 
     // This would be implemented in the service
@@ -479,8 +542,10 @@ router.delete('/:criticalDateId', async (req: Request, res: Response) => {
     logger.error('Failed to delete critical date', error);
     res.status(500).json({
       error: 'Failed to delete critical date',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      message: error instanceof Error ? (error as Error).message : 'Unknown error'
     });
+
+    return;
   }
 });
 
@@ -494,9 +559,11 @@ router.get('/statistics/:organizationId', async (req: Request, res: Response) =>
     const { timeframe } = req.query;
 
     if (!organizationId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Organization ID is required'
       });
+
+      return;
     }
 
     // Get dashboard data which includes statistics
@@ -529,8 +596,10 @@ router.get('/statistics/:organizationId', async (req: Request, res: Response) =>
     logger.error('Failed to get alert statistics', error);
     res.status(500).json({
       error: 'Failed to get alert statistics',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      message: error instanceof Error ? (error as Error).message : 'Unknown error'
     });
+
+    return;
   }
 });
 

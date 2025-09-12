@@ -58,7 +58,7 @@ const standardsService = new SpaceStandardsService();
  *       500:
  *         description: Internal server error
  */
-router.post('/', async (req: Request, res: Response) => {
+router.post('/', async (req: Request, res: Response): Promise<void> => {
   try {
     const {
       name,
@@ -74,23 +74,32 @@ router.post('/', async (req: Request, res: Response) => {
     } = req.body;
 
     if (!name || !category || !type || !specifications || !organizationId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Name, category, type, specifications, and organization ID are required',
       });
+
+      return;
+      return;
     }
 
     const validCategories = ['OFFICE', 'MEETING', 'COMMON', 'SUPPORT', 'SPECIALIZED'];
     if (!validCategories.includes(category)) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Invalid category. Valid values are: ' + validCategories.join(', '),
       });
+
+      return;
+      return;
     }
 
     // Validate required specification fields
     if (!specifications.minimumArea || !specifications.maximumArea || !specifications.recommendedArea) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Specifications must include minimumArea, maximumArea, and recommendedArea',
       });
+
+      return;
+      return;
     }
 
     const standard = await standardsService.createSpaceStandard({
@@ -108,15 +117,22 @@ router.post('/', async (req: Request, res: Response) => {
     });
 
     res.status(201).json(standard);
+
+
+    return;
   } catch (error: unknown) {
     logger.error('Failed to create space standard', error);
-    if (error instanceof Error && error.message.includes('validation')) {
-      res.status(400).json({ error: error.message });
+    if (error instanceof Error && (error as Error).message.includes('validation')) {
+      res.status(400).json({ error: (error as Error).message });
+
+      return;
     } else {
       res.status(500).json({
         error: 'Failed to create space standard',
-        message: error instanceof Error ? error.message : 'Unknown error',
+        message: error instanceof Error ? (error as Error).message : 'Unknown error',
       });
+
+      return;
     }
   }
 });
@@ -162,7 +178,7 @@ router.post('/', async (req: Request, res: Response) => {
  *       500:
  *         description: Internal server error
  */
-router.get('/:organizationId', async (req: Request, res: Response) => {
+router.get('/:organizationId', async (req: Request, res: Response): Promise<void> => {
   try {
     const { organizationId } = req.params;
     const { category, type, search, includeInactive = 'false' } = req.query;
@@ -181,8 +197,10 @@ router.get('/:organizationId', async (req: Request, res: Response) => {
     logger.error('Failed to get space standards', error);
     res.status(500).json({
       error: 'Failed to get space standards',
-      message: error instanceof Error ? error.message : 'Unknown error',
+      message: error instanceof Error ? (error as Error).message : 'Unknown error',
     });
+
+    return;
   }
 });
 
@@ -235,7 +253,7 @@ router.get('/:organizationId', async (req: Request, res: Response) => {
  *       500:
  *         description: Internal server error
  */
-router.post('/:standardId/configuration', async (req: Request, res: Response) => {
+router.post('/:standardId/configuration', async (req: Request, res: Response): Promise<void> => {
   try {
     const { standardId } = req.params;
     const {
@@ -248,15 +266,21 @@ router.post('/:standardId/configuration', async (req: Request, res: Response) =>
     } = req.body;
 
     if (!capacity || capacity < 1) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Capacity is required and must be greater than 0',
       });
+
+      return;
+      return;
     }
 
     if (area && area < 1) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Area must be greater than 0 if specified',
       });
+
+      return;
+      return;
     }
 
     const requirements = {
@@ -273,13 +297,17 @@ router.post('/:standardId/configuration', async (req: Request, res: Response) =>
     res.json(result);
   } catch (error: unknown) {
     logger.error('Failed to generate space configuration', error);
-    if (error instanceof Error && error.message.includes('not found')) {
-      res.status(404).json({ error: error.message });
+    if (error instanceof Error && (error as Error).message.includes('not found')) {
+      res.status(404).json({ error: (error as Error).message });
+
+      return;
     } else {
       res.status(500).json({
         error: 'Failed to generate space configuration',
-        message: error instanceof Error ? error.message : 'Unknown error',
+        message: error instanceof Error ? (error as Error).message : 'Unknown error',
       });
+
+      return;
     }
   }
 });
@@ -312,14 +340,17 @@ router.post('/:standardId/configuration', async (req: Request, res: Response) =>
  *       500:
  *         description: Internal server error
  */
-router.post('/configuration/validate', async (req: Request, res: Response) => {
+router.post('/configuration/validate', async (req: Request, res: Response): Promise<void> => {
   try {
     const { configuration, standardId } = req.body;
 
     if (!configuration) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Configuration is required',
       });
+
+      return;
+      return;
     }
 
     const validation = await standardsService.validateSpaceConfiguration(configuration, standardId);
@@ -329,8 +360,10 @@ router.post('/configuration/validate', async (req: Request, res: Response) => {
     logger.error('Failed to validate space configuration', error);
     res.status(500).json({
       error: 'Failed to validate space configuration',
-      message: error instanceof Error ? error.message : 'Unknown error',
+      message: error instanceof Error ? (error as Error).message : 'Unknown error',
     });
+
+    return;
   }
 });
 
@@ -382,7 +415,7 @@ router.post('/configuration/validate', async (req: Request, res: Response) => {
  *       500:
  *         description: Internal server error
  */
-router.post('/:organizationId/templates', async (req: Request, res: Response) => {
+router.post('/:organizationId/templates', async (req: Request, res: Response): Promise<void> => {
   try {
     const { organizationId } = req.params;
     const {
@@ -394,15 +427,21 @@ router.post('/:organizationId/templates', async (req: Request, res: Response) =>
     } = req.body;
 
     if (!spaceTypes.length || !totalArea || !expectedOccupancy) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Space types, total area, and expected occupancy are required',
       });
+
+      return;
+      return;
     }
 
     if (totalArea < 1 || expectedOccupancy < 1) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Total area and expected occupancy must be greater than 0',
       });
+
+      return;
+      return;
     }
 
     const parameters = {
@@ -420,8 +459,10 @@ router.post('/:organizationId/templates', async (req: Request, res: Response) =>
     logger.error('Failed to generate planning templates', error);
     res.status(500).json({
       error: 'Failed to generate planning templates',
-      message: error instanceof Error ? error.message : 'Unknown error',
+      message: error instanceof Error ? (error as Error).message : 'Unknown error',
     });
+
+    return;
   }
 });
 
@@ -451,7 +492,7 @@ router.post('/:organizationId/templates', async (req: Request, res: Response) =>
  *       500:
  *         description: Internal server error
  */
-router.get('/analytics/:organizationId', async (req: Request, res: Response) => {
+router.get('/analytics/:organizationId', async (req: Request, res: Response): Promise<void> => {
   try {
     const { organizationId } = req.params;
     const { timeframe = 'QUARTERLY' } = req.query;
@@ -536,8 +577,10 @@ router.get('/analytics/:organizationId', async (req: Request, res: Response) => 
     logger.error('Failed to get space standards analytics', error);
     res.status(500).json({
       error: 'Failed to get space standards analytics',
-      message: error instanceof Error ? error.message : 'Unknown error',
+      message: error instanceof Error ? (error as Error).message : 'Unknown error',
     });
+
+    return;
   }
 });
 
@@ -578,15 +621,18 @@ router.get('/analytics/:organizationId', async (req: Request, res: Response) => 
  *       500:
  *         description: Internal server error
  */
-router.post('/:standardId/clone', async (req: Request, res: Response) => {
+router.post('/:standardId/clone', async (req: Request, res: Response): Promise<void> => {
   try {
     const { standardId } = req.params;
     const { name, description, modifications = {} } = req.body;
 
     if (!name) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Name is required for cloned standard',
       });
+
+      return;
+      return;
     }
 
     // Get original standard (this would be implemented in the service)
@@ -594,9 +640,12 @@ router.post('/:standardId/clone', async (req: Request, res: Response) => {
     const originalStandard = standards.find(s => s.id === standardId);
 
     if (!originalStandard) {
-      return res.status(404).json({
+      res.status(404).json({
         error: 'Original standard not found',
       });
+
+      return;
+      return;
     }
 
     // Create cloned standard
@@ -617,12 +666,17 @@ router.post('/:standardId/clone', async (req: Request, res: Response) => {
     const newStandard = await standardsService.createSpaceStandard(clonedStandard);
 
     res.status(201).json(newStandard);
+
+
+    return;
   } catch (error: unknown) {
     logger.error('Failed to clone space standard', error);
     res.status(500).json({
       error: 'Failed to clone space standard',
-      message: error instanceof Error ? error.message : 'Unknown error',
+      message: error instanceof Error ? (error as Error).message : 'Unknown error',
     });
+
+    return;
   }
 });
 

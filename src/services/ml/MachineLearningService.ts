@@ -316,7 +316,7 @@ export class MachineLearningService extends EventEmitter {
         } catch (error: unknown) {
           predictions.push({
             input,
-            error: error.message,
+            error: (error as Error).message,
             prediction: null
           });
           failedPredictions++;
@@ -499,11 +499,11 @@ export class MachineLearningService extends EventEmitter {
 
     } catch (error: unknown) {
       job.status = 'FAILED';
-      job.logs.push(`[${new Date().toISOString()}] Training failed: ${error.message}`);
+      job.logs.push(`[${new Date().toISOString()}] Training failed: ${(error as Error).message}`);
       model.status = 'FAILED';
       
       logger.error('Model training failed', { modelId, jobId, error });
-      this.emit('training:failed', { modelId, jobId, error: error.message });
+      this.emit('training:failed', { modelId, jobId, error: (error as Error).message });
     }
   }
 

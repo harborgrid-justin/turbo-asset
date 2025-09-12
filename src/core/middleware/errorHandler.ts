@@ -156,7 +156,7 @@ export const errorHandler = (
       ...requestInfo,
       error: {
         name: error.name,
-        message: error.message,
+        message: (error as Error).message,
         code: error.code,
         statusCode: error.statusCode,
         details: error.details,
@@ -168,7 +168,7 @@ export const errorHandler = (
       success: false,
       error: {
         code: error.code,
-        message: error.message,
+        message: (error as Error).message,
         details: error.details,
         timestamp: new Date().toISOString(),
         path: req.path,
@@ -181,7 +181,7 @@ export const errorHandler = (
       ...requestInfo,
       error: {
         name: error.name,
-        message: error.message,
+        message: (error as Error).message,
         stack: error.stack,
       },
     });
@@ -192,7 +192,7 @@ export const errorHandler = (
         code: 'INTERNAL_ERROR',
         message: process.env.NODE_ENV === 'production' 
           ? 'An unexpected error occurred' 
-          : error.message,
+          : (error as Error).message,
         timestamp: new Date().toISOString(),
         path: req.path,
         ...(process.env.NODE_ENV === 'development' && { 
@@ -201,6 +201,9 @@ export const errorHandler = (
         }),
       },
     });
+
+
+    return;
   }
 };
 
@@ -232,11 +235,14 @@ export const notFoundHandler = (req: Request, res: Response): void => {
     success: false,
     error: {
       code: error.code,
-      message: error.message,
+      message: (error as Error).message,
       timestamp: new Date().toISOString(),
       path: req.path,
     },
   });
+
+
+  return;
 };
 
 /**
@@ -283,7 +289,7 @@ export const validateRequired = (data: any, fields: string[]): void => {
  */
 export const sanitizeError = (error: any): any => {
   const sanitized: any = {
-    message: error.message,
+    message: (error as Error).message,
     code: error.code || 'UNKNOWN_ERROR',
     timestamp: new Date().toISOString(),
   };

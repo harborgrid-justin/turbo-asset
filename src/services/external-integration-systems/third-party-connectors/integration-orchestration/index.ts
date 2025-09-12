@@ -151,7 +151,7 @@ export class ExternalIntegrationSystemsManager extends EventEmitter {
           results.push({ 
             integration, 
             status: 'failed', 
-            error: error instanceof Error ? error.message : 'Unknown error' 
+            error: error instanceof Error ? (error as Error).message : 'Unknown error' 
           });
         }
       }
@@ -169,7 +169,7 @@ export class ExternalIntegrationSystemsManager extends EventEmitter {
     } catch (error: unknown) {
       logger.error('Integration systems provisioning failed', {
         organizationId: options.organizationId,
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? (error as Error).message : 'Unknown error'
       });
       throw error;
     }
@@ -282,7 +282,7 @@ export class ExternalIntegrationSystemsManager extends EventEmitter {
         syncOperation.results.push({
           service: 'Microsoft 365',
           status: 'failed',
-          errors: [error instanceof Error ? error.message : 'Unknown error']
+          errors: [error instanceof Error ? (error as Error).message : 'Unknown error']
         });
       }
 
@@ -299,7 +299,7 @@ export class ExternalIntegrationSystemsManager extends EventEmitter {
         syncOperation.results.push({
           service: 'Salesforce',
           status: 'failed',
-          errors: [error instanceof Error ? error.message : 'Unknown error']
+          errors: [error instanceof Error ? (error as Error).message : 'Unknown error']
         });
       }
 
@@ -316,7 +316,7 @@ export class ExternalIntegrationSystemsManager extends EventEmitter {
         syncOperation.results.push({
           service: 'Calendar',
           status: 'failed',
-          errors: [error instanceof Error ? error.message : 'Unknown error']
+          errors: [error instanceof Error ? (error as Error).message : 'Unknown error']
         });
       }
 
@@ -437,7 +437,7 @@ export class ExternalIntegrationSystemsManager extends EventEmitter {
     try {
       return await this.microsoft365Service.checkIntegrationHealth();
     } catch (error: unknown) {
-      return { status: 'error', error: error instanceof Error ? error.message : 'Unknown error' };
+      return { status: 'error', error: error instanceof Error ? (error as Error).message : 'Unknown error' };
     }
   }
 
@@ -445,7 +445,7 @@ export class ExternalIntegrationSystemsManager extends EventEmitter {
     try {
       return await this.salesforceService.checkIntegrationHealth();
     } catch (error: unknown) {
-      return { status: 'error', error: error instanceof Error ? error.message : 'Unknown error' };
+      return { status: 'error', error: error instanceof Error ? (error as Error).message : 'Unknown error' };
     }
   }
 
@@ -453,7 +453,7 @@ export class ExternalIntegrationSystemsManager extends EventEmitter {
     try {
       return await this.calendarService.checkIntegrationHealth();
     } catch (error: unknown) {
-      return { status: 'error', error: error instanceof Error ? error.message : 'Unknown error' };
+      return { status: 'error', error: error instanceof Error ? (error as Error).message : 'Unknown error' };
     }
   }
 
@@ -461,7 +461,7 @@ export class ExternalIntegrationSystemsManager extends EventEmitter {
     try {
       return await this.apiManagementService.healthCheck();
     } catch (error: unknown) {
-      return { status: 'error', error: error instanceof Error ? error.message : 'Unknown error' };
+      return { status: 'error', error: error instanceof Error ? (error as Error).message : 'Unknown error' };
     }
   }
 
@@ -469,7 +469,7 @@ export class ExternalIntegrationSystemsManager extends EventEmitter {
     try {
       return this.phase3Service.getServiceHealth();
     } catch (error: unknown) {
-      return { status: 'error', error: error instanceof Error ? error.message : 'Unknown error' };
+      return { status: 'error', error: error instanceof Error ? (error as Error).message : 'Unknown error' };
     }
   }
 
@@ -632,7 +632,7 @@ export class ExternalIntegrationSystemsManager extends EventEmitter {
               processedRecords: 0,
               failedRecords: 0,
               conflicts: 0,
-              errors: [error instanceof Error ? error.message : 'Unknown error']
+              errors: [error instanceof Error ? (error as Error).message : 'Unknown error']
             });
           }
         }
@@ -895,7 +895,7 @@ export class ExternalIntegrationSystemsManager extends EventEmitter {
             actionId: action.platform + '-' + action.action,
             platform: action.platform,
             status: 'failed',
-            error: error instanceof Error ? error.message : 'Unknown error'
+            error: error instanceof Error ? (error as Error).message : 'Unknown error'
           });
 
           overallStatus = results.some(r => r.status === 'success') ? 'partial' : 'failed';
@@ -1049,7 +1049,7 @@ export class ExternalIntegrationSystemsManager extends EventEmitter {
           errors.push(`Unsupported platform: ${platform}`);
       }
     } catch (error: unknown) {
-      errors.push(error instanceof Error ? error.message : 'Unknown error');
+      errors.push(error instanceof Error ? (error as Error).message : 'Unknown error');
       failedRecords = totalRecords;
       processedRecords = 0;
     }

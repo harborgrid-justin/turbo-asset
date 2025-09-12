@@ -9,7 +9,7 @@ export { default as AssetController } from './AssetController';
 export { default as BulkDataController } from './BulkDataController';
 export { BusinessIntelligenceController } from './BusinessIntelligenceController';
 export { BusinessLogicIntegrationController } from './BusinessLogicIntegrationController';
-export { CADIntegrationController } from './CADIntegrationController';
+export { default as CADIntegrationController } from './CADIntegrationController';
 export { ComplianceController } from './ComplianceController';
 export { CriticalDateController } from './CriticalDateController';
 export { CustomFieldController } from './CustomFieldController';
@@ -25,16 +25,16 @@ export { LeaseManagementController } from './LeaseManagementController';
 
 // Operations controllers
 export { default as MaintenanceController } from './MaintenanceController';
-export { MoveManagementController } from './MoveManagementController';
+export { default as MoveManagementController } from './MoveManagementController';
 export { default as NotificationController } from './NotificationController';
-export { PortfolioController } from './PortfolioController';
+export { default as PortfolioController } from './PortfolioController';
 export { default as PropertyController } from './PropertyController';
 
 // Reporting and analytics
 export { ReportingController } from './ReportingController';
-export { SpaceAnalyticsController } from './SpaceAnalyticsController';
-export { SpaceBookingController } from './SpaceBookingController';
-export { SpaceStandardsController } from './SpaceStandardsController';
+export { default as SpaceAnalyticsController } from './SpaceAnalyticsController';
+export { default as SpaceBookingController } from './SpaceBookingController';
+export { default as SpaceStandardsController } from './SpaceStandardsController';
 
 // Tenant and workflow management
 export { WhiteLabelController } from './WhiteLabelController';
@@ -46,4 +46,4 @@ export { EnhancedBusinessLogicController } from './EnhancedBusinessLogicControll
 export { EnhancedBusinessLogicIntegrationController } from './EnhancedBusinessLogicIntegrationController';
 
 // Emergency services
-export { EmergencyPlanningController } from './EmergencyPlanningController';
+export { default as EmergencyPlanningController } from './EmergencyPlanningController';

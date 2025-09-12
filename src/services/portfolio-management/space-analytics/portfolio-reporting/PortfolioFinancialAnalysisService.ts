@@ -81,7 +81,7 @@ export class PortfolioFinancialAnalysisService {
     } catch (error: unknown) {
       logger.error('Failed to calculate financial metrics', {
         query,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -190,7 +190,7 @@ export class PortfolioFinancialAnalysisService {
     } catch (error: unknown) {
       logger.error('Failed to get cost breakdown', {
         query,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -252,7 +252,7 @@ export class PortfolioFinancialAnalysisService {
         organizationId,
         startDate,
         endDate,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -325,7 +325,7 @@ export class PortfolioFinancialAnalysisService {
     } catch (error: unknown) {
       logger.error('Failed to get ROI analysis', {
         organizationId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -390,7 +390,7 @@ export class PortfolioFinancialAnalysisService {
       logger.error('Failed to get financial forecast', {
         organizationId,
         forecastPeriodMonths,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -479,7 +479,7 @@ export class PortfolioFinancialAnalysisService {
       logger.error('Failed to get budget variance analysis', {
         organizationId,
         budgetPeriod,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }

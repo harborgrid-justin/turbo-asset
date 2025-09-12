@@ -38,6 +38,8 @@ export class DataWarehouseController {
     } catch (error: unknown) {
       logger.error('Failed to get data warehouses', { error });
       res.status(500).json({ error: 'Failed to get data warehouses' });
+
+      return;
     }
   }
 
@@ -58,9 +60,14 @@ export class DataWarehouseController {
       );
 
       res.status(201).json(warehouse);
+
+
+      return;
     } catch (error: unknown) {
       logger.error('Failed to create data warehouse', { error });
       res.status(500).json({ error: 'Failed to create data warehouse' });
+
+      return;
     }
   }
 
@@ -81,6 +88,8 @@ export class DataWarehouseController {
     } catch (error: unknown) {
       logger.error('Failed to update data warehouse', { error });
       res.status(500).json({ error: 'Failed to update data warehouse' });
+
+      return;
     }
   }
 
@@ -99,6 +108,8 @@ export class DataWarehouseController {
     } catch (error: unknown) {
       logger.error('Failed to delete data warehouse', { error });
       res.status(500).json({ error: 'Failed to delete data warehouse' });
+
+      return;
     }
   }
 
@@ -137,6 +148,8 @@ export class DataWarehouseController {
     } catch (error: unknown) {
       logger.error('Failed to get ETL processes', { error });
       res.status(500).json({ error: 'Failed to get ETL processes' });
+
+      return;
     }
   }
 
@@ -166,9 +179,14 @@ export class DataWarehouseController {
       );
 
       res.status(201).json(process);
+
+
+      return;
     } catch (error: unknown) {
       logger.error('Failed to create ETL process', { error });
       res.status(500).json({ error: 'Failed to create ETL process' });
+
+      return;
     }
   }
 
@@ -184,6 +202,8 @@ export class DataWarehouseController {
     } catch (error: unknown) {
       logger.error('Failed to execute ETL process', { error });
       res.status(500).json({ error: 'Failed to execute ETL process' });
+
+      return;
     }
   }
 
@@ -200,6 +220,8 @@ export class DataWarehouseController {
     } catch (error: unknown) {
       logger.error('Failed to get ETL metrics', { error });
       res.status(500).json({ error: 'Failed to get ETL metrics' });
+
+      return;
     }
   }
 
@@ -229,6 +251,8 @@ export class DataWarehouseController {
     } catch (error: unknown) {
       logger.error('Failed to get historical data', { error });
       res.status(500).json({ error: 'Failed to get historical data' });
+
+      return;
     }
   }
 
@@ -249,9 +273,14 @@ export class DataWarehouseController {
       );
 
       res.status(201).json(dataMart);
+
+
+      return;
     } catch (error: unknown) {
       logger.error('Failed to create data mart', { error });
       res.status(500).json({ error: 'Failed to create data mart' });
+
+      return;
     }
   }
 
@@ -268,6 +297,8 @@ export class DataWarehouseController {
     } catch (error: unknown) {
       logger.error('Failed to schedule ETL process', { error });
       res.status(500).json({ error: 'Failed to schedule ETL process' });
+
+      return;
     }
   }
 
@@ -288,6 +319,8 @@ export class DataWarehouseController {
     } catch (error: unknown) {
       logger.error('Failed to update ETL process', { error });
       res.status(500).json({ error: 'Failed to update ETL process' });
+
+      return;
     }
   }
 
@@ -306,6 +339,8 @@ export class DataWarehouseController {
     } catch (error: unknown) {
       logger.error('Failed to delete ETL process', { error });
       res.status(500).json({ error: 'Failed to delete ETL process' });
+
+      return;
     }
   }
 
@@ -359,6 +394,8 @@ export class DataWarehouseController {
     } catch (error: unknown) {
       logger.error('Failed to get warehouse analytics', { error });
       res.status(500).json({ error: 'Failed to get warehouse analytics' });
+
+      return;
     }
   }
 
@@ -375,6 +412,8 @@ export class DataWarehouseController {
 
       if (!warehouse) {
         res.status(404).json({ error: 'Warehouse not found' });
+
+        return;
         return;
       }
 
@@ -389,7 +428,7 @@ export class DataWarehouseController {
       res.json(testResult);
     } catch (error: unknown) {
       logger.error('Warehouse connection test failed', { error });
-      res.json({ status: 'error', message: error.message });
+      res.json({ status: 'error', message: (error as Error).message });
     }
   }
 
@@ -425,6 +464,8 @@ export class DataWarehouseController {
     } catch (error: unknown) {
       logger.error('Failed to get data quality metrics', { error });
       res.status(500).json({ error: 'Failed to get data quality metrics' });
+
+      return;
     }
   }
 
@@ -463,6 +504,8 @@ export class DataWarehouseController {
     } catch (error: unknown) {
       logger.error('Failed to get execution history', { error });
       res.status(500).json({ error: 'Failed to get execution history' });
+
+      return;
     }
   }
 }

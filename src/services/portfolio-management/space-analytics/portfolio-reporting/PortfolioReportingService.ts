@@ -73,7 +73,7 @@ export class PortfolioReportingService {
       logger.error('Failed to generate portfolio report', {
         organizationId,
         reportType,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -132,7 +132,7 @@ export class PortfolioReportingService {
       logger.error('Failed to generate executive summary report', {
         organizationId,
         timeframe,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -267,7 +267,7 @@ export class PortfolioReportingService {
       logger.error('Failed to generate lease expiration report', {
         organizationId,
         lookaheadMonths,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -328,7 +328,7 @@ export class PortfolioReportingService {
       logger.error('Failed to generate occupancy analytics report', {
         organizationId,
         timeframe,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -392,7 +392,7 @@ export class PortfolioReportingService {
             scheduledReportId: scheduledReport.id,
             reportId: null,
             status: 'FAILED',
-            error: error.message,
+            error: (error as Error).message,
             generatedAt: new Date(),
             recipientCount: 0,
           });
@@ -400,7 +400,7 @@ export class PortfolioReportingService {
           logger.error('Failed to generate scheduled report', {
             scheduledReportId: scheduledReport.id,
             reportType: scheduledReport.reportType,
-            error: error.message,
+            error: (error as Error).message,
           });
         }
       }
@@ -410,7 +410,7 @@ export class PortfolioReportingService {
     } catch (error: unknown) {
       logger.error('Failed to generate scheduled reports', {
         organizationId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -471,7 +471,7 @@ export class PortfolioReportingService {
       logger.error('Failed to get report history', {
         organizationId,
         filters,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }

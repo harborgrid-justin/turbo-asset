@@ -70,9 +70,11 @@ export class EnhancedBusinessLogicIntegrationController {
         error: {
           code: 'METRICS_FETCH_ERROR',
           message: 'Failed to fetch enhanced production metrics',
-          details: error.message
+          details: (error as Error).message
         }
       });
+
+      return;
     }
   }
 
@@ -117,9 +119,11 @@ export class EnhancedBusinessLogicIntegrationController {
         error: {
           code: 'HEALTH_CHECK_ERROR',
           message: 'Failed to perform enhanced health check',
-          details: error.message
+          details: (error as Error).message
         }
       });
+
+      return;
     }
   }
 
@@ -138,6 +142,8 @@ export class EnhancedBusinessLogicIntegrationController {
             message: 'serviceName and methodName are required'
           }
         });
+
+        return;
         return;
       }
 
@@ -168,9 +174,11 @@ export class EnhancedBusinessLogicIntegrationController {
         error: {
           code: 'EXECUTION_ERROR',
           message: 'Failed to execute enhanced production operation',
-          details: error.message
+          details: (error as Error).message
         }
       });
+
+      return;
     }
   }
 
@@ -232,9 +240,11 @@ export class EnhancedBusinessLogicIntegrationController {
         error: {
           code: 'BRIDGES_FETCH_ERROR',
           message: 'Failed to fetch enhanced available bridges',
-          details: error.message
+          details: (error as Error).message
         }
       });
+
+      return;
     }
   }
 
@@ -253,6 +263,8 @@ export class EnhancedBusinessLogicIntegrationController {
             message: 'serviceName, methodName, and rules array are required'
           }
         });
+
+        return;
         return;
       }
 
@@ -288,6 +300,8 @@ export class EnhancedBusinessLogicIntegrationController {
             message: `Service ${serviceName} not found`
           }
         });
+
+        return;
       }
 
     } catch (error: unknown) {
@@ -297,9 +311,11 @@ export class EnhancedBusinessLogicIntegrationController {
         error: {
           code: 'VALIDATION_RULE_ERROR',
           message: 'Failed to add enhanced validation rule',
-          details: error.message
+          details: (error as Error).message
         }
       });
+
+      return;
     }
   }
 
@@ -318,6 +334,8 @@ export class EnhancedBusinessLogicIntegrationController {
             message: 'serviceName parameter is required'
           }
         });
+
+        return;
         return;
       }
 
@@ -348,6 +366,8 @@ export class EnhancedBusinessLogicIntegrationController {
             message: `Service ${serviceName} not found`
           }
         });
+
+        return;
       }
 
     } catch (error: unknown) {
@@ -357,9 +377,11 @@ export class EnhancedBusinessLogicIntegrationController {
         error: {
           code: 'METRICS_RESET_ERROR',
           message: 'Failed to reset enhanced service metrics',
-          details: error.message
+          details: (error as Error).message
         }
       });
+
+      return;
     }
   }
 
@@ -378,6 +400,8 @@ export class EnhancedBusinessLogicIntegrationController {
             message: 'serviceName parameter is required'
           }
         });
+
+        return;
         return;
       }
 
@@ -394,6 +418,8 @@ export class EnhancedBusinessLogicIntegrationController {
             message: `Service ${serviceName} not found`
           }
         });
+
+        return;
         return;
       }
 
@@ -448,9 +474,11 @@ export class EnhancedBusinessLogicIntegrationController {
         error: {
           code: 'SERVICE_METRICS_ERROR',
           message: 'Failed to fetch enhanced service metrics',
-          details: error.message
+          details: (error as Error).message
         }
       });
+
+      return;
     }
   }
 
@@ -526,9 +554,11 @@ export class EnhancedBusinessLogicIntegrationController {
         error: {
           code: 'DASHBOARD_ERROR',
           message: 'Failed to fetch enhanced system dashboard',
-          details: error.message
+          details: (error as Error).message
         }
       });
+
+      return;
     }
   }
 
@@ -547,6 +577,8 @@ export class EnhancedBusinessLogicIntegrationController {
             message: 'serviceName parameter is required'
           }
         });
+
+        return;
         return;
       }
 
@@ -562,6 +594,8 @@ export class EnhancedBusinessLogicIntegrationController {
             message: `Service ${serviceName} not found`
           }
         });
+
+        return;
         return;
       }
 
@@ -619,9 +653,11 @@ export class EnhancedBusinessLogicIntegrationController {
         error: {
           code: 'CONFIGURATION_ERROR',
           message: 'Failed to fetch enhanced service configuration',
-          details: error.message
+          details: (error as Error).message
         }
       });
+
+      return;
     }
   }
 }

@@ -287,7 +287,7 @@ export class CADIntegrationService extends EventEmitter {
         } catch (error: unknown) {
           errors.push({
             spaceId: mapping.spaceId,
-            error: error instanceof Error ? error.message : 'Unknown error',
+            error: error instanceof Error ? (error as Error).message : 'Unknown error',
           });
         }
       }
@@ -675,7 +675,7 @@ export class CADIntegrationService extends EventEmitter {
         processingInfo.cadFile.id,
         'FAILED',
         0,
-        `Processing failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+        `Processing failed: ${error instanceof Error ? (error as Error).message : 'Unknown error'}`
       );
 
       // Remove from processing queue

@@ -556,7 +556,7 @@ export class DataWarehouseService extends EventEmitter {
     } catch (error: unknown) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown connection error',
+        error: error instanceof Error ? (error as Error).message : 'Unknown connection error',
       };
     }
   }
@@ -712,7 +712,7 @@ export class DataWarehouseService extends EventEmitter {
         data: {
           status: 'FAILED',
           completedAt: new Date(),
-          errorMessage: error instanceof Error ? error.message : 'Unknown error',
+          errorMessage: error instanceof Error ? (error as Error).message : 'Unknown error',
         },
       });
 
@@ -724,7 +724,7 @@ export class DataWarehouseService extends EventEmitter {
       this.emit(EVENT_TYPES.ETL_FAILED, {
         jobId,
         executionId,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: error instanceof Error ? (error as Error).message : 'Unknown error',
         timestamp: new Date(),
       });
 

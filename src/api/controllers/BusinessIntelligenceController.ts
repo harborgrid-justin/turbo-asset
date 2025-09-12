@@ -43,6 +43,8 @@ export class BusinessIntelligenceController {
     } catch (error: unknown) {
       logger.error('Failed to get BI reports', { error });
       res.status(500).json({ error: 'Failed to get BI reports' });
+
+      return;
     }
   }
 
@@ -77,9 +79,14 @@ export class BusinessIntelligenceController {
       );
 
       res.status(201).json(report);
+
+
+      return;
     } catch (error: unknown) {
       logger.error('Failed to create BI report', { error });
       res.status(500).json({ error: 'Failed to create BI report' });
+
+      return;
     }
   }
 
@@ -96,6 +103,8 @@ export class BusinessIntelligenceController {
     } catch (error: unknown) {
       logger.error('Failed to execute BI report', { error });
       res.status(500).json({ error: 'Failed to execute BI report' });
+
+      return;
     }
   }
 
@@ -116,6 +125,8 @@ export class BusinessIntelligenceController {
     } catch (error: unknown) {
       logger.error('Failed to update BI report', { error });
       res.status(500).json({ error: 'Failed to update BI report' });
+
+      return;
     }
   }
 
@@ -134,6 +145,8 @@ export class BusinessIntelligenceController {
     } catch (error: unknown) {
       logger.error('Failed to delete BI report', { error });
       res.status(500).json({ error: 'Failed to delete BI report' });
+
+      return;
     }
   }
 
@@ -172,6 +185,8 @@ export class BusinessIntelligenceController {
     } catch (error: unknown) {
       logger.error('Failed to get dashboards', { error });
       res.status(500).json({ error: 'Failed to get dashboards' });
+
+      return;
     }
   }
 
@@ -202,9 +217,14 @@ export class BusinessIntelligenceController {
       );
 
       res.status(201).json(dashboard);
+
+
+      return;
     } catch (error: unknown) {
       logger.error('Failed to create dashboard', { error });
       res.status(500).json({ error: 'Failed to create dashboard' });
+
+      return;
     }
   }
 
@@ -225,6 +245,8 @@ export class BusinessIntelligenceController {
     } catch (error: unknown) {
       logger.error('Failed to get dashboard data', { error });
       res.status(500).json({ error: 'Failed to get dashboard data' });
+
+      return;
     }
   }
 
@@ -245,6 +267,8 @@ export class BusinessIntelligenceController {
     } catch (error: unknown) {
       logger.error('Failed to update dashboard', { error });
       res.status(500).json({ error: 'Failed to update dashboard' });
+
+      return;
     }
   }
 
@@ -263,6 +287,8 @@ export class BusinessIntelligenceController {
     } catch (error: unknown) {
       logger.error('Failed to delete dashboard', { error });
       res.status(500).json({ error: 'Failed to delete dashboard' });
+
+      return;
     }
   }
 
@@ -279,6 +305,8 @@ export class BusinessIntelligenceController {
     } catch (error: unknown) {
       logger.error('Failed to build report', { error });
       res.status(500).json({ error: 'Failed to build report' });
+
+      return;
     }
   }
 
@@ -294,6 +322,8 @@ export class BusinessIntelligenceController {
     } catch (error: unknown) {
       logger.error('Failed to get data sources', { error });
       res.status(500).json({ error: 'Failed to get data sources' });
+
+      return;
     }
   }
 
@@ -309,6 +339,8 @@ export class BusinessIntelligenceController {
     } catch (error: unknown) {
       logger.error('Failed to get suggested visualizations', { error });
       res.status(500).json({ error: 'Failed to get suggested visualizations' });
+
+      return;
     }
   }
 
@@ -339,6 +371,8 @@ export class BusinessIntelligenceController {
     } catch (error: unknown) {
       logger.error('Failed to export report', { error });
       res.status(500).json({ error: 'Failed to export report' });
+
+      return;
     }
   }
 
@@ -363,6 +397,8 @@ export class BusinessIntelligenceController {
     } catch (error: unknown) {
       logger.error('Failed to generate executive dashboard', { error });
       res.status(500).json({ error: 'Failed to generate executive dashboard' });
+
+      return;
     }
   }
 
@@ -385,6 +421,8 @@ export class BusinessIntelligenceController {
     } catch (error: unknown) {
       logger.error('Failed to generate benchmarking report', { error });
       res.status(500).json({ error: 'Failed to generate benchmarking report' });
+
+      return;
     }
   }
 
@@ -404,9 +442,14 @@ export class BusinessIntelligenceController {
       );
 
       res.status(201).json(schedule);
+
+
+      return;
     } catch (error: unknown) {
       logger.error('Failed to create report schedule', { error });
       res.status(500).json({ error: 'Failed to create report schedule' });
+
+      return;
     }
   }
 
@@ -429,6 +472,8 @@ export class BusinessIntelligenceController {
     } catch (error: unknown) {
       logger.error('Failed to get report schedules', { error });
       res.status(500).json({ error: 'Failed to get report schedules' });
+
+      return;
     }
   }
 
@@ -449,6 +494,8 @@ export class BusinessIntelligenceController {
     } catch (error: unknown) {
       logger.error('Failed to update report schedule', { error });
       res.status(500).json({ error: 'Failed to update report schedule' });
+
+      return;
     }
   }
 
@@ -467,6 +514,8 @@ export class BusinessIntelligenceController {
     } catch (error: unknown) {
       logger.error('Failed to delete report schedule', { error });
       res.status(500).json({ error: 'Failed to delete report schedule' });
+
+      return;
     }
   }
 
@@ -485,9 +534,14 @@ export class BusinessIntelligenceController {
       );
 
       res.status(201).json(createdTemplate);
+
+
+      return;
     } catch (error: unknown) {
       logger.error('Failed to create report template', { error });
       res.status(500).json({ error: 'Failed to create report template' });
+
+      return;
     }
   }
 
@@ -510,6 +564,8 @@ export class BusinessIntelligenceController {
     } catch (error: unknown) {
       logger.error('Failed to generate report from template', { error });
       res.status(500).json({ error: 'Failed to generate report from template' });
+
+      return;
     }
   }
 
@@ -563,6 +619,8 @@ export class BusinessIntelligenceController {
     } catch (error: unknown) {
       logger.error('Failed to get BI analytics', { error });
       res.status(500).json({ error: 'Failed to get BI analytics' });
+
+      return;
     }
   }
 }

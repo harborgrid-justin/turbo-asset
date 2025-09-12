@@ -21,13 +21,16 @@ export class EnhancedBusinessLogicController {
       const { serviceName, methodName, params = [], options = {} } = req.body;
 
       if (!serviceName || !methodName) {
-        return res.status(400).json({
+        res.status(400).json({
           success: false,
           error: {
             code: 'INVALID_REQUEST',
             message: 'serviceName and methodName are required',
           },
         });
+
+        return;
+      return;
       }
 
       const result = await ProductionGradeBusinessLogic.executeWithAdvancedLogic(
@@ -45,14 +48,17 @@ export class EnhancedBusinessLogicController {
       return res.json(result);
     } catch (error: unknown) {
       logger.error('Error executing advanced business logic:', error);
-      return res.status(500).json({
+      res.status(500).json({
         success: false,
         error: {
           code: 'EXECUTION_ERROR',
           message: 'Failed to execute advanced business logic',
-          details: error instanceof Error ? error.message : 'Unknown error',
+          details: error instanceof Error ? (error as Error).message : 'Unknown error',
         },
       });
+
+      return;
+      return;
     }
   }
 
@@ -65,13 +71,16 @@ export class EnhancedBusinessLogicController {
       return res.json(healthStatus);
     } catch (error: unknown) {
       logger.error('Error getting health status:', error);
-      return res.status(500).json({
+      res.status(500).json({
         success: false,
         error: {
           code: 'HEALTH_CHECK_ERROR',
           message: 'Failed to get health status',
         },
       });
+
+      return;
+      return;
     }
   }
 
@@ -102,13 +111,16 @@ export class EnhancedBusinessLogicController {
       return res.json(serializedMetrics);
     } catch (error: unknown) {
       logger.error('Error getting production metrics:', error);
-      return res.status(500).json({
+      res.status(500).json({
         success: false,
         error: {
           code: 'METRICS_ERROR',
           message: 'Failed to get production metrics',
         },
       });
+
+      return;
+      return;
     }
   }
 
@@ -120,13 +132,16 @@ export class EnhancedBusinessLogicController {
       const { assetData } = req.body;
 
       if (!assetData) {
-        return res.status(400).json({
+        res.status(400).json({
           success: false,
           error: {
             code: 'INVALID_REQUEST',
             message: 'assetData is required',
           },
         });
+
+        return;
+      return;
       }
 
       const depreciationResult = advancedBusinessRules.calculateAssetDepreciation({
@@ -148,14 +163,17 @@ export class EnhancedBusinessLogicController {
       });
     } catch (error: unknown) {
       logger.error('Error calculating asset depreciation:', error);
-      return res.status(500).json({
+      res.status(500).json({
         success: false,
         error: {
           code: 'CALCULATION_ERROR',
           message: 'Failed to calculate asset depreciation',
-          details: error instanceof Error ? error.message : 'Unknown error',
+          details: error instanceof Error ? (error as Error).message : 'Unknown error',
         },
       });
+
+      return;
+      return;
     }
   }
 
@@ -167,13 +185,16 @@ export class EnhancedBusinessLogicController {
       const { leaseData } = req.body;
 
       if (!leaseData) {
-        return res.status(400).json({
+        res.status(400).json({
           success: false,
           error: {
             code: 'INVALID_REQUEST',
             message: 'leaseData is required',
           },
         });
+
+        return;
+      return;
       }
 
       const leaseAccountingResult = advancedBusinessRules.calculateLeaseAccounting({
@@ -197,14 +218,17 @@ export class EnhancedBusinessLogicController {
       });
     } catch (error: unknown) {
       logger.error('Error calculating lease accounting:', error);
-      return res.status(500).json({
+      res.status(500).json({
         success: false,
         error: {
           code: 'CALCULATION_ERROR',
           message: 'Failed to calculate lease accounting',
-          details: error instanceof Error ? error.message : 'Unknown error',
+          details: error instanceof Error ? (error as Error).message : 'Unknown error',
         },
       });
+
+      return;
+      return;
     }
   }
 
@@ -216,13 +240,16 @@ export class EnhancedBusinessLogicController {
       const { spaceData } = req.body;
 
       if (!spaceData) {
-        return res.status(400).json({
+        res.status(400).json({
           success: false,
           error: {
             code: 'INVALID_REQUEST',
             message: 'spaceData is required',
           },
         });
+
+        return;
+      return;
       }
 
       const optimizationResult = advancedBusinessRules.optimizeSpaceUtilization(spaceData);
@@ -238,14 +265,17 @@ export class EnhancedBusinessLogicController {
       });
     } catch (error: unknown) {
       logger.error('Error optimizing space utilization:', error);
-      return res.status(500).json({
+      res.status(500).json({
         success: false,
         error: {
           code: 'OPTIMIZATION_ERROR',
           message: 'Failed to optimize space utilization',
-          details: error instanceof Error ? error.message : 'Unknown error',
+          details: error instanceof Error ? (error as Error).message : 'Unknown error',
         },
       });
+
+      return;
+      return;
     }
   }
 
@@ -257,13 +287,16 @@ export class EnhancedBusinessLogicController {
       const { maintenanceData } = req.body;
 
       if (!maintenanceData) {
-        return res.status(400).json({
+        res.status(400).json({
           success: false,
           error: {
             code: 'INVALID_REQUEST',
             message: 'maintenanceData is required',
           },
         });
+
+        return;
+      return;
       }
 
       const optimizationResult = advancedBusinessRules.optimizeMaintenanceCosts(maintenanceData);
@@ -279,14 +312,17 @@ export class EnhancedBusinessLogicController {
       });
     } catch (error: unknown) {
       logger.error('Error optimizing maintenance costs:', error);
-      return res.status(500).json({
+      res.status(500).json({
         success: false,
         error: {
           code: 'OPTIMIZATION_ERROR',
           message: 'Failed to optimize maintenance costs',
-          details: error instanceof Error ? error.message : 'Unknown error',
+          details: error instanceof Error ? (error as Error).message : 'Unknown error',
         },
       });
+
+      return;
+      return;
     }
   }
 
@@ -298,13 +334,16 @@ export class EnhancedBusinessLogicController {
       const { financialData } = req.body;
 
       if (!financialData) {
-        return res.status(400).json({
+        res.status(400).json({
           success: false,
           error: {
             code: 'INVALID_REQUEST',
             message: 'financialData is required',
           },
         });
+
+        return;
+      return;
       }
 
       const consolidationResult = advancedBusinessRules.performFinancialConsolidation(financialData);
@@ -321,14 +360,17 @@ export class EnhancedBusinessLogicController {
       });
     } catch (error: unknown) {
       logger.error('Error performing financial consolidation:', error);
-      return res.status(500).json({
+      res.status(500).json({
         success: false,
         error: {
           code: 'CONSOLIDATION_ERROR',
           message: 'Failed to perform financial consolidation',
-          details: error instanceof Error ? error.message : 'Unknown error',
+          details: error instanceof Error ? (error as Error).message : 'Unknown error',
         },
       });
+
+      return;
+      return;
     }
   }
 
@@ -340,13 +382,16 @@ export class EnhancedBusinessLogicController {
       const { rawAssetData, sourceSystem } = req.body;
 
       if (!rawAssetData || !sourceSystem) {
-        return res.status(400).json({
+        res.status(400).json({
           success: false,
           error: {
             code: 'INVALID_REQUEST',
             message: 'rawAssetData and sourceSystem are required',
           },
         });
+
+        return;
+      return;
       }
 
       const standardizationResult = dataStandardizationEngine.standardizeAssetData(rawAssetData, sourceSystem);
@@ -362,14 +407,17 @@ export class EnhancedBusinessLogicController {
       });
     } catch (error: unknown) {
       logger.error('Error standardizing asset data:', error);
-      return res.status(500).json({
+      res.status(500).json({
         success: false,
         error: {
           code: 'STANDARDIZATION_ERROR',
           message: 'Failed to standardize asset data',
-          details: error instanceof Error ? error.message : 'Unknown error',
+          details: error instanceof Error ? (error as Error).message : 'Unknown error',
         },
       });
+
+      return;
+      return;
     }
   }
 
@@ -381,13 +429,16 @@ export class EnhancedBusinessLogicController {
       const { rawSpaceData, sourceSystem } = req.body;
 
       if (!rawSpaceData || !sourceSystem) {
-        return res.status(400).json({
+        res.status(400).json({
           success: false,
           error: {
             code: 'INVALID_REQUEST',
             message: 'rawSpaceData and sourceSystem are required',
           },
         });
+
+        return;
+      return;
       }
 
       const standardizationResult = dataStandardizationEngine.standardizeSpaceData(rawSpaceData, sourceSystem);
@@ -403,14 +454,17 @@ export class EnhancedBusinessLogicController {
       });
     } catch (error: unknown) {
       logger.error('Error standardizing space data:', error);
-      return res.status(500).json({
+      res.status(500).json({
         success: false,
         error: {
           code: 'STANDARDIZATION_ERROR',
           message: 'Failed to standardize space data',
-          details: error instanceof Error ? error.message : 'Unknown error',
+          details: error instanceof Error ? (error as Error).message : 'Unknown error',
         },
       });
+
+      return;
+      return;
     }
   }
 
@@ -422,13 +476,16 @@ export class EnhancedBusinessLogicController {
       const { serviceName, methodName, rules } = req.body;
 
       if (!serviceName || !methodName || !rules) {
-        return res.status(400).json({
+        res.status(400).json({
           success: false,
           error: {
             code: 'INVALID_REQUEST',
             message: 'serviceName, methodName, and rules are required',
           },
         });
+
+        return;
+      return;
       }
 
       const result = ProductionGradeBusinessLogic.addValidationRule(serviceName, methodName, rules);
@@ -439,13 +496,16 @@ export class EnhancedBusinessLogicController {
       });
     } catch (error: unknown) {
       logger.error('Error adding validation rules:', error);
-      return res.status(500).json({
+      res.status(500).json({
         success: false,
         error: {
           code: 'VALIDATION_ERROR',
           message: 'Failed to add validation rules',
         },
       });
+
+      return;
+      return;
     }
   }
 
@@ -457,13 +517,16 @@ export class EnhancedBusinessLogicController {
       const { serviceName } = req.params;
 
       if (!serviceName) {
-        return res.status(400).json({
+        res.status(400).json({
           success: false,
           error: {
             code: 'INVALID_REQUEST',
             message: 'serviceName is required',
           },
         });
+
+        return;
+      return;
       }
 
       const result = ProductionGradeBusinessLogic.resetServiceMetrics(serviceName);
@@ -474,13 +537,16 @@ export class EnhancedBusinessLogicController {
       });
     } catch (error: unknown) {
       logger.error('Error resetting service metrics:', error);
-      return res.status(500).json({
+      res.status(500).json({
         success: false,
         error: {
           code: 'METRICS_ERROR',
           message: 'Failed to reset service metrics',
         },
       });
+
+      return;
+      return;
     }
   }
 
@@ -503,13 +569,16 @@ export class EnhancedBusinessLogicController {
       });
     } catch (error: unknown) {
       logger.error('Error listing services:', error);
-      return res.status(500).json({
+      res.status(500).json({
         success: false,
         error: {
           code: 'SERVICE_ERROR',
           message: 'Failed to list services',
         },
       });
+
+      return;
+      return;
     }
   }
 }

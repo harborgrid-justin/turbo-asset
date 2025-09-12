@@ -34,7 +34,7 @@ export class AssetImportExportService {
       logger.error('Failed to import assets from CSV', {
         filePath,
         organizationId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -62,7 +62,7 @@ export class AssetImportExportService {
       logger.error('Failed to import assets from Excel', {
         filePath,
         organizationId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -103,7 +103,7 @@ export class AssetImportExportService {
     } catch (error: unknown) {
       logger.error('Failed to export assets to CSV', {
         organizationId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -157,7 +157,7 @@ export class AssetImportExportService {
     } catch (error: unknown) {
       logger.error('Failed to export assets to Excel', {
         organizationId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -216,7 +216,7 @@ export class AssetImportExportService {
     } catch (error: unknown) {
       logger.error('Failed to generate import template', {
         format,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -311,12 +311,12 @@ export class AssetImportExportService {
     } catch (error: unknown) {
       logger.error('Failed to validate import file', {
         filePath,
-        error: error.message,
+        error: (error as Error).message,
       });
       
       return {
         isValid: false,
-        errors: [`Validation failed: ${error.message}`],
+        errors: [`Validation failed: ${(error as Error).message}`],
         warnings: [],
         previewData: [],
         totalRows: 0,
@@ -353,7 +353,7 @@ export class AssetImportExportService {
         results.failed++;
         results.errors.push({
           index: i + 1,
-          error: error.message,
+          error: (error as Error).message,
           assetTag: data[i]?.assetTag || `Row ${i + 1}`,
         });
       }

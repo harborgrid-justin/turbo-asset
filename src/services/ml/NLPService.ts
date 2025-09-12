@@ -301,7 +301,7 @@ export class NLPService extends EventEmitter {
             generateSummary: false // Disable summary for batch processing
           }).catch(error => ({
             ticketId: ticket.ticketId,
-            error: error.message,
+            error: (error as Error).message,
             content: ticket.content,
             predictedCategory: { category: 'OTHER', confidence: 0 },
             predictedPriority: { level: 'MEDIUM', confidence: 0, reasoning: 'Error in processing' },

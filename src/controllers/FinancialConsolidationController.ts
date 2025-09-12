@@ -26,29 +26,37 @@ router.post('/statements', async (req: Request, res: Response) => {
 
     // Validate required fields
     if (!statementType || !period || !fiscalYear || !fiscalPeriod || !consolidationLevel || !entityId || !entityType || !lineItems) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Required fields missing: statementType, period, fiscalYear, fiscalPeriod, consolidationLevel, entityId, entityType, lineItems'
       });
+
+      return;
     }
 
     const validStatementTypes = ['INCOME_STATEMENT', 'BALANCE_SHEET', 'CASH_FLOW', 'BUDGET_VARIANCE', 'CONSOLIDATED'];
     if (!validStatementTypes.includes(statementType)) {
-      return res.status(400).json({
+      res.status(400).json({
         error: `Invalid statementType. Must be one of: ${validStatementTypes.join(', ')}`
       });
+
+      return;
     }
 
     const validConsolidationLevels = ['PROPERTY', 'BUILDING', 'PORTFOLIO', 'REGIONAL', 'GLOBAL'];
     if (!validConsolidationLevels.includes(consolidationLevel)) {
-      return res.status(400).json({
+      res.status(400).json({
         error: `Invalid consolidationLevel. Must be one of: ${validConsolidationLevels.join(', ')}`
       });
+
+      return;
     }
 
     if (!Array.isArray(lineItems) || lineItems.length === 0) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'lineItems must be a non-empty array'
       });
+
+      return;
     }
 
     // Validate and format line items
@@ -94,12 +102,17 @@ router.post('/statements', async (req: Request, res: Response) => {
       success: true,
       data: statement
     });
+
+
+    return;
   } catch (error: unknown) {
     logger.error('Failed to create financial statement', error);
     res.status(500).json({
       error: 'Failed to create financial statement',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      message: error instanceof Error ? (error as Error).message : 'Unknown error'
     });
+
+    return;
   }
 });
 
@@ -125,22 +138,28 @@ router.post('/rules', async (req: Request, res: Response) => {
 
     // Validate required fields
     if (!ruleName || !ruleType || !sourceEntities || !targetEntity || !mappingRules || !calculationMethod || !effectiveDate) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Required fields missing: ruleName, ruleType, sourceEntities, targetEntity, mappingRules, calculationMethod, effectiveDate'
       });
+
+      return;
     }
 
     const validRuleTypes = ['AGGREGATION', 'ELIMINATION', 'ADJUSTMENT', 'MAPPING', 'CALCULATION'];
     if (!validRuleTypes.includes(ruleType)) {
-      return res.status(400).json({
+      res.status(400).json({
         error: `Invalid ruleType. Must be one of: ${validRuleTypes.join(', ')}`
       });
+
+      return;
     }
 
     if (!Array.isArray(sourceEntities) || sourceEntities.length === 0) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'sourceEntities must be a non-empty array'
       });
+
+      return;
     }
 
     const ruleData = {
@@ -163,12 +182,17 @@ router.post('/rules', async (req: Request, res: Response) => {
       success: true,
       data: rule
     });
+
+
+    return;
   } catch (error: unknown) {
     logger.error('Failed to create consolidation rule', error);
     res.status(500).json({
       error: 'Failed to create consolidation rule',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      message: error instanceof Error ? (error as Error).message : 'Unknown error'
     });
+
+    return;
   }
 });
 
@@ -182,16 +206,20 @@ router.post('/consolidate', async (req: Request, res: Response) => {
 
     // Validate required fields
     if (!organizationId || !consolidationLevel || !period) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Required fields missing: organizationId, consolidationLevel, period'
       });
+
+      return;
     }
 
     const validConsolidationLevels = ['PROPERTY', 'BUILDING', 'PORTFOLIO', 'REGIONAL', 'GLOBAL'];
     if (!validConsolidationLevels.includes(consolidationLevel)) {
-      return res.status(400).json({
+      res.status(400).json({
         error: `Invalid consolidationLevel. Must be one of: ${validConsolidationLevels.join(', ')}`
       });
+
+      return;
     }
 
     const result = await financialConsolidationService.performConsolidation(
@@ -209,8 +237,10 @@ router.post('/consolidate', async (req: Request, res: Response) => {
     logger.error('Failed to perform consolidation', error);
     res.status(500).json({
       error: 'Failed to perform consolidation',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      message: error instanceof Error ? (error as Error).message : 'Unknown error'
     });
+
+    return;
   }
 });
 
@@ -224,9 +254,11 @@ router.get('/summary/:organizationId', async (req: Request, res: Response) => {
     const { period } = req.query;
 
     if (!organizationId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Organization ID is required'
       });
+
+      return;
     }
 
     const summary = await financialConsolidationService.getConsolidationSummary(
@@ -242,8 +274,10 @@ router.get('/summary/:organizationId', async (req: Request, res: Response) => {
     logger.error('Failed to get consolidation summary', error);
     res.status(500).json({
       error: 'Failed to get consolidation summary',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      message: error instanceof Error ? (error as Error).message : 'Unknown error'
     });
+
+    return;
   }
 });
 
@@ -257,15 +291,19 @@ router.get('/entity-contribution/:organizationId/:entityId', async (req: Request
     const { period } = req.query;
 
     if (!organizationId || !entityId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Organization ID and Entity ID are required'
       });
+
+      return;
     }
 
     if (!period) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Period is required (YYYY-MM format)'
       });
+
+      return;
     }
 
     const analysis = await financialConsolidationService.analyzeEntityContribution(
@@ -282,8 +320,10 @@ router.get('/entity-contribution/:organizationId/:entityId', async (req: Request
     logger.error('Failed to analyze entity contribution', error);
     res.status(500).json({
       error: 'Failed to analyze entity contribution',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      message: error instanceof Error ? (error as Error).message : 'Unknown error'
     });
+
+    return;
   }
 });
 
@@ -297,15 +337,19 @@ router.get('/global-report/:organizationId', async (req: Request, res: Response)
     const { reportingPeriod } = req.query;
 
     if (!organizationId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Organization ID is required'
       });
+
+      return;
     }
 
     if (!reportingPeriod) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Reporting period is required (YYYY-MM format)'
       });
+
+      return;
     }
 
     const report = await financialConsolidationService.generateGlobalConsolidationReport(
@@ -321,8 +365,10 @@ router.get('/global-report/:organizationId', async (req: Request, res: Response)
     logger.error('Failed to generate global consolidation report', error);
     res.status(500).json({
       error: 'Failed to generate global consolidation report',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      message: error instanceof Error ? (error as Error).message : 'Unknown error'
     });
+
+    return;
   }
 });
 
@@ -336,15 +382,19 @@ router.post('/reports/:organizationId', async (req: Request, res: Response) => {
     const { reportType, filters } = req.body;
 
     if (!organizationId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Organization ID is required'
       });
+
+      return;
     }
 
     if (!reportType) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Report type is required'
       });
+
+      return;
     }
 
     const validReportTypes = [
@@ -355,9 +405,11 @@ router.post('/reports/:organizationId', async (req: Request, res: Response) => {
     ];
 
     if (!validReportTypes.includes(reportType)) {
-      return res.status(400).json({
+      res.status(400).json({
         error: `Invalid report type. Must be one of: ${validReportTypes.join(', ')}`
       });
+
+      return;
     }
 
     const report = await financialConsolidationService.generateConsolidatedReport(
@@ -374,8 +426,10 @@ router.post('/reports/:organizationId', async (req: Request, res: Response) => {
     logger.error('Failed to generate consolidated report', error);
     res.status(500).json({
       error: 'Failed to generate consolidated report',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      message: error instanceof Error ? (error as Error).message : 'Unknown error'
     });
+
+    return;
   }
 });
 
@@ -398,9 +452,11 @@ router.get('/statements', async (req: Request, res: Response) => {
     } = req.query;
 
     if (!organizationId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Organization ID is required'
       });
+
+      return;
     }
 
     // This would be implemented in the service
@@ -424,8 +480,10 @@ router.get('/statements', async (req: Request, res: Response) => {
     logger.error('Failed to get financial statements', error);
     res.status(500).json({
       error: 'Failed to get financial statements',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      message: error instanceof Error ? (error as Error).message : 'Unknown error'
     });
+
+    return;
   }
 });
 
@@ -453,8 +511,10 @@ router.get('/rules', async (req: Request, res: Response) => {
     logger.error('Failed to get consolidation rules', error);
     res.status(500).json({
       error: 'Failed to get consolidation rules',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      message: error instanceof Error ? (error as Error).message : 'Unknown error'
     });
+
+    return;
   }
 });
 
@@ -468,22 +528,28 @@ router.put('/statements/:statementId/status', async (req: Request, res: Response
     const { status, reviewedBy, approvedBy, notes } = req.body;
 
     if (!statementId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Statement ID is required'
       });
+
+      return;
     }
 
     if (!status) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Status is required'
       });
+
+      return;
     }
 
     const validStatuses = ['DRAFT', 'CALCULATED', 'REVIEW', 'APPROVED', 'PUBLISHED', 'FINAL'];
     if (!validStatuses.includes(status)) {
-      return res.status(400).json({
+      res.status(400).json({
         error: `Invalid status. Must be one of: ${validStatuses.join(', ')}`
       });
+
+      return;
     }
 
     // This would be implemented in the service
@@ -497,8 +563,10 @@ router.put('/statements/:statementId/status', async (req: Request, res: Response
     logger.error('Failed to update statement status', error);
     res.status(500).json({
       error: 'Failed to update statement status',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      message: error instanceof Error ? (error as Error).message : 'Unknown error'
     });
+
+    return;
   }
 });
 
@@ -512,9 +580,11 @@ router.put('/rules/:ruleId', async (req: Request, res: Response) => {
     const updates = req.body;
 
     if (!ruleId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Rule ID is required'
       });
+
+      return;
     }
 
     // Convert date fields
@@ -536,8 +606,10 @@ router.put('/rules/:ruleId', async (req: Request, res: Response) => {
     logger.error('Failed to update consolidation rule', error);
     res.status(500).json({
       error: 'Failed to update consolidation rule',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      message: error instanceof Error ? (error as Error).message : 'Unknown error'
     });
+
+    return;
   }
 });
 
@@ -551,9 +623,11 @@ router.get('/dashboard/:organizationId', async (req: Request, res: Response) => 
     const { period } = req.query;
 
     if (!organizationId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Organization ID is required'
       });
+
+      return;
     }
 
     // Get consolidation summary and global report for dashboard
@@ -593,8 +667,10 @@ router.get('/dashboard/:organizationId', async (req: Request, res: Response) => 
     logger.error('Failed to get consolidation dashboard', error);
     res.status(500).json({
       error: 'Failed to get consolidation dashboard',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      message: error instanceof Error ? (error as Error).message : 'Unknown error'
     });
+
+    return;
   }
 });
 
@@ -607,9 +683,11 @@ router.delete('/statements/:statementId', async (req: Request, res: Response) =>
     const { statementId } = req.params;
 
     if (!statementId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Statement ID is required'
       });
+
+      return;
     }
 
     // This would be implemented in the service
@@ -622,8 +700,10 @@ router.delete('/statements/:statementId', async (req: Request, res: Response) =>
     logger.error('Failed to delete financial statement', error);
     res.status(500).json({
       error: 'Failed to delete financial statement',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      message: error instanceof Error ? (error as Error).message : 'Unknown error'
     });
+
+    return;
   }
 });
 

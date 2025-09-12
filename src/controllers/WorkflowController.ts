@@ -13,9 +13,11 @@ router.post('/definitions', async (req: Request, res: Response) => {
     const { organizationId, name, description, version, steps } = req.body;
 
     if (!organizationId || !name || !steps) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Organization ID, name, and steps are required',
       });
+
+      return;
     }
 
     const workflowDefinition = {
@@ -35,12 +37,17 @@ router.post('/definitions', async (req: Request, res: Response) => {
       id: definitionId,
       message: 'Workflow definition created successfully',
     });
+
+
+    return;
   } catch (error: unknown) {
     logger.error('Failed to create workflow definition', error);
     res.status(500).json({
       error: 'Failed to create workflow definition',
-      message: error instanceof Error ? error.message : 'Unknown error',
+      message: error instanceof Error ? (error as Error).message : 'Unknown error',
     });
+
+    return;
   }
 });
 
@@ -52,9 +59,11 @@ router.post('/instances', async (req: Request, res: Response) => {
     const { definitionId, initiatedById, data, priority } = req.body;
 
     if (!definitionId || !initiatedById) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Definition ID and initiated by ID are required',
       });
+
+      return;
     }
 
     const instanceId = await workflowEngine.startWorkflow(
@@ -68,12 +77,17 @@ router.post('/instances', async (req: Request, res: Response) => {
       id: instanceId,
       message: 'Workflow instance started successfully',
     });
+
+
+    return;
   } catch (error: unknown) {
     logger.error('Failed to start workflow instance', error);
     res.status(500).json({
       error: 'Failed to start workflow instance',
-      message: error instanceof Error ? error.message : 'Unknown error',
+      message: error instanceof Error ? (error as Error).message : 'Unknown error',
     });
+
+    return;
   }
 });
 
@@ -86,15 +100,19 @@ router.post('/approvals/:approvalId/process', async (req: Request, res: Response
     const { approverId, decision, comments } = req.body;
 
     if (!approverId || !decision) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Approver ID and decision are required',
       });
+
+      return;
     }
 
     if (!['APPROVED', 'REJECTED'].includes(decision)) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Decision must be APPROVED or REJECTED',
       });
+
+      return;
     }
 
     await workflowEngine.processApproval(
@@ -111,8 +129,10 @@ router.post('/approvals/:approvalId/process', async (req: Request, res: Response
     logger.error('Failed to process approval', error);
     res.status(500).json({
       error: 'Failed to process approval',
-      message: error instanceof Error ? error.message : 'Unknown error',
+      message: error instanceof Error ? (error as Error).message : 'Unknown error',
     });
+
+    return;
   }
 });
 

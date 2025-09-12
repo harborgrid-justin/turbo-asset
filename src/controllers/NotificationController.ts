@@ -13,9 +13,11 @@ router.get('/', async (req: Request, res: Response) => {
     const { userId, limit = 50, offset = 0, unreadOnly = false } = req.query;
 
     if (!userId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'User ID is required',
       });
+
+      return;
     }
 
     const result = await notificationService.getUserNotifications(
@@ -45,8 +47,10 @@ router.get('/', async (req: Request, res: Response) => {
     logger.error('Failed to get notifications', error);
     res.status(500).json({
       error: 'Failed to get notifications',
-      message: error instanceof Error ? error.message : 'Unknown error',
+      message: error instanceof Error ? (error as Error).message : 'Unknown error',
     });
+
+    return;
   }
 });
 
@@ -59,9 +63,11 @@ router.put('/:id/read', async (req: Request, res: Response) => {
     const { userId } = req.body;
 
     if (!userId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'User ID is required',
       });
+
+      return;
     }
 
     await notificationService.markAsRead(id, userId);
@@ -73,8 +79,10 @@ router.put('/:id/read', async (req: Request, res: Response) => {
     logger.error('Failed to mark notification as read', error);
     res.status(500).json({
       error: 'Failed to mark notification as read',
-      message: error instanceof Error ? error.message : 'Unknown error',
+      message: error instanceof Error ? (error as Error).message : 'Unknown error',
     });
+
+    return;
   }
 });
 
@@ -86,9 +94,11 @@ router.post('/', async (req: Request, res: Response) => {
     const { recipientId, title, message, type, priority, data } = req.body;
 
     if (!recipientId || !title || !message || !type) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Recipient ID, title, message, and type are required',
       });
+
+      return;
     }
 
     const notificationId = await notificationService.createNotification({
@@ -104,12 +114,17 @@ router.post('/', async (req: Request, res: Response) => {
       id: notificationId,
       message: 'Notification created successfully',
     });
+
+
+    return;
   } catch (error: unknown) {
     logger.error('Failed to create notification', error);
     res.status(500).json({
       error: 'Failed to create notification',
-      message: error instanceof Error ? error.message : 'Unknown error',
+      message: error instanceof Error ? (error as Error).message : 'Unknown error',
     });
+
+    return;
   }
 });
 

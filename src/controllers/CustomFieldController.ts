@@ -86,6 +86,8 @@ export class CustomFieldController {
 
       if (!entityType) {
         res.status(400).json({ error: 'entityType query parameter is required' });
+
+        return;
         return;
       }
 
@@ -103,6 +105,8 @@ export class CustomFieldController {
     } catch (error: unknown) {
       logger.error('Failed to get field definitions', error);
       res.status(500).json({ error: 'Failed to get field definitions' });
+
+      return;
     }
   }
 
@@ -116,6 +120,8 @@ export class CustomFieldController {
       const { error, value } = createFieldDefinitionSchema.validate(req.body);
       if (error) {
         res.status(400).json({ error: error.details[0].message });
+
+        return;
         return;
       }
 
@@ -126,9 +132,14 @@ export class CustomFieldController {
         data: { id: fieldId },
         message: 'Custom field definition created successfully',
       });
+
+
+      return;
     } catch (error: unknown) {
       logger.error('Failed to create field definition', error);
       res.status(500).json({ error: 'Failed to create field definition' });
+
+      return;
     }
   }
 
@@ -142,6 +153,8 @@ export class CustomFieldController {
       const { error, value } = updateFieldDefinitionSchema.validate(req.body);
       if (error) {
         res.status(400).json({ error: error.details[0].message });
+
+        return;
         return;
       }
 
@@ -154,6 +167,8 @@ export class CustomFieldController {
     } catch (error: unknown) {
       logger.error('Failed to update field definition', error);
       res.status(500).json({ error: 'Failed to update field definition' });
+
+      return;
     }
   }
 
@@ -173,6 +188,8 @@ export class CustomFieldController {
     } catch (error: unknown) {
       logger.error('Failed to delete field definition', error);
       res.status(500).json({ error: 'Failed to delete field definition' });
+
+      return;
     }
   }
 
@@ -186,6 +203,8 @@ export class CustomFieldController {
 
       if (!entityType) {
         res.status(400).json({ error: 'entityType query parameter is required' });
+
+        return;
         return;
       }
 
@@ -202,6 +221,8 @@ export class CustomFieldController {
     } catch (error: unknown) {
       logger.error('Failed to get field values', error);
       res.status(500).json({ error: 'Failed to get field values' });
+
+      return;
     }
   }
 
@@ -215,6 +236,8 @@ export class CustomFieldController {
       const { error, value } = setFieldValuesSchema.validate(req.body);
       if (error) {
         res.status(400).json({ error: error.details[0].message });
+
+        return;
         return;
       }
 
@@ -232,6 +255,8 @@ export class CustomFieldController {
     } catch (error: unknown) {
       logger.error('Failed to set field values', error);
       res.status(500).json({ error: 'Failed to set field values' });
+
+      return;
     }
   }
 
@@ -245,6 +270,8 @@ export class CustomFieldController {
 
       if (!entityType || !values) {
         res.status(400).json({ error: 'entityType and values are required' });
+
+        return;
         return;
       }
 
@@ -261,6 +288,8 @@ export class CustomFieldController {
     } catch (error: unknown) {
       logger.error('Failed to validate field values', error);
       res.status(500).json({ error: 'Failed to validate field values' });
+
+      return;
     }
   }
 
@@ -280,6 +309,8 @@ export class CustomFieldController {
 
       if (!definition) {
         res.status(404).json({ error: 'Field definition not found' });
+
+        return;
         return;
       }
 
@@ -290,6 +321,8 @@ export class CustomFieldController {
     } catch (error: unknown) {
       logger.error('Failed to get field definition', error);
       res.status(500).json({ error: 'Failed to get field definition' });
+
+      return;
     }
   }
 
@@ -303,6 +336,8 @@ export class CustomFieldController {
 
       if (!targetEntityType) {
         res.status(400).json({ error: 'targetEntityType is required' });
+
+        return;
         return;
       }
 
@@ -318,9 +353,14 @@ export class CustomFieldController {
         data: { id: newFieldId },
         message: 'Field definition copied successfully',
       });
+
+
+      return;
     } catch (error: unknown) {
       logger.error('Failed to copy field definition', error);
       res.status(500).json({ error: 'Failed to copy field definition' });
+
+      return;
     }
   }
 
@@ -334,6 +374,8 @@ export class CustomFieldController {
       const { error, value } = bulkUpdateSchema.validate(req.body);
       if (error) {
         res.status(400).json({ error: error.details[0].message });
+
+        return;
         return;
       }
 
@@ -352,6 +394,8 @@ export class CustomFieldController {
     } catch (error: unknown) {
       logger.error('Failed to bulk update field values', error);
       res.status(500).json({ error: 'Failed to bulk update field values' });
+
+      return;
     }
   }
 
@@ -371,6 +415,8 @@ export class CustomFieldController {
     } catch (error: unknown) {
       logger.error('Failed to get field usage stats', error);
       res.status(500).json({ error: 'Failed to get field usage stats' });
+
+      return;
     }
   }
 
@@ -384,6 +430,8 @@ export class CustomFieldController {
 
       if (!entityType) {
         res.status(400).json({ error: 'entityType query parameter is required' });
+
+        return;
         return;
       }
 
@@ -405,10 +453,14 @@ export class CustomFieldController {
         res.send(exportData);
       } else {
         res.status(400).json({ error: 'Invalid format. Supported formats: json, csv' });
+
+        return;
       }
     } catch (error: unknown) {
       logger.error('Failed to export fields', error);
       res.status(500).json({ error: 'Failed to export fields' });
+
+      return;
     }
   }
 
@@ -422,6 +474,8 @@ export class CustomFieldController {
 
       if (!data) {
         res.status(400).json({ error: 'data is required' });
+
+        return;
         return;
       }
 
@@ -440,6 +494,8 @@ export class CustomFieldController {
     } catch (error: unknown) {
       logger.error('Failed to import fields', error);
       res.status(500).json({ error: 'Failed to import fields' });
+
+      return;
     }
   }
 
@@ -460,6 +516,8 @@ export class CustomFieldController {
     } catch (error: unknown) {
       logger.error('Failed to get field templates', error);
       res.status(500).json({ error: 'Failed to get field templates' });
+
+      return;
     }
   }
 
@@ -473,6 +531,8 @@ export class CustomFieldController {
 
       if (!templateId || !entityType) {
         res.status(400).json({ error: 'templateId and entityType are required' });
+
+        return;
         return;
       }
 
@@ -488,9 +548,14 @@ export class CustomFieldController {
         data: { appliedFields },
         message: `Template applied successfully. ${appliedFields.length} fields created.`,
       });
+
+
+      return;
     } catch (error: unknown) {
       logger.error('Failed to apply field template', error);
       res.status(500).json({ error: 'Failed to apply field template' });
+
+      return;
     }
   }
 }

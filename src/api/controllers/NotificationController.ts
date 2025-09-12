@@ -8,14 +8,17 @@ const notificationService = new NotificationService();
 /**
  * Get user notifications
  */
-router.get('/', async (req: Request, res: Response) => {
+router.get('/', async (req: Request, res: Response): Promise<void> => {
   try {
     const { userId, limit = 50, offset = 0, unreadOnly = false } = req.query;
 
     if (!userId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'User ID is required',
       });
+
+      return;
+      return;
     }
 
     const result = await notificationService.getUserNotifications(
@@ -45,23 +48,28 @@ router.get('/', async (req: Request, res: Response) => {
     logger.error('Failed to get notifications', error);
     res.status(500).json({
       error: 'Failed to get notifications',
-      message: error instanceof Error ? error.message : 'Unknown error',
+      message: error instanceof Error ? (error as Error).message : 'Unknown error',
     });
+
+    return;
   }
 });
 
 /**
  * Mark notification as read
  */
-router.put('/:id/read', async (req: Request, res: Response) => {
+router.put('/:id/read', async (req: Request, res: Response): Promise<void> => {
   try {
     const { id } = req.params;
     const { userId } = req.body;
 
     if (!userId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'User ID is required',
       });
+
+      return;
+      return;
     }
 
     await notificationService.markAsRead(id, userId);
@@ -73,22 +81,27 @@ router.put('/:id/read', async (req: Request, res: Response) => {
     logger.error('Failed to mark notification as read', error);
     res.status(500).json({
       error: 'Failed to mark notification as read',
-      message: error instanceof Error ? error.message : 'Unknown error',
+      message: error instanceof Error ? (error as Error).message : 'Unknown error',
     });
+
+    return;
   }
 });
 
 /**
  * Create notification (for testing/admin purposes)
  */
-router.post('/', async (req: Request, res: Response) => {
+router.post('/', async (req: Request, res: Response): Promise<void> => {
   try {
     const { recipientId, title, message, type, priority, data } = req.body;
 
     if (!recipientId || !title || !message || !type) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Recipient ID, title, message, and type are required',
       });
+
+      return;
+      return;
     }
 
     const notificationId = await notificationService.createNotification({
@@ -104,12 +117,17 @@ router.post('/', async (req: Request, res: Response) => {
       id: notificationId,
       message: 'Notification created successfully',
     });
+
+
+    return;
   } catch (error: unknown) {
     logger.error('Failed to create notification', error);
     res.status(500).json({
       error: 'Failed to create notification',
-      message: error instanceof Error ? error.message : 'Unknown error',
+      message: error instanceof Error ? (error as Error).message : 'Unknown error',
     });
+
+    return;
   }
 });
 

@@ -209,7 +209,7 @@ export class CalendarIntegrationService {
             logger.error('Failed to sync booking to calendar', { 
               userId: user.id, 
               provider: auth.provider,
-              error: error instanceof Error ? error.message : 'Unknown error'
+              error: error instanceof Error ? (error as Error).message : 'Unknown error'
             });
           }
         }
@@ -439,7 +439,7 @@ export class CalendarIntegrationService {
           logger.error('Failed to get free/busy data', {
             userId,
             provider: auth.provider,
-            error: error instanceof Error ? error.message : 'Unknown error',
+            error: error instanceof Error ? (error as Error).message : 'Unknown error',
           });
         }
       }

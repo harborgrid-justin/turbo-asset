@@ -60,6 +60,8 @@ export class MLAnalyticsController {
         success: false,
         error: 'Failed to get ML service status'
       });
+
+      return;
     }
   }
 
@@ -109,6 +111,8 @@ export class MLAnalyticsController {
         success: false,
         error: 'Failed to generate space optimization predictions'
       });
+
+      return;
     }
   }
 
@@ -159,6 +163,8 @@ export class MLAnalyticsController {
         success: false,
         error: 'Failed to generate cost forecasts'
       });
+
+      return;
     }
   }
 
@@ -209,6 +215,8 @@ export class MLAnalyticsController {
         success: false,
         error: 'Failed to detect energy anomalies'
       });
+
+      return;
     }
   }
 
@@ -258,6 +266,8 @@ export class MLAnalyticsController {
         success: false,
         error: 'Failed to detect utilization anomalies'
       });
+
+      return;
     }
   }
 
@@ -308,6 +318,8 @@ export class MLAnalyticsController {
         success: false,
         error: 'Failed to generate anomaly dashboard'
       });
+
+      return;
     }
   }
 
@@ -360,6 +372,8 @@ export class MLAnalyticsController {
         success: false,
         error: 'Failed to assess facility condition'
       });
+
+      return;
     }
   }
 
@@ -411,6 +425,8 @@ export class MLAnalyticsController {
         success: false,
         error: 'Failed to detect occupancy'
       });
+
+      return;
     }
   }
 
@@ -467,6 +483,8 @@ export class MLAnalyticsController {
         success: false,
         error: 'Failed to classify ticket'
       });
+
+      return;
     }
   }
 
@@ -512,6 +530,8 @@ export class MLAnalyticsController {
         success: false,
         error: 'Failed to batch classify tickets'
       });
+
+      return;
     }
   }
 
@@ -563,6 +583,8 @@ export class MLAnalyticsController {
         success: false,
         error: 'Failed to generate vendor recommendations'
       });
+
+      return;
     }
   }
 
@@ -613,6 +635,8 @@ export class MLAnalyticsController {
         success: false,
         error: 'Failed to generate lease recommendations'
       });
+
+      return;
     }
   }
 
@@ -666,6 +690,8 @@ export class MLAnalyticsController {
         success: false,
         error: 'Failed to create digital twin'
       });
+
+      return;
     }
   }
 
@@ -717,6 +743,8 @@ export class MLAnalyticsController {
         success: false,
         error: 'Failed to run simulation'
       });
+
+      return;
     }
   }
 
@@ -768,6 +796,8 @@ export class MLAnalyticsController {
         success: false,
         error: 'Failed to generate portfolio forecast'
       });
+
+      return;
     }
   }
 
@@ -819,6 +849,8 @@ export class MLAnalyticsController {
         success: false,
         error: 'Failed to generate budget forecast'
       });
+
+      return;
     }
   }
 
@@ -877,6 +909,8 @@ export class MLAnalyticsController {
         success: false,
         error: 'Failed to analyze feedback'
       });
+
+      return;
     }
   }
 
@@ -930,6 +964,8 @@ export class MLAnalyticsController {
         success: false,
         error: 'Failed to analyze sentiment trends'
       });
+
+      return;
     }
   }
 
@@ -981,6 +1017,8 @@ export class MLAnalyticsController {
         success: false,
         error: 'Failed to generate sentiment dashboard'
       });
+
+      return;
     }
   }
 

@@ -263,7 +263,7 @@ export class AdvancedDataProcessingEngine {
       } catch (error: unknown) {
         errors.push({
           recordId: record.id || 'unknown',
-          error: error instanceof Error ? error.message : 'Unknown processing error'
+          error: error instanceof Error ? (error as Error).message : 'Unknown processing error'
         });
       }
     }

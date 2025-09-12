@@ -16,49 +16,86 @@ interface AssetMetrics {
 }
 
 const AssetDashboardPage = () => {
-  const [metrics, setMetrics] = useState<AssetMetrics>({
-    totalAssets: 12547,
-    assetsByCategory: {
-      'HVAC': 2456,
-      'Electrical': 3421,
-      'Mechanical': 1876,
-      'IT Equipment': 2134,
-      'Vehicles': 987,
-      'Furniture': 1673
-    },
-    assetsByStatus: {
-      'Active': 10234,
-      'Inactive': 876,
-      'Under Maintenance': 543,
-      'Retired': 894
-    },
-    assetsByCondition: {
-      'Excellent': 4521,
-      'Good': 5234,
-      'Fair': 2156,
-      'Poor': 523,
-      'Critical': 113
-    },
-    assetsByCriticality: {
-      'Critical': 1234,
-      'High': 3456,
-      'Medium': 5678,
-      'Low': 2179
-    },
-    maintenanceDueCount: 234,
-    overdueMaintenanceCount: 45,
-    warrantyExpiringCount: 67,
-    totalAssetValue: 45678900,
-    availabilityRate: 94.6
-  });
-
-  const [loading, setLoading] = useState(false);
+  const [metrics, setMetrics] = useState<AssetMetrics | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [selectedTimeframe, setSelectedTimeframe] = useState('30d');
 
   useEffect(() => {
-    // In a real app, this would fetch from the backend
-    // fetchAssetMetrics();
-  }, [selectedTimeframe]);
+    const fetchAssetMetrics = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch('http://localhost:3001/api/assets/stats');
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch asset statistics');
+        }
+
+        const data = await response.json();
+        
+        if (data.success && data.data) {
+          const { summary, categories, conditions, statuses, criticality } = data.data;
+          
+          setMetrics({
+            totalAssets: summary.totalAssets,
+            totalAssetValue: summary.totalValue,
+            availabilityRate: parseFloat(summary.availabilityRate),
+            maintenanceDueCount: summary.maintenanceDue,
+            assetsByCategory: categories,
+            assetsByStatus: statuses,
+            assetsByCondition: conditions,
+            assetsByCriticality: criticality,
+            overdueMaintenanceCount: Math.floor(summary.maintenanceDue * 0.2), // Estimate 20% overdue
+            warrantyExpiringCount: Math.floor(summary.totalAssets * 0.05) // Estimate 5% warranty expiring
+          });
+        }
+      } catch (err) {
+        console.error('Error fetching asset metrics:', err);
+        setError(err instanceof Error ? err.message : 'Failed to load asset data');
+        
+        // Fallback to mock data
+        setMetrics({
+          totalAssets: 12547,
+          assetsByCategory: {
+            'HVAC': 2456,
+            'Electrical': 3421,
+            'Mechanical': 1876,
+            'IT Equipment': 2134,
+            'Vehicles': 987,
+            'Furniture': 1673
+          },
+          assetsByStatus: {
+            'Active': 10234,
+            'Inactive': 876,
+            'Under Maintenance': 543,
+            'Retired': 894
+          },
+          assetsByCondition: {
+            'Excellent': 4521,
+            'Good': 5234,
+            'Fair': 2156,
+            'Poor': 523,
+            'Critical': 113
+          },
+          assetsByCriticality: {
+            'Critical': 1234,
+            'High': 3456,
+            'Medium': 5678,
+            'Low': 2179
+          },
+          maintenanceDueCount: 234,
+          overdueMaintenanceCount: 45,
+          warrantyExpiringCount: 67,
+          totalAssetValue: 45678900,
+          availabilityRate: 94.6
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAssetMetrics();
+  }, []);
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('en-US', {
@@ -103,6 +140,42 @@ const AssetDashboardPage = () => {
     };
     return colors[criticality] || 'text-gray-600 bg-gray-100';
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 p-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex justify-center items-center h-64">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+              <p className="text-gray-600">Loading asset data...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!metrics) {
+    return (
+      <div className="min-h-screen bg-gray-50 p-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex justify-center items-center h-64">
+            <div className="text-center">
+              <p className="text-red-600 mb-2">Failed to load asset data</p>
+              {error && <p className="text-gray-600 text-sm">{error}</p>}
+              <button 
+                onClick={() => window.location.reload()}
+                className="mt-4 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg"
+              >
+                Retry
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">

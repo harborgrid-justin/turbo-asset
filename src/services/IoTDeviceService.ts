@@ -664,7 +664,7 @@ export class IoTDeviceService {
           processed++;
         } catch (error: unknown) {
           failed++;
-          errors.push(`Reading from ${reading.deviceId}: ${error instanceof Error ? error.message : 'Unknown error'}`);
+          errors.push(`Reading from ${reading.deviceId}: ${error instanceof Error ? (error as Error).message : 'Unknown error'}`);
         }
       }
 

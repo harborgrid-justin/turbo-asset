@@ -266,7 +266,7 @@ export class BusinessIntelligenceService {
           }
         } catch (error: unknown) {
           logger.warn(`Widget data loading failed: ${widget.id}`, { error });
-          widgetData[widget.id] = { error: error.message };
+          widgetData[widget.id] = { error: (error as Error).message };
         }
       }
 

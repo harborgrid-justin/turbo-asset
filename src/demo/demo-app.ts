@@ -157,8 +157,10 @@ app.get('/demo/asset-lifecycle', async (req, res) => {
     console.error('Asset Lifecycle Demo Error:', error);
     res.status(500).json({
       error: 'Asset Lifecycle Demo Failed',
-      details: error instanceof Error ? error.message : 'Unknown error'
+      details: error instanceof Error ? (error as Error).message : 'Unknown error'
     });
+
+    return;
   }
 });
 
@@ -252,8 +254,10 @@ app.get('/demo/financial-consolidation', async (req, res) => {
     console.error('Financial Consolidation Demo Error:', error);
     res.status(500).json({
       error: 'Financial Consolidation Demo Failed',
-      details: error instanceof Error ? error.message : 'Unknown error'
+      details: error instanceof Error ? (error as Error).message : 'Unknown error'
     });
+
+    return;
   }
 });
 
@@ -321,8 +325,10 @@ app.get('/demo/space-analytics', async (req, res) => {
     console.error('Space Analytics Demo Error:', error);
     res.status(500).json({
       error: 'Space Analytics Demo Failed',
-      details: error instanceof Error ? error.message : 'Unknown error'
+      details: error instanceof Error ? (error as Error).message : 'Unknown error'
     });
+
+    return;
   }
 });
 
@@ -399,8 +405,10 @@ app.get('/demo/predictive-analysis', async (req, res) => {
     console.error('Predictive Analysis Demo Error:', error);
     res.status(500).json({
       error: 'Predictive Analysis Demo Failed',
-      details: error instanceof Error ? error.message : 'Unknown error'
+      details: error instanceof Error ? (error as Error).message : 'Unknown error'
     });
+
+    return;
   }
 });
 
@@ -446,7 +454,7 @@ app.get('/demo/load-test', async (req, res) => {
           methodName,
           [{ testId: `load-test-${i}`, timestamp: new Date() }]
         ).catch(error => ({ 
-          error: error.message, 
+          error: (error as Error).message, 
           serviceName, 
           methodName 
         }))
@@ -515,8 +523,10 @@ app.get('/demo/load-test', async (req, res) => {
     console.error('Load Test Demo Error:', error);
     res.status(500).json({
       error: 'Load Test Demo Failed',
-      details: error instanceof Error ? error.message : 'Unknown error'
+      details: error instanceof Error ? (error as Error).message : 'Unknown error'
     });
+
+    return;
   }
 });
 
@@ -528,6 +538,8 @@ app.use((error: any, req: express.Request, res: express.Response, next: express.
     error: 'Internal server error',
     timestamp: new Date().toISOString()
   });
+
+  return;
 });
 
 // Start the server

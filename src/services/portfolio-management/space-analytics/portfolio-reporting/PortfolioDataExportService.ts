@@ -84,7 +84,7 @@ export class PortfolioDataExportService {
     } catch (error: unknown) {
       logger.error('Failed to export portfolio data to Excel', {
         organizationId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -161,7 +161,7 @@ export class PortfolioDataExportService {
     } catch (error: unknown) {
       logger.error('Failed to export portfolio data to CSV', {
         organizationId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -223,7 +223,7 @@ export class PortfolioDataExportService {
     } catch (error: unknown) {
       logger.error('Failed to export portfolio data to JSON', {
         organizationId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -284,7 +284,7 @@ export class PortfolioDataExportService {
       logger.error('Failed to export dashboard data', {
         organizationId,
         dashboardName: dashboardConfig.dashboardName,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -332,7 +332,7 @@ export class PortfolioDataExportService {
     } catch (error: unknown) {
       logger.error('Failed to get export history', {
         organizationId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -376,7 +376,7 @@ export class PortfolioDataExportService {
     } catch (error: unknown) {
       logger.error('Failed to schedule recurring export', {
         organizationId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }

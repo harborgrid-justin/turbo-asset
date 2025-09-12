@@ -99,7 +99,7 @@ export class PortfolioReportingManager {
       };
 
     } catch (error: unknown) {
-      throw new Error(`Failed to get portfolio overview: ${error.message}`);
+      throw new Error(`Failed to get portfolio overview: ${(error as Error).message}`);
     }
   }
 
@@ -152,7 +152,7 @@ export class PortfolioReportingManager {
       };
 
     } catch (error: unknown) {
-      throw new Error(`Failed to generate executive report package: ${error.message}`);
+      throw new Error(`Failed to generate executive report package: ${(error as Error).message}`);
     }
   }
 
@@ -182,7 +182,7 @@ export class PortfolioReportingManager {
       };
 
     } catch (error: unknown) {
-      throw new Error(`Failed to process daily analytics: ${error.message}`);
+      throw new Error(`Failed to process daily analytics: ${(error as Error).message}`);
     }
   }
 

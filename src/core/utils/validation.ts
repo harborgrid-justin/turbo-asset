@@ -134,11 +134,13 @@ export function handleValidationError(error: unknown, res: Response): boolean {
     res.status(400).json({
       success: false,
       error: {
-        message: error.message,
+        message: (error as Error).message,
         field: error.field,
         code: error.code,
       },
     });
+
+    return;
     return true;
   }
   

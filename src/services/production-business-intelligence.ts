@@ -279,7 +279,7 @@ export class ProductionBusinessIntelligenceService extends EventEmitter {
         }
       };
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to execute business intelligence query', { error, requestId, query });
       
       return {
@@ -375,7 +375,7 @@ export class ProductionBusinessIntelligenceService extends EventEmitter {
         }
       };
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate analytics report', { error, requestId, reportType, timeRange });
       
       return {
@@ -456,7 +456,7 @@ export class ProductionBusinessIntelligenceService extends EventEmitter {
         }
       };
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate forecast', { error, requestId, request });
       
       return {
@@ -521,7 +521,7 @@ export class ProductionBusinessIntelligenceService extends EventEmitter {
         }
       };
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to get real-time dashboard', { error, requestId, dashboardId });
       
       return {

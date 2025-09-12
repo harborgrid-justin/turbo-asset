@@ -65,7 +65,7 @@ export class AssetAuditService {
     } catch (error: unknown) {
       logger.error('Failed to log asset creation audit', {
         assetId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -125,7 +125,7 @@ export class AssetAuditService {
       logger.error('Failed to log asset cloning audit', {
         sourceAssetId,
         clonedAssetId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -177,7 +177,7 @@ export class AssetAuditService {
     } catch (error: unknown) {
       logger.error('Failed to log asset update audit', {
         assetId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -223,7 +223,7 @@ export class AssetAuditService {
     } catch (error: unknown) {
       logger.error('Failed to log status change audit', {
         assetId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -270,7 +270,7 @@ export class AssetAuditService {
     } catch (error: unknown) {
       logger.error('Failed to log condition change audit', {
         assetId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -322,7 +322,7 @@ export class AssetAuditService {
     } catch (error: unknown) {
       logger.error('Failed to log maintenance scheduled audit', {
         assetId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -373,7 +373,7 @@ export class AssetAuditService {
     } catch (error: unknown) {
       logger.error('Failed to log maintenance completed audit', {
         assetId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -429,7 +429,7 @@ export class AssetAuditService {
     } catch (error: unknown) {
       logger.error('Failed to log asset move audit', {
         assetId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -474,7 +474,7 @@ export class AssetAuditService {
     } catch (error: unknown) {
       logger.error('Failed to log depreciation calculation audit', {
         assetId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -521,7 +521,7 @@ export class AssetAuditService {
     } catch (error: unknown) {
       logger.error('Failed to get asset audit trail', {
         assetId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -636,7 +636,7 @@ export class AssetAuditService {
     } catch (error: unknown) {
       logger.error('Failed to generate compliance report', {
         organizationId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -741,7 +741,7 @@ export class AssetAuditService {
     } catch (error: unknown) {
       logger.error('Failed to search audit records', {
         organizationId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }

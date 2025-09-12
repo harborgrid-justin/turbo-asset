@@ -2,21 +2,21 @@ import { Application } from 'express';
 import { Router } from 'express';
 
 // Import API controllers
-import { PropertyController } from '@/controllers/PropertyController';
-import { AssetController } from '@/controllers/AssetController';
-import { WorkflowController } from '@/controllers/WorkflowController';
-import { DocumentController } from '@/controllers/DocumentController';
-import { BulkDataController } from '@/controllers/BulkDataController';
+import PropertyController from '@/controllers/PropertyController';
+import AssetController from '@/controllers/AssetController';
+import WorkflowController from '@/controllers/WorkflowController';
+import DocumentController from '@/controllers/DocumentController';
+import BulkDataController from '@/controllers/BulkDataController';
 import { CustomFieldController } from '@/controllers/CustomFieldController';
-import { IntegrationController } from '@/controllers/IntegrationController';
-import { NotificationController } from '@/controllers/NotificationController';
+import IntegrationController from '@/controllers/IntegrationController';
+import NotificationController from '@/controllers/NotificationController';
 
 // Phase 3: Space Management & Portfolio Tracking controllers
-import { SpaceBookingController } from '@/controllers/SpaceBookingController';
-import { MoveManagementController } from '@/controllers/MoveManagementController';
-import { PortfolioController } from '@/controllers/PortfolioController';
-import { SpaceAnalyticsController } from '@/controllers/SpaceAnalyticsController';
-import { SpaceStandardsController } from '@/controllers/SpaceStandardsController';
+import SpaceBookingController from '@/controllers/SpaceBookingController';
+import MoveManagementController from '@/controllers/MoveManagementController';
+import PortfolioController from '@/controllers/PortfolioController';
+import SpaceAnalyticsController from '@/controllers/SpaceAnalyticsController';
+import SpaceStandardsController from '@/controllers/SpaceStandardsController';
 
 // Phase 4: Lease Administration & Financial Management controllers
 import { LeaseManagementController } from '@/controllers/LeaseManagementController';
@@ -24,16 +24,16 @@ import { FinancialConsolidationController } from '@/controllers/FinancialConsoli
 import { CriticalDateController } from '@/controllers/CriticalDateController';
 
 // Phase 5: Maintenance & Asset Management controllers
-import { MaintenanceController } from '@/controllers/MaintenanceController';
-import { WorkOrderController } from '@/controllers/WorkOrderController';
+import MaintenanceController from '@/controllers/MaintenanceController';
+import WorkOrderController from '@/controllers/WorkOrderController';
 
 // Additional enterprise controllers
 import { ReportingController } from '@/controllers/ReportingController';
 import { BusinessIntelligenceController } from '@/controllers/BusinessIntelligenceController';
 import { ComplianceController } from '@/controllers/ComplianceController';
 import { DataGovernanceController } from '@/controllers/DataGovernanceController';
-import { EmergencyPlanningController } from '@/controllers/EmergencyPlanningController';
-import { CADIntegrationController } from '@/controllers/CADIntegrationController';
+import EmergencyPlanningController from '@/controllers/EmergencyPlanningController';
+import CADIntegrationController from '@/controllers/CADIntegrationController';
 import { WhiteLabelController } from '@/controllers/WhiteLabelController';
 
 // Machine Learning and Analytics controllers
@@ -57,6 +57,8 @@ export function setupRoutes(app: Application): void {
       uptime: process.uptime(),
       version: process.env.npm_package_version || '1.0.0'
     });
+
+    return;
   });
 
   // API Documentation route (no authentication required)
@@ -134,5 +136,7 @@ export function setupRoutes(app: Application): void {
       message: `Cannot ${req.method} ${req.path}`,
       suggestion: 'Check the API documentation at /api/docs'
     });
+
+    return;
   });
 }

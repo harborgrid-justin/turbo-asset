@@ -233,7 +233,7 @@ export class DataWarehouseService extends EventEmitter {
       } catch (error: unknown) {
         metrics.status = 'FAILED';
         metrics.endTime = new Date();
-        metrics.errors.push(error.message);
+        metrics.errors.push((error as Error).message);
         metrics.errorCount++;
 
         await this.updateETLMetrics(processId, metrics);

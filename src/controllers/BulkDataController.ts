@@ -30,9 +30,11 @@ const upload = multer({
 router.post('/import', upload.single('file'), async (req: Request, res: Response) => {
   try {
     if (!req.file) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'File is required',
       });
+
+      return;
     }
 
     const {
@@ -46,9 +48,11 @@ router.post('/import', upload.single('file'), async (req: Request, res: Response
     } = req.body;
 
     if (!entityType || !organizationId || !userId || !mapping) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Entity type, organization ID, user ID, and mapping are required',
       });
+
+      return;
     }
 
     const options = {
@@ -80,8 +84,10 @@ router.post('/import', upload.single('file'), async (req: Request, res: Response
     logger.error('Failed to start import job', error);
     res.status(500).json({
       error: 'Failed to start import job',
-      message: error instanceof Error ? error.message : 'Unknown error',
+      message: error instanceof Error ? (error as Error).message : 'Unknown error',
     });
+
+    return;
   }
 });
 
@@ -100,15 +106,19 @@ router.post('/export', async (req: Request, res: Response) => {
     } = req.body;
 
     if (!entityType || !organizationId || !format) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Entity type, organization ID, and format are required',
       });
+
+      return;
     }
 
     if (!['csv', 'xlsx'].includes(format)) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Format must be csv or xlsx',
       });
+
+      return;
     }
 
     const options = {
@@ -131,8 +141,10 @@ router.post('/export', async (req: Request, res: Response) => {
     logger.error('Failed to start export job', error);
     res.status(500).json({
       error: 'Failed to start export job',
-      message: error instanceof Error ? error.message : 'Unknown error',
+      message: error instanceof Error ? (error as Error).message : 'Unknown error',
     });
+
+    return;
   }
 });
 
@@ -145,9 +157,11 @@ router.get('/import/:jobId/status', async (req: Request, res: Response) => {
     const result = await bulkDataService.getImportJobStatus(jobId);
 
     if (!result) {
-      return res.status(404).json({
+      res.status(404).json({
         error: 'Job not found',
       });
+
+      return;
     }
 
     res.json(result);
@@ -155,8 +169,10 @@ router.get('/import/:jobId/status', async (req: Request, res: Response) => {
     logger.error('Failed to get import job status', error);
     res.status(500).json({
       error: 'Failed to get import job status',
-      message: error instanceof Error ? error.message : 'Unknown error',
+      message: error instanceof Error ? (error as Error).message : 'Unknown error',
     });
+
+    return;
   }
 });
 
@@ -169,9 +185,11 @@ router.get('/export/:jobId/status', async (req: Request, res: Response) => {
     const result = await bulkDataService.getExportJobStatus(jobId);
 
     if (!result) {
-      return res.status(404).json({
+      res.status(404).json({
         error: 'Job not found',
       });
+
+      return;
     }
 
     res.json(result);
@@ -179,8 +197,10 @@ router.get('/export/:jobId/status', async (req: Request, res: Response) => {
     logger.error('Failed to get export job status', error);
     res.status(500).json({
       error: 'Failed to get export job status',
-      message: error instanceof Error ? error.message : 'Unknown error',
+      message: error instanceof Error ? (error as Error).message : 'Unknown error',
     });
+
+    return;
   }
 });
 
@@ -193,9 +213,11 @@ router.get('/export/:jobId/download', async (req: Request, res: Response) => {
     const result = await bulkDataService.getExportJobStatus(jobId);
 
     if (!result || !result.filePath) {
-      return res.status(404).json({
+      res.status(404).json({
         error: 'Export file not found',
       });
+
+      return;
     }
 
     res.download(result.filePath);
@@ -203,8 +225,10 @@ router.get('/export/:jobId/download', async (req: Request, res: Response) => {
     logger.error('Failed to download export file', error);
     res.status(500).json({
       error: 'Failed to download export file',
-      message: error instanceof Error ? error.message : 'Unknown error',
+      message: error instanceof Error ? (error as Error).message : 'Unknown error',
     });
+
+    return;
   }
 });
 

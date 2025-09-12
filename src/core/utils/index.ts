@@ -44,7 +44,7 @@ export const retry = async <T>(
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
     try {
       return await fn();
-    } catch (error) {
+    } catch (error: unknown) {
       lastError = error instanceof Error ? error : new Error(String(error));
       
       if (attempt === maxAttempts) {

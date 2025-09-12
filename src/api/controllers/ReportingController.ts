@@ -12,7 +12,7 @@ export class ReportingController {
   /**
    * Generate standard reports
    */
-  generateReport = async (req: Request, res: Response) => {
+  generateReport = async (req: Request, res: Response): Promise<void> => {
     try {
       const { organizationId } = req.params;
       const { reportType, parameters, format } = req.body;
@@ -34,13 +34,15 @@ export class ReportingController {
         success: false,
         error: 'Failed to generate report'
       });
+
+      return;
     }
   };
 
   /**
    * Get scheduled reports
    */
-  getScheduledReports = async (req: Request, res: Response) => {
+  getScheduledReports = async (req: Request, res: Response): Promise<void> => {
     try {
       const { organizationId } = req.params;
 
@@ -56,13 +58,15 @@ export class ReportingController {
         success: false,
         error: 'Failed to get scheduled reports'
       });
+
+      return;
     }
   };
 
   /**
    * Schedule a report
    */
-  scheduleReport = async (req: Request, res: Response) => {
+  scheduleReport = async (req: Request, res: Response): Promise<void> => {
     try {
       const { organizationId } = req.params;
       const scheduleData = req.body;
@@ -76,19 +80,24 @@ export class ReportingController {
         success: true,
         data: schedule
       });
+
+
+      return;
     } catch (error: unknown) {
       logger.error('Failed to schedule report', error);
       res.status(500).json({
         success: false,
         error: 'Failed to schedule report'
       });
+
+      return;
     }
   };
 
   /**
    * Export report
    */
-  exportReport = async (req: Request, res: Response) => {
+  exportReport = async (req: Request, res: Response): Promise<void> => {
     try {
       const { organizationId, reportId } = req.params;
       const { format } = req.query;
@@ -109,13 +118,15 @@ export class ReportingController {
         success: false,
         error: 'Failed to export report'
       });
+
+      return;
     }
   };
 
   /**
    * Get report templates
    */
-  getReportTemplates = async (req: Request, res: Response) => {
+  getReportTemplates = async (req: Request, res: Response): Promise<void> => {
     try {
       const { organizationId } = req.params;
 
@@ -131,13 +142,15 @@ export class ReportingController {
         success: false,
         error: 'Failed to get report templates'
       });
+
+      return;
     }
   };
 
   /**
    * Create report template
    */
-  createReportTemplate = async (req: Request, res: Response) => {
+  createReportTemplate = async (req: Request, res: Response): Promise<void> => {
     try {
       const { organizationId } = req.params;
       const templateData = req.body;
@@ -151,19 +164,24 @@ export class ReportingController {
         success: true,
         data: template
       });
+
+
+      return;
     } catch (error: unknown) {
       logger.error('Failed to create report template', error);
       res.status(500).json({
         success: false,
         error: 'Failed to create report template'
       });
+
+      return;
     }
   };
 
   /**
    * Get report history
    */
-  getReportHistory = async (req: Request, res: Response) => {
+  getReportHistory = async (req: Request, res: Response): Promise<void> => {
     try {
       const { organizationId } = req.params;
       const { limit, offset } = req.query;
@@ -184,13 +202,15 @@ export class ReportingController {
         success: false,
         error: 'Failed to get report history'
       });
+
+      return;
     }
   };
 
   /**
    * Get report analytics
    */
-  getReportAnalytics = async (req: Request, res: Response) => {
+  getReportAnalytics = async (req: Request, res: Response): Promise<void> => {
     try {
       const { organizationId } = req.params;
 
@@ -206,13 +226,15 @@ export class ReportingController {
         success: false,
         error: 'Failed to get report analytics'
       });
+
+      return;
     }
   };
 
   /**
    * Delete scheduled report
    */
-  deleteScheduledReport = async (req: Request, res: Response) => {
+  deleteScheduledReport = async (req: Request, res: Response): Promise<void> => {
     try {
       const { organizationId, scheduleId } = req.params;
 
@@ -228,13 +250,15 @@ export class ReportingController {
         success: false,
         error: 'Failed to delete scheduled report'
       });
+
+      return;
     }
   };
 
   /**
    * Update scheduled report
    */
-  updateScheduledReport = async (req: Request, res: Response) => {
+  updateScheduledReport = async (req: Request, res: Response): Promise<void> => {
     try {
       const { organizationId, scheduleId } = req.params;
       const updateData = req.body;
@@ -255,6 +279,8 @@ export class ReportingController {
         success: false,
         error: 'Failed to update scheduled report'
       });
+
+      return;
     }
   };
 }

@@ -8,7 +8,7 @@ const moveService = new MoveManagementService();
 /**
  * Get move requests with filtering and pagination
  */
-router.get('/', async (req: Request, res: Response) => {
+router.get('/', async (req: Request, res: Response): Promise<void> => {
   try {
     const {
       organizationId,
@@ -22,9 +22,12 @@ router.get('/', async (req: Request, res: Response) => {
     } = req.query;
 
     if (!organizationId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Organization ID is required',
       });
+
+      return;
+      return;
     }
 
     const query = {
@@ -45,23 +48,28 @@ router.get('/', async (req: Request, res: Response) => {
     logger.error('Failed to get move requests', error);
     res.status(500).json({
       error: 'Failed to get move requests',
-      message: error instanceof Error ? error.message : 'Unknown error',
+      message: error instanceof Error ? (error as Error).message : 'Unknown error',
     });
+
+    return;
   }
 });
 
 /**
  * Get move request by ID
  */
-router.get('/:id', async (req: Request, res: Response) => {
+router.get('/:id', async (req: Request, res: Response): Promise<void> => {
   try {
     const { id } = req.params;
     const { organizationId } = req.query;
 
     if (!organizationId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Organization ID is required',
       });
+
+      return;
+      return;
     }
 
     const moveRequest = await moveService.getMoveRequest(
@@ -72,13 +80,17 @@ router.get('/:id', async (req: Request, res: Response) => {
     res.json(moveRequest);
   } catch (error: unknown) {
     logger.error('Failed to get move request', error);
-    if (error instanceof Error && error.message === 'Move request not found') {
-      res.status(404).json({ error: error.message });
+    if (error instanceof Error && (error as Error).message === 'Move request not found') {
+      res.status(404).json({ error: (error as Error).message });
+
+      return;
     } else {
       res.status(500).json({
         error: 'Failed to get move request',
-        message: error instanceof Error ? error.message : 'Unknown error',
+        message: error instanceof Error ? (error as Error).message : 'Unknown error',
       });
+
+      return;
     }
   }
 });
@@ -86,7 +98,7 @@ router.get('/:id', async (req: Request, res: Response) => {
 /**
  * Create new move request
  */
-router.post('/', async (req: Request, res: Response) => {
+router.post('/', async (req: Request, res: Response): Promise<void> => {
   try {
     const {
       organizationId,
@@ -103,26 +115,35 @@ router.post('/', async (req: Request, res: Response) => {
 
     // Validate required fields
     if (!organizationId || !requestedById || !moveType || !requestedDate) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Organization ID, requested by ID, move type, and requested date are required',
       });
+
+      return;
+      return;
     }
 
     // Validate move type
     const validMoveTypes = ['INTERNAL', 'EXTERNAL', 'NEW_HIRE', 'TERMINATION', 'RENOVATION', 'EXPANSION', 'CONSOLIDATION'];
     if (!validMoveTypes.includes(moveType)) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Invalid move type. Valid values are: ' + validMoveTypes.join(', '),
       });
+
+      return;
+      return;
     }
 
     // Validate urgency
     if (urgency) {
       const validUrgencies = ['LOW', 'NORMAL', 'HIGH', 'URGENT'];
       if (!validUrgencies.includes(urgency)) {
-        return res.status(400).json({
+        res.status(400).json({
           error: 'Invalid urgency. Valid values are: ' + validUrgencies.join(', '),
         });
+
+        return;
+      return;
       }
     }
 
@@ -140,19 +161,24 @@ router.post('/', async (req: Request, res: Response) => {
     });
 
     res.status(201).json(moveRequest);
+
+
+    return;
   } catch (error: unknown) {
     logger.error('Failed to create move request', error);
     res.status(500).json({
       error: 'Failed to create move request',
-      message: error instanceof Error ? error.message : 'Unknown error',
+      message: error instanceof Error ? (error as Error).message : 'Unknown error',
     });
+
+    return;
   }
 });
 
 /**
  * Approve or reject move request
  */
-router.patch('/:id/process', async (req: Request, res: Response) => {
+router.patch('/:id/process', async (req: Request, res: Response): Promise<void> => {
   try {
     const { id } = req.params;
     const {
@@ -164,22 +190,31 @@ router.patch('/:id/process', async (req: Request, res: Response) => {
     } = req.body;
 
     if (!organizationId || !approvedById || !action) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Organization ID, approved by ID, and action are required',
       });
+
+      return;
+      return;
     }
 
     // Validate action
     if (!['APPROVE', 'REJECT'].includes(action)) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Action must be either APPROVE or REJECT',
       });
+
+      return;
+      return;
     }
 
     if (action === 'REJECT' && !rejectionReason) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Rejection reason is required when rejecting a move request',
       });
+
+      return;
+      return;
     }
 
     const processedRequest = await moveService.processMoveRequest(
@@ -194,15 +229,21 @@ router.patch('/:id/process', async (req: Request, res: Response) => {
     res.json(processedRequest);
   } catch (error: unknown) {
     logger.error('Failed to process move request', error);
-    if (error instanceof Error && error.message.includes('not found')) {
-      res.status(404).json({ error: error.message });
-    } else if (error instanceof Error && error.message.includes('not authorized')) {
-      res.status(403).json({ error: error.message });
+    if (error instanceof Error && (error as Error).message.includes('not found')) {
+      res.status(404).json({ error: (error as Error).message });
+
+      return;
+    } else if (error instanceof Error && (error as Error).message.includes('not authorized')) {
+      res.status(403).json({ error: (error as Error).message });
+
+      return;
     } else {
       res.status(500).json({
         error: 'Failed to process move request',
-        message: error instanceof Error ? error.message : 'Unknown error',
+        message: error instanceof Error ? (error as Error).message : 'Unknown error',
       });
+
+      return;
     }
   }
 });
@@ -210,23 +251,29 @@ router.patch('/:id/process', async (req: Request, res: Response) => {
 /**
  * Update move request status
  */
-router.patch('/:id/status', async (req: Request, res: Response) => {
+router.patch('/:id/status', async (req: Request, res: Response): Promise<void> => {
   try {
     const { id } = req.params;
     const { organizationId, status, completedDate } = req.body;
 
     if (!organizationId || !status) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Organization ID and status are required',
       });
+
+      return;
+      return;
     }
 
     // Validate status
     const validStatuses = ['SCHEDULED', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED'];
     if (!validStatuses.includes(status)) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Invalid status. Valid values are: ' + validStatuses.join(', '),
       });
+
+      return;
+      return;
     }
 
     const updatedRequest = await moveService.updateMoveStatus(
@@ -239,13 +286,17 @@ router.patch('/:id/status', async (req: Request, res: Response) => {
     res.json(updatedRequest);
   } catch (error: unknown) {
     logger.error('Failed to update move status', error);
-    if (error instanceof Error && error.message.includes('not found')) {
-      res.status(404).json({ error: error.message });
+    if (error instanceof Error && (error as Error).message.includes('not found')) {
+      res.status(404).json({ error: (error as Error).message });
+
+      return;
     } else {
       res.status(500).json({
         error: 'Failed to update move status',
-        message: error instanceof Error ? error.message : 'Unknown error',
+        message: error instanceof Error ? (error as Error).message : 'Unknown error',
       });
+
+      return;
     }
   }
 });
@@ -253,7 +304,7 @@ router.patch('/:id/status', async (req: Request, res: Response) => {
 /**
  * Add vendor to move request
  */
-router.post('/:id/vendors', async (req: Request, res: Response) => {
+router.post('/:id/vendors', async (req: Request, res: Response): Promise<void> => {
   try {
     const { id } = req.params;
     const {
@@ -267,9 +318,12 @@ router.post('/:id/vendors', async (req: Request, res: Response) => {
     } = req.body;
 
     if (!organizationId || !vendorName || !contactInfo || !serviceType) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Organization ID, vendor name, contact info, and service type are required',
       });
+
+      return;
+      return;
     }
 
     const vendor = await moveService.addVendor(id, organizationId, {
@@ -282,15 +336,22 @@ router.post('/:id/vendors', async (req: Request, res: Response) => {
     });
 
     res.status(201).json(vendor);
+
+
+    return;
   } catch (error: unknown) {
     logger.error('Failed to add vendor', error);
-    if (error instanceof Error && error.message.includes('not found')) {
-      res.status(404).json({ error: error.message });
+    if (error instanceof Error && (error as Error).message.includes('not found')) {
+      res.status(404).json({ error: (error as Error).message });
+
+      return;
     } else {
       res.status(500).json({
         error: 'Failed to add vendor',
-        message: error instanceof Error ? error.message : 'Unknown error',
+        message: error instanceof Error ? (error as Error).message : 'Unknown error',
       });
+
+      return;
     }
   }
 });
@@ -298,22 +359,28 @@ router.post('/:id/vendors', async (req: Request, res: Response) => {
 /**
  * Select vendor for move request
  */
-router.patch('/:id/vendors/:vendorId/select', async (req: Request, res: Response) => {
+router.patch('/:id/vendors/:vendorId/select', async (req: Request, res: Response): Promise<void> => {
   try {
     const { id, vendorId } = req.params;
     const { organizationId, performanceRating } = req.body;
 
     if (!organizationId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Organization ID is required',
       });
+
+      return;
+      return;
     }
 
     // Validate performance rating if provided
     if (performanceRating && (performanceRating < 1 || performanceRating > 5)) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Performance rating must be between 1 and 5',
       });
+
+      return;
+      return;
     }
 
     const selectedVendor = await moveService.selectVendor(
@@ -326,13 +393,17 @@ router.patch('/:id/vendors/:vendorId/select', async (req: Request, res: Response
     res.json(selectedVendor);
   } catch (error: unknown) {
     logger.error('Failed to select vendor', error);
-    if (error instanceof Error && error.message.includes('not found')) {
-      res.status(404).json({ error: error.message });
+    if (error instanceof Error && (error as Error).message.includes('not found')) {
+      res.status(404).json({ error: (error as Error).message });
+
+      return;
     } else {
       res.status(500).json({
         error: 'Failed to select vendor',
-        message: error instanceof Error ? error.message : 'Unknown error',
+        message: error instanceof Error ? (error as Error).message : 'Unknown error',
       });
+
+      return;
     }
   }
 });
@@ -340,7 +411,7 @@ router.patch('/:id/vendors/:vendorId/select', async (req: Request, res: Response
 /**
  * Add cost to move request
  */
-router.post('/:id/costs', async (req: Request, res: Response) => {
+router.post('/:id/costs', async (req: Request, res: Response): Promise<void> => {
   try {
     const { id } = req.params;
     const {
@@ -355,9 +426,12 @@ router.post('/:id/costs', async (req: Request, res: Response) => {
     } = req.body;
 
     if (!organizationId || !category || !description) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Organization ID, category, and description are required',
       });
+
+      return;
+      return;
     }
 
     const cost = await moveService.addCost(id, organizationId, {
@@ -371,15 +445,22 @@ router.post('/:id/costs', async (req: Request, res: Response) => {
     });
 
     res.status(201).json(cost);
+
+
+    return;
   } catch (error: unknown) {
     logger.error('Failed to add cost', error);
-    if (error instanceof Error && error.message.includes('not found')) {
-      res.status(404).json({ error: error.message });
+    if (error instanceof Error && (error as Error).message.includes('not found')) {
+      res.status(404).json({ error: (error as Error).message });
+
+      return;
     } else {
       res.status(500).json({
         error: 'Failed to add cost',
-        message: error instanceof Error ? error.message : 'Unknown error',
+        message: error instanceof Error ? (error as Error).message : 'Unknown error',
       });
+
+      return;
     }
   }
 });
@@ -387,14 +468,17 @@ router.post('/:id/costs', async (req: Request, res: Response) => {
 /**
  * Get move analytics
  */
-router.get('/analytics/summary', async (req: Request, res: Response) => {
+router.get('/analytics/summary', async (req: Request, res: Response): Promise<void> => {
   try {
     const { organizationId, startDate, endDate } = req.query;
 
     if (!organizationId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Organization ID is required',
       });
+
+      return;
+      return;
     }
 
     const period = startDate && endDate ? {
@@ -412,8 +496,10 @@ router.get('/analytics/summary', async (req: Request, res: Response) => {
     logger.error('Failed to get move analytics', error);
     res.status(500).json({
       error: 'Failed to get move analytics',
-      message: error instanceof Error ? error.message : 'Unknown error',
+      message: error instanceof Error ? (error as Error).message : 'Unknown error',
     });
+
+    return;
   }
 });
 

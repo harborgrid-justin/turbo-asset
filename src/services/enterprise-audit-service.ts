@@ -222,7 +222,7 @@ export class EnterpriseAuditService extends EventEmitter {
         }
       };
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to create audit log entry', { error, auditData });
       
       return {
@@ -295,7 +295,7 @@ export class EnterpriseAuditService extends EventEmitter {
         }
       };
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to search audit logs', { error, criteria });
       
       return {
@@ -358,7 +358,7 @@ export class EnterpriseAuditService extends EventEmitter {
         }
       };
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to generate compliance report', { error, startDate, endDate, complianceStandards });
       
       return {
@@ -475,7 +475,7 @@ export class EnterpriseAuditService extends EventEmitter {
       // Emit batch processed event
       this.emit('auditBatchProcessed', { count: bufferCopy.length, timestamp: new Date() });
       
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to flush audit buffer', { error, count: bufferCopy.length });
       // Put entries back in buffer for retry
       this.auditBuffer.unshift(...bufferCopy);

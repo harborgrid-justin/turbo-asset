@@ -768,7 +768,7 @@ export class NotificationService extends EventEmitter {
         userId 
       });
     } catch (error: unknown) {
-      await this.updateDeliveryStatus(jobData.notificationId, 'WEBSOCKET', 'FAILED', error.message);
+      await this.updateDeliveryStatus(jobData.notificationId, 'WEBSOCKET', 'FAILED', (error as Error).message);
       logger.error('Failed to deliver WebSocket notification', error);
       throw error;
     }
@@ -819,7 +819,7 @@ export class NotificationService extends EventEmitter {
         await this.updateDeliveryStatus(notificationId, 'EMAIL', 'DELIVERED');
         logger.info('Email notification sent', { notificationId, userId, email: user.email });
       } catch (error: unknown) {
-        await this.updateDeliveryStatus(notificationId, 'EMAIL', 'FAILED', error.message);
+        await this.updateDeliveryStatus(notificationId, 'EMAIL', 'FAILED', (error as Error).message);
         logger.error('Failed to send email notification', error);
         throw error;
       }
@@ -847,7 +847,7 @@ export class NotificationService extends EventEmitter {
         await this.updateDeliveryStatus(notificationId, 'SMS', 'DELIVERED');
         logger.info('SMS notification sent', { notificationId, userId, phone: user.phoneNumber });
       } catch (error: unknown) {
-        await this.updateDeliveryStatus(notificationId, 'SMS', 'FAILED', error.message);
+        await this.updateDeliveryStatus(notificationId, 'SMS', 'FAILED', (error as Error).message);
         logger.error('Failed to send SMS notification', error);
         throw error;
       }
@@ -865,7 +865,7 @@ export class NotificationService extends EventEmitter {
         await this.updateDeliveryStatus(notificationId, 'PUSH', 'DELIVERED');
         logger.info('Push notification sent', { notificationId, userId });
       } catch (error: unknown) {
-        await this.updateDeliveryStatus(notificationId, 'PUSH', 'FAILED', error.message);
+        await this.updateDeliveryStatus(notificationId, 'PUSH', 'FAILED', (error as Error).message);
         logger.error('Failed to send push notification', error);
         throw error;
       }

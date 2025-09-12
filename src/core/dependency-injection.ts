@@ -168,7 +168,7 @@ export class EnterpriseContainer extends EventEmitter {
         });
       }
 
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to register service', { serviceId: definition.id, error });
       throw error;
     }
@@ -222,7 +222,7 @@ export class EnterpriseContainer extends EventEmitter {
 
       return instance;
 
-    } catch (error) {
+    } catch (error: unknown) {
       if (this.configuration.enableMetrics) {
         const metrics = this.serviceMetrics.get(serviceId);
         if (metrics) {
@@ -299,7 +299,7 @@ export class EnterpriseContainer extends EventEmitter {
             status,
             lastCheck: new Date()
           });
-        } catch (error) {
+        } catch (error: unknown) {
           unhealthyCount++;
           services.push({
             id: serviceId,
@@ -611,7 +611,7 @@ export class EnterpriseContainer extends EventEmitter {
         if (!isHealthy) {
           this.emit('serviceUnhealthy', { serviceId: definition.id, name: definition.name });
         }
-      } catch (error) {
+      } catch (error: unknown) {
         const instance = this.singletonInstances.get(definition.id);
         if (instance) {
           instance.healthStatus = 'UNHEALTHY';

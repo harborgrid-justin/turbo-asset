@@ -228,7 +228,7 @@ export class EnterpriseServiceBusService extends EventEmitter {
       this.emit(EVENT_TYPES.MESSAGE_FAILED, {
         messageId,
         flowId,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: error instanceof Error ? (error as Error).message : 'Unknown error',
         timestamp: new Date(),
       });
 
@@ -889,7 +889,7 @@ export class EnterpriseServiceBusService extends EventEmitter {
       await this.retryQueue.add('retry-message', {
         messageId,
         flowId,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: error instanceof Error ? (error as Error).message : 'Unknown error',
         retryCount: 0,
         maxRetries: retryPolicy.maxRetries,
         retryDelay: retryPolicy.retryDelay,

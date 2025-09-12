@@ -40,7 +40,7 @@ export class PortfolioVisualizationService {
     } catch (error: unknown) {
       logger.error('Failed to generate portfolio overview charts', {
         organizationId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -249,7 +249,7 @@ export class PortfolioVisualizationService {
     } catch (error: unknown) {
       logger.error('Failed to generate KPI dashboard charts', {
         organizationId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -392,7 +392,7 @@ export class PortfolioVisualizationService {
       };
 
     } catch (error: unknown) {
-      logger.error('Failed to generate lease expiration chart', { error: error.message });
+      logger.error('Failed to generate lease expiration chart', { error: (error as Error).message });
       throw error;
     }
   }

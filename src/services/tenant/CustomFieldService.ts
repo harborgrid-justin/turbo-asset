@@ -208,7 +208,7 @@ export class CustomFieldService {
           try {
             await this.validateFieldValue(fieldDef, value);
           } catch (error: unknown) {
-            errors[fieldDef.name] = error instanceof Error ? error.message : 'Invalid value';
+            errors[fieldDef.name] = error instanceof Error ? (error as Error).message : 'Invalid value';
           }
         }
 
@@ -534,7 +534,7 @@ export class CustomFieldService {
           errorCount++;
           errors.push({
             entityId,
-            error: error.message,
+            error: (error as Error).message,
           });
         }
       }

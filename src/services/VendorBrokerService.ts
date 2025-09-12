@@ -702,7 +702,7 @@ export class VendorBrokerService {
           results.push({
             vendorId: update.vendorId,
             status: 'ERROR',
-            error: error instanceof Error ? error.message : 'Unknown error'
+            error: error instanceof Error ? (error as Error).message : 'Unknown error'
           });
         }
       }

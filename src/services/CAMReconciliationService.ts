@@ -687,13 +687,13 @@ export class CAMReconciliationService {
         } catch (error: unknown) {
           logger.error('Failed to process reconciliation for lease', {
             leaseId: lease.id,
-            error: error instanceof Error ? error.message : 'Unknown error'
+            error: error instanceof Error ? (error as Error).message : 'Unknown error'
           });
           
           results.push({
             leaseId: lease.id,
             status: 'ERROR',
-            error: error instanceof Error ? error.message : 'Unknown error'
+            error: error instanceof Error ? (error as Error).message : 'Unknown error'
           });
           
           errors++;

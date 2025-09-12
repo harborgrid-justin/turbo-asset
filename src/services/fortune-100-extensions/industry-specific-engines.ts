@@ -439,7 +439,7 @@ export class Fortune100IndustryEngine {
         success: false,
         error: {
           code: 'INDUSTRY_ANALYSIS_FAILED',
-          message: `Industry analysis failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+          message: `Industry analysis failed: ${error instanceof Error ? (error as Error).message : 'Unknown error'}`
         },
         data: null
       };
