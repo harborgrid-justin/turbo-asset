@@ -32,7 +32,7 @@ const portfolioService = new PortfolioService();
  *       500:
  *         description: Internal server error
  */
-router.get('/utilization/:organizationId/predictive', async (req: Request, res: Response) => {
+router.get('/utilization/:organizationId/predictive', async (req: Request, res: Response): Promise<void> => {
   try {
     const { organizationId } = req.params;
     const { timeHorizon = '90' } = req.query;
@@ -94,22 +94,24 @@ router.get('/utilization/:organizationId/predictive', async (req: Request, res: 
  *       500:
  *         description: Internal server error
  */
-router.post('/sensor-data', async (req: Request, res: Response) => {
+router.post('/sensor-data', async (req: Request, res: Response): Promise<void> => {
   try {
     const { sensorData = [] } = req.body;
 
     if (!Array.isArray(sensorData) || sensorData.length === 0) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Sensor data array is required and cannot be empty',
       });
+      return;
     }
 
     // Validate sensor data structure
     for (const data of sensorData) {
       if (!data.sensorId || !data.spaceId || !data.sensorType || typeof data.value !== 'number') {
-        return res.status(400).json({
+        res.status(400).json({
           error: 'Each sensor data entry must have sensorId, spaceId, sensorType, and value',
         });
+      return;
       }
     }
 
@@ -175,7 +177,7 @@ router.post('/sensor-data', async (req: Request, res: Response) => {
  *       500:
  *         description: Internal server error
  */
-router.get('/enterprise/:organizationId/insights', async (req: Request, res: Response) => {
+router.get('/enterprise/:organizationId/insights', async (req: Request, res: Response): Promise<void> => {
   try {
     const { organizationId } = req.params;
     const {
@@ -239,7 +241,7 @@ router.get('/enterprise/:organizationId/insights', async (req: Request, res: Res
  *       500:
  *         description: Internal server error
  */
-router.get('/portfolio/:organizationId/executive', async (req: Request, res: Response) => {
+router.get('/portfolio/:organizationId/executive', async (req: Request, res: Response): Promise<void> => {
   try {
     const { organizationId } = req.params;
     const {
@@ -303,7 +305,7 @@ router.get('/portfolio/:organizationId/executive', async (req: Request, res: Res
  *       500:
  *         description: Internal server error
  */
-router.get('/portfolio/:organizationId/advanced', async (req: Request, res: Response) => {
+router.get('/portfolio/:organizationId/advanced', async (req: Request, res: Response): Promise<void> => {
   try {
     const { organizationId } = req.params;
     const {
@@ -349,7 +351,7 @@ router.get('/portfolio/:organizationId/advanced', async (req: Request, res: Resp
  *       500:
  *         description: Internal server error
  */
-router.get('/portfolio/:organizationId/realtime', async (req: Request, res: Response) => {
+router.get('/portfolio/:organizationId/realtime', async (req: Request, res: Response): Promise<void> => {
   try {
     const { organizationId } = req.params;
 
@@ -391,7 +393,7 @@ router.get('/portfolio/:organizationId/realtime', async (req: Request, res: Resp
  *       500:
  *         description: Internal server error
  */
-router.get('/esg/:organizationId', async (req: Request, res: Response) => {
+router.get('/esg/:organizationId', async (req: Request, res: Response): Promise<void> => {
   try {
     const { organizationId } = req.params;
     const { reportingPeriod = 'QUARTERLY' } = req.query;
@@ -446,7 +448,7 @@ router.get('/esg/:organizationId', async (req: Request, res: Response) => {
  *       500:
  *         description: Internal server error
  */
-router.get('/benchmarking/:organizationId', async (req: Request, res: Response) => {
+router.get('/benchmarking/:organizationId', async (req: Request, res: Response): Promise<void> => {
   try {
     const { organizationId } = req.params;
     const { industry, region, companySize } = req.query;
@@ -577,7 +579,7 @@ router.get('/benchmarking/:organizationId', async (req: Request, res: Response) 
  *       500:
  *         description: Internal server error
  */
-router.post('/optimization/:organizationId', async (req: Request, res: Response) => {
+router.post('/optimization/:organizationId', async (req: Request, res: Response): Promise<void> => {
   try {
     const { organizationId } = req.params;
     const {
@@ -587,9 +589,10 @@ router.post('/optimization/:organizationId', async (req: Request, res: Response)
     } = req.body;
 
     if (targetUtilization < 0 || targetUtilization > 100) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Target utilization must be between 0 and 100',
       });
+      return;
     }
 
     // This would be implemented with actual optimization algorithms

@@ -12,7 +12,7 @@ export class ReportingController {
   /**
    * Generate standard reports
    */
-  generateReport = async (req: Request, res: Response) => {
+  generateReport = async (req: Request, res: Response): Promise<void> => {
     try {
       const { organizationId } = req.params;
       const { reportType, parameters, format } = req.body;
@@ -40,7 +40,7 @@ export class ReportingController {
   /**
    * Get scheduled reports
    */
-  getScheduledReports = async (req: Request, res: Response) => {
+  getScheduledReports = async (req: Request, res: Response): Promise<void> => {
     try {
       const { organizationId } = req.params;
 
@@ -62,7 +62,7 @@ export class ReportingController {
   /**
    * Schedule a report
    */
-  scheduleReport = async (req: Request, res: Response) => {
+  scheduleReport = async (req: Request, res: Response): Promise<void> => {
     try {
       const { organizationId } = req.params;
       const scheduleData = req.body;
@@ -88,7 +88,7 @@ export class ReportingController {
   /**
    * Export report
    */
-  exportReport = async (req: Request, res: Response) => {
+  exportReport = async (req: Request, res: Response): Promise<void> => {
     try {
       const { organizationId, reportId } = req.params;
       const { format } = req.query;
@@ -115,7 +115,7 @@ export class ReportingController {
   /**
    * Get report templates
    */
-  getReportTemplates = async (req: Request, res: Response) => {
+  getReportTemplates = async (req: Request, res: Response): Promise<void> => {
     try {
       const { organizationId } = req.params;
 
@@ -137,7 +137,7 @@ export class ReportingController {
   /**
    * Create report template
    */
-  createReportTemplate = async (req: Request, res: Response) => {
+  createReportTemplate = async (req: Request, res: Response): Promise<void> => {
     try {
       const { organizationId } = req.params;
       const templateData = req.body;
@@ -163,7 +163,7 @@ export class ReportingController {
   /**
    * Get report history
    */
-  getReportHistory = async (req: Request, res: Response) => {
+  getReportHistory = async (req: Request, res: Response): Promise<void> => {
     try {
       const { organizationId } = req.params;
       const { limit, offset } = req.query;
@@ -190,7 +190,7 @@ export class ReportingController {
   /**
    * Get report analytics
    */
-  getReportAnalytics = async (req: Request, res: Response) => {
+  getReportAnalytics = async (req: Request, res: Response): Promise<void> => {
     try {
       const { organizationId } = req.params;
 
@@ -212,7 +212,7 @@ export class ReportingController {
   /**
    * Delete scheduled report
    */
-  deleteScheduledReport = async (req: Request, res: Response) => {
+  deleteScheduledReport = async (req: Request, res: Response): Promise<void> => {
     try {
       const { organizationId, scheduleId } = req.params;
 
@@ -234,7 +234,7 @@ export class ReportingController {
   /**
    * Update scheduled report
    */
-  updateScheduledReport = async (req: Request, res: Response) => {
+  updateScheduledReport = async (req: Request, res: Response): Promise<void> => {
     try {
       const { organizationId, scheduleId } = req.params;
       const updateData = req.body;

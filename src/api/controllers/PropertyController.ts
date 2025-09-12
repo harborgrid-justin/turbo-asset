@@ -9,14 +9,15 @@ const customFieldService = new CustomFieldService();
 /**
  * Get properties for an organization
  */
-router.get('/', async (req: Request, res: Response) => {
+router.get('/', async (req: Request, res: Response): Promise<void> => {
   try {
     const { organizationId, limit = 50, offset = 0 } = req.query;
 
     if (!organizationId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Organization ID is required',
       });
+      return;
     }
 
     const properties = await prisma.property.findMany({
@@ -78,7 +79,7 @@ router.get('/', async (req: Request, res: Response) => {
 /**
  * Get property by ID
  */
-router.get('/:id', async (req: Request, res: Response) => {
+router.get('/:id', async (req: Request, res: Response): Promise<void> => {
   try {
     const { id } = req.params;
     const { organizationId } = req.query;
@@ -109,9 +110,10 @@ router.get('/:id', async (req: Request, res: Response) => {
     });
 
     if (!property) {
-      return res.status(404).json({
+      res.status(404).json({
         error: 'Property not found',
       });
+      return;
     }
 
     // Get custom field values
@@ -135,7 +137,7 @@ router.get('/:id', async (req: Request, res: Response) => {
 /**
  * Create new property
  */
-router.post('/', async (req: Request, res: Response) => {
+router.post('/', async (req: Request, res: Response): Promise<void> => {
   try {
     const {
       organizationId,
@@ -154,9 +156,10 @@ router.post('/', async (req: Request, res: Response) => {
 
     // Validate required fields
     if (!organizationId || !name || !type) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Organization ID, name, and type are required',
       });
+      return;
     }
 
     // Validate custom fields
@@ -167,10 +170,11 @@ router.post('/', async (req: Request, res: Response) => {
     );
 
     if (!customFieldValidation.isValid) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Custom field validation failed',
         errors: customFieldValidation.errors,
       });
+      return;
     }
 
     // Create property
@@ -226,7 +230,7 @@ router.post('/', async (req: Request, res: Response) => {
 /**
  * Update property
  */
-router.put('/:id', async (req: Request, res: Response) => {
+router.put('/:id', async (req: Request, res: Response): Promise<void> => {
   try {
     const { id } = req.params;
     const {
@@ -253,9 +257,10 @@ router.put('/:id', async (req: Request, res: Response) => {
     });
 
     if (!existingProperty) {
-      return res.status(404).json({
+      res.status(404).json({
         error: 'Property not found',
       });
+      return;
     }
 
     // Validate custom fields
@@ -267,10 +272,11 @@ router.put('/:id', async (req: Request, res: Response) => {
       );
 
       if (!customFieldValidation.isValid) {
-        return res.status(400).json({
+        res.status(400).json({
           error: 'Custom field validation failed',
           errors: customFieldValidation.errors,
         });
+      return;
       }
     }
 
@@ -328,7 +334,7 @@ router.put('/:id', async (req: Request, res: Response) => {
 /**
  * Delete property
  */
-router.delete('/:id', async (req: Request, res: Response) => {
+router.delete('/:id', async (req: Request, res: Response): Promise<void> => {
   try {
     const { id } = req.params;
     const { organizationId } = req.query;
@@ -341,9 +347,10 @@ router.delete('/:id', async (req: Request, res: Response) => {
     });
 
     if (!property) {
-      return res.status(404).json({
+      res.status(404).json({
         error: 'Property not found',
       });
+      return;
     }
 
     // Soft delete - mark as inactive

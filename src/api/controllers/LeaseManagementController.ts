@@ -9,7 +9,7 @@ const leaseManagementService = new LeaseManagementService();
  * Create a new lease
  * POST /api/lease-management/leases
  */
-router.post('/leases', async (req: Request, res: Response) => {
+router.post('/leases', async (req: Request, res: Response): Promise<void> => {
   try {
     const {
       organizationId,
@@ -44,9 +44,10 @@ router.post('/leases', async (req: Request, res: Response) => {
 
     // Validate required fields
     if (!organizationId || !propertyId || !tenantId || !leaseNumber || !leaseName || !startDate || !endDate || !originalTerm || !baseLease || !expirationDate) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Required fields missing: organizationId, propertyId, tenantId, leaseNumber, leaseName, startDate, endDate, originalTerm, baseLease, expirationDate'
       });
+      return;
     }
 
     const leaseData = {
@@ -99,14 +100,15 @@ router.post('/leases', async (req: Request, res: Response) => {
  * Get lease portfolio summary
  * GET /api/lease-management/portfolio/summary/:organizationId
  */
-router.get('/portfolio/summary/:organizationId', async (req: Request, res: Response) => {
+router.get('/portfolio/summary/:organizationId', async (req: Request, res: Response): Promise<void> => {
   try {
     const { organizationId } = req.params;
     
     if (!organizationId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Organization ID is required'
       });
+      return;
     }
 
     const summary = await leaseManagementService.getPortfolioSummary(organizationId);
@@ -128,7 +130,7 @@ router.get('/portfolio/summary/:organizationId', async (req: Request, res: Respo
  * Search leases with filters
  * GET /api/lease-management/leases/search
  */
-router.get('/leases/search', async (req: Request, res: Response) => {
+router.get('/leases/search', async (req: Request, res: Response): Promise<void> => {
   try {
     const {
       organizationId,
@@ -144,9 +146,10 @@ router.get('/leases/search', async (req: Request, res: Response) => {
     } = req.query;
 
     if (!organizationId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Organization ID is required'
       });
+      return;
     }
 
     const query = {
@@ -186,15 +189,16 @@ router.get('/leases/search', async (req: Request, res: Response) => {
  * Get lease metrics and analytics
  * GET /api/lease-management/metrics/:organizationId
  */
-router.get('/metrics/:organizationId', async (req: Request, res: Response) => {
+router.get('/metrics/:organizationId', async (req: Request, res: Response): Promise<void> => {
   try {
     const { organizationId } = req.params;
     const { propertyIds } = req.query;
     
     if (!organizationId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Organization ID is required'
       });
+      return;
     }
 
     const propertyIdArray = propertyIds ? (propertyIds as string).split(',') : undefined;
@@ -217,15 +221,16 @@ router.get('/metrics/:organizationId', async (req: Request, res: Response) => {
  * Analyze renewal opportunities
  * GET /api/lease-management/renewals/analyze/:organizationId
  */
-router.get('/renewals/analyze/:organizationId', async (req: Request, res: Response) => {
+router.get('/renewals/analyze/:organizationId', async (req: Request, res: Response): Promise<void> => {
   try {
     const { organizationId } = req.params;
     const { monthsAhead } = req.query;
     
     if (!organizationId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Organization ID is required'
       });
+      return;
     }
 
     const months = monthsAhead ? parseInt(monthsAhead as string) : 18;
@@ -255,21 +260,23 @@ router.get('/renewals/analyze/:organizationId', async (req: Request, res: Respon
  * Update lease
  * PUT /api/lease-management/leases/:leaseId
  */
-router.put('/leases/:leaseId', async (req: Request, res: Response) => {
+router.put('/leases/:leaseId', async (req: Request, res: Response): Promise<void> => {
   try {
     const { leaseId } = req.params;
     const { amendmentReason, ...updates } = req.body;
     
     if (!leaseId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Lease ID is required'
       });
+      return;
     }
 
     if (!amendmentReason) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Amendment reason is required'
       });
+      return;
     }
 
     // Convert date strings to Date objects
@@ -310,28 +317,31 @@ router.put('/leases/:leaseId', async (req: Request, res: Response) => {
  * Generate lease report
  * POST /api/lease-management/reports/:organizationId
  */
-router.post('/reports/:organizationId', async (req: Request, res: Response) => {
+router.post('/reports/:organizationId', async (req: Request, res: Response): Promise<void> => {
   try {
     const { organizationId } = req.params;
     const { reportType, filters } = req.body;
     
     if (!organizationId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Organization ID is required'
       });
+      return;
     }
 
     if (!reportType) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Report type is required'
       });
+      return;
     }
 
     const validReportTypes = ['EXPIRATION_REPORT', 'RENT_ROLL', 'TENANT_ANALYSIS', 'RENEWAL_PIPELINE'];
     if (!validReportTypes.includes(reportType)) {
-      return res.status(400).json({
+      res.status(400).json({
         error: `Invalid report type. Must be one of: ${validReportTypes.join(', ')}`
       });
+      return;
     }
 
     const report = await leaseManagementService.generateLeaseReport(organizationId, reportType, filters);
@@ -353,14 +363,15 @@ router.post('/reports/:organizationId', async (req: Request, res: Response) => {
  * Get single lease by ID
  * GET /api/lease-management/leases/:leaseId
  */
-router.get('/leases/:leaseId', async (req: Request, res: Response) => {
+router.get('/leases/:leaseId', async (req: Request, res: Response): Promise<void> => {
   try {
     const { leaseId } = req.params;
     
     if (!leaseId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Lease ID is required'
       });
+      return;
     }
 
     // This would be implemented in the service
@@ -382,14 +393,15 @@ router.get('/leases/:leaseId', async (req: Request, res: Response) => {
  * Delete lease (soft delete)
  * DELETE /api/lease-management/leases/:leaseId
  */
-router.delete('/leases/:leaseId', async (req: Request, res: Response) => {
+router.delete('/leases/:leaseId', async (req: Request, res: Response): Promise<void> => {
   try {
     const { leaseId } = req.params;
     
     if (!leaseId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Lease ID is required'
       });
+      return;
     }
 
     // This would be implemented in the service
@@ -411,14 +423,15 @@ router.delete('/leases/:leaseId', async (req: Request, res: Response) => {
  * Get lease dashboard data
  * GET /api/lease-management/dashboard/:organizationId
  */
-router.get('/dashboard/:organizationId', async (req: Request, res: Response) => {
+router.get('/dashboard/:organizationId', async (req: Request, res: Response): Promise<void> => {
   try {
     const { organizationId } = req.params;
     
     if (!organizationId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Organization ID is required'
       });
+      return;
     }
 
     // Get comprehensive dashboard data

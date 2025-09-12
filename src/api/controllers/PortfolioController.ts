@@ -14,7 +14,7 @@ const chargebackService = new ChargebackService();
 /**
  * Get comprehensive portfolio dashboard
  */
-router.get('/dashboard', async (req: Request, res: Response) => {
+router.get('/dashboard', async (req: Request, res: Response): Promise<void> => {
   try {
     const { 
       organizationId,
@@ -26,9 +26,10 @@ router.get('/dashboard', async (req: Request, res: Response) => {
     } = req.query;
 
     if (!organizationId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Organization ID is required',
       });
+      return;
     }
 
     const query = {
@@ -55,15 +56,16 @@ router.get('/dashboard', async (req: Request, res: Response) => {
 /**
  * Get property drill-down data
  */
-router.get('/properties/:id/drilldown', async (req: Request, res: Response) => {
+router.get('/properties/:id/drilldown', async (req: Request, res: Response): Promise<void> => {
   try {
     const { id } = req.params;
     const { organizationId } = req.query;
 
     if (!organizationId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Organization ID is required',
       });
+      return;
     }
 
     const drillDown = await portfolioService.getPropertyDrillDown(
@@ -84,7 +86,7 @@ router.get('/properties/:id/drilldown', async (req: Request, res: Response) => {
 /**
  * Get space utilization analytics
  */
-router.get('/utilization/analytics', async (req: Request, res: Response) => {
+router.get('/utilization/analytics', async (req: Request, res: Response): Promise<void> => {
   try {
     const {
       organizationId,
@@ -98,9 +100,10 @@ router.get('/utilization/analytics', async (req: Request, res: Response) => {
     } = req.query;
 
     if (!organizationId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Organization ID is required',
       });
+      return;
     }
 
     const query = {
@@ -129,14 +132,15 @@ router.get('/utilization/analytics', async (req: Request, res: Response) => {
 /**
  * Get real-time occupancy data
  */
-router.get('/occupancy/realtime', async (req: Request, res: Response) => {
+router.get('/occupancy/realtime', async (req: Request, res: Response): Promise<void> => {
   try {
     const { organizationId, spaceIds } = req.query;
 
     if (!organizationId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Organization ID is required',
       });
+      return;
     }
 
     const spaceIdArray = spaceIds 
@@ -161,14 +165,15 @@ router.get('/occupancy/realtime', async (req: Request, res: Response) => {
 /**
  * Get move analytics
  */
-router.get('/moves/analytics', async (req: Request, res: Response) => {
+router.get('/moves/analytics', async (req: Request, res: Response): Promise<void> => {
   try {
     const { organizationId, startDate, endDate } = req.query;
 
     if (!organizationId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Organization ID is required',
       });
+      return;
     }
 
     const period = startDate && endDate ? {
@@ -194,14 +199,15 @@ router.get('/moves/analytics', async (req: Request, res: Response) => {
 /**
  * Get chargeback analytics
  */
-router.get('/chargeback/analytics', async (req: Request, res: Response) => {
+router.get('/chargeback/analytics', async (req: Request, res: Response): Promise<void> => {
   try {
     const { organizationId, periodCount = 12 } = req.query;
 
     if (!organizationId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Organization ID is required',
       });
+      return;
     }
 
     const analytics = await chargebackService.getChargebackAnalytics(
@@ -222,21 +228,23 @@ router.get('/chargeback/analytics', async (req: Request, res: Response) => {
 /**
  * Generate chargeback report
  */
-router.get('/chargeback/report', async (req: Request, res: Response) => {
+router.get('/chargeback/report', async (req: Request, res: Response): Promise<void> => {
   try {
     const { organizationId, period, departmentId } = req.query;
 
     if (!organizationId || !period) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Organization ID and period are required',
       });
+      return;
     }
 
     // Validate period format (YYYY-MM)
     if (!/^\d{4}-\d{2}$/.test(period as string)) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Period must be in YYYY-MM format',
       });
+      return;
     }
 
     const report = await chargebackService.generateChargebackReport(
@@ -258,7 +266,7 @@ router.get('/chargeback/report', async (req: Request, res: Response) => {
 /**
  * Get utilization report
  */
-router.get('/utilization/report', async (req: Request, res: Response) => {
+router.get('/utilization/report', async (req: Request, res: Response): Promise<void> => {
   try {
     const {
       organizationId,
@@ -272,9 +280,10 @@ router.get('/utilization/report', async (req: Request, res: Response) => {
     } = req.query;
 
     if (!organizationId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Organization ID is required',
       });
+      return;
     }
 
     const query = {
@@ -303,14 +312,15 @@ router.get('/utilization/report', async (req: Request, res: Response) => {
 /**
  * Record utilization data (for sensor integration)
  */
-router.post('/utilization/record', async (req: Request, res: Response) => {
+router.post('/utilization/record', async (req: Request, res: Response): Promise<void> => {
   try {
     const { organizationId, records } = req.body;
 
     if (!organizationId || !records || !Array.isArray(records)) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Organization ID and records array are required',
       });
+      return;
     }
 
     await utilizationService.recordUtilization(records);
@@ -331,22 +341,24 @@ router.post('/utilization/record', async (req: Request, res: Response) => {
 /**
  * Process sensor data
  */
-router.post('/utilization/sensor-data', async (req: Request, res: Response) => {
+router.post('/utilization/sensor-data', async (req: Request, res: Response): Promise<void> => {
   try {
     const { organizationId, sensorData } = req.body;
 
     if (!organizationId || !sensorData || !Array.isArray(sensorData)) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Organization ID and sensor data array are required',
       });
+      return;
     }
 
     // Validate sensor data format
     for (const sensor of sensorData) {
       if (!sensor.sensorId || !sensor.spaceId || !sensor.data || !sensor.timestamp) {
-        return res.status(400).json({
+        res.status(400).json({
           error: 'Each sensor data record must have sensorId, spaceId, data, and timestamp',
         });
+      return;
       }
     }
 
@@ -368,7 +380,7 @@ router.post('/utilization/sensor-data', async (req: Request, res: Response) => {
 /**
  * Get portfolio summary statistics
  */
-router.get('/summary', async (req: Request, res: Response) => {
+router.get('/summary', async (req: Request, res: Response): Promise<void> => {
   try {
     const { 
       organizationId,
@@ -377,9 +389,10 @@ router.get('/summary', async (req: Request, res: Response) => {
     } = req.query;
 
     if (!organizationId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Organization ID is required',
       });
+      return;
     }
 
     const query = {

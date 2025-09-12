@@ -210,10 +210,11 @@ export class EnhancedBusinessLogicIntegrationController {
       const bridgeInfo = enhancedBusinessLogicService.getBridgeInfo(serviceName);
 
       if (!bridgeInfo) {
-        return res.status(404).json({
+        res.status(404).json({
           success: false,
           error: `Service '${serviceName}' not found`
         });
+      return;
       }
 
       res.json({
@@ -249,10 +250,11 @@ export class EnhancedBusinessLogicIntegrationController {
       const bridgeInfo = enhancedBusinessLogicService.getBridgeInfo(serviceName);
 
       if (!bridgeInfo) {
-        return res.status(404).json({
+        res.status(404).json({
           success: false,
           error: `Service '${serviceName}' not found`
         });
+      return;
       }
 
       res.json({
@@ -287,10 +289,11 @@ export class EnhancedBusinessLogicIntegrationController {
       const { serviceName, methodName, parameters, options = {} } = req.body;
 
       if (!serviceName || !methodName) {
-        return res.status(400).json({
+        res.status(400).json({
           success: false,
           error: 'serviceName and methodName are required'
         });
+      return;
       }
 
       const startTime = Date.now();
@@ -345,10 +348,11 @@ export class EnhancedBusinessLogicIntegrationController {
       const { serviceName, methodName, rules } = req.body;
 
       if (!serviceName || !methodName || !rules) {
-        return res.status(400).json({
+        res.status(400).json({
           success: false,
           error: 'serviceName, methodName, and rules are required'
         });
+      return;
       }
 
       // In a real implementation, this would update the validation rules
@@ -386,10 +390,11 @@ export class EnhancedBusinessLogicIntegrationController {
       const bridgeInfo = enhancedBusinessLogicService.getBridgeInfo(serviceName);
 
       if (!bridgeInfo) {
-        return res.status(404).json({
+        res.status(404).json({
           success: false,
           error: `Service '${serviceName}' not found`
         });
+      return;
       }
 
       enhancedBusinessLogicService.resetMetrics(serviceName);

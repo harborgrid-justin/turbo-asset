@@ -90,12 +90,13 @@ const upload = multer({
  *       500:
  *         description: Internal server error
  */
-router.post('/upload', upload.single('file'), async (req: Request, res: Response) => {
+router.post('/upload', upload.single('file'), async (req: Request, res: Response): Promise<void> => {
   try {
     if (!req.file) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'No file provided',
       });
+      return;
     }
 
     const {
@@ -116,9 +117,10 @@ router.post('/upload', upload.single('file'), async (req: Request, res: Response
     } = req.body;
 
     if (!buildingId || !organizationId || !uploadedBy) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Building ID, organization ID, and uploader ID are required',
       });
+      return;
     }
 
     // Determine file type from extension
@@ -196,7 +198,7 @@ router.post('/upload', upload.single('file'), async (req: Request, res: Response
  *       500:
  *         description: Internal server error
  */
-router.get('/files/:fileId', async (req: Request, res: Response) => {
+router.get('/files/:fileId', async (req: Request, res: Response): Promise<void> => {
   try {
     const { fileId } = req.params;
     const { includeContent = 'false' } = req.query;
@@ -269,15 +271,16 @@ router.get('/files/:fileId', async (req: Request, res: Response) => {
  *       500:
  *         description: Internal server error
  */
-router.put('/files/:fileId/mappings', async (req: Request, res: Response) => {
+router.put('/files/:fileId/mappings', async (req: Request, res: Response): Promise<void> => {
   try {
     const { fileId } = req.params;
     const { mappings = [] } = req.body;
 
     if (!Array.isArray(mappings)) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Mappings must be an array',
       });
+      return;
     }
 
     const result = await cadService.updateSpaceMappings(fileId, mappings);
@@ -346,7 +349,7 @@ router.put('/files/:fileId/mappings', async (req: Request, res: Response) => {
  *       500:
  *         description: Internal server error
  */
-router.post('/files/:fileId/floor-plan', async (req: Request, res: Response) => {
+router.post('/files/:fileId/floor-plan', async (req: Request, res: Response): Promise<void> => {
   try {
     const { fileId } = req.params;
     const {
@@ -439,7 +442,7 @@ router.post('/files/:fileId/floor-plan', async (req: Request, res: Response) => 
  *       500:
  *         description: Internal server error
  */
-router.post('/files/:fileId/sync', async (req: Request, res: Response) => {
+router.post('/files/:fileId/sync', async (req: Request, res: Response): Promise<void> => {
   try {
     const { fileId } = req.params;
     const {
@@ -493,7 +496,7 @@ router.post('/files/:fileId/sync', async (req: Request, res: Response) => {
  *       500:
  *         description: Internal server error
  */
-router.get('/processing/:processingId/status', async (req: Request, res: Response) => {
+router.get('/processing/:processingId/status', async (req: Request, res: Response): Promise<void> => {
   try {
     const { processingId } = req.params;
 
@@ -539,7 +542,7 @@ router.get('/processing/:processingId/status', async (req: Request, res: Respons
  *       500:
  *         description: Internal server error
  */
-router.get('/analytics/:organizationId', async (req: Request, res: Response) => {
+router.get('/analytics/:organizationId', async (req: Request, res: Response): Promise<void> => {
   try {
     const { organizationId } = req.params;
     const { timeframe = 'MONTHLY' } = req.query;

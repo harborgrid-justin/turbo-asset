@@ -32,7 +32,8 @@ router.get('/', async (req, res) => {
     const organizationId = req.headers['x-organization-id'] as string;
 
     if (!organizationId) {
-      return res.status(400).json({ error: 'Organization ID required' });
+      res.status(400).json({ error: 'Organization ID required' });
+      return;
     }
 
     const filters = {
@@ -101,7 +102,8 @@ router.post('/', async (req, res) => {
     const createdBy = req.headers['x-user-id'] as string;
 
     if (!organizationId || !createdBy) {
-      return res.status(400).json({ error: 'Organization ID and User ID required' });
+      res.status(400).json({ error: 'Organization ID and User ID required' });
+      return;
     }
 
     const workOrderData = {
@@ -193,11 +195,13 @@ router.put('/:id/status', async (req, res) => {
     const { status, notes } = req.body;
 
     if (!updatedBy) {
-      return res.status(400).json({ error: 'User ID required' });
+      res.status(400).json({ error: 'User ID required' });
+      return;
     }
 
     if (!status) {
-      return res.status(400).json({ error: 'Status is required' });
+      res.status(400).json({ error: 'Status is required' });
+      return;
     }
 
     const workOrder = await workOrderService.updateWorkOrderStatus(workOrderId, status, updatedBy, notes);
@@ -409,11 +413,13 @@ router.put('/tasks/:taskId/status', async (req, res) => {
     const { status, actualHours, notes } = req.body;
 
     if (!updatedBy) {
-      return res.status(400).json({ error: 'User ID required' });
+      res.status(400).json({ error: 'User ID required' });
+      return;
     }
 
     if (!status) {
-      return res.status(400).json({ error: 'Status is required' });
+      res.status(400).json({ error: 'Status is required' });
+      return;
     }
 
     const task = await workOrderService.updateTaskStatus(taskId, status, updatedBy, actualHours, notes);
@@ -466,11 +472,13 @@ router.put('/:id/assign', async (req, res) => {
     const { technicianId, scheduledDate } = req.body;
 
     if (!assignedBy) {
-      return res.status(400).json({ error: 'User ID required' });
+      res.status(400).json({ error: 'User ID required' });
+      return;
     }
 
     if (!technicianId) {
-      return res.status(400).json({ error: 'Technician ID is required' });
+      res.status(400).json({ error: 'Technician ID is required' });
+      return;
     }
 
     const workOrder = await workOrderService.assignWorkOrder(
@@ -521,7 +529,8 @@ router.get('/metrics', async (req, res) => {
     const organizationId = req.headers['x-organization-id'] as string;
 
     if (!organizationId) {
-      return res.status(400).json({ error: 'Organization ID required' });
+      res.status(400).json({ error: 'Organization ID required' });
+      return;
     }
 
     const startDate = req.query.startDate ? new Date(req.query.startDate as string) : undefined;
@@ -576,7 +585,8 @@ router.get('/technician/:technicianId/schedule', async (req, res) => {
     const { technicianId } = req.params;
 
     if (!organizationId) {
-      return res.status(400).json({ error: 'Organization ID required' });
+      res.status(400).json({ error: 'Organization ID required' });
+      return;
     }
 
     const startDate = req.query.startDate 

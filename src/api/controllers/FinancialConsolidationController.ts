@@ -9,7 +9,7 @@ const financialConsolidationService = new FinancialConsolidationService();
  * Create financial statement
  * POST /api/financial-consolidation/statements
  */
-router.post('/statements', async (req: Request, res: Response) => {
+router.post('/statements', async (req: Request, res: Response): Promise<void> => {
   try {
     const {
       statementType,
@@ -26,29 +26,33 @@ router.post('/statements', async (req: Request, res: Response) => {
 
     // Validate required fields
     if (!statementType || !period || !fiscalYear || !fiscalPeriod || !consolidationLevel || !entityId || !entityType || !lineItems) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Required fields missing: statementType, period, fiscalYear, fiscalPeriod, consolidationLevel, entityId, entityType, lineItems'
       });
+      return;
     }
 
     const validStatementTypes = ['INCOME_STATEMENT', 'BALANCE_SHEET', 'CASH_FLOW', 'BUDGET_VARIANCE', 'CONSOLIDATED'];
     if (!validStatementTypes.includes(statementType)) {
-      return res.status(400).json({
+      res.status(400).json({
         error: `Invalid statementType. Must be one of: ${validStatementTypes.join(', ')}`
       });
+      return;
     }
 
     const validConsolidationLevels = ['PROPERTY', 'BUILDING', 'PORTFOLIO', 'REGIONAL', 'GLOBAL'];
     if (!validConsolidationLevels.includes(consolidationLevel)) {
-      return res.status(400).json({
+      res.status(400).json({
         error: `Invalid consolidationLevel. Must be one of: ${validConsolidationLevels.join(', ')}`
       });
+      return;
     }
 
     if (!Array.isArray(lineItems) || lineItems.length === 0) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'lineItems must be a non-empty array'
       });
+      return;
     }
 
     // Validate and format line items
@@ -107,7 +111,7 @@ router.post('/statements', async (req: Request, res: Response) => {
  * Create consolidation rule
  * POST /api/financial-consolidation/rules
  */
-router.post('/rules', async (req: Request, res: Response) => {
+router.post('/rules', async (req: Request, res: Response): Promise<void> => {
   try {
     const {
       ruleName,
@@ -125,22 +129,25 @@ router.post('/rules', async (req: Request, res: Response) => {
 
     // Validate required fields
     if (!ruleName || !ruleType || !sourceEntities || !targetEntity || !mappingRules || !calculationMethod || !effectiveDate) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Required fields missing: ruleName, ruleType, sourceEntities, targetEntity, mappingRules, calculationMethod, effectiveDate'
       });
+      return;
     }
 
     const validRuleTypes = ['AGGREGATION', 'ELIMINATION', 'ADJUSTMENT', 'MAPPING', 'CALCULATION'];
     if (!validRuleTypes.includes(ruleType)) {
-      return res.status(400).json({
+      res.status(400).json({
         error: `Invalid ruleType. Must be one of: ${validRuleTypes.join(', ')}`
       });
+      return;
     }
 
     if (!Array.isArray(sourceEntities) || sourceEntities.length === 0) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'sourceEntities must be a non-empty array'
       });
+      return;
     }
 
     const ruleData = {
@@ -176,22 +183,24 @@ router.post('/rules', async (req: Request, res: Response) => {
  * Perform consolidation
  * POST /api/financial-consolidation/consolidate
  */
-router.post('/consolidate', async (req: Request, res: Response) => {
+router.post('/consolidate', async (req: Request, res: Response): Promise<void> => {
   try {
     const { organizationId, consolidationLevel, period, entityIds } = req.body;
 
     // Validate required fields
     if (!organizationId || !consolidationLevel || !period) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Required fields missing: organizationId, consolidationLevel, period'
       });
+      return;
     }
 
     const validConsolidationLevels = ['PROPERTY', 'BUILDING', 'PORTFOLIO', 'REGIONAL', 'GLOBAL'];
     if (!validConsolidationLevels.includes(consolidationLevel)) {
-      return res.status(400).json({
+      res.status(400).json({
         error: `Invalid consolidationLevel. Must be one of: ${validConsolidationLevels.join(', ')}`
       });
+      return;
     }
 
     const result = await financialConsolidationService.performConsolidation(
@@ -218,15 +227,16 @@ router.post('/consolidate', async (req: Request, res: Response) => {
  * Get consolidation summary
  * GET /api/financial-consolidation/summary/:organizationId
  */
-router.get('/summary/:organizationId', async (req: Request, res: Response) => {
+router.get('/summary/:organizationId', async (req: Request, res: Response): Promise<void> => {
   try {
     const { organizationId } = req.params;
     const { period } = req.query;
 
     if (!organizationId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Organization ID is required'
       });
+      return;
     }
 
     const summary = await financialConsolidationService.getConsolidationSummary(
@@ -251,21 +261,23 @@ router.get('/summary/:organizationId', async (req: Request, res: Response) => {
  * Analyze entity contribution
  * GET /api/financial-consolidation/entity-contribution/:organizationId/:entityId
  */
-router.get('/entity-contribution/:organizationId/:entityId', async (req: Request, res: Response) => {
+router.get('/entity-contribution/:organizationId/:entityId', async (req: Request, res: Response): Promise<void> => {
   try {
     const { organizationId, entityId } = req.params;
     const { period } = req.query;
 
     if (!organizationId || !entityId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Organization ID and Entity ID are required'
       });
+      return;
     }
 
     if (!period) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Period is required (YYYY-MM format)'
       });
+      return;
     }
 
     const analysis = await financialConsolidationService.analyzeEntityContribution(
@@ -291,21 +303,23 @@ router.get('/entity-contribution/:organizationId/:entityId', async (req: Request
  * Generate global consolidation report
  * GET /api/financial-consolidation/global-report/:organizationId
  */
-router.get('/global-report/:organizationId', async (req: Request, res: Response) => {
+router.get('/global-report/:organizationId', async (req: Request, res: Response): Promise<void> => {
   try {
     const { organizationId } = req.params;
     const { reportingPeriod } = req.query;
 
     if (!organizationId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Organization ID is required'
       });
+      return;
     }
 
     if (!reportingPeriod) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Reporting period is required (YYYY-MM format)'
       });
+      return;
     }
 
     const report = await financialConsolidationService.generateGlobalConsolidationReport(
@@ -330,21 +344,23 @@ router.get('/global-report/:organizationId', async (req: Request, res: Response)
  * Generate consolidated reports
  * POST /api/financial-consolidation/reports/:organizationId
  */
-router.post('/reports/:organizationId', async (req: Request, res: Response) => {
+router.post('/reports/:organizationId', async (req: Request, res: Response): Promise<void> => {
   try {
     const { organizationId } = req.params;
     const { reportType, filters } = req.body;
 
     if (!organizationId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Organization ID is required'
       });
+      return;
     }
 
     if (!reportType) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Report type is required'
       });
+      return;
     }
 
     const validReportTypes = [
@@ -355,9 +371,10 @@ router.post('/reports/:organizationId', async (req: Request, res: Response) => {
     ];
 
     if (!validReportTypes.includes(reportType)) {
-      return res.status(400).json({
+      res.status(400).json({
         error: `Invalid report type. Must be one of: ${validReportTypes.join(', ')}`
       });
+      return;
     }
 
     const report = await financialConsolidationService.generateConsolidatedReport(
@@ -383,7 +400,7 @@ router.post('/reports/:organizationId', async (req: Request, res: Response) => {
  * Get financial statements with filtering
  * GET /api/financial-consolidation/statements
  */
-router.get('/statements', async (req: Request, res: Response) => {
+router.get('/statements', async (req: Request, res: Response): Promise<void> => {
   try {
     const {
       organizationId,
@@ -398,9 +415,10 @@ router.get('/statements', async (req: Request, res: Response) => {
     } = req.query;
 
     if (!organizationId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Organization ID is required'
       });
+      return;
     }
 
     // This would be implemented in the service
@@ -433,7 +451,7 @@ router.get('/statements', async (req: Request, res: Response) => {
  * Get consolidation rules
  * GET /api/financial-consolidation/rules
  */
-router.get('/rules', async (req: Request, res: Response) => {
+router.get('/rules', async (req: Request, res: Response): Promise<void> => {
   try {
     const { ruleType, isActive, limit, offset } = req.query;
 
@@ -462,28 +480,31 @@ router.get('/rules', async (req: Request, res: Response) => {
  * Update financial statement status
  * PUT /api/financial-consolidation/statements/:statementId/status
  */
-router.put('/statements/:statementId/status', async (req: Request, res: Response) => {
+router.put('/statements/:statementId/status', async (req: Request, res: Response): Promise<void> => {
   try {
     const { statementId } = req.params;
     const { status, reviewedBy, approvedBy, notes } = req.body;
 
     if (!statementId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Statement ID is required'
       });
+      return;
     }
 
     if (!status) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Status is required'
       });
+      return;
     }
 
     const validStatuses = ['DRAFT', 'CALCULATED', 'REVIEW', 'APPROVED', 'PUBLISHED', 'FINAL'];
     if (!validStatuses.includes(status)) {
-      return res.status(400).json({
+      res.status(400).json({
         error: `Invalid status. Must be one of: ${validStatuses.join(', ')}`
       });
+      return;
     }
 
     // This would be implemented in the service
@@ -506,15 +527,16 @@ router.put('/statements/:statementId/status', async (req: Request, res: Response
  * Update consolidation rule
  * PUT /api/financial-consolidation/rules/:ruleId
  */
-router.put('/rules/:ruleId', async (req: Request, res: Response) => {
+router.put('/rules/:ruleId', async (req: Request, res: Response): Promise<void> => {
   try {
     const { ruleId } = req.params;
     const updates = req.body;
 
     if (!ruleId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Rule ID is required'
       });
+      return;
     }
 
     // Convert date fields
@@ -545,15 +567,16 @@ router.put('/rules/:ruleId', async (req: Request, res: Response) => {
  * Get consolidation dashboard
  * GET /api/financial-consolidation/dashboard/:organizationId
  */
-router.get('/dashboard/:organizationId', async (req: Request, res: Response) => {
+router.get('/dashboard/:organizationId', async (req: Request, res: Response): Promise<void> => {
   try {
     const { organizationId } = req.params;
     const { period } = req.query;
 
     if (!organizationId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Organization ID is required'
       });
+      return;
     }
 
     // Get consolidation summary and global report for dashboard
@@ -602,14 +625,15 @@ router.get('/dashboard/:organizationId', async (req: Request, res: Response) => 
  * Delete financial statement
  * DELETE /api/financial-consolidation/statements/:statementId
  */
-router.delete('/statements/:statementId', async (req: Request, res: Response) => {
+router.delete('/statements/:statementId', async (req: Request, res: Response): Promise<void> => {
   try {
     const { statementId } = req.params;
 
     if (!statementId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Statement ID is required'
       });
+      return;
     }
 
     // This would be implemented in the service

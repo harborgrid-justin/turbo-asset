@@ -53,7 +53,7 @@ export class APIManagementController {
   /**
    * Create new API key
    */
-  createAPIKey = withValidation(async (req: Request, res: Response) => {
+  createAPIKey = withValidation(async (req: Request, res: Response): Promise<void> => {
     const organizationId = validateOrganizationId(req);
     const {
       name,
@@ -87,7 +87,7 @@ export class APIManagementController {
   /**
    * Update API key
    */
-  updateAPIKey = withValidation(async (req: Request, res: Response) => {
+  updateAPIKey = withValidation(async (req: Request, res: Response): Promise<void> => {
     const keyId = validateRequiredParam(req, 'keyId');
     const updates = req.body;
 

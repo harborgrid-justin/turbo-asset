@@ -8,14 +8,15 @@ const notificationService = new NotificationService();
 /**
  * Get user notifications
  */
-router.get('/', async (req: Request, res: Response) => {
+router.get('/', async (req: Request, res: Response): Promise<void> => {
   try {
     const { userId, limit = 50, offset = 0, unreadOnly = false } = req.query;
 
     if (!userId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'User ID is required',
       });
+      return;
     }
 
     const result = await notificationService.getUserNotifications(
@@ -53,15 +54,16 @@ router.get('/', async (req: Request, res: Response) => {
 /**
  * Mark notification as read
  */
-router.put('/:id/read', async (req: Request, res: Response) => {
+router.put('/:id/read', async (req: Request, res: Response): Promise<void> => {
   try {
     const { id } = req.params;
     const { userId } = req.body;
 
     if (!userId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'User ID is required',
       });
+      return;
     }
 
     await notificationService.markAsRead(id, userId);
@@ -81,14 +83,15 @@ router.put('/:id/read', async (req: Request, res: Response) => {
 /**
  * Create notification (for testing/admin purposes)
  */
-router.post('/', async (req: Request, res: Response) => {
+router.post('/', async (req: Request, res: Response): Promise<void> => {
   try {
     const { recipientId, title, message, type, priority, data } = req.body;
 
     if (!recipientId || !title || !message || !type) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Recipient ID, title, message, and type are required',
       });
+      return;
     }
 
     const notificationId = await notificationService.createNotification({

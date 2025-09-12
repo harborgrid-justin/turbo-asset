@@ -27,12 +27,13 @@ const upload = multer({
 /**
  * Import data from CSV/Excel file
  */
-router.post('/import', upload.single('file'), async (req: Request, res: Response) => {
+router.post('/import', upload.single('file'), async (req: Request, res: Response): Promise<void> => {
   try {
     if (!req.file) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'File is required',
       });
+      return;
     }
 
     const {
@@ -46,9 +47,10 @@ router.post('/import', upload.single('file'), async (req: Request, res: Response
     } = req.body;
 
     if (!entityType || !organizationId || !userId || !mapping) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Entity type, organization ID, user ID, and mapping are required',
       });
+      return;
     }
 
     const options = {
@@ -78,17 +80,18 @@ router.post('/import', upload.single('file'), async (req: Request, res: Response
     });
   } catch (error: unknown) {
     logger.error('Failed to start import job', error);
-    return res.status(500).json({
+    res.status(500).json({
       error: 'Failed to start import job',
       message: error instanceof Error ? error.message : 'Unknown error',
     });
+      return;
   }
 });
 
 /**
  * Export data to CSV/Excel file
  */
-router.post('/export', async (req: Request, res: Response) => {
+router.post('/export', async (req: Request, res: Response): Promise<void> => {
   try {
     const {
       entityType,
@@ -100,15 +103,17 @@ router.post('/export', async (req: Request, res: Response) => {
     } = req.body;
 
     if (!entityType || !organizationId || !format) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Entity type, organization ID, and format are required',
       });
+      return;
     }
 
     if (!['csv', 'xlsx'].includes(format)) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Format must be csv or xlsx',
       });
+      return;
     }
 
     const options = {
@@ -129,82 +134,89 @@ router.post('/export', async (req: Request, res: Response) => {
     });
   } catch (error: unknown) {
     logger.error('Failed to start export job', error);
-    return res.status(500).json({
+    res.status(500).json({
       error: 'Failed to start export job',
       message: error instanceof Error ? error.message : 'Unknown error',
     });
+      return;
   }
 });
 
 /**
  * Get import job status
  */
-router.get('/import/:jobId/status', async (req: Request, res: Response) => {
+router.get('/import/:jobId/status', async (req: Request, res: Response): Promise<void> => {
   try {
     const { jobId } = req.params;
     const result = await bulkDataService.getImportJobStatus(jobId);
 
     if (!result) {
-      return res.status(404).json({
+      res.status(404).json({
         error: 'Job not found',
       });
+      return;
     }
 
     return res.json(result);
   } catch (error: unknown) {
     logger.error('Failed to get import job status', error);
-    return res.status(500).json({
+    res.status(500).json({
       error: 'Failed to get import job status',
       message: error instanceof Error ? error.message : 'Unknown error',
     });
+      return;
   }
 });
 
 /**
  * Get export job status
  */
-router.get('/export/:jobId/status', async (req: Request, res: Response) => {
+router.get('/export/:jobId/status', async (req: Request, res: Response): Promise<void> => {
   try {
     const { jobId } = req.params;
     const result = await bulkDataService.getExportJobStatus(jobId);
 
     if (!result) {
-      return res.status(404).json({
+      res.status(404).json({
         error: 'Job not found',
       });
+      return;
     }
 
     return res.json(result);
   } catch (error: unknown) {
     logger.error('Failed to get export job status', error);
-    return res.status(500).json({
+    res.status(500).json({
       error: 'Failed to get export job status',
       message: error instanceof Error ? error.message : 'Unknown error',
     });
+      return;
   }
 });
 
 /**
  * Download exported file
  */
-router.get('/export/:jobId/download', async (req: Request, res: Response) => {
+router.get('/export/:jobId/download', async (req: Request, res: Response): Promise<void> => {
   try {
     const { jobId } = req.params;
     const result = await bulkDataService.getExportJobStatus(jobId);
 
     if (!result || !result.filePath) {
-      return res.status(404).json({
+      res.status(404).json({
         error: 'Export file not found',
       });
+      return;
     }
 
     return res.download(result.filePath);
   } catch (error: unknown) {
     logger.error('Failed to download export file', error);
-    return res.status(500).json({
+    res.status(500).json({
       error: 'Failed to download export file',
       message: error instanceof Error ? error.message : 'Unknown error',
     });
+      return;
   }
 });
 

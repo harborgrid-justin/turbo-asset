@@ -9,7 +9,7 @@ const complianceService = new ComplianceService();
  * Calculate lease accounting (ASC 842/IFRS 16)
  * POST /api/compliance/calculate-lease-accounting
  */
-router.post('/calculate-lease-accounting', async (req: Request, res: Response) => {
+router.post('/calculate-lease-accounting', async (req: Request, res: Response): Promise<void> => {
   try {
     const {
       leaseId,
@@ -28,15 +28,17 @@ router.post('/calculate-lease-accounting', async (req: Request, res: Response) =
 
     // Validate required fields
     if (!leaseId || !accountingStandard || !fiscalYear || !fiscalPeriod || !incrementalBorrowingRate || !leasePayments) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Required fields missing: leaseId, accountingStandard, fiscalYear, fiscalPeriod, incrementalBorrowingRate, leasePayments'
       });
+      return;
     }
 
     if (!['ASC842', 'IFRS16'].includes(accountingStandard)) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Invalid accounting standard. Must be ASC842 or IFRS16'
       });
+      return;
     }
 
     // Convert lease payments dates
@@ -82,14 +84,15 @@ router.post('/calculate-lease-accounting', async (req: Request, res: Response) =
  * Create lease accounting record with journal entries
  * POST /api/compliance/lease-accounting-records
  */
-router.post('/lease-accounting-records', async (req: Request, res: Response) => {
+router.post('/lease-accounting-records', async (req: Request, res: Response): Promise<void> => {
   try {
     const { calculationData, calculationResult, approvalWorkflow } = req.body;
 
     if (!calculationData || !calculationResult) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'calculationData and calculationResult are required'
       });
+      return;
     }
 
     // Format calculation data
@@ -129,21 +132,23 @@ router.post('/lease-accounting-records', async (req: Request, res: Response) => 
  * Process bulk lease accounting for period-end
  * POST /api/compliance/bulk-lease-accounting
  */
-router.post('/bulk-lease-accounting', async (req: Request, res: Response) => {
+router.post('/bulk-lease-accounting', async (req: Request, res: Response): Promise<void> => {
   try {
     const { organizationId, fiscalYear, fiscalPeriod, accountingStandard } = req.body;
 
     if (!organizationId || !fiscalYear || !fiscalPeriod) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'organizationId, fiscalYear, and fiscalPeriod are required'
       });
+      return;
     }
 
     const standard = accountingStandard || 'ASC842';
     if (!['ASC842', 'IFRS16'].includes(standard)) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Invalid accounting standard. Must be ASC842 or IFRS16'
       });
+      return;
     }
 
     const result = await complianceService.processBulkLeaseAccounting(
@@ -170,28 +175,31 @@ router.post('/bulk-lease-accounting', async (req: Request, res: Response) => {
  * Generate compliance report
  * GET /api/compliance/reports/:organizationId
  */
-router.get('/reports/:organizationId', async (req: Request, res: Response) => {
+router.get('/reports/:organizationId', async (req: Request, res: Response): Promise<void> => {
   try {
     const { organizationId } = req.params;
     const { reportingPeriod, accountingStandard } = req.query;
 
     if (!organizationId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Organization ID is required'
       });
+      return;
     }
 
     if (!reportingPeriod) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Reporting period is required (YYYY-MM format)'
       });
+      return;
     }
 
     const standard = (accountingStandard as string) || 'ASC842';
     if (!['ASC842', 'IFRS16'].includes(standard)) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Invalid accounting standard. Must be ASC842 or IFRS16'
       });
+      return;
     }
 
     const report = await complianceService.generateComplianceReport(
@@ -217,28 +225,31 @@ router.get('/reports/:organizationId', async (req: Request, res: Response) => {
  * Update discount rates for lease accounting
  * POST /api/compliance/update-discount-rates
  */
-router.post('/update-discount-rates', async (req: Request, res: Response) => {
+router.post('/update-discount-rates', async (req: Request, res: Response): Promise<void> => {
   try {
     const { organizationId, rateUpdates, effectiveDate } = req.body;
 
     if (!organizationId || !rateUpdates || !effectiveDate) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'organizationId, rateUpdates, and effectiveDate are required'
       });
+      return;
     }
 
     if (!Array.isArray(rateUpdates)) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'rateUpdates must be an array'
       });
+      return;
     }
 
     // Validate rate updates format
     for (const update of rateUpdates) {
       if (!update.leaseId || typeof update.discountRate !== 'number') {
-        return res.status(400).json({
+        res.status(400).json({
           error: 'Each rate update must have leaseId and discountRate'
         });
+      return;
       }
     }
 
@@ -270,28 +281,31 @@ router.post('/update-discount-rates', async (req: Request, res: Response) => {
  * Generate disclosure notes for financial statements
  * GET /api/compliance/disclosure-notes/:organizationId
  */
-router.get('/disclosure-notes/:organizationId', async (req: Request, res: Response) => {
+router.get('/disclosure-notes/:organizationId', async (req: Request, res: Response): Promise<void> => {
   try {
     const { organizationId } = req.params;
     const { fiscalYear, accountingStandard } = req.query;
 
     if (!organizationId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Organization ID is required'
       });
+      return;
     }
 
     if (!fiscalYear) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Fiscal year is required'
       });
+      return;
     }
 
     const standard = (accountingStandard as string) || 'ASC842';
     if (!['ASC842', 'IFRS16'].includes(standard)) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Invalid accounting standard. Must be ASC842 or IFRS16'
       });
+      return;
     }
 
     const disclosureNotes = await complianceService.generateDisclosureNotes(
@@ -317,7 +331,7 @@ router.get('/disclosure-notes/:organizationId', async (req: Request, res: Respon
  * Get lease accounting records with filtering
  * GET /api/compliance/lease-accounting-records
  */
-router.get('/lease-accounting-records', async (req: Request, res: Response) => {
+router.get('/lease-accounting-records', async (req: Request, res: Response): Promise<void> => {
   try {
     const {
       organizationId,
@@ -331,9 +345,10 @@ router.get('/lease-accounting-records', async (req: Request, res: Response) => {
     } = req.query;
 
     if (!organizationId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Organization ID is required'
       });
+      return;
     }
 
     // This would be implemented in the service
@@ -365,7 +380,7 @@ router.get('/lease-accounting-records', async (req: Request, res: Response) => {
  * Get journal entries for lease accounting
  * GET /api/compliance/journal-entries
  */
-router.get('/journal-entries', async (req: Request, res: Response) => {
+router.get('/journal-entries', async (req: Request, res: Response): Promise<void> => {
   try {
     const {
       organizationId,
@@ -379,9 +394,10 @@ router.get('/journal-entries', async (req: Request, res: Response) => {
     } = req.query;
 
     if (!organizationId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Organization ID is required'
       });
+      return;
     }
 
     // This would be implemented in the service
@@ -413,28 +429,31 @@ router.get('/journal-entries', async (req: Request, res: Response) => {
  * Update lease accounting record status
  * PUT /api/compliance/lease-accounting-records/:recordId/status
  */
-router.put('/lease-accounting-records/:recordId/status', async (req: Request, res: Response) => {
+router.put('/lease-accounting-records/:recordId/status', async (req: Request, res: Response): Promise<void> => {
   try {
     const { recordId } = req.params;
     const { status, notes } = req.body;
 
     if (!recordId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Record ID is required'
       });
+      return;
     }
 
     if (!status) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Status is required'
       });
+      return;
     }
 
     const validStatuses = ['DRAFT', 'CALCULATED', 'REVIEWED', 'APPROVED', 'POSTED', 'ADJUSTED'];
     if (!validStatuses.includes(status)) {
-      return res.status(400).json({
+      res.status(400).json({
         error: `Invalid status. Must be one of: ${validStatuses.join(', ')}`
       });
+      return;
     }
 
     // This would be implemented in the service
@@ -457,21 +476,23 @@ router.put('/lease-accounting-records/:recordId/status', async (req: Request, re
  * Approve journal entry
  * POST /api/compliance/journal-entries/:entryId/approve
  */
-router.post('/journal-entries/:entryId/approve', async (req: Request, res: Response) => {
+router.post('/journal-entries/:entryId/approve', async (req: Request, res: Response): Promise<void> => {
   try {
     const { entryId } = req.params;
     const { approvedBy, notes } = req.body;
 
     if (!entryId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Entry ID is required'
       });
+      return;
     }
 
     if (!approvedBy) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Approved by is required'
       });
+      return;
     }
 
     // This would be implemented in the service
@@ -494,15 +515,16 @@ router.post('/journal-entries/:entryId/approve', async (req: Request, res: Respo
  * Get compliance dashboard
  * GET /api/compliance/dashboard/:organizationId
  */
-router.get('/dashboard/:organizationId', async (req: Request, res: Response) => {
+router.get('/dashboard/:organizationId', async (req: Request, res: Response): Promise<void> => {
   try {
     const { organizationId } = req.params;
     const { fiscalYear } = req.query;
 
     if (!organizationId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Organization ID is required'
       });
+      return;
     }
 
     // Get compliance report for dashboard metrics

@@ -9,7 +9,7 @@ const criticalDateService = new CriticalDateService();
  * Create a new critical date
  * POST /api/critical-dates
  */
-router.post('/', async (req: Request, res: Response) => {
+router.post('/', async (req: Request, res: Response): Promise<void> => {
   try {
     const {
       entityType,
@@ -27,27 +27,31 @@ router.post('/', async (req: Request, res: Response) => {
 
     // Validate required fields
     if (!entityType || !entityId || !dateType || !dateValue || !description || !importance) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Required fields missing: entityType, entityId, dateType, dateValue, description, importance'
       });
+      return;
     }
 
     if (!['lease', 'contract', 'property', 'compliance'].includes(entityType)) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Invalid entityType. Must be one of: lease, contract, property, compliance'
       });
+      return;
     }
 
     if (!['LOW', 'MEDIUM', 'HIGH', 'CRITICAL'].includes(importance)) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Invalid importance. Must be one of: LOW, MEDIUM, HIGH, CRITICAL'
       });
+      return;
     }
 
     if (!Array.isArray(alertDays) || alertDays.length === 0) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'alertDays must be a non-empty array of numbers'
       });
+      return;
     }
 
     const criticalDateData = {
@@ -83,14 +87,15 @@ router.post('/', async (req: Request, res: Response) => {
  * Get critical date dashboard
  * GET /api/critical-dates/dashboard/:organizationId
  */
-router.get('/dashboard/:organizationId', async (req: Request, res: Response) => {
+router.get('/dashboard/:organizationId', async (req: Request, res: Response): Promise<void> => {
   try {
     const { organizationId } = req.params;
 
     if (!organizationId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Organization ID is required'
       });
+      return;
     }
 
     const dashboard = await criticalDateService.getCriticalDateDashboard(organizationId);
@@ -112,14 +117,15 @@ router.get('/dashboard/:organizationId', async (req: Request, res: Response) => 
  * Process daily alerts
  * POST /api/critical-dates/process-alerts/:organizationId
  */
-router.post('/process-alerts/:organizationId', async (req: Request, res: Response) => {
+router.post('/process-alerts/:organizationId', async (req: Request, res: Response): Promise<void> => {
   try {
     const { organizationId } = req.params;
 
     if (!organizationId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Organization ID is required'
       });
+      return;
     }
 
     const result = await criticalDateService.processDailyAlerts(organizationId);
@@ -141,7 +147,7 @@ router.post('/process-alerts/:organizationId', async (req: Request, res: Respons
  * Search alerts with filters
  * GET /api/critical-dates/alerts/search
  */
-router.get('/alerts/search', async (req: Request, res: Response) => {
+router.get('/alerts/search', async (req: Request, res: Response): Promise<void> => {
   try {
     const {
       organizationId,
@@ -157,9 +163,10 @@ router.get('/alerts/search', async (req: Request, res: Response) => {
     } = req.query;
 
     if (!organizationId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Organization ID is required'
       });
+      return;
     }
 
     const query = {
@@ -199,21 +206,23 @@ router.get('/alerts/search', async (req: Request, res: Response) => {
  * Acknowledge an alert
  * POST /api/critical-dates/alerts/:alertId/acknowledge
  */
-router.post('/alerts/:alertId/acknowledge', async (req: Request, res: Response) => {
+router.post('/alerts/:alertId/acknowledge', async (req: Request, res: Response): Promise<void> => {
   try {
     const { alertId } = req.params;
     const { acknowledgedBy, notes } = req.body;
 
     if (!alertId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Alert ID is required'
       });
+      return;
     }
 
     if (!acknowledgedBy) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'acknowledgedBy is required'
       });
+      return;
     }
 
     const alert = await criticalDateService.acknowledgeAlert(alertId, acknowledgedBy, notes);
@@ -235,21 +244,23 @@ router.post('/alerts/:alertId/acknowledge', async (req: Request, res: Response) 
  * Mark critical date as completed
  * POST /api/critical-dates/:criticalDateId/complete
  */
-router.post('/:criticalDateId/complete', async (req: Request, res: Response) => {
+router.post('/:criticalDateId/complete', async (req: Request, res: Response): Promise<void> => {
   try {
     const { criticalDateId } = req.params;
     const { completedBy, completionNotes } = req.body;
 
     if (!criticalDateId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Critical Date ID is required'
       });
+      return;
     }
 
     if (!completedBy) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'completedBy is required'
       });
+      return;
     }
 
     const criticalDate = await criticalDateService.completeCriticalDate(
@@ -275,15 +286,16 @@ router.post('/:criticalDateId/complete', async (req: Request, res: Response) => 
  * Update critical date
  * PUT /api/critical-dates/:criticalDateId
  */
-router.put('/:criticalDateId', async (req: Request, res: Response) => {
+router.put('/:criticalDateId', async (req: Request, res: Response): Promise<void> => {
   try {
     const { criticalDateId } = req.params;
     const updates = req.body;
 
     if (!criticalDateId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Critical Date ID is required'
       });
+      return;
     }
 
     // Convert date fields
@@ -315,21 +327,23 @@ router.put('/:criticalDateId', async (req: Request, res: Response) => {
  * Generate critical date reports
  * POST /api/critical-dates/reports/:organizationId
  */
-router.post('/reports/:organizationId', async (req: Request, res: Response) => {
+router.post('/reports/:organizationId', async (req: Request, res: Response): Promise<void> => {
   try {
     const { organizationId } = req.params;
     const { reportType, filters } = req.body;
 
     if (!organizationId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Organization ID is required'
       });
+      return;
     }
 
     if (!reportType) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Report type is required'
       });
+      return;
     }
 
     const validReportTypes = [
@@ -340,9 +354,10 @@ router.post('/reports/:organizationId', async (req: Request, res: Response) => {
     ];
 
     if (!validReportTypes.includes(reportType)) {
-      return res.status(400).json({
+      res.status(400).json({
         error: `Invalid report type. Must be one of: ${validReportTypes.join(', ')}`
       });
+      return;
     }
 
     const report = await criticalDateService.generateCriticalDateReport(
@@ -368,29 +383,32 @@ router.post('/reports/:organizationId', async (req: Request, res: Response) => {
  * Bulk update critical dates
  * POST /api/critical-dates/bulk-update/:organizationId
  */
-router.post('/bulk-update/:organizationId', async (req: Request, res: Response) => {
+router.post('/bulk-update/:organizationId', async (req: Request, res: Response): Promise<void> => {
   try {
     const { organizationId } = req.params;
     const { updates } = req.body;
 
     if (!organizationId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Organization ID is required'
       });
+      return;
     }
 
     if (!updates || !Array.isArray(updates)) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Updates array is required'
       });
+      return;
     }
 
     // Validate updates format
     for (const update of updates) {
       if (!update.criticalDateId || !update.changes) {
-        return res.status(400).json({
+        res.status(400).json({
           error: 'Each update must have criticalDateId and changes'
         });
+      return;
       }
     }
 
@@ -430,14 +448,15 @@ router.post('/bulk-update/:organizationId', async (req: Request, res: Response) 
  * Get critical date by ID
  * GET /api/critical-dates/:criticalDateId
  */
-router.get('/:criticalDateId', async (req: Request, res: Response) => {
+router.get('/:criticalDateId', async (req: Request, res: Response): Promise<void> => {
   try {
     const { criticalDateId } = req.params;
 
     if (!criticalDateId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Critical Date ID is required'
       });
+      return;
     }
 
     // This would be implemented in the service
@@ -459,14 +478,15 @@ router.get('/:criticalDateId', async (req: Request, res: Response) => {
  * Delete critical date
  * DELETE /api/critical-dates/:criticalDateId
  */
-router.delete('/:criticalDateId', async (req: Request, res: Response) => {
+router.delete('/:criticalDateId', async (req: Request, res: Response): Promise<void> => {
   try {
     const { criticalDateId } = req.params;
 
     if (!criticalDateId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Critical Date ID is required'
       });
+      return;
     }
 
     // This would be implemented in the service
@@ -488,15 +508,16 @@ router.delete('/:criticalDateId', async (req: Request, res: Response) => {
  * Get alert statistics
  * GET /api/critical-dates/statistics/:organizationId
  */
-router.get('/statistics/:organizationId', async (req: Request, res: Response) => {
+router.get('/statistics/:organizationId', async (req: Request, res: Response): Promise<void> => {
   try {
     const { organizationId } = req.params;
     const { timeframe } = req.query;
 
     if (!organizationId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Organization ID is required'
       });
+      return;
     }
 
     // Get dashboard data which includes statistics
