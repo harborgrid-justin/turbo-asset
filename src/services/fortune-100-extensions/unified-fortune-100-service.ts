@@ -179,7 +179,7 @@ export class Fortune100BusinessLogicService {
           code: 'ANALYSIS_FAILED',
           message: `Analysis failed: ${error instanceof Error ? error.message : 'Unknown error'}`
         },
-        data: null
+        data: undefined
       };
     }
   }

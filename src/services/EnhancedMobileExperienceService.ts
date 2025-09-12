@@ -1259,12 +1259,3 @@ interface ValidationRule {
   pattern?: string;
   message: string;
 }
-
-export {
-  MobileDeviceInfo,
-  MobileUser,
-  MobileWorkOrder,
-  MobileInspection,
-  MobileFeatures,
-  SyncStrategy
-};
