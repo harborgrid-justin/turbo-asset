@@ -64,12 +64,12 @@ export class AssetValidationService {
     } catch (error: unknown) {
       logger.error('Asset validation failed', {
         assetTag: assetData.assetTag,
-        error: error.message
+        error: (error as Error).message
       });
       
       return {
         isValid: false,
-        errors: [`Validation process failed: ${error.message}`],
+        errors: [`Validation process failed: ${(error as Error).message}`],
         warnings: []
       };
     }
@@ -239,7 +239,7 @@ export class AssetValidationService {
     } catch (error: unknown) {
       logger.warn('Location validation failed', { 
         assetTag: assetData.assetTag, 
-        error: error.message 
+        error: (error as Error).message 
       });
       warnings.push('Could not fully validate location hierarchy');
     }
@@ -545,7 +545,7 @@ export class AssetValidationService {
     } catch (error: unknown) {
       logger.warn('Could not validate organizational constraints', { 
         organizationId: assetData.organizationId,
-        error: error.message 
+        error: (error as Error).message 
       });
     }
   }

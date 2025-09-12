@@ -25,6 +25,8 @@ router.get('/', async (req: Request, res: Response): Promise<void> => {
       res.status(400).json({
         error: 'Organization ID is required',
       });
+
+      return;
       return;
     }
 
@@ -46,8 +48,10 @@ router.get('/', async (req: Request, res: Response): Promise<void> => {
     logger.error('Failed to get move requests', error);
     res.status(500).json({
       error: 'Failed to get move requests',
-      message: error instanceof Error ? error.message : 'Unknown error',
+      message: error instanceof Error ? (error as Error).message : 'Unknown error',
     });
+
+    return;
   }
 });
 
@@ -63,6 +67,8 @@ router.get('/:id', async (req: Request, res: Response): Promise<void> => {
       res.status(400).json({
         error: 'Organization ID is required',
       });
+
+      return;
       return;
     }
 
@@ -74,13 +80,17 @@ router.get('/:id', async (req: Request, res: Response): Promise<void> => {
     res.json(moveRequest);
   } catch (error: unknown) {
     logger.error('Failed to get move request', error);
-    if (error instanceof Error && error.message === 'Move request not found') {
-      res.status(404).json({ error: error.message });
+    if (error instanceof Error && (error as Error).message === 'Move request not found') {
+      res.status(404).json({ error: (error as Error).message });
+
+      return;
     } else {
       res.status(500).json({
         error: 'Failed to get move request',
-        message: error instanceof Error ? error.message : 'Unknown error',
+        message: error instanceof Error ? (error as Error).message : 'Unknown error',
       });
+
+      return;
     }
   }
 });
@@ -108,6 +118,8 @@ router.post('/', async (req: Request, res: Response): Promise<void> => {
       res.status(400).json({
         error: 'Organization ID, requested by ID, move type, and requested date are required',
       });
+
+      return;
       return;
     }
 
@@ -117,6 +129,8 @@ router.post('/', async (req: Request, res: Response): Promise<void> => {
       res.status(400).json({
         error: 'Invalid move type. Valid values are: ' + validMoveTypes.join(', '),
       });
+
+      return;
       return;
     }
 
@@ -127,6 +141,8 @@ router.post('/', async (req: Request, res: Response): Promise<void> => {
         res.status(400).json({
           error: 'Invalid urgency. Valid values are: ' + validUrgencies.join(', '),
         });
+
+        return;
       return;
       }
     }
@@ -145,12 +161,17 @@ router.post('/', async (req: Request, res: Response): Promise<void> => {
     });
 
     res.status(201).json(moveRequest);
+
+
+    return;
   } catch (error: unknown) {
     logger.error('Failed to create move request', error);
     res.status(500).json({
       error: 'Failed to create move request',
-      message: error instanceof Error ? error.message : 'Unknown error',
+      message: error instanceof Error ? (error as Error).message : 'Unknown error',
     });
+
+    return;
   }
 });
 
@@ -172,6 +193,8 @@ router.patch('/:id/process', async (req: Request, res: Response): Promise<void> 
       res.status(400).json({
         error: 'Organization ID, approved by ID, and action are required',
       });
+
+      return;
       return;
     }
 
@@ -180,6 +203,8 @@ router.patch('/:id/process', async (req: Request, res: Response): Promise<void> 
       res.status(400).json({
         error: 'Action must be either APPROVE or REJECT',
       });
+
+      return;
       return;
     }
 
@@ -187,6 +212,8 @@ router.patch('/:id/process', async (req: Request, res: Response): Promise<void> 
       res.status(400).json({
         error: 'Rejection reason is required when rejecting a move request',
       });
+
+      return;
       return;
     }
 
@@ -202,15 +229,21 @@ router.patch('/:id/process', async (req: Request, res: Response): Promise<void> 
     res.json(processedRequest);
   } catch (error: unknown) {
     logger.error('Failed to process move request', error);
-    if (error instanceof Error && error.message.includes('not found')) {
-      res.status(404).json({ error: error.message });
-    } else if (error instanceof Error && error.message.includes('not authorized')) {
-      res.status(403).json({ error: error.message });
+    if (error instanceof Error && (error as Error).message.includes('not found')) {
+      res.status(404).json({ error: (error as Error).message });
+
+      return;
+    } else if (error instanceof Error && (error as Error).message.includes('not authorized')) {
+      res.status(403).json({ error: (error as Error).message });
+
+      return;
     } else {
       res.status(500).json({
         error: 'Failed to process move request',
-        message: error instanceof Error ? error.message : 'Unknown error',
+        message: error instanceof Error ? (error as Error).message : 'Unknown error',
       });
+
+      return;
     }
   }
 });
@@ -227,6 +260,8 @@ router.patch('/:id/status', async (req: Request, res: Response): Promise<void> =
       res.status(400).json({
         error: 'Organization ID and status are required',
       });
+
+      return;
       return;
     }
 
@@ -236,6 +271,8 @@ router.patch('/:id/status', async (req: Request, res: Response): Promise<void> =
       res.status(400).json({
         error: 'Invalid status. Valid values are: ' + validStatuses.join(', '),
       });
+
+      return;
       return;
     }
 
@@ -249,13 +286,17 @@ router.patch('/:id/status', async (req: Request, res: Response): Promise<void> =
     res.json(updatedRequest);
   } catch (error: unknown) {
     logger.error('Failed to update move status', error);
-    if (error instanceof Error && error.message.includes('not found')) {
-      res.status(404).json({ error: error.message });
+    if (error instanceof Error && (error as Error).message.includes('not found')) {
+      res.status(404).json({ error: (error as Error).message });
+
+      return;
     } else {
       res.status(500).json({
         error: 'Failed to update move status',
-        message: error instanceof Error ? error.message : 'Unknown error',
+        message: error instanceof Error ? (error as Error).message : 'Unknown error',
       });
+
+      return;
     }
   }
 });
@@ -280,6 +321,8 @@ router.post('/:id/vendors', async (req: Request, res: Response): Promise<void> =
       res.status(400).json({
         error: 'Organization ID, vendor name, contact info, and service type are required',
       });
+
+      return;
       return;
     }
 
@@ -293,15 +336,22 @@ router.post('/:id/vendors', async (req: Request, res: Response): Promise<void> =
     });
 
     res.status(201).json(vendor);
+
+
+    return;
   } catch (error: unknown) {
     logger.error('Failed to add vendor', error);
-    if (error instanceof Error && error.message.includes('not found')) {
-      res.status(404).json({ error: error.message });
+    if (error instanceof Error && (error as Error).message.includes('not found')) {
+      res.status(404).json({ error: (error as Error).message });
+
+      return;
     } else {
       res.status(500).json({
         error: 'Failed to add vendor',
-        message: error instanceof Error ? error.message : 'Unknown error',
+        message: error instanceof Error ? (error as Error).message : 'Unknown error',
       });
+
+      return;
     }
   }
 });
@@ -318,6 +368,8 @@ router.patch('/:id/vendors/:vendorId/select', async (req: Request, res: Response
       res.status(400).json({
         error: 'Organization ID is required',
       });
+
+      return;
       return;
     }
 
@@ -326,6 +378,8 @@ router.patch('/:id/vendors/:vendorId/select', async (req: Request, res: Response
       res.status(400).json({
         error: 'Performance rating must be between 1 and 5',
       });
+
+      return;
       return;
     }
 
@@ -339,13 +393,17 @@ router.patch('/:id/vendors/:vendorId/select', async (req: Request, res: Response
     res.json(selectedVendor);
   } catch (error: unknown) {
     logger.error('Failed to select vendor', error);
-    if (error instanceof Error && error.message.includes('not found')) {
-      res.status(404).json({ error: error.message });
+    if (error instanceof Error && (error as Error).message.includes('not found')) {
+      res.status(404).json({ error: (error as Error).message });
+
+      return;
     } else {
       res.status(500).json({
         error: 'Failed to select vendor',
-        message: error instanceof Error ? error.message : 'Unknown error',
+        message: error instanceof Error ? (error as Error).message : 'Unknown error',
       });
+
+      return;
     }
   }
 });
@@ -371,6 +429,8 @@ router.post('/:id/costs', async (req: Request, res: Response): Promise<void> => 
       res.status(400).json({
         error: 'Organization ID, category, and description are required',
       });
+
+      return;
       return;
     }
 
@@ -385,15 +445,22 @@ router.post('/:id/costs', async (req: Request, res: Response): Promise<void> => 
     });
 
     res.status(201).json(cost);
+
+
+    return;
   } catch (error: unknown) {
     logger.error('Failed to add cost', error);
-    if (error instanceof Error && error.message.includes('not found')) {
-      res.status(404).json({ error: error.message });
+    if (error instanceof Error && (error as Error).message.includes('not found')) {
+      res.status(404).json({ error: (error as Error).message });
+
+      return;
     } else {
       res.status(500).json({
         error: 'Failed to add cost',
-        message: error instanceof Error ? error.message : 'Unknown error',
+        message: error instanceof Error ? (error as Error).message : 'Unknown error',
       });
+
+      return;
     }
   }
 });
@@ -409,6 +476,8 @@ router.get('/analytics/summary', async (req: Request, res: Response): Promise<vo
       res.status(400).json({
         error: 'Organization ID is required',
       });
+
+      return;
       return;
     }
 
@@ -427,8 +496,10 @@ router.get('/analytics/summary', async (req: Request, res: Response): Promise<vo
     logger.error('Failed to get move analytics', error);
     res.status(500).json({
       error: 'Failed to get move analytics',
-      message: error instanceof Error ? error.message : 'Unknown error',
+      message: error instanceof Error ? (error as Error).message : 'Unknown error',
     });
+
+    return;
   }
 });
 

@@ -461,7 +461,7 @@ export class ReportingService extends EventEmitter {
         data: { 
           status: 'FAILED',
           completedAt: new Date(),
-          errorMessage: error instanceof Error ? error.message : 'Unknown error',
+          errorMessage: error instanceof Error ? (error as Error).message : 'Unknown error',
         }
       });
 
@@ -471,7 +471,7 @@ export class ReportingService extends EventEmitter {
 
       this.emit(EVENT_TYPES.REPORT_GENERATION_FAILED, {
         reportId,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: error instanceof Error ? (error as Error).message : 'Unknown error',
         timestamp: new Date(),
       });
     }

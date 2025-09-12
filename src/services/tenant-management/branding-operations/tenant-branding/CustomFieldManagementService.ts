@@ -123,7 +123,7 @@ export class CustomFieldManagementService extends EventEmitter {
       logger.error('Failed to create custom field', {
         organizationId,
         fieldName: fieldDefinition.name,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: error instanceof Error ? (error as Error).message : 'Unknown error',
       });
       throw error;
     }
@@ -189,7 +189,7 @@ export class CustomFieldManagementService extends EventEmitter {
     } catch (error: unknown) {
       logger.error('Failed to update custom field', {
         fieldId,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: error instanceof Error ? (error as Error).message : 'Unknown error',
       });
       throw error;
     }
@@ -304,7 +304,7 @@ export class CustomFieldManagementService extends EventEmitter {
         organizationId: context.organizationId,
         fieldId,
         entityId,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: error instanceof Error ? (error as Error).message : 'Unknown error',
       });
       throw error;
     }
@@ -387,7 +387,7 @@ export class CustomFieldManagementService extends EventEmitter {
     } catch (error: unknown) {
       logger.error('Failed to delete custom field', {
         fieldId,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: error instanceof Error ? (error as Error).message : 'Unknown error',
       });
       throw error;
     }
@@ -427,7 +427,7 @@ export class CustomFieldManagementService extends EventEmitter {
       logger.error('Failed to create field group', {
         organizationId,
         groupName: groupDefinition.name,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: error instanceof Error ? (error as Error).message : 'Unknown error',
       });
       throw error;
     }

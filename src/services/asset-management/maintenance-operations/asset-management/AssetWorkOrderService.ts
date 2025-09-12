@@ -64,7 +64,7 @@ export class AssetWorkOrderService {
     } catch (error: unknown) {
       logger.error('Failed to schedule initial maintenance', {
         assetId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -123,7 +123,7 @@ export class AssetWorkOrderService {
     } catch (error: unknown) {
       logger.error('Failed to create work order', {
         assetId: workOrderRequest.assetId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -184,7 +184,7 @@ export class AssetWorkOrderService {
     } catch (error: unknown) {
       logger.error('Failed to create emergency work orders', {
         assetId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -250,7 +250,7 @@ export class AssetWorkOrderService {
       logger.error('Failed to clone maintenance schedules', {
         sourceAssetId,
         targetAssetId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -299,7 +299,7 @@ export class AssetWorkOrderService {
       logger.error('Failed to update work order status', {
         workOrderId,
         status,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -378,7 +378,7 @@ export class AssetWorkOrderService {
     } catch (error: unknown) {
       logger.error('Failed to generate scheduled work orders', {
         organizationId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }

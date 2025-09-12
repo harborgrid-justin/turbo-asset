@@ -489,7 +489,7 @@ export class ComputerVisionService extends EventEmitter {
               metadata: image.metadata,
               includeDetailedAnalysis: false,
               generateReport: false
-            }).catch(error => ({ error: error.message, facilityId: image.facilityId }))
+            }).catch(error => ({ error: (error as Error).message, facilityId: image.facilityId }))
           );
           
           const chunkResults = await Promise.all(chunkPromises);
@@ -506,7 +506,7 @@ export class ComputerVisionService extends EventEmitter {
             });
             results.push(result);
           } catch (error: unknown) {
-            results.push({ error: error.message, facilityId: image.facilityId });
+            results.push({ error: (error as Error).message, facilityId: image.facilityId });
           }
         }
       }

@@ -177,7 +177,7 @@ export class Fortune100BusinessLogicService {
         success: false,
         error: {
           code: 'ANALYSIS_FAILED',
-          message: `Analysis failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+          message: `Analysis failed: ${error instanceof Error ? (error as Error).message : 'Unknown error'}`
         },
         data: undefined
       };
@@ -217,7 +217,7 @@ export class Fortune100BusinessLogicService {
         success: false,
         error: {
           code: 'INDUSTRY_ANALYSIS_FAILED',
-          message: `Industry analysis failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+          message: `Industry analysis failed: ${error instanceof Error ? (error as Error).message : 'Unknown error'}`
         },
         data: null
       };
@@ -263,7 +263,7 @@ export class Fortune100BusinessLogicService {
         success: false,
         error: {
           code: 'COMPLIANCE_ANALYSIS_FAILED',
-          message: `Compliance analysis failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+          message: `Compliance analysis failed: ${error instanceof Error ? (error as Error).message : 'Unknown error'}`
         },
         data: null
       };
@@ -324,7 +324,7 @@ export class Fortune100BusinessLogicService {
         success: false,
         error: {
           code: 'FINANCIAL_ANALYSIS_FAILED',
-          message: `Financial analysis failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+          message: `Financial analysis failed: ${error instanceof Error ? (error as Error).message : 'Unknown error'}`
         },
         data: null
       };
@@ -366,7 +366,7 @@ export class Fortune100BusinessLogicService {
         success: false,
         error: {
           code: 'INTEGRATION_FAILED',
-          message: `Integration failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+          message: `Integration failed: ${error instanceof Error ? (error as Error).message : 'Unknown error'}`
         },
         data: null
       };

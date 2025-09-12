@@ -503,7 +503,7 @@ export class AdvancedOperationsManager extends EventEmitter {
         } catch (error: unknown) {
           logger.error('Coordination step failed', { coordinationId, stepId, error });
           failedSteps.push(stepId);
-          results[stepId] = { error: error instanceof Error ? error.message : 'Unknown error' };
+          results[stepId] = { error: error instanceof Error ? (error as Error).message : 'Unknown error' };
         }
       }
 
@@ -684,7 +684,7 @@ export class AdvancedOperationsManager extends EventEmitter {
       return {
         service: 'workflow',
         status: 'CRITICAL',
-        message: error instanceof Error ? error.message : 'Unknown error',
+        message: error instanceof Error ? (error as Error).message : 'Unknown error',
         lastChecked: new Date(),
       };
     }
@@ -711,7 +711,7 @@ export class AdvancedOperationsManager extends EventEmitter {
       return {
         service: 'reporting',
         status: 'CRITICAL',
-        message: error instanceof Error ? error.message : 'Unknown error',
+        message: error instanceof Error ? (error as Error).message : 'Unknown error',
         lastChecked: new Date(),
       };
     }
@@ -738,7 +738,7 @@ export class AdvancedOperationsManager extends EventEmitter {
       return {
         service: 'esb',
         status: 'CRITICAL',
-        message: error instanceof Error ? error.message : 'Unknown error',
+        message: error instanceof Error ? (error as Error).message : 'Unknown error',
         lastChecked: new Date(),
       };
     }
@@ -765,7 +765,7 @@ export class AdvancedOperationsManager extends EventEmitter {
       return {
         service: 'warehouse',
         status: 'CRITICAL',
-        message: error instanceof Error ? error.message : 'Unknown error',
+        message: error instanceof Error ? (error as Error).message : 'Unknown error',
         lastChecked: new Date(),
       };
     }
@@ -792,7 +792,7 @@ export class AdvancedOperationsManager extends EventEmitter {
       return {
         service: 'portfolio',
         status: 'CRITICAL',
-        message: error instanceof Error ? error.message : 'Unknown error',
+        message: error instanceof Error ? (error as Error).message : 'Unknown error',
         lastChecked: new Date(),
       };
     }
@@ -1194,7 +1194,7 @@ class AdvancedOperationsManagementBlock$i {
     } catch (error: unknown) {
       logger.error(\`Advanced workflow management failed - Block $i\`, {
         workflowId,
-        error: error.message,
+        error: (error as Error).message,
         stack: error.stack,
       });
       throw error;
@@ -1422,7 +1422,7 @@ class AdvancedOperationsManagementBlock$i {
     } catch (error: unknown) {
       logger.error(\`Enterprise reporting management failed - Block $i\`, {
         reportingId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -1692,7 +1692,7 @@ class AdvancedOperationsManagementBlock$i {
     } catch (error: unknown) {
       logger.error(\`Data warehouse management failed - Block $i\`, {
         warehouseId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -2800,7 +2800,7 @@ class AdvancedOperationsManagementBlock$i {
     } catch (error: unknown) {
       logger.error(\`Advanced workflow management failed - Block $i\`, {
         workflowId,
-        error: error.message,
+        error: (error as Error).message,
         stack: error.stack,
       });
       throw error;
@@ -3028,7 +3028,7 @@ class AdvancedOperationsManagementBlock$i {
     } catch (error: unknown) {
       logger.error(\`Enterprise reporting management failed - Block $i\`, {
         reportingId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -3298,7 +3298,7 @@ class AdvancedOperationsManagementBlock$i {
     } catch (error: unknown) {
       logger.error(\`Data warehouse management failed - Block $i\`, {
         warehouseId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -4406,7 +4406,7 @@ class AdvancedOperationsManagementBlock$i {
     } catch (error: unknown) {
       logger.error(\`Advanced workflow management failed - Block $i\`, {
         workflowId,
-        error: error.message,
+        error: (error as Error).message,
         stack: error.stack,
       });
       throw error;
@@ -4634,7 +4634,7 @@ class AdvancedOperationsManagementBlock$i {
     } catch (error: unknown) {
       logger.error(\`Enterprise reporting management failed - Block $i\`, {
         reportingId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -4904,7 +4904,7 @@ class AdvancedOperationsManagementBlock$i {
     } catch (error: unknown) {
       logger.error(\`Data warehouse management failed - Block $i\`, {
         warehouseId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -6012,7 +6012,7 @@ class AdvancedOperationsManagementBlock$i {
     } catch (error: unknown) {
       logger.error(\`Advanced workflow management failed - Block $i\`, {
         workflowId,
-        error: error.message,
+        error: (error as Error).message,
         stack: error.stack,
       });
       throw error;
@@ -6240,7 +6240,7 @@ class AdvancedOperationsManagementBlock$i {
     } catch (error: unknown) {
       logger.error(\`Enterprise reporting management failed - Block $i\`, {
         reportingId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -6510,7 +6510,7 @@ class AdvancedOperationsManagementBlock$i {
     } catch (error: unknown) {
       logger.error(\`Data warehouse management failed - Block $i\`, {
         warehouseId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -7618,7 +7618,7 @@ class AdvancedOperationsManagementBlock$i {
     } catch (error: unknown) {
       logger.error(\`Advanced workflow management failed - Block $i\`, {
         workflowId,
-        error: error.message,
+        error: (error as Error).message,
         stack: error.stack,
       });
       throw error;
@@ -7846,7 +7846,7 @@ class AdvancedOperationsManagementBlock$i {
     } catch (error: unknown) {
       logger.error(\`Enterprise reporting management failed - Block $i\`, {
         reportingId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -8116,7 +8116,7 @@ class AdvancedOperationsManagementBlock$i {
     } catch (error: unknown) {
       logger.error(\`Data warehouse management failed - Block $i\`, {
         warehouseId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -9224,7 +9224,7 @@ class AdvancedOperationsManagementBlock$i {
     } catch (error: unknown) {
       logger.error(\`Advanced workflow management failed - Block $i\`, {
         workflowId,
-        error: error.message,
+        error: (error as Error).message,
         stack: error.stack,
       });
       throw error;
@@ -9452,7 +9452,7 @@ class AdvancedOperationsManagementBlock$i {
     } catch (error: unknown) {
       logger.error(\`Enterprise reporting management failed - Block $i\`, {
         reportingId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -9722,7 +9722,7 @@ class AdvancedOperationsManagementBlock$i {
     } catch (error: unknown) {
       logger.error(\`Data warehouse management failed - Block $i\`, {
         warehouseId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -10830,7 +10830,7 @@ class AdvancedOperationsManagementBlock$i {
     } catch (error: unknown) {
       logger.error(\`Advanced workflow management failed - Block $i\`, {
         workflowId,
-        error: error.message,
+        error: (error as Error).message,
         stack: error.stack,
       });
       throw error;
@@ -11058,7 +11058,7 @@ class AdvancedOperationsManagementBlock$i {
     } catch (error: unknown) {
       logger.error(\`Enterprise reporting management failed - Block $i\`, {
         reportingId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -11328,7 +11328,7 @@ class AdvancedOperationsManagementBlock$i {
     } catch (error: unknown) {
       logger.error(\`Data warehouse management failed - Block $i\`, {
         warehouseId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -12436,7 +12436,7 @@ class AdvancedOperationsManagementBlock$i {
     } catch (error: unknown) {
       logger.error(\`Advanced workflow management failed - Block $i\`, {
         workflowId,
-        error: error.message,
+        error: (error as Error).message,
         stack: error.stack,
       });
       throw error;
@@ -12664,7 +12664,7 @@ class AdvancedOperationsManagementBlock$i {
     } catch (error: unknown) {
       logger.error(\`Enterprise reporting management failed - Block $i\`, {
         reportingId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -12934,7 +12934,7 @@ class AdvancedOperationsManagementBlock$i {
     } catch (error: unknown) {
       logger.error(\`Data warehouse management failed - Block $i\`, {
         warehouseId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -14042,7 +14042,7 @@ class AdvancedOperationsManagementBlock$i {
     } catch (error: unknown) {
       logger.error(\`Advanced workflow management failed - Block $i\`, {
         workflowId,
-        error: error.message,
+        error: (error as Error).message,
         stack: error.stack,
       });
       throw error;
@@ -14270,7 +14270,7 @@ class AdvancedOperationsManagementBlock$i {
     } catch (error: unknown) {
       logger.error(\`Enterprise reporting management failed - Block $i\`, {
         reportingId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -14540,7 +14540,7 @@ class AdvancedOperationsManagementBlock$i {
     } catch (error: unknown) {
       logger.error(\`Data warehouse management failed - Block $i\`, {
         warehouseId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -15648,7 +15648,7 @@ class AdvancedOperationsManagementBlock$i {
     } catch (error: unknown) {
       logger.error(\`Advanced workflow management failed - Block $i\`, {
         workflowId,
-        error: error.message,
+        error: (error as Error).message,
         stack: error.stack,
       });
       throw error;
@@ -15876,7 +15876,7 @@ class AdvancedOperationsManagementBlock$i {
     } catch (error: unknown) {
       logger.error(\`Enterprise reporting management failed - Block $i\`, {
         reportingId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -16146,7 +16146,7 @@ class AdvancedOperationsManagementBlock$i {
     } catch (error: unknown) {
       logger.error(\`Data warehouse management failed - Block $i\`, {
         warehouseId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -17254,7 +17254,7 @@ class AdvancedOperationsManagementBlock$i {
     } catch (error: unknown) {
       logger.error(\`Advanced workflow management failed - Block $i\`, {
         workflowId,
-        error: error.message,
+        error: (error as Error).message,
         stack: error.stack,
       });
       throw error;
@@ -17482,7 +17482,7 @@ class AdvancedOperationsManagementBlock$i {
     } catch (error: unknown) {
       logger.error(\`Enterprise reporting management failed - Block $i\`, {
         reportingId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -17752,7 +17752,7 @@ class AdvancedOperationsManagementBlock$i {
     } catch (error: unknown) {
       logger.error(\`Data warehouse management failed - Block $i\`, {
         warehouseId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -18860,7 +18860,7 @@ class AdvancedOperationsManagementBlock$i {
     } catch (error: unknown) {
       logger.error(\`Advanced workflow management failed - Block $i\`, {
         workflowId,
-        error: error.message,
+        error: (error as Error).message,
         stack: error.stack,
       });
       throw error;
@@ -19088,7 +19088,7 @@ class AdvancedOperationsManagementBlock$i {
     } catch (error: unknown) {
       logger.error(\`Enterprise reporting management failed - Block $i\`, {
         reportingId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -19358,7 +19358,7 @@ class AdvancedOperationsManagementBlock$i {
     } catch (error: unknown) {
       logger.error(\`Data warehouse management failed - Block $i\`, {
         warehouseId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -20466,7 +20466,7 @@ class AdvancedOperationsManagementBlock$i {
     } catch (error: unknown) {
       logger.error(\`Advanced workflow management failed - Block $i\`, {
         workflowId,
-        error: error.message,
+        error: (error as Error).message,
         stack: error.stack,
       });
       throw error;
@@ -20694,7 +20694,7 @@ class AdvancedOperationsManagementBlock$i {
     } catch (error: unknown) {
       logger.error(\`Enterprise reporting management failed - Block $i\`, {
         reportingId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -20964,7 +20964,7 @@ class AdvancedOperationsManagementBlock$i {
     } catch (error: unknown) {
       logger.error(\`Data warehouse management failed - Block $i\`, {
         warehouseId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -22072,7 +22072,7 @@ class AdvancedOperationsManagementBlock$i {
     } catch (error: unknown) {
       logger.error(\`Advanced workflow management failed - Block $i\`, {
         workflowId,
-        error: error.message,
+        error: (error as Error).message,
         stack: error.stack,
       });
       throw error;
@@ -22300,7 +22300,7 @@ class AdvancedOperationsManagementBlock$i {
     } catch (error: unknown) {
       logger.error(\`Enterprise reporting management failed - Block $i\`, {
         reportingId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -22570,7 +22570,7 @@ class AdvancedOperationsManagementBlock$i {
     } catch (error: unknown) {
       logger.error(\`Data warehouse management failed - Block $i\`, {
         warehouseId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -23678,7 +23678,7 @@ class AdvancedOperationsManagementBlock$i {
     } catch (error: unknown) {
       logger.error(\`Advanced workflow management failed - Block $i\`, {
         workflowId,
-        error: error.message,
+        error: (error as Error).message,
         stack: error.stack,
       });
       throw error;
@@ -23906,7 +23906,7 @@ class AdvancedOperationsManagementBlock$i {
     } catch (error: unknown) {
       logger.error(\`Enterprise reporting management failed - Block $i\`, {
         reportingId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -24176,7 +24176,7 @@ class AdvancedOperationsManagementBlock$i {
     } catch (error: unknown) {
       logger.error(\`Data warehouse management failed - Block $i\`, {
         warehouseId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -25284,7 +25284,7 @@ class AdvancedOperationsManagementBlock$i {
     } catch (error: unknown) {
       logger.error(\`Advanced workflow management failed - Block $i\`, {
         workflowId,
-        error: error.message,
+        error: (error as Error).message,
         stack: error.stack,
       });
       throw error;
@@ -25512,7 +25512,7 @@ class AdvancedOperationsManagementBlock$i {
     } catch (error: unknown) {
       logger.error(\`Enterprise reporting management failed - Block $i\`, {
         reportingId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -25782,7 +25782,7 @@ class AdvancedOperationsManagementBlock$i {
     } catch (error: unknown) {
       logger.error(\`Data warehouse management failed - Block $i\`, {
         warehouseId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -26890,7 +26890,7 @@ class AdvancedOperationsManagementBlock$i {
     } catch (error: unknown) {
       logger.error(\`Advanced workflow management failed - Block $i\`, {
         workflowId,
-        error: error.message,
+        error: (error as Error).message,
         stack: error.stack,
       });
       throw error;
@@ -27118,7 +27118,7 @@ class AdvancedOperationsManagementBlock$i {
     } catch (error: unknown) {
       logger.error(\`Enterprise reporting management failed - Block $i\`, {
         reportingId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -27388,7 +27388,7 @@ class AdvancedOperationsManagementBlock$i {
     } catch (error: unknown) {
       logger.error(\`Data warehouse management failed - Block $i\`, {
         warehouseId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -28496,7 +28496,7 @@ class AdvancedOperationsManagementBlock$i {
     } catch (error: unknown) {
       logger.error(\`Advanced workflow management failed - Block $i\`, {
         workflowId,
-        error: error.message,
+        error: (error as Error).message,
         stack: error.stack,
       });
       throw error;
@@ -28724,7 +28724,7 @@ class AdvancedOperationsManagementBlock$i {
     } catch (error: unknown) {
       logger.error(\`Enterprise reporting management failed - Block $i\`, {
         reportingId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -28994,7 +28994,7 @@ class AdvancedOperationsManagementBlock$i {
     } catch (error: unknown) {
       logger.error(\`Data warehouse management failed - Block $i\`, {
         warehouseId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -30102,7 +30102,7 @@ class AdvancedOperationsManagementBlock$i {
     } catch (error: unknown) {
       logger.error(\`Advanced workflow management failed - Block $i\`, {
         workflowId,
-        error: error.message,
+        error: (error as Error).message,
         stack: error.stack,
       });
       throw error;
@@ -30330,7 +30330,7 @@ class AdvancedOperationsManagementBlock$i {
     } catch (error: unknown) {
       logger.error(\`Enterprise reporting management failed - Block $i\`, {
         reportingId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -30600,7 +30600,7 @@ class AdvancedOperationsManagementBlock$i {
     } catch (error: unknown) {
       logger.error(\`Data warehouse management failed - Block $i\`, {
         warehouseId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -31708,7 +31708,7 @@ class AdvancedOperationsManagementBlock$i {
     } catch (error: unknown) {
       logger.error(\`Advanced workflow management failed - Block $i\`, {
         workflowId,
-        error: error.message,
+        error: (error as Error).message,
         stack: error.stack,
       });
       throw error;
@@ -31936,7 +31936,7 @@ class AdvancedOperationsManagementBlock$i {
     } catch (error: unknown) {
       logger.error(\`Enterprise reporting management failed - Block $i\`, {
         reportingId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -32206,7 +32206,7 @@ class AdvancedOperationsManagementBlock$i {
     } catch (error: unknown) {
       logger.error(\`Data warehouse management failed - Block $i\`, {
         warehouseId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }

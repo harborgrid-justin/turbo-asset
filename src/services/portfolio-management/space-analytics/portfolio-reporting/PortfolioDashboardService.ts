@@ -63,7 +63,7 @@ export class PortfolioDashboardService {
     } catch (error: unknown) {
       logger.error('Failed to generate portfolio dashboard', {
         query,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -141,7 +141,7 @@ export class PortfolioDashboardService {
     } catch (error: unknown) {
       logger.error('Failed to get portfolio summary', {
         query,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -206,7 +206,7 @@ export class PortfolioDashboardService {
       logger.error('Failed to generate executive dashboard', {
         organizationId,
         timeFrame,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -275,7 +275,7 @@ export class PortfolioDashboardService {
     } catch (error: unknown) {
       logger.error('Failed to get portfolio performance indicators', {
         organizationId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -322,7 +322,7 @@ export class PortfolioDashboardService {
     } catch (error: unknown) {
       logger.error('Failed to get portfolio alerts', {
         organizationId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -415,7 +415,7 @@ export class PortfolioDashboardService {
       logger.error('Failed to get portfolio benchmarks', {
         organizationId,
         benchmarkType,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }

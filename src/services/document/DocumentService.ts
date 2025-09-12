@@ -860,7 +860,7 @@ export class DocumentService {
           shareResults.push({
             userId,
             success: false,
-            error: error.message,
+            error: (error as Error).message,
           });
         }
       }
@@ -1231,7 +1231,7 @@ export class DocumentService {
           results.failed++;
           results.errors.push({
             documentId,
-            error: error.message,
+            error: (error as Error).message,
           });
         }
       }

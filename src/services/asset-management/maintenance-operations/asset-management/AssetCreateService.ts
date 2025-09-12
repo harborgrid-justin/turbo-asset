@@ -138,7 +138,7 @@ export class AssetCreateService {
       logger.error('Failed to create maintenance asset', {
         assetTag: assetData.assetTag,
         organizationId: assetData.organizationId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -170,7 +170,7 @@ export class AssetCreateService {
           results.failed++;
           results.errors.push({
             index: i + batchIndex,
-            error: error.message,
+            error: (error as Error).message,
             assetTag: assetData.assetTag,
           });
         }
@@ -266,7 +266,7 @@ export class AssetCreateService {
     } catch (error: unknown) {
       logger.error('Failed to clone asset', {
         sourceAssetId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -289,7 +289,7 @@ export class AssetCreateService {
     } catch (error: unknown) {
       logger.warn('Failed to generate asset documentation', {
         assetId: asset.id,
-        error: error.message,
+        error: (error as Error).message,
       });
       // Don't fail asset creation if documentation generation fails
     }

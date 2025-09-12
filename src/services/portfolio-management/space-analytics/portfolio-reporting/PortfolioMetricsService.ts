@@ -72,7 +72,7 @@ export class PortfolioMetricsService {
       logger.error('Failed to calculate portfolio KPIs', {
         organizationId,
         timeframe,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -127,7 +127,7 @@ export class PortfolioMetricsService {
       logger.error('Failed to get KPI trends', {
         organizationId,
         kpiType,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -189,7 +189,7 @@ export class PortfolioMetricsService {
     } catch (error: unknown) {
       logger.error('Failed to calculate space utilization metrics', {
         organizationId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -251,7 +251,7 @@ export class PortfolioMetricsService {
     } catch (error: unknown) {
       logger.error('Failed to calculate tenant retention metrics', {
         organizationId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -314,7 +314,7 @@ export class PortfolioMetricsService {
     } catch (error: unknown) {
       logger.error('Failed to calculate energy efficiency metrics', {
         organizationId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -379,7 +379,7 @@ export class PortfolioMetricsService {
     } catch (error: unknown) {
       logger.error('Failed to calculate maintenance performance metrics', {
         organizationId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -441,7 +441,7 @@ export class PortfolioMetricsService {
       logger.error('Failed to compare against benchmarks', {
         organizationId,
         benchmarkType,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }

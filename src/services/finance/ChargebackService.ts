@@ -150,7 +150,7 @@ export class ChargebackService {
           logger.error('Failed to process rule allocation', {
             ruleId: rule.id,
             ruleName: rule.name,
-            error: error instanceof Error ? error.message : 'Unknown error',
+            error: error instanceof Error ? (error as Error).message : 'Unknown error',
           });
         }
       }

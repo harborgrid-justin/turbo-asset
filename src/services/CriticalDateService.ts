@@ -383,7 +383,7 @@ export class CriticalDateService {
         } catch (error: unknown) {
           logger.error('Failed to process alerts for critical date', {
             criticalDateId: criticalDate.id,
-            error: error instanceof Error ? error.message : 'Unknown error'
+            error: error instanceof Error ? (error as Error).message : 'Unknown error'
           });
           results.errors++;
         }
@@ -727,7 +727,7 @@ export class CriticalDateService {
           results.push({
             criticalDateId: update.criticalDateId,
             status: 'ERROR',
-            error: error instanceof Error ? error.message : 'Unknown error'
+            error: error instanceof Error ? (error as Error).message : 'Unknown error'
           });
         }
       }

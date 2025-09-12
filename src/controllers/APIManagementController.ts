@@ -46,6 +46,8 @@ export class APIManagementController {
     } catch (error: unknown) {
       logger.error('Failed to get API keys', { error });
       res.status(500).json({ error: 'Failed to get API keys' });
+
+      return;
     }
   }
 
@@ -82,9 +84,14 @@ export class APIManagementController {
         createdAt: apiKey.createdAt,
         expiresAt: apiKey.expiresAt,
       });
+
+
+      return;
     } catch (error: unknown) {
       logger.error('Failed to create API key', { error });
       res.status(500).json({ error: 'Failed to create API key' });
+
+      return;
     }
   }
 
@@ -108,6 +115,8 @@ export class APIManagementController {
     } catch (error: unknown) {
       logger.error('Failed to update API key', { error });
       res.status(500).json({ error: 'Failed to update API key' });
+
+      return;
     }
   }
 
@@ -124,6 +133,8 @@ export class APIManagementController {
 
       if (!apiKey) {
         res.status(404).json({ error: 'API key not found' });
+
+        return;
         return;
       }
 
@@ -133,6 +144,8 @@ export class APIManagementController {
     } catch (error: unknown) {
       logger.error('Failed to revoke API key', { error });
       res.status(500).json({ error: 'Failed to revoke API key' });
+
+      return;
     }
   }
 
@@ -150,6 +163,8 @@ export class APIManagementController {
 
       if (!apiKey) {
         res.status(404).json({ error: 'API key not found' });
+
+        return;
         return;
       }
 
@@ -162,6 +177,8 @@ export class APIManagementController {
     } catch (error: unknown) {
       logger.error('Failed to get API key usage', { error });
       res.status(500).json({ error: 'Failed to get API key usage' });
+
+      return;
     }
   }
 
@@ -178,6 +195,8 @@ export class APIManagementController {
 
       if (!apiKey) {
         res.status(404).json({ error: 'API key not found' });
+
+        return;
         return;
       }
 
@@ -186,6 +205,8 @@ export class APIManagementController {
     } catch (error: unknown) {
       logger.error('Failed to get rate limit status', { error });
       res.status(500).json({ error: 'Failed to get rate limit status' });
+
+      return;
     }
   }
 
@@ -211,6 +232,8 @@ export class APIManagementController {
     } catch (error: unknown) {
       logger.error('Failed to get usage analytics', { error });
       res.status(500).json({ error: 'Failed to get usage analytics' });
+
+      return;
     }
   }
 
@@ -224,6 +247,8 @@ export class APIManagementController {
     } catch (error: unknown) {
       logger.error('Failed to get API health metrics', { error });
       res.status(500).json({ error: 'Failed to get API health metrics' });
+
+      return;
     }
   }
 
@@ -239,6 +264,8 @@ export class APIManagementController {
     } catch (error: unknown) {
       logger.error('Failed to generate API documentation', { error });
       res.status(500).json({ error: 'Failed to generate API documentation' });
+
+      return;
     }
   }
 
@@ -255,6 +282,8 @@ export class APIManagementController {
     } catch (error: unknown) {
       logger.error('Failed to register endpoint', { error });
       res.status(500).json({ error: 'Failed to register endpoint' });
+
+      return;
     }
   }
 
@@ -320,6 +349,8 @@ export class APIManagementController {
     } catch (error: unknown) {
       logger.error('Failed to get endpoint analytics', { error });
       res.status(500).json({ error: 'Failed to get endpoint analytics' });
+
+      return;
     }
   }
 
@@ -377,6 +408,8 @@ export class APIManagementController {
     } catch (error: unknown) {
       logger.error('Failed to get usage trends', { error });
       res.status(500).json({ error: 'Failed to get usage trends' });
+
+      return;
     }
   }
 
@@ -407,6 +440,8 @@ export class APIManagementController {
     } catch (error: unknown) {
       logger.error('Failed to get quota status', { error });
       res.status(500).json({ error: 'Failed to get quota status' });
+
+      return;
     }
   }
 
@@ -465,6 +500,8 @@ export class APIManagementController {
     } catch (error: unknown) {
       logger.error('Failed to get error analysis', { error });
       res.status(500).json({ error: 'Failed to get error analysis' });
+
+      return;
     }
   }
 
@@ -487,6 +524,8 @@ export class APIManagementController {
     } catch (error: unknown) {
       logger.error('Failed to update permissions', { error });
       res.status(500).json({ error: 'Failed to update permissions' });
+
+      return;
     }
   }
 
@@ -534,6 +573,8 @@ export class APIManagementController {
     } catch (error: unknown) {
       logger.error('Failed to get performance metrics', { error });
       res.status(500).json({ error: 'Failed to get performance metrics' });
+
+      return;
     }
   }
 

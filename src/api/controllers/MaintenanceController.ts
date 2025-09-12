@@ -43,6 +43,8 @@ router.get('/assets', async (req, res) => {
 
     if (!organizationId) {
       res.status(400).json({ error: 'Organization ID required' });
+
+      return;
       return;
     }
 
@@ -76,8 +78,10 @@ router.get('/assets', async (req, res) => {
     logger.error('Failed to search maintenance assets', error);
     res.status(500).json({
       error: 'Failed to search maintenance assets',
-      message: error instanceof Error ? error.message : 'Unknown error',
+      message: error instanceof Error ? (error as Error).message : 'Unknown error',
     });
+
+    return;
   }
 });
 
@@ -113,6 +117,8 @@ router.post('/assets', async (req, res) => {
 
     if (!organizationId || !createdBy) {
       res.status(400).json({ error: 'Organization ID and User ID required' });
+
+      return;
       return;
     }
 
@@ -128,12 +134,17 @@ router.post('/assets', async (req, res) => {
       success: true,
       data: asset,
     });
+
+
+    return;
   } catch (error: unknown) {
     logger.error('Failed to create maintenance asset', error);
     res.status(500).json({
       error: 'Failed to create maintenance asset',
-      message: error instanceof Error ? error.message : 'Unknown error',
+      message: error instanceof Error ? (error as Error).message : 'Unknown error',
     });
+
+    return;
   }
 });
 
@@ -163,9 +174,9 @@ router.get('/assets/:id', async (req, res) => {
     });
   } catch (error: unknown) {
     logger.error('Failed to get maintenance asset', error);
-    res.status(error instanceof Error && error.message === 'Maintenance asset not found' ? 404 : 500).json({
+    res.status(error instanceof Error && (error as Error).message === 'Maintenance asset not found' ? 404 : 500).json({
       error: 'Failed to get maintenance asset',
-      message: error instanceof Error ? error.message : 'Unknown error',
+      message: error instanceof Error ? (error as Error).message : 'Unknown error',
     });
   }
 });
@@ -186,6 +197,8 @@ router.get('/metrics', async (req, res) => {
 
     if (!organizationId) {
       res.status(400).json({ error: 'Organization ID required' });
+
+      return;
       return;
     }
 
@@ -199,8 +212,10 @@ router.get('/metrics', async (req, res) => {
     logger.error('Failed to get maintenance metrics', error);
     res.status(500).json({
       error: 'Failed to get maintenance metrics',
-      message: error instanceof Error ? error.message : 'Unknown error',
+      message: error instanceof Error ? (error as Error).message : 'Unknown error',
     });
+
+    return;
   }
 });
 
@@ -240,6 +255,8 @@ router.put('/assets/:id/condition', async (req, res) => {
 
     if (!assessedBy) {
       res.status(400).json({ error: 'User ID required' });
+
+      return;
       return;
     }
 
@@ -258,8 +275,10 @@ router.put('/assets/:id/condition', async (req, res) => {
     logger.error('Failed to update asset condition', error);
     res.status(500).json({
       error: 'Failed to update asset condition',
-      message: error instanceof Error ? error.message : 'Unknown error',
+      message: error instanceof Error ? (error as Error).message : 'Unknown error',
     });
+
+    return;
   }
 });
 
@@ -291,11 +310,15 @@ router.post('/assets/condition-summary', async (req, res) => {
 
     if (!organizationId) {
       res.status(400).json({ error: 'Organization ID required' });
+
+      return;
       return;
     }
 
     if (!Array.isArray(assetIds)) {
       res.status(400).json({ error: 'Asset IDs array required' });
+
+      return;
       return;
     }
 
@@ -309,8 +332,10 @@ router.post('/assets/condition-summary', async (req, res) => {
     logger.error('Failed to get asset condition summary', error);
     res.status(500).json({
       error: 'Failed to get asset condition summary',
-      message: error instanceof Error ? error.message : 'Unknown error',
+      message: error instanceof Error ? (error as Error).message : 'Unknown error',
     });
+
+    return;
   }
 });
 
@@ -342,11 +367,15 @@ router.post('/assets/lifecycle-analysis', async (req, res) => {
 
     if (!organizationId) {
       res.status(400).json({ error: 'Organization ID required' });
+
+      return;
       return;
     }
 
     if (!Array.isArray(assetIds)) {
       res.status(400).json({ error: 'Asset IDs array required' });
+
+      return;
       return;
     }
 
@@ -360,8 +389,10 @@ router.post('/assets/lifecycle-analysis', async (req, res) => {
     logger.error('Failed to perform lifecycle analysis', error);
     res.status(500).json({
       error: 'Failed to perform lifecycle analysis',
-      message: error instanceof Error ? error.message : 'Unknown error',
+      message: error instanceof Error ? (error as Error).message : 'Unknown error',
     });
+
+    return;
   }
 });
 
@@ -394,6 +425,8 @@ router.get('/cost-analytics', async (req, res) => {
 
     if (!organizationId) {
       res.status(400).json({ error: 'Organization ID required' });
+
+      return;
       return;
     }
 
@@ -415,8 +448,10 @@ router.get('/cost-analytics', async (req, res) => {
     logger.error('Failed to get maintenance cost analytics', error);
     res.status(500).json({
       error: 'Failed to get maintenance cost analytics',
-      message: error instanceof Error ? error.message : 'Unknown error',
+      message: error instanceof Error ? (error as Error).message : 'Unknown error',
     });
+
+    return;
   }
 });
 
@@ -453,11 +488,15 @@ router.put('/assets/bulk-update', async (req, res) => {
 
     if (!organizationId) {
       res.status(400).json({ error: 'Organization ID required' });
+
+      return;
       return;
     }
 
     if (!Array.isArray(updates)) {
       res.status(400).json({ error: 'Updates array required' });
+
+      return;
       return;
     }
 
@@ -471,8 +510,10 @@ router.put('/assets/bulk-update', async (req, res) => {
     logger.error('Failed to bulk update assets', error);
     res.status(500).json({
       error: 'Failed to bulk update assets',
-      message: error instanceof Error ? error.message : 'Unknown error',
+      message: error instanceof Error ? (error as Error).message : 'Unknown error',
     });
+
+    return;
   }
 });
 

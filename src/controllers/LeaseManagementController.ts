@@ -44,9 +44,11 @@ router.post('/leases', async (req: Request, res: Response) => {
 
     // Validate required fields
     if (!organizationId || !propertyId || !tenantId || !leaseNumber || !leaseName || !startDate || !endDate || !originalTerm || !baseLease || !expirationDate) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Required fields missing: organizationId, propertyId, tenantId, leaseNumber, leaseName, startDate, endDate, originalTerm, baseLease, expirationDate'
       });
+
+      return;
     }
 
     const leaseData = {
@@ -86,12 +88,17 @@ router.post('/leases', async (req: Request, res: Response) => {
       success: true,
       data: lease
     });
+
+
+    return;
   } catch (error: unknown) {
     logger.error('Failed to create lease', error);
     res.status(500).json({
       error: 'Failed to create lease',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      message: error instanceof Error ? (error as Error).message : 'Unknown error'
     });
+
+    return;
   }
 });
 
@@ -104,9 +111,11 @@ router.get('/portfolio/summary/:organizationId', async (req: Request, res: Respo
     const { organizationId } = req.params;
     
     if (!organizationId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Organization ID is required'
       });
+
+      return;
     }
 
     const summary = await leaseManagementService.getPortfolioSummary(organizationId);
@@ -119,8 +128,10 @@ router.get('/portfolio/summary/:organizationId', async (req: Request, res: Respo
     logger.error('Failed to get portfolio summary', error);
     res.status(500).json({
       error: 'Failed to get portfolio summary',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      message: error instanceof Error ? (error as Error).message : 'Unknown error'
     });
+
+    return;
   }
 });
 
@@ -144,9 +155,11 @@ router.get('/leases/search', async (req: Request, res: Response) => {
     } = req.query;
 
     if (!organizationId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Organization ID is required'
       });
+
+      return;
     }
 
     const query = {
@@ -177,8 +190,10 @@ router.get('/leases/search', async (req: Request, res: Response) => {
     logger.error('Failed to search leases', error);
     res.status(500).json({
       error: 'Failed to search leases',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      message: error instanceof Error ? (error as Error).message : 'Unknown error'
     });
+
+    return;
   }
 });
 
@@ -192,9 +207,11 @@ router.get('/metrics/:organizationId', async (req: Request, res: Response) => {
     const { propertyIds } = req.query;
     
     if (!organizationId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Organization ID is required'
       });
+
+      return;
     }
 
     const propertyIdArray = propertyIds ? (propertyIds as string).split(',') : undefined;
@@ -208,8 +225,10 @@ router.get('/metrics/:organizationId', async (req: Request, res: Response) => {
     logger.error('Failed to get lease metrics', error);
     res.status(500).json({
       error: 'Failed to get lease metrics',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      message: error instanceof Error ? (error as Error).message : 'Unknown error'
     });
+
+    return;
   }
 });
 
@@ -223,9 +242,11 @@ router.get('/renewals/analyze/:organizationId', async (req: Request, res: Respon
     const { monthsAhead } = req.query;
     
     if (!organizationId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Organization ID is required'
       });
+
+      return;
     }
 
     const months = monthsAhead ? parseInt(monthsAhead as string) : 18;
@@ -246,8 +267,10 @@ router.get('/renewals/analyze/:organizationId', async (req: Request, res: Respon
     logger.error('Failed to analyze renewal opportunities', error);
     res.status(500).json({
       error: 'Failed to analyze renewal opportunities',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      message: error instanceof Error ? (error as Error).message : 'Unknown error'
     });
+
+    return;
   }
 });
 
@@ -261,15 +284,19 @@ router.put('/leases/:leaseId', async (req: Request, res: Response) => {
     const { amendmentReason, ...updates } = req.body;
     
     if (!leaseId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Lease ID is required'
       });
+
+      return;
     }
 
     if (!amendmentReason) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Amendment reason is required'
       });
+
+      return;
     }
 
     // Convert date strings to Date objects
@@ -301,8 +328,10 @@ router.put('/leases/:leaseId', async (req: Request, res: Response) => {
     logger.error('Failed to update lease', error);
     res.status(500).json({
       error: 'Failed to update lease',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      message: error instanceof Error ? (error as Error).message : 'Unknown error'
     });
+
+    return;
   }
 });
 
@@ -316,22 +345,28 @@ router.post('/reports/:organizationId', async (req: Request, res: Response) => {
     const { reportType, filters } = req.body;
     
     if (!organizationId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Organization ID is required'
       });
+
+      return;
     }
 
     if (!reportType) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Report type is required'
       });
+
+      return;
     }
 
     const validReportTypes = ['EXPIRATION_REPORT', 'RENT_ROLL', 'TENANT_ANALYSIS', 'RENEWAL_PIPELINE'];
     if (!validReportTypes.includes(reportType)) {
-      return res.status(400).json({
+      res.status(400).json({
         error: `Invalid report type. Must be one of: ${validReportTypes.join(', ')}`
       });
+
+      return;
     }
 
     const report = await leaseManagementService.generateLeaseReport(organizationId, reportType, filters);
@@ -344,8 +379,10 @@ router.post('/reports/:organizationId', async (req: Request, res: Response) => {
     logger.error('Failed to generate lease report', error);
     res.status(500).json({
       error: 'Failed to generate lease report',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      message: error instanceof Error ? (error as Error).message : 'Unknown error'
     });
+
+    return;
   }
 });
 
@@ -358,9 +395,11 @@ router.get('/leases/:leaseId', async (req: Request, res: Response) => {
     const { leaseId } = req.params;
     
     if (!leaseId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Lease ID is required'
       });
+
+      return;
     }
 
     // This would be implemented in the service
@@ -373,8 +412,10 @@ router.get('/leases/:leaseId', async (req: Request, res: Response) => {
     logger.error('Failed to get lease', error);
     res.status(500).json({
       error: 'Failed to get lease',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      message: error instanceof Error ? (error as Error).message : 'Unknown error'
     });
+
+    return;
   }
 });
 
@@ -387,9 +428,11 @@ router.delete('/leases/:leaseId', async (req: Request, res: Response) => {
     const { leaseId } = req.params;
     
     if (!leaseId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Lease ID is required'
       });
+
+      return;
     }
 
     // This would be implemented in the service
@@ -402,8 +445,10 @@ router.delete('/leases/:leaseId', async (req: Request, res: Response) => {
     logger.error('Failed to delete lease', error);
     res.status(500).json({
       error: 'Failed to delete lease',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      message: error instanceof Error ? (error as Error).message : 'Unknown error'
     });
+
+    return;
   }
 });
 
@@ -416,9 +461,11 @@ router.get('/dashboard/:organizationId', async (req: Request, res: Response) => 
     const { organizationId } = req.params;
     
     if (!organizationId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Organization ID is required'
       });
+
+      return;
     }
 
     // Get comprehensive dashboard data
@@ -447,8 +494,10 @@ router.get('/dashboard/:organizationId', async (req: Request, res: Response) => 
     logger.error('Failed to get lease dashboard', error);
     res.status(500).json({
       error: 'Failed to get lease dashboard',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      message: error instanceof Error ? (error as Error).message : 'Unknown error'
     });
+
+    return;
   }
 });
 

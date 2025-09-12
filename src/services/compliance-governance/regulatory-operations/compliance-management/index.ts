@@ -163,7 +163,7 @@ export class ComplianceManagementOperationsManager extends EventEmitter {
     } catch (error: unknown) {
       logger.error('Compliance provisioning failed', {
         organizationId: options.organizationId,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: error instanceof Error ? (error as Error).message : 'Unknown error',
       });
       throw error;
     }
@@ -245,7 +245,7 @@ export class ComplianceManagementOperationsManager extends EventEmitter {
     } catch (error: unknown) {
       logger.error('Compliance dashboard generation failed', {
         organizationId,
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? (error as Error).message : 'Unknown error'
       });
       throw error;
     }
@@ -316,7 +316,7 @@ export class ComplianceManagementOperationsManager extends EventEmitter {
     } catch (error: unknown) {
       logger.error('Compliance health check failed', {
         organizationId,
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? (error as Error).message : 'Unknown error'
       });
       throw error;
     }

@@ -173,7 +173,7 @@ export class APIManagementService extends EventEmitter {
       logger.error('Failed to create API endpoint', {
         path: endpointData.path,
         method: endpointData.method,
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? (error as Error).message : 'Unknown error'
       });
       throw error;
     }
@@ -293,7 +293,7 @@ export class APIManagementService extends EventEmitter {
     } catch (error: unknown) {
       logger.error('Failed to create API key', {
         keyName: keyData.name,
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? (error as Error).message : 'Unknown error'
       });
       throw error;
     }

@@ -402,14 +402,14 @@ export class ComplianceService {
         } catch (error: unknown) {
           logger.error('Failed to process lease accounting', {
             leaseId: lease.id,
-            error: error instanceof Error ? error.message : 'Unknown error'
+            error: error instanceof Error ? (error as Error).message : 'Unknown error'
           });
           
           results.push({
             leaseId: lease.id,
             leaseNumber: lease.leaseNumber,
             status: 'ERROR',
-            error: error instanceof Error ? error.message : 'Unknown error'
+            error: error instanceof Error ? (error as Error).message : 'Unknown error'
           });
           
           errors++;

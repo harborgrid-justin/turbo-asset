@@ -278,7 +278,7 @@ export class IntegrationService {
     logger.error(`${system} sync failed`, {
       operation: operation.operation,
       entityId: operation.entityId,
-      error: error.message,
+      error: (error as Error).message,
     });
 
     // Update integration record with error
@@ -296,7 +296,7 @@ export class IntegrationService {
         where: { id: record.id },
         data: {
           syncStatus: 'FAILED',
-          errorMessage: error.message,
+          errorMessage: (error as Error).message,
           retryCount: record.retryCount + 1,
         },
       });

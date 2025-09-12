@@ -34,6 +34,8 @@ export class ReportingController {
         success: false,
         error: 'Failed to generate report'
       });
+
+      return;
     }
   };
 
@@ -56,6 +58,8 @@ export class ReportingController {
         success: false,
         error: 'Failed to get scheduled reports'
       });
+
+      return;
     }
   };
 
@@ -76,12 +80,17 @@ export class ReportingController {
         success: true,
         data: schedule
       });
+
+
+      return;
     } catch (error: unknown) {
       logger.error('Failed to schedule report', error);
       res.status(500).json({
         success: false,
         error: 'Failed to schedule report'
       });
+
+      return;
     }
   };
 
@@ -109,6 +118,8 @@ export class ReportingController {
         success: false,
         error: 'Failed to export report'
       });
+
+      return;
     }
   };
 
@@ -131,6 +142,8 @@ export class ReportingController {
         success: false,
         error: 'Failed to get report templates'
       });
+
+      return;
     }
   };
 
@@ -151,12 +164,17 @@ export class ReportingController {
         success: true,
         data: template
       });
+
+
+      return;
     } catch (error: unknown) {
       logger.error('Failed to create report template', error);
       res.status(500).json({
         success: false,
         error: 'Failed to create report template'
       });
+
+      return;
     }
   };
 
@@ -184,6 +202,8 @@ export class ReportingController {
         success: false,
         error: 'Failed to get report history'
       });
+
+      return;
     }
   };
 
@@ -206,6 +226,8 @@ export class ReportingController {
         success: false,
         error: 'Failed to get report analytics'
       });
+
+      return;
     }
   };
 
@@ -228,6 +250,8 @@ export class ReportingController {
         success: false,
         error: 'Failed to delete scheduled report'
       });
+
+      return;
     }
   };
 
@@ -255,6 +279,8 @@ export class ReportingController {
         success: false,
         error: 'Failed to update scheduled report'
       });
+
+      return;
     }
   };
 }

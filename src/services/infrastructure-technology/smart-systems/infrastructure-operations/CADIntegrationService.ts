@@ -266,7 +266,7 @@ export class CADIntegrationService extends EventEmitter {
       const processing = this.processingQueue.get(processingId);
       if (processing) {
         processing.status = 'FAILED';
-        processing.error = error instanceof Error ? error.message : 'Unknown error';
+        processing.error = error instanceof Error ? (error as Error).message : 'Unknown error';
       }
 
       logger.error('CAD file processing failed', {
@@ -280,7 +280,7 @@ export class CADIntegrationService extends EventEmitter {
         where: { id: cadFile.id },
         data: {
           status: 'FAILED',
-          error: error instanceof Error ? error.message : 'Processing failed'
+          error: error instanceof Error ? (error as Error).message : 'Processing failed'
         }
       });
     }
@@ -573,7 +573,7 @@ export class CADIntegrationService extends EventEmitter {
     } catch (error: unknown) {
       logger.error('CAD drawing import failed', {
         fileName: options.fileName,
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? (error as Error).message : 'Unknown error'
       });
       throw error;
     }
@@ -654,14 +654,14 @@ export class CADIntegrationService extends EventEmitter {
     } catch (error: unknown) {
       logger.error('CAD drawing processing failed', {
         drawingId,
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? (error as Error).message : 'Unknown error'
       });
 
       // Update processing status
       const processingTask = this.processingQueue.get(drawingId);
       if (processingTask) {
         processingTask.status = 'failed';
-        processingTask.error = error instanceof Error ? error.message : 'Unknown error';
+        processingTask.error = error instanceof Error ? (error as Error).message : 'Unknown error';
         this.processingQueue.set(drawingId, processingTask);
       }
 
@@ -790,7 +790,7 @@ export class CADIntegrationService extends EventEmitter {
       logger.error('Space analysis report generation failed', {
         organizationId,
         buildingId,
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? (error as Error).message : 'Unknown error'
       });
       throw error;
     }
@@ -850,7 +850,7 @@ export class CADIntegrationService extends EventEmitter {
       logger.error('CAD drawing export failed', {
         drawingId: options.drawingId,
         format: options.format,
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? (error as Error).message : 'Unknown error'
       });
       throw error;
     }
@@ -934,7 +934,7 @@ export class CADIntegrationService extends EventEmitter {
       return result;
     } catch (error: unknown) {
       result.isValid = false;
-      result.errors.push(`Validation error: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      result.errors.push(`Validation error: ${error instanceof Error ? (error as Error).message : 'Unknown error'}`);
       return result;
     }
   }

@@ -249,7 +249,7 @@ export class FinancialOperationsManager {
 
       return results;
     } catch (error: unknown) {
-      throw new Error(`Failed to process monthly financial cycle: ${error.message}`);
+      throw new Error(`Failed to process monthly financial cycle: ${(error as Error).message}`);
     }
   }
 

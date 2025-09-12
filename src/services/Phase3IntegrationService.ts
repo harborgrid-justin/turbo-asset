@@ -451,7 +451,7 @@ export class Phase3IntegrationService extends EventEmitter {
           const syncResult = await this.syncSpaceUtilizationData(organizationId, syncOptions);
           results.push({ service: 'SpaceUtilization', ...syncResult });
         } catch (error: unknown) {
-          errors.push({ service: 'SpaceUtilization', error: error instanceof Error ? error.message : 'Unknown error' });
+          errors.push({ service: 'SpaceUtilization', error: error instanceof Error ? (error as Error).message : 'Unknown error' });
         }
       }
 
@@ -462,7 +462,7 @@ export class Phase3IntegrationService extends EventEmitter {
           results.push({ service: 'CADIntegration', ...syncResult });
           conflicts.push(...syncResult.conflicts || []);
         } catch (error: unknown) {
-          errors.push({ service: 'CADIntegration', error: error instanceof Error ? error.message : 'Unknown error' });
+          errors.push({ service: 'CADIntegration', error: error instanceof Error ? (error as Error).message : 'Unknown error' });
         }
       }
 
@@ -472,7 +472,7 @@ export class Phase3IntegrationService extends EventEmitter {
           const syncResult = await this.syncMoveManagementData(organizationId, syncOptions);
           results.push({ service: 'MoveManagement', ...syncResult });
         } catch (error: unknown) {
-          errors.push({ service: 'MoveManagement', error: error instanceof Error ? error.message : 'Unknown error' });
+          errors.push({ service: 'MoveManagement', error: error instanceof Error ? (error as Error).message : 'Unknown error' });
         }
       }
 
@@ -482,7 +482,7 @@ export class Phase3IntegrationService extends EventEmitter {
           const syncResult = await this.syncChargebackData(organizationId, syncOptions);
           results.push({ service: 'Chargeback', ...syncResult });
         } catch (error: unknown) {
-          errors.push({ service: 'Chargeback', error: error instanceof Error ? error.message : 'Unknown error' });
+          errors.push({ service: 'Chargeback', error: error instanceof Error ? (error as Error).message : 'Unknown error' });
         }
       }
 

@@ -71,7 +71,7 @@ export class HealthCheckService {
       return {
         name: 'database',
         status: 'unhealthy',
-        message: error.message,
+        message: (error as Error).message,
         responseTime: Date.now() - start,
       };
     }
@@ -99,7 +99,7 @@ export class HealthCheckService {
       return {
         name: 'redis',
         status: 'unhealthy',
-        message: error.message,
+        message: (error as Error).message,
         responseTime: Date.now() - start,
       };
     }
@@ -140,7 +140,7 @@ export class HealthCheckService {
       return {
         name: 'filesystem',
         status: 'unhealthy',
-        message: error.message,
+        message: (error as Error).message,
         responseTime: Date.now() - start,
       };
     }
@@ -174,7 +174,7 @@ export class HealthCheckService {
       return {
         name: 'external_services',
         status: 'degraded',
-        message: error.message,
+        message: (error as Error).message,
         responseTime: Date.now() - start,
       };
     }
@@ -218,7 +218,7 @@ export class HealthCheckService {
       return {
         name: 'memory',
         status: 'unhealthy',
-        message: error.message,
+        message: (error as Error).message,
       };
     }
   }
@@ -257,7 +257,7 @@ export class HealthCheckService {
       return {
         name: 'cpu',
         status: 'unhealthy',
-        message: error.message,
+        message: (error as Error).message,
       };
     }
   }
@@ -285,7 +285,7 @@ export class HealthCheckService {
       return {
         name: 'disk',
         status: 'unhealthy',
-        message: error.message,
+        message: (error as Error).message,
       };
     }
   }
@@ -387,7 +387,7 @@ export class HealthCheckService {
           {
             name: 'health_check_service',
             status: 'unhealthy',
-            message: error.message,
+            message: (error as Error).message,
           },
         ],
         system: this.getSystemInfo(),
@@ -449,8 +449,10 @@ export class HealthController {
       res.status(500).json({
         status: 'unhealthy',
         timestamp: new Date().toISOString(),
-        message: error.message,
+        message: (error as Error).message,
       });
+
+      return;
     }
   }
 
@@ -466,19 +468,25 @@ export class HealthController {
           status: 'ready',
           timestamp: new Date().toISOString(),
         });
+
+        return;
       } else {
         res.status(503).json({
           status: 'not_ready',
           timestamp: new Date().toISOString(),
         });
+
+        return;
       }
     } catch (error: any) {
       logger.error('Readiness endpoint error', error);
       res.status(503).json({
         status: 'not_ready',
         timestamp: new Date().toISOString(),
-        message: error.message,
+        message: (error as Error).message,
       });
+
+      return;
     }
   }
 
@@ -494,19 +502,25 @@ export class HealthController {
           status: 'alive',
           timestamp: new Date().toISOString(),
         });
+
+        return;
       } else {
         res.status(503).json({
           status: 'dead',
           timestamp: new Date().toISOString(),
         });
+
+        return;
       }
     } catch (error: any) {
       logger.error('Liveness endpoint error', error);
       res.status(503).json({
         status: 'dead',
         timestamp: new Date().toISOString(),
-        message: error.message,
+        message: (error as Error).message,
       });
+
+      return;
     }
   }
 }

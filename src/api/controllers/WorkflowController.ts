@@ -16,6 +16,8 @@ router.post('/definitions', async (req: Request, res: Response): Promise<void> =
       res.status(400).json({
         error: 'Organization ID, name, and steps are required',
       });
+
+      return;
       return;
     }
 
@@ -36,12 +38,17 @@ router.post('/definitions', async (req: Request, res: Response): Promise<void> =
       id: definitionId,
       message: 'Workflow definition created successfully',
     });
+
+
+    return;
   } catch (error: unknown) {
     logger.error('Failed to create workflow definition', error);
     res.status(500).json({
       error: 'Failed to create workflow definition',
-      message: error instanceof Error ? error.message : 'Unknown error',
+      message: error instanceof Error ? (error as Error).message : 'Unknown error',
     });
+
+    return;
   }
 });
 
@@ -56,6 +63,8 @@ router.post('/instances', async (req: Request, res: Response): Promise<void> => 
       res.status(400).json({
         error: 'Definition ID and initiated by ID are required',
       });
+
+      return;
       return;
     }
 
@@ -70,12 +79,17 @@ router.post('/instances', async (req: Request, res: Response): Promise<void> => 
       id: instanceId,
       message: 'Workflow instance started successfully',
     });
+
+
+    return;
   } catch (error: unknown) {
     logger.error('Failed to start workflow instance', error);
     res.status(500).json({
       error: 'Failed to start workflow instance',
-      message: error instanceof Error ? error.message : 'Unknown error',
+      message: error instanceof Error ? (error as Error).message : 'Unknown error',
     });
+
+    return;
   }
 });
 
@@ -91,6 +105,8 @@ router.post('/approvals/:approvalId/process', async (req: Request, res: Response
       res.status(400).json({
         error: 'Approver ID and decision are required',
       });
+
+      return;
       return;
     }
 
@@ -98,6 +114,8 @@ router.post('/approvals/:approvalId/process', async (req: Request, res: Response
       res.status(400).json({
         error: 'Decision must be APPROVED or REJECTED',
       });
+
+      return;
       return;
     }
 
@@ -115,8 +133,10 @@ router.post('/approvals/:approvalId/process', async (req: Request, res: Response
     logger.error('Failed to process approval', error);
     res.status(500).json({
       error: 'Failed to process approval',
-      message: error instanceof Error ? error.message : 'Unknown error',
+      message: error instanceof Error ? (error as Error).message : 'Unknown error',
     });
+
+    return;
   }
 });
 

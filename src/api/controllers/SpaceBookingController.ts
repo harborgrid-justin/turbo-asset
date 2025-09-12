@@ -25,6 +25,8 @@ router.get('/', async (req: Request, res: Response): Promise<void> => {
       res.status(400).json({
         error: 'Organization ID is required',
       });
+
+      return;
       return;
     }
 
@@ -126,8 +128,10 @@ router.get('/', async (req: Request, res: Response): Promise<void> => {
     logger.error('Failed to get space bookings', error);
     res.status(500).json({
       error: 'Failed to get space bookings',
-      message: error instanceof Error ? error.message : 'Unknown error',
+      message: error instanceof Error ? (error as Error).message : 'Unknown error',
     });
+
+    return;
   }
 });
 
@@ -143,6 +147,8 @@ router.get('/:id', async (req: Request, res: Response): Promise<void> => {
       res.status(400).json({
         error: 'Organization ID is required',
       });
+
+      return;
       return;
     }
 
@@ -197,6 +203,8 @@ router.get('/:id', async (req: Request, res: Response): Promise<void> => {
       res.status(404).json({
         error: 'Space booking not found',
       });
+
+      return;
       return;
     }
 
@@ -205,8 +213,10 @@ router.get('/:id', async (req: Request, res: Response): Promise<void> => {
     logger.error('Failed to get space booking', error);
     res.status(500).json({
       error: 'Failed to get space booking',
-      message: error instanceof Error ? error.message : 'Unknown error',
+      message: error instanceof Error ? (error as Error).message : 'Unknown error',
     });
+
+    return;
   }
 });
 
@@ -235,6 +245,8 @@ router.post('/', async (req: Request, res: Response): Promise<void> => {
       res.status(400).json({
         error: 'Organization ID, space ID, booked by ID, start date time, and end date time are required',
       });
+
+      return;
       return;
     }
 
@@ -246,6 +258,8 @@ router.post('/', async (req: Request, res: Response): Promise<void> => {
       res.status(400).json({
         error: 'Start date must be before end date',
       });
+
+      return;
       return;
     }
 
@@ -253,6 +267,8 @@ router.post('/', async (req: Request, res: Response): Promise<void> => {
       res.status(400).json({
         error: 'Start date cannot be in the past',
       });
+
+      return;
       return;
     }
 
@@ -275,6 +291,8 @@ router.post('/', async (req: Request, res: Response): Promise<void> => {
       res.status(404).json({
         error: 'Space not found or does not belong to organization',
       });
+
+      return;
       return;
     }
 
@@ -314,6 +332,8 @@ router.post('/', async (req: Request, res: Response): Promise<void> => {
         error: 'Space is already booked during the requested time',
         conflicts: conflictingBookings,
       });
+
+      return;
       return;
     }
 
@@ -369,12 +389,17 @@ router.post('/', async (req: Request, res: Response): Promise<void> => {
     logger.info('Space booking created', { bookingId: booking.id, spaceId, organizationId });
 
     res.status(201).json(booking);
+
+
+    return;
   } catch (error: unknown) {
     logger.error('Failed to create space booking', error);
     res.status(500).json({
       error: 'Failed to create space booking',
-      message: error instanceof Error ? error.message : 'Unknown error',
+      message: error instanceof Error ? (error as Error).message : 'Unknown error',
     });
+
+    return;
   }
 });
 
@@ -390,6 +415,8 @@ router.patch('/:id/status', async (req: Request, res: Response): Promise<void> =
       res.status(400).json({
         error: 'Organization ID and status are required',
       });
+
+      return;
       return;
     }
 
@@ -399,6 +426,8 @@ router.patch('/:id/status', async (req: Request, res: Response): Promise<void> =
       res.status(400).json({
         error: 'Invalid status. Valid values are: ' + validStatuses.join(', '),
       });
+
+      return;
       return;
     }
 
@@ -423,6 +452,8 @@ router.patch('/:id/status', async (req: Request, res: Response): Promise<void> =
       res.status(404).json({
         error: 'Space booking not found',
       });
+
+      return;
       return;
     }
 
@@ -500,8 +531,10 @@ router.patch('/:id/status', async (req: Request, res: Response): Promise<void> =
     logger.error('Failed to update space booking status', error);
     res.status(500).json({
       error: 'Failed to update space booking status',
-      message: error instanceof Error ? error.message : 'Unknown error',
+      message: error instanceof Error ? (error as Error).message : 'Unknown error',
     });
+
+    return;
   }
 });
 
@@ -522,6 +555,8 @@ router.get('/availability/check', async (req: Request, res: Response): Promise<v
       res.status(400).json({
         error: 'Organization ID, start date time, and end date time are required',
       });
+
+      return;
       return;
     }
 
@@ -532,6 +567,8 @@ router.get('/availability/check', async (req: Request, res: Response): Promise<v
       res.status(400).json({
         error: 'Start date must be before end date',
       });
+
+      return;
       return;
     }
 
@@ -643,8 +680,10 @@ router.get('/availability/check', async (req: Request, res: Response): Promise<v
     logger.error('Failed to check space availability', error);
     res.status(500).json({
       error: 'Failed to check space availability',
-      message: error instanceof Error ? error.message : 'Unknown error',
+      message: error instanceof Error ? (error as Error).message : 'Unknown error',
     });
+
+    return;
   }
 });
 

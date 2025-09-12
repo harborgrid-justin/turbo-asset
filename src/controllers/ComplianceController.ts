@@ -28,15 +28,19 @@ router.post('/calculate-lease-accounting', async (req: Request, res: Response) =
 
     // Validate required fields
     if (!leaseId || !accountingStandard || !fiscalYear || !fiscalPeriod || !incrementalBorrowingRate || !leasePayments) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Required fields missing: leaseId, accountingStandard, fiscalYear, fiscalPeriod, incrementalBorrowingRate, leasePayments'
       });
+
+      return;
     }
 
     if (!['ASC842', 'IFRS16'].includes(accountingStandard)) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Invalid accounting standard. Must be ASC842 or IFRS16'
       });
+
+      return;
     }
 
     // Convert lease payments dates
@@ -73,8 +77,10 @@ router.post('/calculate-lease-accounting', async (req: Request, res: Response) =
     logger.error('Failed to calculate lease accounting', error);
     res.status(500).json({
       error: 'Failed to calculate lease accounting',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      message: error instanceof Error ? (error as Error).message : 'Unknown error'
     });
+
+    return;
   }
 });
 
@@ -87,9 +93,11 @@ router.post('/lease-accounting-records', async (req: Request, res: Response) => 
     const { calculationData, calculationResult, approvalWorkflow } = req.body;
 
     if (!calculationData || !calculationResult) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'calculationData and calculationResult are required'
       });
+
+      return;
     }
 
     // Format calculation data
@@ -116,12 +124,17 @@ router.post('/lease-accounting-records', async (req: Request, res: Response) => 
       success: true,
       data: record
     });
+
+
+    return;
   } catch (error: unknown) {
     logger.error('Failed to create lease accounting record', error);
     res.status(500).json({
       error: 'Failed to create lease accounting record',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      message: error instanceof Error ? (error as Error).message : 'Unknown error'
     });
+
+    return;
   }
 });
 
@@ -134,16 +147,20 @@ router.post('/bulk-lease-accounting', async (req: Request, res: Response) => {
     const { organizationId, fiscalYear, fiscalPeriod, accountingStandard } = req.body;
 
     if (!organizationId || !fiscalYear || !fiscalPeriod) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'organizationId, fiscalYear, and fiscalPeriod are required'
       });
+
+      return;
     }
 
     const standard = accountingStandard || 'ASC842';
     if (!['ASC842', 'IFRS16'].includes(standard)) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Invalid accounting standard. Must be ASC842 or IFRS16'
       });
+
+      return;
     }
 
     const result = await complianceService.processBulkLeaseAccounting(
@@ -161,8 +178,10 @@ router.post('/bulk-lease-accounting', async (req: Request, res: Response) => {
     logger.error('Failed to process bulk lease accounting', error);
     res.status(500).json({
       error: 'Failed to process bulk lease accounting',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      message: error instanceof Error ? (error as Error).message : 'Unknown error'
     });
+
+    return;
   }
 });
 
@@ -176,22 +195,28 @@ router.get('/reports/:organizationId', async (req: Request, res: Response) => {
     const { reportingPeriod, accountingStandard } = req.query;
 
     if (!organizationId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Organization ID is required'
       });
+
+      return;
     }
 
     if (!reportingPeriod) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Reporting period is required (YYYY-MM format)'
       });
+
+      return;
     }
 
     const standard = (accountingStandard as string) || 'ASC842';
     if (!['ASC842', 'IFRS16'].includes(standard)) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Invalid accounting standard. Must be ASC842 or IFRS16'
       });
+
+      return;
     }
 
     const report = await complianceService.generateComplianceReport(
@@ -208,8 +233,10 @@ router.get('/reports/:organizationId', async (req: Request, res: Response) => {
     logger.error('Failed to generate compliance report', error);
     res.status(500).json({
       error: 'Failed to generate compliance report',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      message: error instanceof Error ? (error as Error).message : 'Unknown error'
     });
+
+    return;
   }
 });
 
@@ -222,23 +249,29 @@ router.post('/update-discount-rates', async (req: Request, res: Response) => {
     const { organizationId, rateUpdates, effectiveDate } = req.body;
 
     if (!organizationId || !rateUpdates || !effectiveDate) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'organizationId, rateUpdates, and effectiveDate are required'
       });
+
+      return;
     }
 
     if (!Array.isArray(rateUpdates)) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'rateUpdates must be an array'
       });
+
+      return;
     }
 
     // Validate rate updates format
     for (const update of rateUpdates) {
       if (!update.leaseId || typeof update.discountRate !== 'number') {
-        return res.status(400).json({
+        res.status(400).json({
           error: 'Each rate update must have leaseId and discountRate'
         });
+
+        return;
       }
     }
 
@@ -261,8 +294,10 @@ router.post('/update-discount-rates', async (req: Request, res: Response) => {
     logger.error('Failed to update discount rates', error);
     res.status(500).json({
       error: 'Failed to update discount rates',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      message: error instanceof Error ? (error as Error).message : 'Unknown error'
     });
+
+    return;
   }
 });
 
@@ -276,22 +311,28 @@ router.get('/disclosure-notes/:organizationId', async (req: Request, res: Respon
     const { fiscalYear, accountingStandard } = req.query;
 
     if (!organizationId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Organization ID is required'
       });
+
+      return;
     }
 
     if (!fiscalYear) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Fiscal year is required'
       });
+
+      return;
     }
 
     const standard = (accountingStandard as string) || 'ASC842';
     if (!['ASC842', 'IFRS16'].includes(standard)) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Invalid accounting standard. Must be ASC842 or IFRS16'
       });
+
+      return;
     }
 
     const disclosureNotes = await complianceService.generateDisclosureNotes(
@@ -308,8 +349,10 @@ router.get('/disclosure-notes/:organizationId', async (req: Request, res: Respon
     logger.error('Failed to generate disclosure notes', error);
     res.status(500).json({
       error: 'Failed to generate disclosure notes',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      message: error instanceof Error ? (error as Error).message : 'Unknown error'
     });
+
+    return;
   }
 });
 
@@ -331,9 +374,11 @@ router.get('/lease-accounting-records', async (req: Request, res: Response) => {
     } = req.query;
 
     if (!organizationId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Organization ID is required'
       });
+
+      return;
     }
 
     // This would be implemented in the service
@@ -356,8 +401,10 @@ router.get('/lease-accounting-records', async (req: Request, res: Response) => {
     logger.error('Failed to get lease accounting records', error);
     res.status(500).json({
       error: 'Failed to get lease accounting records',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      message: error instanceof Error ? (error as Error).message : 'Unknown error'
     });
+
+    return;
   }
 });
 
@@ -379,9 +426,11 @@ router.get('/journal-entries', async (req: Request, res: Response) => {
     } = req.query;
 
     if (!organizationId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Organization ID is required'
       });
+
+      return;
     }
 
     // This would be implemented in the service
@@ -404,8 +453,10 @@ router.get('/journal-entries', async (req: Request, res: Response) => {
     logger.error('Failed to get journal entries', error);
     res.status(500).json({
       error: 'Failed to get journal entries',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      message: error instanceof Error ? (error as Error).message : 'Unknown error'
     });
+
+    return;
   }
 });
 
@@ -419,22 +470,28 @@ router.put('/lease-accounting-records/:recordId/status', async (req: Request, re
     const { status, notes } = req.body;
 
     if (!recordId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Record ID is required'
       });
+
+      return;
     }
 
     if (!status) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Status is required'
       });
+
+      return;
     }
 
     const validStatuses = ['DRAFT', 'CALCULATED', 'REVIEWED', 'APPROVED', 'POSTED', 'ADJUSTED'];
     if (!validStatuses.includes(status)) {
-      return res.status(400).json({
+      res.status(400).json({
         error: `Invalid status. Must be one of: ${validStatuses.join(', ')}`
       });
+
+      return;
     }
 
     // This would be implemented in the service
@@ -448,8 +505,10 @@ router.put('/lease-accounting-records/:recordId/status', async (req: Request, re
     logger.error('Failed to update accounting record status', error);
     res.status(500).json({
       error: 'Failed to update accounting record status',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      message: error instanceof Error ? (error as Error).message : 'Unknown error'
     });
+
+    return;
   }
 });
 
@@ -463,15 +522,19 @@ router.post('/journal-entries/:entryId/approve', async (req: Request, res: Respo
     const { approvedBy, notes } = req.body;
 
     if (!entryId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Entry ID is required'
       });
+
+      return;
     }
 
     if (!approvedBy) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Approved by is required'
       });
+
+      return;
     }
 
     // This would be implemented in the service
@@ -485,8 +548,10 @@ router.post('/journal-entries/:entryId/approve', async (req: Request, res: Respo
     logger.error('Failed to approve journal entry', error);
     res.status(500).json({
       error: 'Failed to approve journal entry',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      message: error instanceof Error ? (error as Error).message : 'Unknown error'
     });
+
+    return;
   }
 });
 
@@ -500,9 +565,11 @@ router.get('/dashboard/:organizationId', async (req: Request, res: Response) => 
     const { fiscalYear } = req.query;
 
     if (!organizationId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Organization ID is required'
       });
+
+      return;
     }
 
     // Get compliance report for dashboard metrics
@@ -542,8 +609,10 @@ router.get('/dashboard/:organizationId', async (req: Request, res: Response) => 
     logger.error('Failed to get compliance dashboard', error);
     res.status(500).json({
       error: 'Failed to get compliance dashboard',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      message: error instanceof Error ? (error as Error).message : 'Unknown error'
     });
+
+    return;
   }
 });
 

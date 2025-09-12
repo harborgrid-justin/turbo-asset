@@ -78,7 +78,7 @@ export class AssetNotificationService extends EventEmitter {
     } catch (error: unknown) {
       logger.error('Failed to send asset creation notifications', {
         assetId: asset.id,
-        error: error.message,
+        error: (error as Error).message,
       });
       // Don't throw - notifications shouldn't fail asset creation
     }
@@ -112,7 +112,7 @@ export class AssetNotificationService extends EventEmitter {
 
     } catch (error: unknown) {
       logger.error('Failed to send maintenance due notifications', {
-        error: error.message,
+        error: (error as Error).message,
       });
     }
   }
@@ -156,7 +156,7 @@ export class AssetNotificationService extends EventEmitter {
 
     } catch (error: unknown) {
       logger.error('Failed to send warranty expiration notifications', {
-        error: error.message,
+        error: (error as Error).message,
       });
     }
   }
@@ -216,7 +216,7 @@ export class AssetNotificationService extends EventEmitter {
     } catch (error: unknown) {
       logger.error('Failed to send condition change notifications', {
         assetId,
-        error: error.message,
+        error: (error as Error).message,
       });
     }
   }
@@ -277,7 +277,7 @@ export class AssetNotificationService extends EventEmitter {
       logger.error('Failed to send emergency notifications', {
         assetId,
         emergencyType,
-        error: error.message,
+        error: (error as Error).message,
       });
     }
   }
@@ -324,7 +324,7 @@ export class AssetNotificationService extends EventEmitter {
       logger.error('Failed to send bulk operation notifications', {
         operationType,
         organizationId,
-        error: error.message,
+        error: (error as Error).message,
       });
     }
   }
@@ -668,7 +668,7 @@ export class AssetNotificationService extends EventEmitter {
         recipient,
         subject,
         type,
-        error: error.message,
+        error: (error as Error).message,
       });
     }
   }

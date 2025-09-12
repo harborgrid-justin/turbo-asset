@@ -22,9 +22,11 @@ router.get('/', async (req: Request, res: Response) => {
     } = req.query;
 
     if (!organizationId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Organization ID is required',
       });
+
+      return;
     }
 
     // Build where clause
@@ -125,8 +127,10 @@ router.get('/', async (req: Request, res: Response) => {
     logger.error('Failed to get space bookings', error);
     res.status(500).json({
       error: 'Failed to get space bookings',
-      message: error instanceof Error ? error.message : 'Unknown error',
+      message: error instanceof Error ? (error as Error).message : 'Unknown error',
     });
+
+    return;
   }
 });
 
@@ -139,9 +143,11 @@ router.get('/:id', async (req: Request, res: Response) => {
     const { organizationId } = req.query;
 
     if (!organizationId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Organization ID is required',
       });
+
+      return;
     }
 
     const booking = await prisma.spaceBooking.findFirst({
@@ -192,9 +198,11 @@ router.get('/:id', async (req: Request, res: Response) => {
     });
 
     if (!booking) {
-      return res.status(404).json({
+      res.status(404).json({
         error: 'Space booking not found',
       });
+
+      return;
     }
 
     res.json(booking);
@@ -202,8 +210,10 @@ router.get('/:id', async (req: Request, res: Response) => {
     logger.error('Failed to get space booking', error);
     res.status(500).json({
       error: 'Failed to get space booking',
-      message: error instanceof Error ? error.message : 'Unknown error',
+      message: error instanceof Error ? (error as Error).message : 'Unknown error',
     });
+
+    return;
   }
 });
 
@@ -229,9 +239,11 @@ router.post('/', async (req: Request, res: Response) => {
 
     // Validate required fields
     if (!organizationId || !spaceId || !bookedById || !startDateTime || !endDateTime) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Organization ID, space ID, booked by ID, start date time, and end date time are required',
       });
+
+      return;
     }
 
     // Validate dates
@@ -239,15 +251,19 @@ router.post('/', async (req: Request, res: Response) => {
     const endDate = new Date(endDateTime);
 
     if (startDate >= endDate) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Start date must be before end date',
       });
+
+      return;
     }
 
     if (startDate < new Date()) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Start date cannot be in the past',
       });
+
+      return;
     }
 
     // Check if space exists and belongs to the organization
@@ -266,9 +282,11 @@ router.post('/', async (req: Request, res: Response) => {
     });
 
     if (!space) {
-      return res.status(404).json({
+      res.status(404).json({
         error: 'Space not found or does not belong to organization',
       });
+
+      return;
     }
 
     // Check for booking conflicts
@@ -303,10 +321,12 @@ router.post('/', async (req: Request, res: Response) => {
     });
 
     if (conflictingBookings.length > 0) {
-      return res.status(409).json({
+      res.status(409).json({
         error: 'Space is already booked during the requested time',
         conflicts: conflictingBookings,
       });
+
+      return;
     }
 
     // Create the booking
@@ -361,12 +381,17 @@ router.post('/', async (req: Request, res: Response) => {
     logger.info('Space booking created', { bookingId: booking.id, spaceId, organizationId });
 
     res.status(201).json(booking);
+
+
+    return;
   } catch (error: unknown) {
     logger.error('Failed to create space booking', error);
     res.status(500).json({
       error: 'Failed to create space booking',
-      message: error instanceof Error ? error.message : 'Unknown error',
+      message: error instanceof Error ? (error as Error).message : 'Unknown error',
     });
+
+    return;
   }
 });
 
@@ -379,17 +404,21 @@ router.patch('/:id/status', async (req: Request, res: Response) => {
     const { organizationId, status, reason } = req.body;
 
     if (!organizationId || !status) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Organization ID and status are required',
       });
+
+      return;
     }
 
     // Validate status
     const validStatuses = ['CONFIRMED', 'CHECKED_IN', 'CHECKED_OUT', 'CANCELLED', 'NO_SHOW'];
     if (!validStatuses.includes(status)) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Invalid status. Valid values are: ' + validStatuses.join(', '),
       });
+
+      return;
     }
 
     // Find the booking
@@ -410,9 +439,11 @@ router.patch('/:id/status', async (req: Request, res: Response) => {
     });
 
     if (!existingBooking) {
-      return res.status(404).json({
+      res.status(404).json({
         error: 'Space booking not found',
       });
+
+      return;
     }
 
     // Prepare update data
@@ -489,8 +520,10 @@ router.patch('/:id/status', async (req: Request, res: Response) => {
     logger.error('Failed to update space booking status', error);
     res.status(500).json({
       error: 'Failed to update space booking status',
-      message: error instanceof Error ? error.message : 'Unknown error',
+      message: error instanceof Error ? (error as Error).message : 'Unknown error',
     });
+
+    return;
   }
 });
 
@@ -508,18 +541,22 @@ router.get('/availability/check', async (req: Request, res: Response) => {
     } = req.query;
 
     if (!organizationId || !startDateTime || !endDateTime) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Organization ID, start date time, and end date time are required',
       });
+
+      return;
     }
 
     const startDate = new Date(startDateTime as string);
     const endDate = new Date(endDateTime as string);
 
     if (startDate >= endDate) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Start date must be before end date',
       });
+
+      return;
     }
 
     // Build space filter
@@ -630,8 +667,10 @@ router.get('/availability/check', async (req: Request, res: Response) => {
     logger.error('Failed to check space availability', error);
     res.status(500).json({
       error: 'Failed to check space availability',
-      message: error instanceof Error ? error.message : 'Unknown error',
+      message: error instanceof Error ? (error as Error).message : 'Unknown error',
     });
+
+    return;
   }
 });
 

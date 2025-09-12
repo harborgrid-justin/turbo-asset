@@ -28,6 +28,8 @@ export class EnhancedBusinessLogicController {
             message: 'serviceName and methodName are required',
           },
         });
+
+        return;
       return;
       }
 
@@ -51,9 +53,11 @@ export class EnhancedBusinessLogicController {
         error: {
           code: 'EXECUTION_ERROR',
           message: 'Failed to execute advanced business logic',
-          details: error instanceof Error ? error.message : 'Unknown error',
+          details: error instanceof Error ? (error as Error).message : 'Unknown error',
         },
       });
+
+      return;
       return;
     }
   }
@@ -74,6 +78,8 @@ export class EnhancedBusinessLogicController {
           message: 'Failed to get health status',
         },
       });
+
+      return;
       return;
     }
   }
@@ -112,6 +118,8 @@ export class EnhancedBusinessLogicController {
           message: 'Failed to get production metrics',
         },
       });
+
+      return;
       return;
     }
   }
@@ -131,6 +139,8 @@ export class EnhancedBusinessLogicController {
             message: 'assetData is required',
           },
         });
+
+        return;
       return;
       }
 
@@ -158,9 +168,11 @@ export class EnhancedBusinessLogicController {
         error: {
           code: 'CALCULATION_ERROR',
           message: 'Failed to calculate asset depreciation',
-          details: error instanceof Error ? error.message : 'Unknown error',
+          details: error instanceof Error ? (error as Error).message : 'Unknown error',
         },
       });
+
+      return;
       return;
     }
   }
@@ -180,6 +192,8 @@ export class EnhancedBusinessLogicController {
             message: 'leaseData is required',
           },
         });
+
+        return;
       return;
       }
 
@@ -209,9 +223,11 @@ export class EnhancedBusinessLogicController {
         error: {
           code: 'CALCULATION_ERROR',
           message: 'Failed to calculate lease accounting',
-          details: error instanceof Error ? error.message : 'Unknown error',
+          details: error instanceof Error ? (error as Error).message : 'Unknown error',
         },
       });
+
+      return;
       return;
     }
   }
@@ -231,6 +247,8 @@ export class EnhancedBusinessLogicController {
             message: 'spaceData is required',
           },
         });
+
+        return;
       return;
       }
 
@@ -252,9 +270,11 @@ export class EnhancedBusinessLogicController {
         error: {
           code: 'OPTIMIZATION_ERROR',
           message: 'Failed to optimize space utilization',
-          details: error instanceof Error ? error.message : 'Unknown error',
+          details: error instanceof Error ? (error as Error).message : 'Unknown error',
         },
       });
+
+      return;
       return;
     }
   }
@@ -274,6 +294,8 @@ export class EnhancedBusinessLogicController {
             message: 'maintenanceData is required',
           },
         });
+
+        return;
       return;
       }
 
@@ -295,9 +317,11 @@ export class EnhancedBusinessLogicController {
         error: {
           code: 'OPTIMIZATION_ERROR',
           message: 'Failed to optimize maintenance costs',
-          details: error instanceof Error ? error.message : 'Unknown error',
+          details: error instanceof Error ? (error as Error).message : 'Unknown error',
         },
       });
+
+      return;
       return;
     }
   }
@@ -317,6 +341,8 @@ export class EnhancedBusinessLogicController {
             message: 'financialData is required',
           },
         });
+
+        return;
       return;
       }
 
@@ -339,9 +365,11 @@ export class EnhancedBusinessLogicController {
         error: {
           code: 'CONSOLIDATION_ERROR',
           message: 'Failed to perform financial consolidation',
-          details: error instanceof Error ? error.message : 'Unknown error',
+          details: error instanceof Error ? (error as Error).message : 'Unknown error',
         },
       });
+
+      return;
       return;
     }
   }
@@ -361,6 +389,8 @@ export class EnhancedBusinessLogicController {
             message: 'rawAssetData and sourceSystem are required',
           },
         });
+
+        return;
       return;
       }
 
@@ -382,9 +412,11 @@ export class EnhancedBusinessLogicController {
         error: {
           code: 'STANDARDIZATION_ERROR',
           message: 'Failed to standardize asset data',
-          details: error instanceof Error ? error.message : 'Unknown error',
+          details: error instanceof Error ? (error as Error).message : 'Unknown error',
         },
       });
+
+      return;
       return;
     }
   }
@@ -404,6 +436,8 @@ export class EnhancedBusinessLogicController {
             message: 'rawSpaceData and sourceSystem are required',
           },
         });
+
+        return;
       return;
       }
 
@@ -425,9 +459,11 @@ export class EnhancedBusinessLogicController {
         error: {
           code: 'STANDARDIZATION_ERROR',
           message: 'Failed to standardize space data',
-          details: error instanceof Error ? error.message : 'Unknown error',
+          details: error instanceof Error ? (error as Error).message : 'Unknown error',
         },
       });
+
+      return;
       return;
     }
   }
@@ -447,6 +483,8 @@ export class EnhancedBusinessLogicController {
             message: 'serviceName, methodName, and rules are required',
           },
         });
+
+        return;
       return;
       }
 
@@ -465,6 +503,8 @@ export class EnhancedBusinessLogicController {
           message: 'Failed to add validation rules',
         },
       });
+
+      return;
       return;
     }
   }
@@ -484,6 +524,8 @@ export class EnhancedBusinessLogicController {
             message: 'serviceName is required',
           },
         });
+
+        return;
       return;
       }
 
@@ -502,6 +544,8 @@ export class EnhancedBusinessLogicController {
           message: 'Failed to reset service metrics',
         },
       });
+
+      return;
       return;
     }
   }
@@ -532,6 +576,8 @@ export class EnhancedBusinessLogicController {
           message: 'Failed to list services',
         },
       });
+
+      return;
       return;
     }
   }

@@ -26,9 +26,11 @@ router.get('/dashboard', async (req: Request, res: Response) => {
     } = req.query;
 
     if (!organizationId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Organization ID is required',
       });
+
+      return;
     }
 
     const query = {
@@ -47,8 +49,10 @@ router.get('/dashboard', async (req: Request, res: Response) => {
     logger.error('Failed to get portfolio dashboard', error);
     res.status(500).json({
       error: 'Failed to get portfolio dashboard',
-      message: error instanceof Error ? error.message : 'Unknown error',
+      message: error instanceof Error ? (error as Error).message : 'Unknown error',
     });
+
+    return;
   }
 });
 
@@ -61,9 +65,11 @@ router.get('/properties/:id/drilldown', async (req: Request, res: Response) => {
     const { organizationId } = req.query;
 
     if (!organizationId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Organization ID is required',
       });
+
+      return;
     }
 
     const drillDown = await portfolioService.getPropertyDrillDown(
@@ -76,8 +82,10 @@ router.get('/properties/:id/drilldown', async (req: Request, res: Response) => {
     logger.error('Failed to get property drill-down', error);
     res.status(500).json({
       error: 'Failed to get property drill-down',
-      message: error instanceof Error ? error.message : 'Unknown error',
+      message: error instanceof Error ? (error as Error).message : 'Unknown error',
     });
+
+    return;
   }
 });
 
@@ -98,9 +106,11 @@ router.get('/utilization/analytics', async (req: Request, res: Response) => {
     } = req.query;
 
     if (!organizationId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Organization ID is required',
       });
+
+      return;
     }
 
     const query = {
@@ -121,8 +131,10 @@ router.get('/utilization/analytics', async (req: Request, res: Response) => {
     logger.error('Failed to get utilization analytics', error);
     res.status(500).json({
       error: 'Failed to get utilization analytics',
-      message: error instanceof Error ? error.message : 'Unknown error',
+      message: error instanceof Error ? (error as Error).message : 'Unknown error',
     });
+
+    return;
   }
 });
 
@@ -134,9 +146,11 @@ router.get('/occupancy/realtime', async (req: Request, res: Response) => {
     const { organizationId, spaceIds } = req.query;
 
     if (!organizationId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Organization ID is required',
       });
+
+      return;
     }
 
     const spaceIdArray = spaceIds 
@@ -153,8 +167,10 @@ router.get('/occupancy/realtime', async (req: Request, res: Response) => {
     logger.error('Failed to get real-time occupancy', error);
     res.status(500).json({
       error: 'Failed to get real-time occupancy',
-      message: error instanceof Error ? error.message : 'Unknown error',
+      message: error instanceof Error ? (error as Error).message : 'Unknown error',
     });
+
+    return;
   }
 });
 
@@ -166,9 +182,11 @@ router.get('/moves/analytics', async (req: Request, res: Response) => {
     const { organizationId, startDate, endDate } = req.query;
 
     if (!organizationId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Organization ID is required',
       });
+
+      return;
     }
 
     const period = startDate && endDate ? {
@@ -186,8 +204,10 @@ router.get('/moves/analytics', async (req: Request, res: Response) => {
     logger.error('Failed to get move analytics', error);
     res.status(500).json({
       error: 'Failed to get move analytics',
-      message: error instanceof Error ? error.message : 'Unknown error',
+      message: error instanceof Error ? (error as Error).message : 'Unknown error',
     });
+
+    return;
   }
 });
 
@@ -199,9 +219,11 @@ router.get('/chargeback/analytics', async (req: Request, res: Response) => {
     const { organizationId, periodCount = 12 } = req.query;
 
     if (!organizationId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Organization ID is required',
       });
+
+      return;
     }
 
     const analytics = await chargebackService.getChargebackAnalytics(
@@ -214,8 +236,10 @@ router.get('/chargeback/analytics', async (req: Request, res: Response) => {
     logger.error('Failed to get chargeback analytics', error);
     res.status(500).json({
       error: 'Failed to get chargeback analytics',
-      message: error instanceof Error ? error.message : 'Unknown error',
+      message: error instanceof Error ? (error as Error).message : 'Unknown error',
     });
+
+    return;
   }
 });
 
@@ -227,16 +251,20 @@ router.get('/chargeback/report', async (req: Request, res: Response) => {
     const { organizationId, period, departmentId } = req.query;
 
     if (!organizationId || !period) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Organization ID and period are required',
       });
+
+      return;
     }
 
     // Validate period format (YYYY-MM)
     if (!/^\d{4}-\d{2}$/.test(period as string)) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Period must be in YYYY-MM format',
       });
+
+      return;
     }
 
     const report = await chargebackService.generateChargebackReport(
@@ -250,8 +278,10 @@ router.get('/chargeback/report', async (req: Request, res: Response) => {
     logger.error('Failed to generate chargeback report', error);
     res.status(500).json({
       error: 'Failed to generate chargeback report',
-      message: error instanceof Error ? error.message : 'Unknown error',
+      message: error instanceof Error ? (error as Error).message : 'Unknown error',
     });
+
+    return;
   }
 });
 
@@ -272,9 +302,11 @@ router.get('/utilization/report', async (req: Request, res: Response) => {
     } = req.query;
 
     if (!organizationId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Organization ID is required',
       });
+
+      return;
     }
 
     const query = {
@@ -295,8 +327,10 @@ router.get('/utilization/report', async (req: Request, res: Response) => {
     logger.error('Failed to get utilization report', error);
     res.status(500).json({
       error: 'Failed to get utilization report',
-      message: error instanceof Error ? error.message : 'Unknown error',
+      message: error instanceof Error ? (error as Error).message : 'Unknown error',
     });
+
+    return;
   }
 });
 
@@ -308,9 +342,11 @@ router.post('/utilization/record', async (req: Request, res: Response) => {
     const { organizationId, records } = req.body;
 
     if (!organizationId || !records || !Array.isArray(records)) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Organization ID and records array are required',
       });
+
+      return;
     }
 
     await utilizationService.recordUtilization(records);
@@ -319,12 +355,17 @@ router.post('/utilization/record', async (req: Request, res: Response) => {
       message: 'Utilization data recorded successfully',
       recordCount: records.length,
     });
+
+
+    return;
   } catch (error: unknown) {
     logger.error('Failed to record utilization data', error);
     res.status(500).json({
       error: 'Failed to record utilization data',
-      message: error instanceof Error ? error.message : 'Unknown error',
+      message: error instanceof Error ? (error as Error).message : 'Unknown error',
     });
+
+    return;
   }
 });
 
@@ -336,17 +377,21 @@ router.post('/utilization/sensor-data', async (req: Request, res: Response) => {
     const { organizationId, sensorData } = req.body;
 
     if (!organizationId || !sensorData || !Array.isArray(sensorData)) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Organization ID and sensor data array are required',
       });
+
+      return;
     }
 
     // Validate sensor data format
     for (const sensor of sensorData) {
       if (!sensor.sensorId || !sensor.spaceId || !sensor.data || !sensor.timestamp) {
-        return res.status(400).json({
+        res.status(400).json({
           error: 'Each sensor data record must have sensorId, spaceId, data, and timestamp',
         });
+
+        return;
       }
     }
 
@@ -356,12 +401,17 @@ router.post('/utilization/sensor-data', async (req: Request, res: Response) => {
       message: 'Sensor data processed successfully',
       sensorCount: sensorData.length,
     });
+
+
+    return;
   } catch (error: unknown) {
     logger.error('Failed to process sensor data', error);
     res.status(500).json({
       error: 'Failed to process sensor data',
-      message: error instanceof Error ? error.message : 'Unknown error',
+      message: error instanceof Error ? (error as Error).message : 'Unknown error',
     });
+
+    return;
   }
 });
 
@@ -377,9 +427,11 @@ router.get('/summary', async (req: Request, res: Response) => {
     } = req.query;
 
     if (!organizationId) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'Organization ID is required',
       });
+
+      return;
     }
 
     const query = {
@@ -395,8 +447,10 @@ router.get('/summary', async (req: Request, res: Response) => {
     logger.error('Failed to get portfolio summary', error);
     res.status(500).json({
       error: 'Failed to get portfolio summary',
-      message: error instanceof Error ? error.message : 'Unknown error',
+      message: error instanceof Error ? (error as Error).message : 'Unknown error',
     });
+
+    return;
   }
 });
 

@@ -85,6 +85,8 @@ export class DocumentController {
     } catch (error: unknown) {
       logger.error('Failed to get documents', error);
       res.status(500).json({ error: 'Failed to get documents' });
+
+      return;
     }
   }
 
@@ -97,12 +99,16 @@ export class DocumentController {
       
       if (!req.file) {
         res.status(400).json({ error: 'No file uploaded' });
+
+        return;
         return;
       }
 
       const { error, value } = uploadDocumentSchema.validate(req.body);
       if (error) {
         res.status(400).json({ error: error.details[0].message });
+
+        return;
         return;
       }
 
@@ -118,9 +124,14 @@ export class DocumentController {
         data: { id: documentId },
         message: 'Document uploaded successfully',
       });
+
+
+      return;
     } catch (error: unknown) {
       logger.error('Failed to upload document', error);
       res.status(500).json({ error: 'Failed to upload document' });
+
+      return;
     }
   }
 
@@ -133,6 +144,8 @@ export class DocumentController {
       
       if (!req.file) {
         res.status(400).json({ error: 'No file uploaded' });
+
+        return;
         return;
       }
 
@@ -151,9 +164,14 @@ export class DocumentController {
         data: { versionId },
         message: 'Document version uploaded successfully',
       });
+
+
+      return;
     } catch (error: unknown) {
       logger.error('Failed to upload document version', error);
       res.status(500).json({ error: 'Failed to upload document version' });
+
+      return;
     }
   }
 
@@ -176,6 +194,8 @@ export class DocumentController {
 
       if (!document) {
         res.status(404).json({ error: 'Document not found' });
+
+        return;
         return;
       }
 
@@ -186,6 +206,8 @@ export class DocumentController {
     } catch (error: unknown) {
       logger.error('Failed to get document', error);
       res.status(500).json({ error: 'Failed to get document' });
+
+      return;
     }
   }
 
@@ -199,6 +221,8 @@ export class DocumentController {
       const { error, value } = updateDocumentSchema.validate(req.body);
       if (error) {
         res.status(400).json({ error: error.details[0].message });
+
+        return;
         return;
       }
 
@@ -211,6 +235,8 @@ export class DocumentController {
     } catch (error: unknown) {
       logger.error('Failed to update document', error);
       res.status(500).json({ error: 'Failed to update document' });
+
+      return;
     }
   }
 
@@ -230,6 +256,8 @@ export class DocumentController {
 
       if (!downloadInfo) {
         res.status(404).json({ error: 'Document not found' });
+
+        return;
         return;
       }
 
@@ -252,6 +280,8 @@ export class DocumentController {
     } catch (error: unknown) {
       logger.error('Failed to download document', error);
       res.status(500).json({ error: 'Failed to download document' });
+
+      return;
     }
   }
 
@@ -271,6 +301,8 @@ export class DocumentController {
 
       if (!previewInfo) {
         res.status(404).json({ error: 'Preview not available' });
+
+        return;
         return;
       }
 
@@ -289,6 +321,8 @@ export class DocumentController {
     } catch (error: unknown) {
       logger.error('Failed to generate document preview', error);
       res.status(500).json({ error: 'Failed to generate preview' });
+
+      return;
     }
   }
 
@@ -313,6 +347,8 @@ export class DocumentController {
     } catch (error: unknown) {
       logger.error('Failed to delete document', error);
       res.status(500).json({ error: 'Failed to delete document' });
+
+      return;
     }
   }
 
@@ -332,6 +368,8 @@ export class DocumentController {
     } catch (error: unknown) {
       logger.error('Failed to restore document', error);
       res.status(500).json({ error: 'Failed to restore document' });
+
+      return;
     }
   }
 
@@ -345,6 +383,8 @@ export class DocumentController {
       const { error, value } = shareDocumentSchema.validate(req.body);
       if (error) {
         res.status(400).json({ error: error.details[0].message });
+
+        return;
         return;
       }
 
@@ -368,6 +408,8 @@ export class DocumentController {
     } catch (error: unknown) {
       logger.error('Failed to share document', error);
       res.status(500).json({ error: 'Failed to share document' });
+
+      return;
     }
   }
 
@@ -390,6 +432,8 @@ export class DocumentController {
     } catch (error: unknown) {
       logger.error('Failed to get document permissions', error);
       res.status(500).json({ error: 'Failed to get document permissions' });
+
+      return;
     }
   }
 
@@ -403,6 +447,8 @@ export class DocumentController {
 
       if (!permissions || !Array.isArray(permissions)) {
         res.status(400).json({ error: 'Permissions array is required' });
+
+        return;
         return;
       }
 
@@ -419,6 +465,8 @@ export class DocumentController {
     } catch (error: unknown) {
       logger.error('Failed to update document permissions', error);
       res.status(500).json({ error: 'Failed to update document permissions' });
+
+      return;
     }
   }
 
@@ -441,6 +489,8 @@ export class DocumentController {
     } catch (error: unknown) {
       logger.error('Failed to get document versions', error);
       res.status(500).json({ error: 'Failed to get document versions' });
+
+      return;
     }
   }
 
@@ -454,6 +504,8 @@ export class DocumentController {
 
       if (!version1 || !version2) {
         res.status(400).json({ error: 'Both version1 and version2 are required' });
+
+        return;
         return;
       }
 
@@ -471,6 +523,8 @@ export class DocumentController {
     } catch (error: unknown) {
       logger.error('Failed to compare document versions', error);
       res.status(500).json({ error: 'Failed to compare versions' });
+
+      return;
     }
   }
 
@@ -498,6 +552,8 @@ export class DocumentController {
     } catch (error: unknown) {
       logger.error('Failed to get document access history', error);
       res.status(500).json({ error: 'Failed to get access history' });
+
+      return;
     }
   }
 
@@ -522,6 +578,8 @@ export class DocumentController {
     } catch (error: unknown) {
       logger.error('Failed to get document analytics', error);
       res.status(500).json({ error: 'Failed to get analytics' });
+
+      return;
     }
   }
 
@@ -541,6 +599,8 @@ export class DocumentController {
 
       if (!query || query.trim() === '') {
         res.status(400).json({ error: 'Search query is required' });
+
+        return;
         return;
       }
 
@@ -562,6 +622,8 @@ export class DocumentController {
     } catch (error: unknown) {
       logger.error('Failed to search documents', error);
       res.status(500).json({ error: 'Failed to search documents' });
+
+      return;
     }
   }
 
@@ -575,6 +637,8 @@ export class DocumentController {
 
       if (!operation || !documentIds || !Array.isArray(documentIds)) {
         res.status(400).json({ error: 'operation and documentIds array are required' });
+
+        return;
         return;
       }
 
@@ -593,6 +657,8 @@ export class DocumentController {
     } catch (error: unknown) {
       logger.error('Failed to perform bulk operation', error);
       res.status(500).json({ error: 'Failed to perform bulk operation' });
+
+      return;
     }
   }
 }

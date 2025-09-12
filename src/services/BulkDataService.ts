@@ -281,7 +281,7 @@ export class BulkDataService {
         result.failed++;
         result.errors.push({
           row: i + 1,
-          message: error instanceof Error ? error.message : 'Unknown error',
+          message: error instanceof Error ? (error as Error).message : 'Unknown error',
           data: row,
         });
       }

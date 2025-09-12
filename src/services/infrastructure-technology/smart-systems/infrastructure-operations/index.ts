@@ -552,7 +552,7 @@ export class InfrastructureTechnologyOperationsManager extends EventEmitter {
       logger.error('Integrated space analysis failed', {
         organizationId,
         buildingId,
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? (error as Error).message : 'Unknown error'
       });
       throw error;
     }
@@ -659,7 +659,7 @@ export class InfrastructureTechnologyOperationsManager extends EventEmitter {
     } catch (error: unknown) {
       logger.error('Predictive infrastructure insights generation failed', {
         organizationId,
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? (error as Error).message : 'Unknown error'
       });
       throw error;
     }

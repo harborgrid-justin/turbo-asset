@@ -192,7 +192,7 @@ export class TenantBrandingOperationsManager extends EventEmitter {
     } catch (error: unknown) {
       logger.error('Tenant provisioning failed', {
         organizationId: options.organizationId,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: error instanceof Error ? (error as Error).message : 'Unknown error',
       });
       throw error;
     }
@@ -281,7 +281,7 @@ export class TenantBrandingOperationsManager extends EventEmitter {
     } catch (error: unknown) {
       logger.error('Failed to update tenant branding', {
         organizationId,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: error instanceof Error ? (error as Error).message : 'Unknown error',
       });
       throw error;
     }
@@ -347,7 +347,7 @@ export class TenantBrandingOperationsManager extends EventEmitter {
     } catch (error: unknown) {
       logger.error('Failed to generate PWA manifest', {
         organizationId: context.organizationId,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: error instanceof Error ? (error as Error).message : 'Unknown error',
       });
       throw error;
     }
@@ -436,7 +436,7 @@ export class TenantBrandingOperationsManager extends EventEmitter {
     } catch (error: unknown) {
       logger.error('Failed to suspend tenant', {
         organizationId,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: error instanceof Error ? (error as Error).message : 'Unknown error',
       });
       throw error;
     }

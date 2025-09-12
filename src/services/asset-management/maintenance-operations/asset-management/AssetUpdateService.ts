@@ -103,7 +103,7 @@ export class AssetUpdateService {
     } catch (error: unknown) {
       logger.error('Failed to update asset', {
         assetId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -170,7 +170,7 @@ export class AssetUpdateService {
       logger.error('Failed to update asset status', {
         assetId,
         newStatus,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -242,7 +242,7 @@ export class AssetUpdateService {
       logger.error('Failed to update asset condition', {
         assetId,
         newCondition,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -325,7 +325,7 @@ export class AssetUpdateService {
       logger.error('Failed to update asset location', {
         assetId,
         newLocation,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -395,7 +395,7 @@ export class AssetUpdateService {
     } catch (error: unknown) {
       logger.error('Failed to update asset financials', {
         assetId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -432,7 +432,7 @@ export class AssetUpdateService {
           results.failed++;
           results.errors.push({
             assetId,
-            error: error.message,
+            error: (error as Error).message,
           });
         }
       });

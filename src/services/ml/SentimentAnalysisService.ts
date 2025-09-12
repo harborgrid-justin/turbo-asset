@@ -500,7 +500,7 @@ export class SentimentAnalysisService extends EventEmitter {
               success: false,
               error: {
                 feedbackId: item.feedbackId,
-                error: error.message
+                error: (error as Error).message
               }
             };
           }

@@ -66,7 +66,7 @@ export class PortfolioAlertService {
     } catch (error: unknown) {
       logger.error('Failed to generate portfolio alerts', {
         organizationId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -105,7 +105,7 @@ export class PortfolioAlertService {
     } catch (error: unknown) {
       logger.error('Failed to get active alerts', {
         organizationId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -143,7 +143,7 @@ export class PortfolioAlertService {
     } catch (error: unknown) {
       logger.error('Failed to acknowledge alert', {
         alertId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -187,7 +187,7 @@ export class PortfolioAlertService {
     } catch (error: unknown) {
       logger.error('Failed to resolve alert', {
         alertId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -250,7 +250,7 @@ export class PortfolioAlertService {
       logger.error('Failed to get alert statistics', {
         organizationId,
         timeframe,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -316,7 +316,7 @@ export class PortfolioAlertService {
     } catch (error: unknown) {
       logger.error('Failed to configure alert rules', {
         organizationId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -366,7 +366,7 @@ export class PortfolioAlertService {
     } catch (error: unknown) {
       logger.error('Failed to send alert notifications', {
         alertId: alert.id,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }

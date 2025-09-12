@@ -112,8 +112,10 @@ router.get('/status', async (req, res) => {
     res.status(500).json({
       success: false,
       status: 'error',
-      error: error instanceof Error ? error.message : 'Unknown error'
+      error: error instanceof Error ? (error as Error).message : 'Unknown error'
     });
+
+    return;
   }
 });
 
@@ -163,17 +165,21 @@ router.post('/bulk-execute', async (req, res) => {
     const { operations } = req.body;
     
     if (!Array.isArray(operations)) {
-      return res.status(400).json({
+      res.status(400).json({
         success: false,
         error: 'operations must be an array'
       });
+
+      return;
     }
 
     if (operations.length > 20) {
-      return res.status(400).json({
+      res.status(400).json({
         success: false,
         error: 'Maximum 20 operations allowed per batch'
       });
+
+      return;
     }
 
     const { enhancedBusinessLogicService } = require('../demo/enhanced-napi-business-logic-demo');
@@ -197,7 +203,7 @@ router.post('/bulk-execute', async (req, res) => {
         results.push({
           operationId: operation.id || results.length + 1,
           success: false,
-          error: error instanceof Error ? error.message : 'Unknown error'
+          error: error instanceof Error ? (error as Error).message : 'Unknown error'
         });
       }
     }
@@ -224,8 +230,10 @@ router.post('/bulk-execute', async (req, res) => {
     res.status(500).json({
       success: false,
       error: 'Bulk execution failed',
-      details: error instanceof Error ? error.message : 'Unknown error'
+      details: error instanceof Error ? (error as Error).message : 'Unknown error'
     });
+
+    return;
   }
 });
 
@@ -280,6 +288,8 @@ router.get('/monitoring/live', async (req, res) => {
       success: false,
       error: 'Failed to get live monitoring data'
     });
+
+    return;
   }
 });
 

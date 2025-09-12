@@ -119,7 +119,7 @@ export class CustomDomainManagementService extends EventEmitter {
       logger.error('Custom domain setup failed', {
         organizationId,
         domain,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: error instanceof Error ? (error as Error).message : 'Unknown error',
       });
       throw error;
     }
@@ -160,7 +160,7 @@ export class CustomDomainManagementService extends EventEmitter {
           isVerified = await this.verifyCnameRecord(domainConfig);
         }
       } catch (error: unknown) {
-        verificationError = error instanceof Error ? error.message : 'Verification failed';
+        verificationError = error instanceof Error ? (error as Error).message : 'Verification failed';
         logger.error('Domain verification check failed', {
           domain,
           error: verificationError,
@@ -214,7 +214,7 @@ export class CustomDomainManagementService extends EventEmitter {
       logger.error('Domain verification failed', {
         organizationId,
         domain,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: error instanceof Error ? (error as Error).message : 'Unknown error',
       });
       throw error;
     }
@@ -289,7 +289,7 @@ export class CustomDomainManagementService extends EventEmitter {
       logger.error('Failed to remove custom domain', {
         organizationId,
         domain,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: error instanceof Error ? (error as Error).message : 'Unknown error',
       });
       throw error;
     }
@@ -403,7 +403,7 @@ export class CustomDomainManagementService extends EventEmitter {
     } catch (error: unknown) {
       logger.error('SSL certificate setup failed', {
         domain,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: error instanceof Error ? (error as Error).message : 'Unknown error',
       });
     }
   }
@@ -466,7 +466,7 @@ export class CustomDomainManagementService extends EventEmitter {
     } catch (error: unknown) {
       logger.error('Scheduled verification failed', {
         domain,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: error instanceof Error ? (error as Error).message : 'Unknown error',
       });
     }
   }

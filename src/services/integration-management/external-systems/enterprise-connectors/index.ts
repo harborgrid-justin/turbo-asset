@@ -79,7 +79,7 @@ export class EnterpriseConnectorsService {
           successful++;
         } catch (error: unknown) {
           failed++;
-          results.m365 = { error: error.message };
+          results.m365 = { error: (error as Error).message };
         }
       }
 
@@ -89,7 +89,7 @@ export class EnterpriseConnectorsService {
           successful++;
         } catch (error: unknown) {
           failed++;
-          results.salesforce = { error: error.message };
+          results.salesforce = { error: (error as Error).message };
         }
       }
 
@@ -99,7 +99,7 @@ export class EnterpriseConnectorsService {
           successful++;
         } catch (error: unknown) {
           failed++;
-          results.calendar = { error: error.message };
+          results.calendar = { error: (error as Error).message };
         }
       }
 
@@ -109,7 +109,7 @@ export class EnterpriseConnectorsService {
           successful++;
         } catch (error: unknown) {
           failed++;
-          results.cad = { error: error.message };
+          results.cad = { error: (error as Error).message };
         }
       }
     } catch (error: unknown) {

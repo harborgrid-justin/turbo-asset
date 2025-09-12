@@ -3433,7 +3433,7 @@ export const productionGradeBusinessLogicService = {
       };
       
     } catch (error: unknown) {
-      throw new Error(`Comprehensive asset analysis failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(`Comprehensive asset analysis failed: ${error instanceof Error ? (error as Error).message : 'Unknown error'}`);
     }
   },
   
@@ -3506,7 +3506,7 @@ export const productionGradeBusinessLogicService = {
       };
       
     } catch (error: unknown) {
-      throw new Error(`Organizational assessment failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(`Organizational assessment failed: ${error instanceof Error ? (error as Error).message : 'Unknown error'}`);
     }
   },
 
@@ -3608,7 +3608,7 @@ export const productionGradeBusinessLogicService = {
       };
 
     } catch (error: unknown) {
-      throw new Error(`Predictive asset analysis failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(`Predictive asset analysis failed: ${error instanceof Error ? (error as Error).message : 'Unknown error'}`);
     }
   },
 
@@ -3690,7 +3690,7 @@ export const productionGradeBusinessLogicService = {
       };
 
     } catch (error: unknown) {
-      throw new Error(`Real-time data processing failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(`Real-time data processing failed: ${error instanceof Error ? (error as Error).message : 'Unknown error'}`);
     }
   },
 
@@ -3766,7 +3766,7 @@ export const productionGradeBusinessLogicService = {
       };
 
     } catch (error: unknown) {
-      throw new Error(`Demand forecasting failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(`Demand forecasting failed: ${error instanceof Error ? (error as Error).message : 'Unknown error'}`);
     }
   }
 };

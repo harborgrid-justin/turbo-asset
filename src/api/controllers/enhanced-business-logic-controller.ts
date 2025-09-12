@@ -70,8 +70,10 @@ export class EnhancedBusinessLogicIntegrationController {
       res.status(500).json({
         success: false,
         error: 'Failed to load dashboard data',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        details: error instanceof Error ? (error as Error).message : 'Unknown error'
       });
+
+      return;
     }
   }
 
@@ -115,8 +117,10 @@ export class EnhancedBusinessLogicIntegrationController {
       res.status(500).json({
         success: false,
         error: 'Health check failed',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        details: error instanceof Error ? (error as Error).message : 'Unknown error'
       });
+
+      return;
     }
   }
 
@@ -161,8 +165,10 @@ export class EnhancedBusinessLogicIntegrationController {
       res.status(500).json({
         success: false,
         error: 'Failed to retrieve metrics',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        details: error instanceof Error ? (error as Error).message : 'Unknown error'
       });
+
+      return;
     }
   }
 
@@ -195,8 +201,10 @@ export class EnhancedBusinessLogicIntegrationController {
       res.status(500).json({
         success: false,
         error: 'Failed to retrieve bridges',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        details: error instanceof Error ? (error as Error).message : 'Unknown error'
       });
+
+      return;
     }
   }
 
@@ -214,6 +222,8 @@ export class EnhancedBusinessLogicIntegrationController {
           success: false,
           error: `Service '${serviceName}' not found`
         });
+
+        return;
       return;
       }
 
@@ -235,8 +245,10 @@ export class EnhancedBusinessLogicIntegrationController {
       res.status(500).json({
         success: false,
         error: 'Failed to retrieve service metrics',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        details: error instanceof Error ? (error as Error).message : 'Unknown error'
       });
+
+      return;
     }
   }
 
@@ -254,6 +266,8 @@ export class EnhancedBusinessLogicIntegrationController {
           success: false,
           error: `Service '${serviceName}' not found`
         });
+
+        return;
       return;
       }
 
@@ -275,8 +289,10 @@ export class EnhancedBusinessLogicIntegrationController {
       res.status(500).json({
         success: false,
         error: 'Failed to retrieve service configuration',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        details: error instanceof Error ? (error as Error).message : 'Unknown error'
       });
+
+      return;
     }
   }
 
@@ -293,6 +309,8 @@ export class EnhancedBusinessLogicIntegrationController {
           success: false,
           error: 'serviceName and methodName are required'
         });
+
+        return;
       return;
       }
 
@@ -324,16 +342,16 @@ export class EnhancedBusinessLogicIntegrationController {
       // Determine appropriate status code
       let statusCode = 500;
       if (error instanceof Error) {
-        if (error.message.includes('not found')) {statusCode = 404;}
-        else if (error.message.includes('validation') || error.message.includes('required')) {statusCode = 400;}
-        else if (error.message.includes('rate limit')) {statusCode = 429;}
-        else if (error.message.includes('circuit breaker')) {statusCode = 503;}
+        if ((error as Error).message.includes('not found')) {statusCode = 404;}
+        else if ((error as Error).message.includes('validation') || (error as Error).message.includes('required')) {statusCode = 400;}
+        else if ((error as Error).message.includes('rate limit')) {statusCode = 429;}
+        else if ((error as Error).message.includes('circuit breaker')) {statusCode = 503;}
       }
 
       res.status(statusCode).json({
         success: false,
         error: 'Service execution failed',
-        details: error instanceof Error ? error.message : 'Unknown error',
+        details: error instanceof Error ? (error as Error).message : 'Unknown error',
         timestamp: new Date().toISOString()
       });
     }
@@ -352,6 +370,8 @@ export class EnhancedBusinessLogicIntegrationController {
           success: false,
           error: 'serviceName, methodName, and rules are required'
         });
+
+        return;
       return;
       }
 
@@ -375,8 +395,10 @@ export class EnhancedBusinessLogicIntegrationController {
       res.status(500).json({
         success: false,
         error: 'Failed to update validation rules',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        details: error instanceof Error ? (error as Error).message : 'Unknown error'
       });
+
+      return;
     }
   }
 
@@ -394,6 +416,8 @@ export class EnhancedBusinessLogicIntegrationController {
           success: false,
           error: `Service '${serviceName}' not found`
         });
+
+        return;
       return;
       }
 
@@ -414,8 +438,10 @@ export class EnhancedBusinessLogicIntegrationController {
       res.status(500).json({
         success: false,
         error: 'Failed to reset service metrics',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        details: error instanceof Error ? (error as Error).message : 'Unknown error'
       });
+
+      return;
     }
   }
 
@@ -441,8 +467,10 @@ export class EnhancedBusinessLogicIntegrationController {
       res.status(500).json({
         success: false,
         error: 'Failed to reset all metrics',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        details: error instanceof Error ? (error as Error).message : 'Unknown error'
       });
+
+      return;
     }
   }
 
@@ -487,8 +515,10 @@ export class EnhancedBusinessLogicIntegrationController {
       res.status(500).json({
         success: false,
         error: 'Failed to generate analytics',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        details: error instanceof Error ? (error as Error).message : 'Unknown error'
       });
+
+      return;
     }
   }
 

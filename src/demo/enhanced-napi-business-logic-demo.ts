@@ -1187,7 +1187,7 @@ export class EnhancedBusinessLogicIntegrationService extends EventEmitter {
           return { 
             serviceName: name, 
             healthy: false, 
-            error: error.message,
+            error: (error as Error).message,
             circuitBreakerStatus: 'UNKNOWN'
           };
         }

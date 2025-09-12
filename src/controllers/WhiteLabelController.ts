@@ -38,6 +38,8 @@ export class WhiteLabelController {
     } catch (error: unknown) {
       logger.error('Failed to get white label configurations', { error });
       res.status(500).json({ error: 'Failed to get white label configurations' });
+
+      return;
     }
   }
 
@@ -59,9 +61,14 @@ export class WhiteLabelController {
       );
 
       res.status(201).json(config);
+
+
+      return;
     } catch (error: unknown) {
       logger.error('Failed to create white label configuration', { error });
       res.status(500).json({ error: 'Failed to create white label configuration' });
+
+      return;
     }
   }
 
@@ -79,6 +86,8 @@ export class WhiteLabelController {
     } catch (error: unknown) {
       logger.error('Failed to update branding', { error });
       res.status(500).json({ error: 'Failed to update branding' });
+
+      return;
     }
   }
 
@@ -96,6 +105,8 @@ export class WhiteLabelController {
     } catch (error: unknown) {
       logger.error('Failed to apply theme', { error });
       res.status(500).json({ error: 'Failed to apply theme' });
+
+      return;
     }
   }
 
@@ -113,6 +124,8 @@ export class WhiteLabelController {
     } catch (error: unknown) {
       logger.error('Failed to setup custom domain', { error });
       res.status(500).json({ error: 'Failed to setup custom domain' });
+
+      return;
     }
   }
 
@@ -130,6 +143,8 @@ export class WhiteLabelController {
     } catch (error: unknown) {
       logger.error('Failed to verify custom domain', { error });
       res.status(500).json({ error: 'Failed to verify custom domain' });
+
+      return;
     }
   }
 
@@ -144,6 +159,8 @@ export class WhiteLabelController {
 
       if (!organizationId) {
         res.status(404).json({ error: 'Organization not found for domain' });
+
+        return;
         return;
       }
 
@@ -151,6 +168,8 @@ export class WhiteLabelController {
     } catch (error: unknown) {
       logger.error('Failed to get organization by domain', { error });
       res.status(500).json({ error: 'Failed to get organization by domain' });
+
+      return;
     }
   }
 
@@ -173,6 +192,8 @@ export class WhiteLabelController {
     } catch (error: unknown) {
       logger.error('Failed to generate bundle', { error });
       res.status(500).json({ error: 'Failed to generate bundle' });
+
+      return;
     }
   }
 
@@ -191,9 +212,14 @@ export class WhiteLabelController {
       );
 
       res.status(201).json(result);
+
+
+      return;
     } catch (error: unknown) {
       logger.error('Failed to create subsidiary', { error });
       res.status(500).json({ error: 'Failed to create subsidiary' });
+
+      return;
     }
   }
 
@@ -215,6 +241,8 @@ export class WhiteLabelController {
     } catch (error: unknown) {
       logger.error('Failed to get subsidiaries', { error });
       res.status(500).json({ error: 'Failed to get subsidiaries' });
+
+      return;
     }
   }
 
@@ -232,9 +260,14 @@ export class WhiteLabelController {
       );
 
       res.status(201).json(createdTemplate);
+
+
+      return;
     } catch (error: unknown) {
       logger.error('Failed to create email template', { error });
       res.status(500).json({ error: 'Failed to create email template' });
+
+      return;
     }
   }
 
@@ -256,6 +289,8 @@ export class WhiteLabelController {
     } catch (error: unknown) {
       logger.error('Failed to render email template', { error });
       res.status(500).json({ error: 'Failed to render email template' });
+
+      return;
     }
   }
 
@@ -273,6 +308,8 @@ export class WhiteLabelController {
     } catch (error: unknown) {
       logger.error('Failed to setup feature flags', { error });
       res.status(500).json({ error: 'Failed to setup feature flags' });
+
+      return;
     }
   }
 
@@ -294,6 +331,8 @@ export class WhiteLabelController {
     } catch (error: unknown) {
       logger.error('Failed to check feature flag', { error });
       res.status(500).json({ error: 'Failed to check feature flag' });
+
+      return;
     }
   }
 
@@ -310,6 +349,8 @@ export class WhiteLabelController {
     } catch (error: unknown) {
       logger.error('Failed to generate PWA manifest', { error });
       res.status(500).json({ error: 'Failed to generate PWA manifest' });
+
+      return;
     }
   }
 
@@ -383,6 +424,8 @@ export class WhiteLabelController {
     } catch (error: unknown) {
       logger.error('Failed to get available themes', { error });
       res.status(500).json({ error: 'Failed to get available themes' });
+
+      return;
     }
   }
 
@@ -430,6 +473,8 @@ export class WhiteLabelController {
     } catch (error: unknown) {
       logger.error('Failed to get branding analytics', { error });
       res.status(500).json({ error: 'Failed to get branding analytics' });
+
+      return;
     }
   }
 
@@ -450,6 +495,8 @@ export class WhiteLabelController {
     } catch (error: unknown) {
       logger.error('Failed to update white label configuration', { error });
       res.status(500).json({ error: 'Failed to update white label configuration' });
+
+      return;
     }
   }
 
@@ -468,6 +515,8 @@ export class WhiteLabelController {
     } catch (error: unknown) {
       logger.error('Failed to delete white label configuration', { error });
       res.status(500).json({ error: 'Failed to delete white label configuration' });
+
+      return;
     }
   }
 
@@ -480,6 +529,8 @@ export class WhiteLabelController {
 
       if (!req.file) {
         res.status(400).json({ error: 'No logo file provided' });
+
+        return;
         return;
       }
 
@@ -495,6 +546,8 @@ export class WhiteLabelController {
     } catch (error: unknown) {
       logger.error('Failed to upload logo', { error });
       res.status(500).json({ error: 'Failed to upload logo' });
+
+      return;
     }
   }
 
@@ -563,6 +616,8 @@ export class WhiteLabelController {
     } catch (error: unknown) {
       logger.error('Failed to preview theme', { error });
       res.status(500).json({ error: 'Failed to preview theme' });
+
+      return;
     }
   }
 
@@ -580,6 +635,8 @@ export class WhiteLabelController {
 
       if (!config) {
         res.status(404).json({ error: 'Configuration not found' });
+
+        return;
         return;
       }
 
@@ -589,6 +646,8 @@ export class WhiteLabelController {
     } catch (error: unknown) {
       logger.error('Failed to export configuration', { error });
       res.status(500).json({ error: 'Failed to export configuration' });
+
+      return;
     }
   }
 
@@ -612,9 +671,14 @@ export class WhiteLabelController {
       });
 
       res.status(201).json(importedConfig);
+
+
+      return;
     } catch (error: unknown) {
       logger.error('Failed to import configuration', { error });
       res.status(500).json({ error: 'Failed to import configuration' });
+
+      return;
     }
   }
 }

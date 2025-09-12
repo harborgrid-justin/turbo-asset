@@ -204,7 +204,7 @@ export class NAPIServiceRegistry {
         success: false,
         error: {
           code: error.code || 'EXECUTION_ERROR',
-          message: error.message || 'Unknown error occurred',
+          message: (error as Error).message || 'Unknown error occurred',
           details: { serviceName, methodName, args: JSON.stringify(args) }
         },
         metadata: {

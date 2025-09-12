@@ -200,7 +200,7 @@ export class Phase3IntegrationService extends EventEmitter {
     } catch (error: unknown) {
       logger.error('Failed to create integration rule', {
         ruleName: ruleData.name,
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? (error as Error).message : 'Unknown error'
       });
       throw error;
     }
@@ -237,7 +237,7 @@ export class Phase3IntegrationService extends EventEmitter {
     } catch (error: unknown) {
       logger.error('Failed to create workflow', {
         workflowName: workflowData.name,
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? (error as Error).message : 'Unknown error'
       });
       throw error;
     }
@@ -286,7 +286,7 @@ export class Phase3IntegrationService extends EventEmitter {
     } catch (error: unknown) {
       logger.error('Failed to execute workflow', {
         workflowId,
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? (error as Error).message : 'Unknown error'
       });
       throw error;
     }
@@ -380,7 +380,7 @@ export class Phase3IntegrationService extends EventEmitter {
               break;
           }
         } catch (error: unknown) {
-          errors.push(`Transformation ${rule.type} failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+          errors.push(`Transformation ${rule.type} failed: ${error instanceof Error ? (error as Error).message : 'Unknown error'}`);
         }
       }
 
@@ -566,7 +566,7 @@ export class Phase3IntegrationService extends EventEmitter {
         logger.error('Integration rule execution failed', {
           ruleId: rule.id,
           ruleName: rule.name,
-          error: error instanceof Error ? error.message : 'Unknown error'
+          error: error instanceof Error ? (error as Error).message : 'Unknown error'
         });
       }
     }
@@ -623,7 +623,7 @@ export class Phase3IntegrationService extends EventEmitter {
     } catch (error: unknown) {
       logger.error('Transformation execution failed', {
         language: transformation.language,
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? (error as Error).message : 'Unknown error'
       });
       return data;
     }
@@ -688,7 +688,7 @@ export class Phase3IntegrationService extends EventEmitter {
             stepId: step.id,
             timestamp: new Date(),
             status: 'failed',
-            error: error instanceof Error ? error.message : 'Unknown error'
+            error: error instanceof Error ? (error as Error).message : 'Unknown error'
           });
 
           if (step.errorHandling?.fallbackStep) {
@@ -726,7 +726,7 @@ export class Phase3IntegrationService extends EventEmitter {
       
       logger.error('Workflow execution failed', {
         executionId: execution.executionId,
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? (error as Error).message : 'Unknown error'
       });
     } finally {
       this.activeWorkflows.set(execution.executionId, execution);

@@ -29,6 +29,8 @@ router.get('/dashboard', async (req: Request, res: Response): Promise<void> => {
       res.status(400).json({
         error: 'Organization ID is required',
       });
+
+      return;
       return;
     }
 
@@ -48,8 +50,10 @@ router.get('/dashboard', async (req: Request, res: Response): Promise<void> => {
     logger.error('Failed to get portfolio dashboard', error);
     res.status(500).json({
       error: 'Failed to get portfolio dashboard',
-      message: error instanceof Error ? error.message : 'Unknown error',
+      message: error instanceof Error ? (error as Error).message : 'Unknown error',
     });
+
+    return;
   }
 });
 
@@ -65,6 +69,8 @@ router.get('/properties/:id/drilldown', async (req: Request, res: Response): Pro
       res.status(400).json({
         error: 'Organization ID is required',
       });
+
+      return;
       return;
     }
 
@@ -78,8 +84,10 @@ router.get('/properties/:id/drilldown', async (req: Request, res: Response): Pro
     logger.error('Failed to get property drill-down', error);
     res.status(500).json({
       error: 'Failed to get property drill-down',
-      message: error instanceof Error ? error.message : 'Unknown error',
+      message: error instanceof Error ? (error as Error).message : 'Unknown error',
     });
+
+    return;
   }
 });
 
@@ -103,6 +111,8 @@ router.get('/utilization/analytics', async (req: Request, res: Response): Promis
       res.status(400).json({
         error: 'Organization ID is required',
       });
+
+      return;
       return;
     }
 
@@ -124,8 +134,10 @@ router.get('/utilization/analytics', async (req: Request, res: Response): Promis
     logger.error('Failed to get utilization analytics', error);
     res.status(500).json({
       error: 'Failed to get utilization analytics',
-      message: error instanceof Error ? error.message : 'Unknown error',
+      message: error instanceof Error ? (error as Error).message : 'Unknown error',
     });
+
+    return;
   }
 });
 
@@ -140,6 +152,8 @@ router.get('/occupancy/realtime', async (req: Request, res: Response): Promise<v
       res.status(400).json({
         error: 'Organization ID is required',
       });
+
+      return;
       return;
     }
 
@@ -157,8 +171,10 @@ router.get('/occupancy/realtime', async (req: Request, res: Response): Promise<v
     logger.error('Failed to get real-time occupancy', error);
     res.status(500).json({
       error: 'Failed to get real-time occupancy',
-      message: error instanceof Error ? error.message : 'Unknown error',
+      message: error instanceof Error ? (error as Error).message : 'Unknown error',
     });
+
+    return;
   }
 });
 
@@ -173,6 +189,8 @@ router.get('/moves/analytics', async (req: Request, res: Response): Promise<void
       res.status(400).json({
         error: 'Organization ID is required',
       });
+
+      return;
       return;
     }
 
@@ -191,8 +209,10 @@ router.get('/moves/analytics', async (req: Request, res: Response): Promise<void
     logger.error('Failed to get move analytics', error);
     res.status(500).json({
       error: 'Failed to get move analytics',
-      message: error instanceof Error ? error.message : 'Unknown error',
+      message: error instanceof Error ? (error as Error).message : 'Unknown error',
     });
+
+    return;
   }
 });
 
@@ -207,6 +227,8 @@ router.get('/chargeback/analytics', async (req: Request, res: Response): Promise
       res.status(400).json({
         error: 'Organization ID is required',
       });
+
+      return;
       return;
     }
 
@@ -220,8 +242,10 @@ router.get('/chargeback/analytics', async (req: Request, res: Response): Promise
     logger.error('Failed to get chargeback analytics', error);
     res.status(500).json({
       error: 'Failed to get chargeback analytics',
-      message: error instanceof Error ? error.message : 'Unknown error',
+      message: error instanceof Error ? (error as Error).message : 'Unknown error',
     });
+
+    return;
   }
 });
 
@@ -236,6 +260,8 @@ router.get('/chargeback/report', async (req: Request, res: Response): Promise<vo
       res.status(400).json({
         error: 'Organization ID and period are required',
       });
+
+      return;
       return;
     }
 
@@ -244,6 +270,8 @@ router.get('/chargeback/report', async (req: Request, res: Response): Promise<vo
       res.status(400).json({
         error: 'Period must be in YYYY-MM format',
       });
+
+      return;
       return;
     }
 
@@ -258,8 +286,10 @@ router.get('/chargeback/report', async (req: Request, res: Response): Promise<vo
     logger.error('Failed to generate chargeback report', error);
     res.status(500).json({
       error: 'Failed to generate chargeback report',
-      message: error instanceof Error ? error.message : 'Unknown error',
+      message: error instanceof Error ? (error as Error).message : 'Unknown error',
     });
+
+    return;
   }
 });
 
@@ -283,6 +313,8 @@ router.get('/utilization/report', async (req: Request, res: Response): Promise<v
       res.status(400).json({
         error: 'Organization ID is required',
       });
+
+      return;
       return;
     }
 
@@ -304,8 +336,10 @@ router.get('/utilization/report', async (req: Request, res: Response): Promise<v
     logger.error('Failed to get utilization report', error);
     res.status(500).json({
       error: 'Failed to get utilization report',
-      message: error instanceof Error ? error.message : 'Unknown error',
+      message: error instanceof Error ? (error as Error).message : 'Unknown error',
     });
+
+    return;
   }
 });
 
@@ -320,6 +354,8 @@ router.post('/utilization/record', async (req: Request, res: Response): Promise<
       res.status(400).json({
         error: 'Organization ID and records array are required',
       });
+
+      return;
       return;
     }
 
@@ -329,12 +365,17 @@ router.post('/utilization/record', async (req: Request, res: Response): Promise<
       message: 'Utilization data recorded successfully',
       recordCount: records.length,
     });
+
+
+    return;
   } catch (error: unknown) {
     logger.error('Failed to record utilization data', error);
     res.status(500).json({
       error: 'Failed to record utilization data',
-      message: error instanceof Error ? error.message : 'Unknown error',
+      message: error instanceof Error ? (error as Error).message : 'Unknown error',
     });
+
+    return;
   }
 });
 
@@ -349,6 +390,8 @@ router.post('/utilization/sensor-data', async (req: Request, res: Response): Pro
       res.status(400).json({
         error: 'Organization ID and sensor data array are required',
       });
+
+      return;
       return;
     }
 
@@ -358,6 +401,8 @@ router.post('/utilization/sensor-data', async (req: Request, res: Response): Pro
         res.status(400).json({
           error: 'Each sensor data record must have sensorId, spaceId, data, and timestamp',
         });
+
+        return;
       return;
       }
     }
@@ -368,12 +413,17 @@ router.post('/utilization/sensor-data', async (req: Request, res: Response): Pro
       message: 'Sensor data processed successfully',
       sensorCount: sensorData.length,
     });
+
+
+    return;
   } catch (error: unknown) {
     logger.error('Failed to process sensor data', error);
     res.status(500).json({
       error: 'Failed to process sensor data',
-      message: error instanceof Error ? error.message : 'Unknown error',
+      message: error instanceof Error ? (error as Error).message : 'Unknown error',
     });
+
+    return;
   }
 });
 
@@ -392,6 +442,8 @@ router.get('/summary', async (req: Request, res: Response): Promise<void> => {
       res.status(400).json({
         error: 'Organization ID is required',
       });
+
+      return;
       return;
     }
 
@@ -408,8 +460,10 @@ router.get('/summary', async (req: Request, res: Response): Promise<void> => {
     logger.error('Failed to get portfolio summary', error);
     res.status(500).json({
       error: 'Failed to get portfolio summary',
-      message: error instanceof Error ? error.message : 'Unknown error',
+      message: error instanceof Error ? (error as Error).message : 'Unknown error',
     });
+
+    return;
   }
 });
 

@@ -47,6 +47,8 @@ router.post('/leases', async (req: Request, res: Response): Promise<void> => {
       res.status(400).json({
         error: 'Required fields missing: organizationId, propertyId, tenantId, leaseNumber, leaseName, startDate, endDate, originalTerm, baseLease, expirationDate'
       });
+
+      return;
       return;
     }
 
@@ -87,12 +89,17 @@ router.post('/leases', async (req: Request, res: Response): Promise<void> => {
       success: true,
       data: lease
     });
+
+
+    return;
   } catch (error: unknown) {
     logger.error('Failed to create lease', error);
     res.status(500).json({
       error: 'Failed to create lease',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      message: error instanceof Error ? (error as Error).message : 'Unknown error'
     });
+
+    return;
   }
 });
 
@@ -108,6 +115,8 @@ router.get('/portfolio/summary/:organizationId', async (req: Request, res: Respo
       res.status(400).json({
         error: 'Organization ID is required'
       });
+
+      return;
       return;
     }
 
@@ -121,8 +130,10 @@ router.get('/portfolio/summary/:organizationId', async (req: Request, res: Respo
     logger.error('Failed to get portfolio summary', error);
     res.status(500).json({
       error: 'Failed to get portfolio summary',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      message: error instanceof Error ? (error as Error).message : 'Unknown error'
     });
+
+    return;
   }
 });
 
@@ -149,6 +160,8 @@ router.get('/leases/search', async (req: Request, res: Response): Promise<void> 
       res.status(400).json({
         error: 'Organization ID is required'
       });
+
+      return;
       return;
     }
 
@@ -180,8 +193,10 @@ router.get('/leases/search', async (req: Request, res: Response): Promise<void> 
     logger.error('Failed to search leases', error);
     res.status(500).json({
       error: 'Failed to search leases',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      message: error instanceof Error ? (error as Error).message : 'Unknown error'
     });
+
+    return;
   }
 });
 
@@ -198,6 +213,8 @@ router.get('/metrics/:organizationId', async (req: Request, res: Response): Prom
       res.status(400).json({
         error: 'Organization ID is required'
       });
+
+      return;
       return;
     }
 
@@ -212,8 +229,10 @@ router.get('/metrics/:organizationId', async (req: Request, res: Response): Prom
     logger.error('Failed to get lease metrics', error);
     res.status(500).json({
       error: 'Failed to get lease metrics',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      message: error instanceof Error ? (error as Error).message : 'Unknown error'
     });
+
+    return;
   }
 });
 
@@ -230,6 +249,8 @@ router.get('/renewals/analyze/:organizationId', async (req: Request, res: Respon
       res.status(400).json({
         error: 'Organization ID is required'
       });
+
+      return;
       return;
     }
 
@@ -251,8 +272,10 @@ router.get('/renewals/analyze/:organizationId', async (req: Request, res: Respon
     logger.error('Failed to analyze renewal opportunities', error);
     res.status(500).json({
       error: 'Failed to analyze renewal opportunities',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      message: error instanceof Error ? (error as Error).message : 'Unknown error'
     });
+
+    return;
   }
 });
 
@@ -269,6 +292,8 @@ router.put('/leases/:leaseId', async (req: Request, res: Response): Promise<void
       res.status(400).json({
         error: 'Lease ID is required'
       });
+
+      return;
       return;
     }
 
@@ -276,6 +301,8 @@ router.put('/leases/:leaseId', async (req: Request, res: Response): Promise<void
       res.status(400).json({
         error: 'Amendment reason is required'
       });
+
+      return;
       return;
     }
 
@@ -308,8 +335,10 @@ router.put('/leases/:leaseId', async (req: Request, res: Response): Promise<void
     logger.error('Failed to update lease', error);
     res.status(500).json({
       error: 'Failed to update lease',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      message: error instanceof Error ? (error as Error).message : 'Unknown error'
     });
+
+    return;
   }
 });
 
@@ -326,6 +355,8 @@ router.post('/reports/:organizationId', async (req: Request, res: Response): Pro
       res.status(400).json({
         error: 'Organization ID is required'
       });
+
+      return;
       return;
     }
 
@@ -333,6 +364,8 @@ router.post('/reports/:organizationId', async (req: Request, res: Response): Pro
       res.status(400).json({
         error: 'Report type is required'
       });
+
+      return;
       return;
     }
 
@@ -341,6 +374,8 @@ router.post('/reports/:organizationId', async (req: Request, res: Response): Pro
       res.status(400).json({
         error: `Invalid report type. Must be one of: ${validReportTypes.join(', ')}`
       });
+
+      return;
       return;
     }
 
@@ -354,8 +389,10 @@ router.post('/reports/:organizationId', async (req: Request, res: Response): Pro
     logger.error('Failed to generate lease report', error);
     res.status(500).json({
       error: 'Failed to generate lease report',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      message: error instanceof Error ? (error as Error).message : 'Unknown error'
     });
+
+    return;
   }
 });
 
@@ -371,6 +408,8 @@ router.get('/leases/:leaseId', async (req: Request, res: Response): Promise<void
       res.status(400).json({
         error: 'Lease ID is required'
       });
+
+      return;
       return;
     }
 
@@ -384,8 +423,10 @@ router.get('/leases/:leaseId', async (req: Request, res: Response): Promise<void
     logger.error('Failed to get lease', error);
     res.status(500).json({
       error: 'Failed to get lease',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      message: error instanceof Error ? (error as Error).message : 'Unknown error'
     });
+
+    return;
   }
 });
 
@@ -401,6 +442,8 @@ router.delete('/leases/:leaseId', async (req: Request, res: Response): Promise<v
       res.status(400).json({
         error: 'Lease ID is required'
       });
+
+      return;
       return;
     }
 
@@ -414,8 +457,10 @@ router.delete('/leases/:leaseId', async (req: Request, res: Response): Promise<v
     logger.error('Failed to delete lease', error);
     res.status(500).json({
       error: 'Failed to delete lease',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      message: error instanceof Error ? (error as Error).message : 'Unknown error'
     });
+
+    return;
   }
 });
 
@@ -431,6 +476,8 @@ router.get('/dashboard/:organizationId', async (req: Request, res: Response): Pr
       res.status(400).json({
         error: 'Organization ID is required'
       });
+
+      return;
       return;
     }
 
@@ -460,8 +507,10 @@ router.get('/dashboard/:organizationId', async (req: Request, res: Response): Pr
     logger.error('Failed to get lease dashboard', error);
     res.status(500).json({
       error: 'Failed to get lease dashboard',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      message: error instanceof Error ? (error as Error).message : 'Unknown error'
     });
+
+    return;
   }
 });
 

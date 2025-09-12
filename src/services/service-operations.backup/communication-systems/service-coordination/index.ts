@@ -979,7 +979,7 @@ class EnterpriseServiceOperationsBlock$i {
     } catch (error: unknown) {
       logger.error(\`Service communications management failed - Block $i\`, {
         communicationId,
-        error: error.message,
+        error: (error as Error).message,
         stack: error.stack,
       });
       throw error;
@@ -1150,7 +1150,7 @@ class EnterpriseServiceOperationsBlock$i {
     } catch (error: unknown) {
       logger.error(\`Notification platform management failed - Block $i\`, {
         notificationId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -1322,7 +1322,7 @@ class EnterpriseServiceOperationsBlock$i {
     } catch (error: unknown) {
       logger.error(\`Integration hub management failed - Block $i\`, {
         integrationId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -2155,7 +2155,7 @@ class EnterpriseServiceOperationsBlock$i {
     } catch (error: unknown) {
       logger.error(\`Service communications management failed - Block $i\`, {
         communicationId,
-        error: error.message,
+        error: (error as Error).message,
         stack: error.stack,
       });
       throw error;
@@ -2326,7 +2326,7 @@ class EnterpriseServiceOperationsBlock$i {
     } catch (error: unknown) {
       logger.error(\`Notification platform management failed - Block $i\`, {
         notificationId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -2498,7 +2498,7 @@ class EnterpriseServiceOperationsBlock$i {
     } catch (error: unknown) {
       logger.error(\`Integration hub management failed - Block $i\`, {
         integrationId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -3331,7 +3331,7 @@ class EnterpriseServiceOperationsBlock$i {
     } catch (error: unknown) {
       logger.error(\`Service communications management failed - Block $i\`, {
         communicationId,
-        error: error.message,
+        error: (error as Error).message,
         stack: error.stack,
       });
       throw error;
@@ -3502,7 +3502,7 @@ class EnterpriseServiceOperationsBlock$i {
     } catch (error: unknown) {
       logger.error(\`Notification platform management failed - Block $i\`, {
         notificationId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -3674,7 +3674,7 @@ class EnterpriseServiceOperationsBlock$i {
     } catch (error: unknown) {
       logger.error(\`Integration hub management failed - Block $i\`, {
         integrationId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -4507,7 +4507,7 @@ class EnterpriseServiceOperationsBlock$i {
     } catch (error: unknown) {
       logger.error(\`Service communications management failed - Block $i\`, {
         communicationId,
-        error: error.message,
+        error: (error as Error).message,
         stack: error.stack,
       });
       throw error;
@@ -4678,7 +4678,7 @@ class EnterpriseServiceOperationsBlock$i {
     } catch (error: unknown) {
       logger.error(\`Notification platform management failed - Block $i\`, {
         notificationId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -4850,7 +4850,7 @@ class EnterpriseServiceOperationsBlock$i {
     } catch (error: unknown) {
       logger.error(\`Integration hub management failed - Block $i\`, {
         integrationId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -5683,7 +5683,7 @@ class EnterpriseServiceOperationsBlock$i {
     } catch (error: unknown) {
       logger.error(\`Service communications management failed - Block $i\`, {
         communicationId,
-        error: error.message,
+        error: (error as Error).message,
         stack: error.stack,
       });
       throw error;
@@ -5854,7 +5854,7 @@ class EnterpriseServiceOperationsBlock$i {
     } catch (error: unknown) {
       logger.error(\`Notification platform management failed - Block $i\`, {
         notificationId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -6026,7 +6026,7 @@ class EnterpriseServiceOperationsBlock$i {
     } catch (error: unknown) {
       logger.error(\`Integration hub management failed - Block $i\`, {
         integrationId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -6859,7 +6859,7 @@ class EnterpriseServiceOperationsBlock$i {
     } catch (error: unknown) {
       logger.error(\`Service communications management failed - Block $i\`, {
         communicationId,
-        error: error.message,
+        error: (error as Error).message,
         stack: error.stack,
       });
       throw error;
@@ -7030,7 +7030,7 @@ class EnterpriseServiceOperationsBlock$i {
     } catch (error: unknown) {
       logger.error(\`Notification platform management failed - Block $i\`, {
         notificationId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -7202,7 +7202,7 @@ class EnterpriseServiceOperationsBlock$i {
     } catch (error: unknown) {
       logger.error(\`Integration hub management failed - Block $i\`, {
         integrationId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -8035,7 +8035,7 @@ class EnterpriseServiceOperationsBlock$i {
     } catch (error: unknown) {
       logger.error(\`Service communications management failed - Block $i\`, {
         communicationId,
-        error: error.message,
+        error: (error as Error).message,
         stack: error.stack,
       });
       throw error;
@@ -8206,7 +8206,7 @@ class EnterpriseServiceOperationsBlock$i {
     } catch (error: unknown) {
       logger.error(\`Notification platform management failed - Block $i\`, {
         notificationId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -8378,7 +8378,7 @@ class EnterpriseServiceOperationsBlock$i {
     } catch (error: unknown) {
       logger.error(\`Integration hub management failed - Block $i\`, {
         integrationId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -9211,7 +9211,7 @@ class EnterpriseServiceOperationsBlock$i {
     } catch (error: unknown) {
       logger.error(\`Service communications management failed - Block $i\`, {
         communicationId,
-        error: error.message,
+        error: (error as Error).message,
         stack: error.stack,
       });
       throw error;
@@ -9382,7 +9382,7 @@ class EnterpriseServiceOperationsBlock$i {
     } catch (error: unknown) {
       logger.error(\`Notification platform management failed - Block $i\`, {
         notificationId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -9554,7 +9554,7 @@ class EnterpriseServiceOperationsBlock$i {
     } catch (error: unknown) {
       logger.error(\`Integration hub management failed - Block $i\`, {
         integrationId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -10387,7 +10387,7 @@ class EnterpriseServiceOperationsBlock$i {
     } catch (error: unknown) {
       logger.error(\`Service communications management failed - Block $i\`, {
         communicationId,
-        error: error.message,
+        error: (error as Error).message,
         stack: error.stack,
       });
       throw error;
@@ -10558,7 +10558,7 @@ class EnterpriseServiceOperationsBlock$i {
     } catch (error: unknown) {
       logger.error(\`Notification platform management failed - Block $i\`, {
         notificationId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -10730,7 +10730,7 @@ class EnterpriseServiceOperationsBlock$i {
     } catch (error: unknown) {
       logger.error(\`Integration hub management failed - Block $i\`, {
         integrationId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -11563,7 +11563,7 @@ class EnterpriseServiceOperationsBlock$i {
     } catch (error: unknown) {
       logger.error(\`Service communications management failed - Block $i\`, {
         communicationId,
-        error: error.message,
+        error: (error as Error).message,
         stack: error.stack,
       });
       throw error;
@@ -11734,7 +11734,7 @@ class EnterpriseServiceOperationsBlock$i {
     } catch (error: unknown) {
       logger.error(\`Notification platform management failed - Block $i\`, {
         notificationId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -11906,7 +11906,7 @@ class EnterpriseServiceOperationsBlock$i {
     } catch (error: unknown) {
       logger.error(\`Integration hub management failed - Block $i\`, {
         integrationId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -12739,7 +12739,7 @@ class EnterpriseServiceOperationsBlock$i {
     } catch (error: unknown) {
       logger.error(\`Service communications management failed - Block $i\`, {
         communicationId,
-        error: error.message,
+        error: (error as Error).message,
         stack: error.stack,
       });
       throw error;
@@ -12910,7 +12910,7 @@ class EnterpriseServiceOperationsBlock$i {
     } catch (error: unknown) {
       logger.error(\`Notification platform management failed - Block $i\`, {
         notificationId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -13082,7 +13082,7 @@ class EnterpriseServiceOperationsBlock$i {
     } catch (error: unknown) {
       logger.error(\`Integration hub management failed - Block $i\`, {
         integrationId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -13915,7 +13915,7 @@ class EnterpriseServiceOperationsBlock$i {
     } catch (error: unknown) {
       logger.error(\`Service communications management failed - Block $i\`, {
         communicationId,
-        error: error.message,
+        error: (error as Error).message,
         stack: error.stack,
       });
       throw error;
@@ -14086,7 +14086,7 @@ class EnterpriseServiceOperationsBlock$i {
     } catch (error: unknown) {
       logger.error(\`Notification platform management failed - Block $i\`, {
         notificationId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -14258,7 +14258,7 @@ class EnterpriseServiceOperationsBlock$i {
     } catch (error: unknown) {
       logger.error(\`Integration hub management failed - Block $i\`, {
         integrationId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -15091,7 +15091,7 @@ class EnterpriseServiceOperationsBlock$i {
     } catch (error: unknown) {
       logger.error(\`Service communications management failed - Block $i\`, {
         communicationId,
-        error: error.message,
+        error: (error as Error).message,
         stack: error.stack,
       });
       throw error;
@@ -15262,7 +15262,7 @@ class EnterpriseServiceOperationsBlock$i {
     } catch (error: unknown) {
       logger.error(\`Notification platform management failed - Block $i\`, {
         notificationId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -15434,7 +15434,7 @@ class EnterpriseServiceOperationsBlock$i {
     } catch (error: unknown) {
       logger.error(\`Integration hub management failed - Block $i\`, {
         integrationId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -16267,7 +16267,7 @@ class EnterpriseServiceOperationsBlock$i {
     } catch (error: unknown) {
       logger.error(\`Service communications management failed - Block $i\`, {
         communicationId,
-        error: error.message,
+        error: (error as Error).message,
         stack: error.stack,
       });
       throw error;
@@ -16438,7 +16438,7 @@ class EnterpriseServiceOperationsBlock$i {
     } catch (error: unknown) {
       logger.error(\`Notification platform management failed - Block $i\`, {
         notificationId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -16610,7 +16610,7 @@ class EnterpriseServiceOperationsBlock$i {
     } catch (error: unknown) {
       logger.error(\`Integration hub management failed - Block $i\`, {
         integrationId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -17443,7 +17443,7 @@ class EnterpriseServiceOperationsBlock$i {
     } catch (error: unknown) {
       logger.error(\`Service communications management failed - Block $i\`, {
         communicationId,
-        error: error.message,
+        error: (error as Error).message,
         stack: error.stack,
       });
       throw error;
@@ -17614,7 +17614,7 @@ class EnterpriseServiceOperationsBlock$i {
     } catch (error: unknown) {
       logger.error(\`Notification platform management failed - Block $i\`, {
         notificationId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -17786,7 +17786,7 @@ class EnterpriseServiceOperationsBlock$i {
     } catch (error: unknown) {
       logger.error(\`Integration hub management failed - Block $i\`, {
         integrationId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -18619,7 +18619,7 @@ class EnterpriseServiceOperationsBlock$i {
     } catch (error: unknown) {
       logger.error(\`Service communications management failed - Block $i\`, {
         communicationId,
-        error: error.message,
+        error: (error as Error).message,
         stack: error.stack,
       });
       throw error;
@@ -18790,7 +18790,7 @@ class EnterpriseServiceOperationsBlock$i {
     } catch (error: unknown) {
       logger.error(\`Notification platform management failed - Block $i\`, {
         notificationId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -18962,7 +18962,7 @@ class EnterpriseServiceOperationsBlock$i {
     } catch (error: unknown) {
       logger.error(\`Integration hub management failed - Block $i\`, {
         integrationId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -19795,7 +19795,7 @@ class EnterpriseServiceOperationsBlock$i {
     } catch (error: unknown) {
       logger.error(\`Service communications management failed - Block $i\`, {
         communicationId,
-        error: error.message,
+        error: (error as Error).message,
         stack: error.stack,
       });
       throw error;
@@ -19966,7 +19966,7 @@ class EnterpriseServiceOperationsBlock$i {
     } catch (error: unknown) {
       logger.error(\`Notification platform management failed - Block $i\`, {
         notificationId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -20138,7 +20138,7 @@ class EnterpriseServiceOperationsBlock$i {
     } catch (error: unknown) {
       logger.error(\`Integration hub management failed - Block $i\`, {
         integrationId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -20971,7 +20971,7 @@ class EnterpriseServiceOperationsBlock$i {
     } catch (error: unknown) {
       logger.error(\`Service communications management failed - Block $i\`, {
         communicationId,
-        error: error.message,
+        error: (error as Error).message,
         stack: error.stack,
       });
       throw error;
@@ -21142,7 +21142,7 @@ class EnterpriseServiceOperationsBlock$i {
     } catch (error: unknown) {
       logger.error(\`Notification platform management failed - Block $i\`, {
         notificationId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -21314,7 +21314,7 @@ class EnterpriseServiceOperationsBlock$i {
     } catch (error: unknown) {
       logger.error(\`Integration hub management failed - Block $i\`, {
         integrationId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -22147,7 +22147,7 @@ class EnterpriseServiceOperationsBlock$i {
     } catch (error: unknown) {
       logger.error(\`Service communications management failed - Block $i\`, {
         communicationId,
-        error: error.message,
+        error: (error as Error).message,
         stack: error.stack,
       });
       throw error;
@@ -22318,7 +22318,7 @@ class EnterpriseServiceOperationsBlock$i {
     } catch (error: unknown) {
       logger.error(\`Notification platform management failed - Block $i\`, {
         notificationId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -22490,7 +22490,7 @@ class EnterpriseServiceOperationsBlock$i {
     } catch (error: unknown) {
       logger.error(\`Integration hub management failed - Block $i\`, {
         integrationId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -23323,7 +23323,7 @@ class EnterpriseServiceOperationsBlock$i {
     } catch (error: unknown) {
       logger.error(\`Service communications management failed - Block $i\`, {
         communicationId,
-        error: error.message,
+        error: (error as Error).message,
         stack: error.stack,
       });
       throw error;
@@ -23494,7 +23494,7 @@ class EnterpriseServiceOperationsBlock$i {
     } catch (error: unknown) {
       logger.error(\`Notification platform management failed - Block $i\`, {
         notificationId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -23666,7 +23666,7 @@ class EnterpriseServiceOperationsBlock$i {
     } catch (error: unknown) {
       logger.error(\`Integration hub management failed - Block $i\`, {
         integrationId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -24499,7 +24499,7 @@ class EnterpriseServiceOperationsBlock$i {
     } catch (error: unknown) {
       logger.error(\`Service communications management failed - Block $i\`, {
         communicationId,
-        error: error.message,
+        error: (error as Error).message,
         stack: error.stack,
       });
       throw error;
@@ -24670,7 +24670,7 @@ class EnterpriseServiceOperationsBlock$i {
     } catch (error: unknown) {
       logger.error(\`Notification platform management failed - Block $i\`, {
         notificationId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -24842,7 +24842,7 @@ class EnterpriseServiceOperationsBlock$i {
     } catch (error: unknown) {
       logger.error(\`Integration hub management failed - Block $i\`, {
         integrationId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -25675,7 +25675,7 @@ class EnterpriseServiceOperationsBlock$i {
     } catch (error: unknown) {
       logger.error(\`Service communications management failed - Block $i\`, {
         communicationId,
-        error: error.message,
+        error: (error as Error).message,
         stack: error.stack,
       });
       throw error;
@@ -25846,7 +25846,7 @@ class EnterpriseServiceOperationsBlock$i {
     } catch (error: unknown) {
       logger.error(\`Notification platform management failed - Block $i\`, {
         notificationId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -26018,7 +26018,7 @@ class EnterpriseServiceOperationsBlock$i {
     } catch (error: unknown) {
       logger.error(\`Integration hub management failed - Block $i\`, {
         integrationId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -26851,7 +26851,7 @@ class EnterpriseServiceOperationsBlock$i {
     } catch (error: unknown) {
       logger.error(\`Service communications management failed - Block $i\`, {
         communicationId,
-        error: error.message,
+        error: (error as Error).message,
         stack: error.stack,
       });
       throw error;
@@ -27022,7 +27022,7 @@ class EnterpriseServiceOperationsBlock$i {
     } catch (error: unknown) {
       logger.error(\`Notification platform management failed - Block $i\`, {
         notificationId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -27194,7 +27194,7 @@ class EnterpriseServiceOperationsBlock$i {
     } catch (error: unknown) {
       logger.error(\`Integration hub management failed - Block $i\`, {
         integrationId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -28027,7 +28027,7 @@ class EnterpriseServiceOperationsBlock$i {
     } catch (error: unknown) {
       logger.error(\`Service communications management failed - Block $i\`, {
         communicationId,
-        error: error.message,
+        error: (error as Error).message,
         stack: error.stack,
       });
       throw error;
@@ -28198,7 +28198,7 @@ class EnterpriseServiceOperationsBlock$i {
     } catch (error: unknown) {
       logger.error(\`Notification platform management failed - Block $i\`, {
         notificationId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -28370,7 +28370,7 @@ class EnterpriseServiceOperationsBlock$i {
     } catch (error: unknown) {
       logger.error(\`Integration hub management failed - Block $i\`, {
         integrationId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -29203,7 +29203,7 @@ class EnterpriseServiceOperationsBlock$i {
     } catch (error: unknown) {
       logger.error(\`Service communications management failed - Block $i\`, {
         communicationId,
-        error: error.message,
+        error: (error as Error).message,
         stack: error.stack,
       });
       throw error;
@@ -29374,7 +29374,7 @@ class EnterpriseServiceOperationsBlock$i {
     } catch (error: unknown) {
       logger.error(\`Notification platform management failed - Block $i\`, {
         notificationId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }
@@ -29546,7 +29546,7 @@ class EnterpriseServiceOperationsBlock$i {
     } catch (error: unknown) {
       logger.error(\`Integration hub management failed - Block $i\`, {
         integrationId,
-        error: error.message,
+        error: (error as Error).message,
       });
       throw error;
     }

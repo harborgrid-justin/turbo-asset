@@ -592,7 +592,7 @@ export class BudgetForecastService {
             logger.error('Failed to generate forecast', {
               period,
               method,
-              error: error instanceof Error ? error.message : 'Unknown error'
+              error: error instanceof Error ? (error as Error).message : 'Unknown error'
             });
           }
         }

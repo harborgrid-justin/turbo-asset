@@ -543,7 +543,7 @@ export class Microsoft365IntegrationService extends EventEmitter {
         
         logger.error('Microsoft 365 API error', {
           status: error.response?.status,
-          message: error.message,
+          message: (error as Error).message,
           url: error.config?.url
         });
         
@@ -643,7 +643,7 @@ export class Microsoft365IntegrationService extends EventEmitter {
       return this.token;
     } catch (error: unknown) {
       logger.error('Microsoft 365 authentication failed', {
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: error instanceof Error ? (error as Error).message : 'Unknown error',
         tenantId: this.config.tenantId
       });
       throw error;
@@ -1278,7 +1278,7 @@ export class Microsoft365IntegrationService extends EventEmitter {
         const sites = await this.getSharePointSites();
         syncOperation.results.sites = sites.length;
       } catch (error: unknown) {
-        syncOperation.errors.push(`Sites sync failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+        syncOperation.errors.push(`Sites sync failed: ${error instanceof Error ? (error as Error).message : 'Unknown error'}`);
       }
 
       // Sync calendar events (next 30 days)
@@ -1288,7 +1288,7 @@ export class Microsoft365IntegrationService extends EventEmitter {
         const events = await this.getCalendarEvents(startDate, endDate);
         syncOperation.results.events = events.length;
       } catch (error: unknown) {
-        syncOperation.errors.push(`Events sync failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+        syncOperation.errors.push(`Events sync failed: ${error instanceof Error ? (error as Error).message : 'Unknown error'}`);
       }
 
       // Sync OneDrive files (root folder)
@@ -1296,7 +1296,7 @@ export class Microsoft365IntegrationService extends EventEmitter {
         const files = await this.getOneDriveFiles();
         syncOperation.results.files = files.length;
       } catch (error: unknown) {
-        syncOperation.errors.push(`Files sync failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+        syncOperation.errors.push(`Files sync failed: ${error instanceof Error ? (error as Error).message : 'Unknown error'}`);
       }
 
       // Sync users
@@ -1304,7 +1304,7 @@ export class Microsoft365IntegrationService extends EventEmitter {
         const users = await this.getUsers();
         syncOperation.results.users = users.length;
       } catch (error: unknown) {
-        syncOperation.errors.push(`Users sync failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+        syncOperation.errors.push(`Users sync failed: ${error instanceof Error ? (error as Error).message : 'Unknown error'}`);
       }
 
       syncOperation.completedAt = new Date();
@@ -1326,7 +1326,7 @@ export class Microsoft365IntegrationService extends EventEmitter {
     } catch (error: unknown) {
       syncOperation.status = 'failed';
       syncOperation.completedAt = new Date();
-      syncOperation.errors.push(`Sync failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      syncOperation.errors.push(`Sync failed: ${error instanceof Error ? (error as Error).message : 'Unknown error'}`);
 
       logger.error('Microsoft 365 data sync failed', { syncId, error });
     }

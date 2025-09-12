@@ -57,6 +57,8 @@ export function setupRoutes(app: Application): void {
       uptime: process.uptime(),
       version: process.env.npm_package_version || '1.0.0'
     });
+
+    return;
   });
 
   // API Documentation route (no authentication required)
@@ -134,5 +136,7 @@ export function setupRoutes(app: Application): void {
       message: `Cannot ${req.method} ${req.path}`,
       suggestion: 'Check the API documentation at /api/docs'
     });
+
+    return;
   });
 }

@@ -543,7 +543,7 @@ export class UnifiedRegulatoryComplianceEngine {
         success: false,
         error: {
           code: 'COMPLIANCE_ASSESSMENT_FAILED',
-          message: `Compliance assessment failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+          message: `Compliance assessment failed: ${error instanceof Error ? (error as Error).message : 'Unknown error'}`
         },
         data: null
       };

@@ -96,6 +96,8 @@ router.post('/upload', upload.single('file'), async (req: Request, res: Response
       res.status(400).json({
         error: 'No file provided',
       });
+
+      return;
       return;
     }
 
@@ -120,6 +122,8 @@ router.post('/upload', upload.single('file'), async (req: Request, res: Response
       res.status(400).json({
         error: 'Building ID, organization ID, and uploader ID are required',
       });
+
+      return;
       return;
     }
 
@@ -156,17 +160,26 @@ router.post('/upload', upload.single('file'), async (req: Request, res: Response
     const result = await cadService.uploadCADFile(uploadData, processingOptions);
 
     res.status(201).json(result);
+
+
+    return;
   } catch (error: unknown) {
     logger.error('Failed to upload CAD file', error);
-    if (error instanceof Error && error.message.includes('File size exceeds')) {
-      res.status(413).json({ error: error.message });
-    } else if (error instanceof Error && error.message.includes('Unsupported file type')) {
-      res.status(400).json({ error: error.message });
+    if (error instanceof Error && (error as Error).message.includes('File size exceeds')) {
+      res.status(413).json({ error: (error as Error).message });
+
+      return;
+    } else if (error instanceof Error && (error as Error).message.includes('Unsupported file type')) {
+      res.status(400).json({ error: (error as Error).message });
+
+      return;
     } else {
       res.status(500).json({
         error: 'Failed to upload CAD file',
-        message: error instanceof Error ? error.message : 'Unknown error',
+        message: error instanceof Error ? (error as Error).message : 'Unknown error',
       });
+
+      return;
     }
   }
 });
@@ -208,13 +221,17 @@ router.get('/files/:fileId', async (req: Request, res: Response): Promise<void> 
     res.json(cadFile);
   } catch (error: unknown) {
     logger.error('Failed to get CAD file', error);
-    if (error instanceof Error && error.message.includes('not found')) {
-      res.status(404).json({ error: error.message });
+    if (error instanceof Error && (error as Error).message.includes('not found')) {
+      res.status(404).json({ error: (error as Error).message });
+
+      return;
     } else {
       res.status(500).json({
         error: 'Failed to get CAD file',
-        message: error instanceof Error ? error.message : 'Unknown error',
+        message: error instanceof Error ? (error as Error).message : 'Unknown error',
       });
+
+      return;
     }
   }
 });
@@ -280,6 +297,8 @@ router.put('/files/:fileId/mappings', async (req: Request, res: Response): Promi
       res.status(400).json({
         error: 'Mappings must be an array',
       });
+
+      return;
       return;
     }
 
@@ -288,13 +307,17 @@ router.put('/files/:fileId/mappings', async (req: Request, res: Response): Promi
     res.json(result);
   } catch (error: unknown) {
     logger.error('Failed to update space mappings', error);
-    if (error instanceof Error && error.message.includes('not found')) {
-      res.status(404).json({ error: error.message });
+    if (error instanceof Error && (error as Error).message.includes('not found')) {
+      res.status(404).json({ error: (error as Error).message });
+
+      return;
     } else {
       res.status(500).json({
         error: 'Failed to update space mappings',
-        message: error instanceof Error ? error.message : 'Unknown error',
+        message: error instanceof Error ? (error as Error).message : 'Unknown error',
       });
+
+      return;
     }
   }
 });
@@ -389,15 +412,21 @@ router.post('/files/:fileId/floor-plan', async (req: Request, res: Response): Pr
     });
   } catch (error: unknown) {
     logger.error('Failed to generate floor plan', error);
-    if (error instanceof Error && error.message.includes('not found')) {
-      res.status(404).json({ error: error.message });
-    } else if (error instanceof Error && error.message.includes('not yet processed')) {
-      res.status(400).json({ error: error.message });
+    if (error instanceof Error && (error as Error).message.includes('not found')) {
+      res.status(404).json({ error: (error as Error).message });
+
+      return;
+    } else if (error instanceof Error && (error as Error).message.includes('not yet processed')) {
+      res.status(400).json({ error: (error as Error).message });
+
+      return;
     } else {
       res.status(500).json({
         error: 'Failed to generate floor plan',
-        message: error instanceof Error ? error.message : 'Unknown error',
+        message: error instanceof Error ? (error as Error).message : 'Unknown error',
       });
+
+      return;
     }
   }
 });
@@ -464,13 +493,17 @@ router.post('/files/:fileId/sync', async (req: Request, res: Response): Promise<
     res.json(result);
   } catch (error: unknown) {
     logger.error('Failed to synchronize CAD file', error);
-    if (error instanceof Error && error.message.includes('not found')) {
-      res.status(404).json({ error: error.message });
+    if (error instanceof Error && (error as Error).message.includes('not found')) {
+      res.status(404).json({ error: (error as Error).message });
+
+      return;
     } else {
       res.status(500).json({
         error: 'Failed to synchronize CAD file',
-        message: error instanceof Error ? error.message : 'Unknown error',
+        message: error instanceof Error ? (error as Error).message : 'Unknown error',
       });
+
+      return;
     }
   }
 });
@@ -505,13 +538,17 @@ router.get('/processing/:processingId/status', async (req: Request, res: Respons
     res.json(status);
   } catch (error: unknown) {
     logger.error('Failed to get processing status', error);
-    if (error instanceof Error && error.message.includes('not found')) {
-      res.status(404).json({ error: error.message });
+    if (error instanceof Error && (error as Error).message.includes('not found')) {
+      res.status(404).json({ error: (error as Error).message });
+
+      return;
     } else {
       res.status(500).json({
         error: 'Failed to get processing status',
-        message: error instanceof Error ? error.message : 'Unknown error',
+        message: error instanceof Error ? (error as Error).message : 'Unknown error',
       });
+
+      return;
     }
   }
 });
@@ -595,8 +632,10 @@ router.get('/analytics/:organizationId', async (req: Request, res: Response): Pr
     logger.error('Failed to get CAD analytics', error);
     res.status(500).json({
       error: 'Failed to get CAD analytics',
-      message: error instanceof Error ? error.message : 'Unknown error',
+      message: error instanceof Error ? (error as Error).message : 'Unknown error',
     });
+
+    return;
   }
 });
 

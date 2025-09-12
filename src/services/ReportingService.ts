@@ -735,7 +735,7 @@ export class ReportingService extends EventEmitter {
         logger.warn(`Section processing failed: ${section.id}`, { error });
         processedSections.push({
           ...section,
-          error: error.message,
+          error: (error as Error).message,
         });
       }
     }
