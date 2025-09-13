@@ -158,9 +158,53 @@ export class EnhancedBusinessLogicIntegrationService {
 
   /**
    * Initialize core service bridges with enhanced production features
+   * Now supporting 48 enterprise business features to compete with IBM TRIRIGA
    */
   private initializeCoreBridges(): void {
-    // Core NAPI-RS services with production configuration (32 High-Performance Modules)
+    // Import and integrate the 48-feature enterprise service
+    const { EnterpriseBusinessLogicService } = require('./enterprise-business-logic-48-features');
+    const enterpriseService = EnterpriseBusinessLogicService.getInstance();
+    
+    // Get all 48 features and convert to bridge format
+    const enterpriseFeatures = enterpriseService.getEnterpriseFeatures();
+    
+    enterpriseFeatures.forEach((feature: any) => {
+      const bridge: ProductionBusinessLogicBridge = {
+        serviceName: feature.id,
+        napiServiceName: feature.id,
+        businessLogicService: enterpriseService,
+        integrationMethods: feature.integrationMethods,
+        fallbackEnabled: true,
+        healthCheck: async () => feature.status === 'ACTIVE',
+        metrics: {
+          callCount: 0,
+          successCount: 0,
+          failureCount: 0,
+          avgResponseTime: 0,
+          lastHealthCheck: new Date(),
+          circuitBreakerStatus: 'CLOSED' as const,
+          lastFailureTime: undefined,
+        },
+        rateLimit: {
+          maxRequestsPerMinute: feature.configuration.limits.requestsPerMinute || 1000,
+          requestWindow: new Map<number, number>(),
+          blockUntil: undefined,
+        },
+        validation: {
+          rules: new Map([['default', feature.validationRules]]),
+          enabled: true,
+        },
+        retry: {
+          maxAttempts: 3,
+          backoffMultiplier: 2,
+          baseDelayMs: 1000,
+        },
+      };
+
+      this.bridges.set(feature.id, bridge);
+    });
+
+    // Legacy compatibility bridges for existing 32 modules
     const coreServices = [
       // Business Operations Domain (6 services)
       {

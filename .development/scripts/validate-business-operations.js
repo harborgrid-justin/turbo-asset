@@ -11,7 +11,7 @@ const path = require('path');
 console.log('🚀 Business Operations Domain Validation');
 console.log('==========================================\n');
 
-const businessOpsPath = path.join(__dirname, '../src/services/business-operations');
+const businessOpsPath = path.join(__dirname, '../../src/services/business-operations');
 
 function countLinesInFile(filePath) {
   try {
