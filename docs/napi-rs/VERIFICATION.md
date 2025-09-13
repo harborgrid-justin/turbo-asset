@@ -261,16 +261,16 @@ npm run test:napi
 npm run napi:health
 
 # Test individual modules
-node scripts/test-napi-modules.js
+node .development/scripts/test-napi-modules.js
 ```
 
 ### Code Generation
 ```bash
 # Generate documentation for all modules
-node scripts/generate-napi-docs.js
+node .development/scripts/generate-napi-docs.js
 
 # Fix module compilation issues
-node scripts/fix-napi-modules.js
+node .development/scripts/fix-napi-modules.js
 ```
 
 ## 📁 File Structure
@@ -290,7 +290,7 @@ docs/napi-rs/
 └── examples/                           # Practical examples
     └── README.md                       # 20,308 characters - Usage examples
 
-scripts/
+.development/scripts/
 ├── generate-napi-docs.js              # 19,545 characters - Doc generator
 ├── fix-napi-modules.js                # 7,200+ characters - Build fixer
 └── test-napi-modules.js               # 2,659 characters - Module tester

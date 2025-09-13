@@ -5,7 +5,7 @@
 
 import { promises as fs } from 'fs';
 
-module.exports = async () => {
+export default async () => {
   console.log('🧹 Cleaning up test environment...');
   
   try {

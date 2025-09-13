@@ -47,6 +47,6 @@
       "@/database/*": ["src/core/database/*"]
     }
   },
-  "include": ["src/**/*", "tests/**/*"],
+  "include": ["src/**/*", ".development/tests/**/*"],
   "exclude": ["node_modules", "dist", "src/services/**/*.backup/**/*"]
 }

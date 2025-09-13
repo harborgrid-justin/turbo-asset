@@ -5,7 +5,7 @@
 
 import { execSync } from 'child_process';
 
-module.exports = async () => {
+export default async () => {
   console.log('🚀 Setting up test environment...');
   
   try {
