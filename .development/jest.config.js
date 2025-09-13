@@ -8,7 +8,13 @@ module.exports = {
   ],
   transform: {
     '^.+\\.(ts|tsx)$': ['ts-jest', {
-      tsconfig: '../tsconfig.json'
+      tsconfig: {
+        target: 'ES2022',
+        module: 'commonjs',
+        esModuleInterop: true,
+        skipLibCheck: true,
+        strict: false
+      }
     }],
   },
   moduleNameMapper: {  // Fixed typo: was moduleNameMapping
