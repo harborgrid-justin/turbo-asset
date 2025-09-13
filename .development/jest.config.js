@@ -7,7 +7,9 @@ module.exports = {
     '**/?(*.)+(spec|test).ts'
   ],
   transform: {
-    '^.+\\.ts$': 'ts-jest',
+    '^.+\\.(ts|tsx)$': ['ts-jest', {
+      tsconfig: '../tsconfig.json'
+    }],
   },
   moduleNameMapper: {  // Fixed typo: was moduleNameMapping
     '^@/(.*)$': '../src/$1',
@@ -69,22 +71,23 @@ module.exports = {
     'default'
   ],
   
+  // Disable projects for now to simplify configuration
   // Custom test environments for different test types
-  projects: [
-    {
-      displayName: 'Controllers',
-      testMatch: ['<rootDir>/tests/controllers/**/*.test.ts'],
-      setupFilesAfterEnv: ['<rootDir>/tests/setup.ts']
-    },
-    {
-      displayName: 'Services',
-      testMatch: ['<rootDir>/tests/services/**/*.test.ts'],
-      setupFilesAfterEnv: ['<rootDir>/tests/setup.ts']
-    },
-    {
-      displayName: 'Models',
-      testMatch: ['<rootDir>/tests/models/**/*.test.ts'],
-      setupFilesAfterEnv: ['<rootDir>/tests/setup.ts']
-    }
-  ]
+  // projects: [
+  //   {
+  //     displayName: 'Controllers',
+  //     testMatch: ['<rootDir>/tests/controllers/**/*.test.ts'],
+  //     setupFilesAfterEnv: ['<rootDir>/tests/setup.ts']
+  //   },
+  //   {
+  //     displayName: 'Services',
+  //     testMatch: ['<rootDir>/tests/services/**/*.test.ts'],
+  //     setupFilesAfterEnv: ['<rootDir>/tests/setup.ts']
+  //   },
+  //   {
+  //     displayName: 'Models',
+  //     testMatch: ['<rootDir>/tests/models/**/*.test.ts'],
+  //     setupFilesAfterEnv: ['<rootDir>/tests/setup.ts']
+  //   }
+  // ]
 };
