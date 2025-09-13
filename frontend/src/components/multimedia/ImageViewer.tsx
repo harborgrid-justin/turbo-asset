@@ -292,7 +292,7 @@ export default function ImageViewer({ file }: ImageViewerProps) {
   };
 
   const exportImage = () => {
-    if (!canvasRef.current) return;
+    if (!canvasRef.current || typeof window === 'undefined') return;
     
     const link = document.createElement('a');
     link.download = `enhanced_${file.name}`;

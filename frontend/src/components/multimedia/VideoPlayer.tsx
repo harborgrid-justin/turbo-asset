@@ -60,6 +60,9 @@ export default function VideoPlayer({ file }: VideoPlayerProps) {
   });
 
   useEffect(() => {
+    // Only run on client side
+    if (typeof window === 'undefined') return;
+    
     if (!playerRef.current && videoRef.current) {
       const videoElement = document.createElement('video-js');
       videoElement.className = 'vjs-default-skin vjs-big-play-centered w-full h-96';

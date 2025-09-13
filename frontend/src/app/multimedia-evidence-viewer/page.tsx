@@ -1,10 +1,25 @@
 'use client';
 
 import React, { useRef, useState } from 'react';
-import VideoPlayer from '../../components/multimedia/VideoPlayer';
-import AudioAnalyzer from '../../components/multimedia/AudioAnalyzer';
-import ImageViewer from '../../components/multimedia/ImageViewer';
-import DocumentProcessor from '../../components/multimedia/DocumentProcessor';
+import dynamic from 'next/dynamic';
+
+// Dynamically import multimedia components to avoid SSR issues
+const VideoPlayer = dynamic(() => import('../../components/multimedia/VideoPlayer'), { 
+  ssr: false,
+  loading: () => <div>Loading video player...</div>
+});
+const AudioAnalyzer = dynamic(() => import('../../components/multimedia/AudioAnalyzer'), { 
+  ssr: false,
+  loading: () => <div>Loading audio analyzer...</div>
+});
+const ImageViewer = dynamic(() => import('../../components/multimedia/ImageViewer'), { 
+  ssr: false,
+  loading: () => <div>Loading image viewer...</div>
+});
+const DocumentProcessor = dynamic(() => import('../../components/multimedia/DocumentProcessor'), { 
+  ssr: false,
+  loading: () => <div>Loading document processor...</div>
+});
 
 type MediaType = 'video' | 'audio' | 'image' | 'document';
 

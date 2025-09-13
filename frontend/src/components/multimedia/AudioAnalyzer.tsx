@@ -57,6 +57,9 @@ export default function AudioAnalyzer({ file }: AudioAnalyzerProps) {
   const [showSpectogram, setShowSpectogram] = useState(false);
 
   useEffect(() => {
+    // Only run on client side
+    if (typeof window === 'undefined') return;
+    
     if (waveformRef.current && !wavesurferRef.current) {
       // Initialize WaveSurfer
       const wavesurfer = WaveSurfer.create({

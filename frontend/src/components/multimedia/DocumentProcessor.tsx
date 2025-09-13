@@ -1,11 +1,6 @@
 'use client';
 
 import React, { useRef, useEffect, useState } from 'react';
-import * as pdfjsLib from 'pdfjs-dist';
-import { createWorker } from 'tesseract.js';
-
-// Configure PDF.js worker
-pdfjsLib.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.js';
 
 interface EvidenceFile {
   id: string;
@@ -82,7 +77,12 @@ export default function DocumentProcessor({ file }: DocumentProcessorProps) {
   }, [file.url]);
 
   const loadPdfDocument = async () => {
+    if (typeof window === 'undefined') return;
+    
     try {
+      const pdfjsLib = await import('pdfjs-dist');
+      pdfjsLib.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.js';
+      
       const loadingTask = pdfjsLib.getDocument(file.url);
       const pdf = await loadingTask.promise;
       setPdfDocument(pdf);
@@ -163,12 +163,13 @@ export default function DocumentProcessor({ file }: DocumentProcessorProps) {
   };
 
   const performOCR = async () => {
-    if (!pdfDocument) return;
+    if (!pdfDocument || typeof window === 'undefined') return;
     
     setIsProcessingOCR(true);
     setOcrProgress(0);
     
     try {
+      const { createWorker } = await import('tesseract.js');
       const worker = await createWorker('eng');
       let fullText = '';
       
