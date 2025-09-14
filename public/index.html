@@ -744,7 +744,11 @@
             document.querySelectorAll('[data-cy^="edit-asset-"]').forEach(btn => {
                 btn.onclick = function(e) {
                     e.preventDefault();
-                    alert('Edit functionality would be implemented here');
+                    const assetId = this.getAttribute('data-cy').split('-')[2];
+                    const row = this.closest('tr');
+                    const assetName = row.querySelector('[data-cy^="asset-name-"]').textContent;
+                    
+                    showEditModal(assetId, assetName, row);
                 }
             });
 
@@ -752,30 +756,44 @@
                 btn.onclick = function(e) {
                     e.preventDefault();
                     if (confirm('Are you sure you want to delete this asset?')) {
-                        alert('Delete functionality would be implemented here');
+                        const assetId = this.getAttribute('data-cy').split('-')[2];
+                        const row = this.closest('tr');
+                        
+                        // Simulate delete with animation
+                        row.style.transition = 'opacity 0.3s ease-out';
+                        row.style.opacity = '0';
+                        
+                        setTimeout(() => {
+                            row.remove();
+                            showNotification('Asset deleted successfully', 'success');
+                        }, 300);
                     }
                 }
             });
             
             // Widget buttons
             document.querySelector('[data-cy="view-assets-btn"]').onclick = function() {
-                alert('Navigate to assets page');
+                window.location.href = 'assets.html';
             }
             
             document.querySelector('[data-cy="view-financial-btn"]').onclick = function() {
-                alert('Navigate to financial details');
+                showNotification('Opening financial dashboard...', 'info');
+                // Simulate navigation delay
+                setTimeout(() => {
+                    showNotification('Financial dashboard would load here', 'info');
+                }, 1000);
             }
             
             document.querySelector('[data-cy="create-ticket-btn"]').onclick = function() {
-                alert('Create new maintenance ticket');
+                showMaintenanceTicketModal();
             }
             
             document.querySelector('[data-cy="add-asset-btn"]').onclick = function() {
-                alert('Add new asset form would open');
+                showAddAssetModal();
             }
             
             document.querySelector('[data-cy="export-data-btn"]').onclick = function() {
-                alert('Export data functionality');
+                exportTableData();
             }
             
             document.querySelector('[data-cy="refresh-data-btn"]').onclick = function() {
@@ -952,6 +970,215 @@
                     toast.classList.remove('show');
                     setTimeout(() => container.removeChild(toast), 300);
                 }, 3000);
+            }
+            
+            // Edit Asset Modal
+            function showEditModal(assetId, assetName, row) {
+                const modal = document.getElementById('sampleModal');
+                const title = modal.querySelector('[data-cy="modal-title"]');
+                const content = modal.querySelector('[data-cy="modal-content"]');
+                const saveBtn = modal.querySelector('[data-cy="modal-save-btn"]');
+                
+                title.textContent = `Edit Asset: ${assetName}`;
+                content.innerHTML = `
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: 500;">Asset Name:</label>
+                        <input type="text" id="editAssetName" value="${assetName}" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                    </div>
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: 500;">Status:</label>
+                        <select id="editAssetStatus" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                            <option value="Active">Active</option>
+                            <option value="Inactive">Inactive</option>
+                            <option value="Maintenance">Under Maintenance</option>
+                        </select>
+                    </div>
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: 500;">Location:</label>
+                        <input type="text" id="editAssetLocation" value="${row.querySelector('[data-cy^="asset-location-"]').textContent}" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                    </div>
+                `;
+                
+                saveBtn.onclick = function() {
+                    const newName = document.getElementById('editAssetName').value;
+                    const newStatus = document.getElementById('editAssetStatus').value;
+                    const newLocation = document.getElementById('editAssetLocation').value;
+                    
+                    // Update the row
+                    row.querySelector('[data-cy^="asset-name-"]').textContent = newName;
+                    row.querySelector('[data-cy^="asset-location-"]').textContent = newLocation;
+                    const statusCell = row.querySelector('[data-cy^="asset-status-"]');
+                    statusCell.innerHTML = `<span class="status-indicator status-active"></span>${newStatus}`;
+                    
+                    modal.style.display = 'none';
+                    showNotification(`Asset ${newName} updated successfully`, 'success');
+                };
+                
+                modal.style.display = 'block';
+            }
+            
+            // Maintenance Ticket Modal
+            function showMaintenanceTicketModal() {
+                const modal = document.getElementById('sampleModal');
+                const title = modal.querySelector('[data-cy="modal-title"]');
+                const content = modal.querySelector('[data-cy="modal-content"]');
+                const saveBtn = modal.querySelector('[data-cy="modal-save-btn"]');
+                
+                title.textContent = 'Create Maintenance Ticket';
+                content.innerHTML = `
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: 500;">Asset:</label>
+                        <select id="ticketAsset" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                            <option value="AST-001">Server Rack - AST-001</option>
+                            <option value="AST-002">HVAC Unit - AST-002</option>
+                            <option value="AST-003">Company Vehicle - AST-003</option>
+                        </select>
+                    </div>
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: 500;">Priority:</label>
+                        <select id="ticketPriority" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                            <option value="Low">Low</option>
+                            <option value="Medium">Medium</option>
+                            <option value="High">High</option>
+                            <option value="Critical">Critical</option>
+                        </select>
+                    </div>
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: 500;">Description:</label>
+                        <textarea id="ticketDescription" placeholder="Describe the maintenance issue..." style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; height: 80px; resize: vertical;"></textarea>
+                    </div>
+                `;
+                
+                saveBtn.textContent = 'Create Ticket';
+                saveBtn.onclick = function() {
+                    const asset = document.getElementById('ticketAsset').value;
+                    const priority = document.getElementById('ticketPriority').value;
+                    const description = document.getElementById('ticketDescription').value;
+                    
+                    if (!description.trim()) {
+                        showNotification('Please provide a description for the maintenance ticket', 'error');
+                        return;
+                    }
+                    
+                    modal.style.display = 'none';
+                    showNotification(`Maintenance ticket created for ${asset} with ${priority} priority`, 'success');
+                };
+                
+                modal.style.display = 'block';
+            }
+            
+            // Add Asset Modal
+            function showAddAssetModal() {
+                const modal = document.getElementById('sampleModal');
+                const title = modal.querySelector('[data-cy="modal-title"]');
+                const content = modal.querySelector('[data-cy="modal-content"]');
+                const saveBtn = modal.querySelector('[data-cy="modal-save-btn"]');
+                
+                title.textContent = 'Add New Asset';
+                content.innerHTML = `
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: 500;">Asset Name:</label>
+                        <input type="text" id="newAssetName" placeholder="Enter asset name" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                    </div>
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: 500;">Asset Type:</label>
+                        <select id="newAssetType" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                            <option value="Hardware">Hardware</option>
+                            <option value="Software">Software</option>
+                            <option value="Vehicle">Vehicle</option>
+                            <option value="Equipment">Equipment</option>
+                            <option value="Furniture">Furniture</option>
+                        </select>
+                    </div>
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: 500;">Location:</label>
+                        <input type="text" id="newAssetLocation" placeholder="Enter location" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                    </div>
+                `;
+                
+                saveBtn.textContent = 'Add Asset';
+                saveBtn.onclick = function() {
+                    const name = document.getElementById('newAssetName').value;
+                    const type = document.getElementById('newAssetType').value;
+                    const location = document.getElementById('newAssetLocation').value;
+                    
+                    if (!name.trim()) {
+                        showNotification('Please provide an asset name', 'error');
+                        return;
+                    }
+                    
+                    // Add new row to table
+                    const tbody = document.querySelector('tbody');
+                    const newId = 'AST-' + String(Date.now()).slice(-3).padStart(3, '0');
+                    const newRow = document.createElement('tr');
+                    newRow.setAttribute('data-cy', `asset-row-${newId}`);
+                    newRow.innerHTML = `
+                        <td data-cy="asset-id-${newId}">${newId}</td>
+                        <td data-cy="asset-name-${newId}">${name}</td>
+                        <td data-cy="asset-type-${newId}">${type}</td>
+                        <td data-cy="asset-status-${newId}">
+                            <span class="status-indicator status-active"></span>Active
+                        </td>
+                        <td data-cy="asset-location-${newId}">${location || 'Not Specified'}</td>
+                        <td>
+                            <button data-cy="edit-asset-${newId}" class="btn-secondary">Edit</button>
+                            <button data-cy="delete-asset-${newId}" class="btn-danger">Delete</button>
+                        </td>
+                    `;
+                    
+                    tbody.appendChild(newRow);
+                    
+                    // Bind new events
+                    const editBtn = newRow.querySelector(`[data-cy="edit-asset-${newId}"]`);
+                    const deleteBtn = newRow.querySelector(`[data-cy="delete-asset-${newId}"]`);
+                    
+                    editBtn.onclick = function(e) {
+                        e.preventDefault();
+                        showEditModal(newId, name, newRow);
+                    };
+                    
+                    deleteBtn.onclick = function(e) {
+                        e.preventDefault();
+                        if (confirm('Are you sure you want to delete this asset?')) {
+                            newRow.style.transition = 'opacity 0.3s ease-out';
+                            newRow.style.opacity = '0';
+                            setTimeout(() => {
+                                newRow.remove();
+                                showNotification('Asset deleted successfully', 'success');
+                            }, 300);
+                        }
+                    };
+                    
+                    modal.style.display = 'none';
+                    showNotification(`Asset ${name} added successfully`, 'success');
+                };
+                
+                modal.style.display = 'block';
+            }
+            
+            // Export Table Data
+            function exportTableData() {
+                const table = document.querySelector('table');
+                const rows = Array.from(table.querySelectorAll('tr'));
+                
+                let csv = '';
+                rows.forEach((row, index) => {
+                    const cols = Array.from(row.querySelectorAll('th, td'));
+                    const rowData = cols.slice(0, -1).map(col => {
+                        // Remove HTML tags and extra whitespace
+                        return col.textContent.replace(/\s+/g, ' ').trim();
+                    });
+                    csv += rowData.join(',') + '\n';
+                });
+                
+                // Create and download CSV file
+                const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = `asset-data-${new Date().toISOString().split('T')[0]}.csv`;
+                link.click();
+                
+                showNotification('Asset data exported successfully', 'success');
             }
         });
     </script>
