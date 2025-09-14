@@ -1,6 +1,9 @@
 'use client';
 
 import React, { useState } from 'react';
+import HelpSystem from '@/components/ui/HelpSystem';
+import HelpTooltip from '@/components/ui/HelpTooltip';
+import { useNotificationHelpers } from '@/components/ui/NotificationSystem';
 
 interface AssetFormData {
   assetTag: string;
@@ -56,6 +59,8 @@ const AssetRegistryPage = () => {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+  const [isHelpOpen, setIsHelpOpen] = useState(false);
+  const { showSuccess, showError, showInfo } = useNotificationHelpers();
 
   const categories = [
     'HVAC',
@@ -132,8 +137,57 @@ const AssetRegistryPage = () => {
     setIsSubmitting(true);
     
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      // Simulate API call with actual backend integration attempt
+      try {
+        const response = await fetch('/api/assets', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(formData),
+        });
+
+        if (response.ok) {
+          const result = await response.json();
+          showSuccess(
+            'Asset Registered Successfully',
+            `Asset ${formData.assetTag} has been registered and saved to the database.`,
+            {
+              label: 'View Asset',
+              onClick: () => {
+                showInfo('Navigation', `Would navigate to asset details for ${formData.assetTag}`);
+              }
+            }
+          );
+        } else {
+          throw new Error('Backend registration failed');
+        }
+      } catch (apiError) {
+        // Fallback to local storage simulation if backend is not available
+        console.log('Backend not available, using local simulation');
+        
+        // Save to localStorage for demonstration
+        const existingAssets = JSON.parse(localStorage.getItem('turbo-assets') || '[]');
+        const newAsset = {
+          ...formData,
+          id: Date.now().toString(),
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        };
+        existingAssets.push(newAsset);
+        localStorage.setItem('turbo-assets', JSON.stringify(existingAssets));
+        
+        showSuccess(
+          'Asset Registered Successfully',
+          `Asset ${formData.assetTag} has been saved locally. In production, this would be saved to the database.`,
+          {
+            label: 'View All Assets',
+            onClick: () => {
+              showInfo('Navigation', 'Would navigate to asset list page');
+            }
+          }
+        );
+      }
       
       console.log('Asset registered:', formData);
       setShowSuccessMessage(true);
@@ -167,6 +221,14 @@ const AssetRegistryPage = () => {
       setTimeout(() => setShowSuccessMessage(false), 3000);
     } catch (error) {
       console.error('Error registering asset:', error);
+      showError(
+        'Registration Failed', 
+        'There was an error registering the asset. Please check your connection and try again.',
+        {
+          label: 'Retry',
+          onClick: () => handleSubmit
+        }
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -177,8 +239,29 @@ const AssetRegistryPage = () => {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Asset Registration</h1>
-          <p className="text-gray-600 mt-2">Register new assets in the system with comprehensive details</p>
+          <div className="flex items-center justify-between">
+            <div>
+              <div className="flex items-center gap-2">
+                <h1 className="text-3xl font-bold text-gray-900">Asset Registration</h1>
+                <HelpTooltip 
+                  content="Register new assets with comprehensive details including financial information, location, and technical specifications. All required fields are marked with an asterisk."
+                  title="Asset Registration Help"
+                />
+              </div>
+              <p className="text-gray-600 mt-2">Register new assets in the system with comprehensive details</p>
+            </div>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setIsHelpOpen(true)}
+                className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z" />
+                </svg>
+                Help
+              </button>
+            </div>
+          </div>
         </div>
 
         {/* Success Message */}
@@ -597,6 +680,13 @@ const AssetRegistryPage = () => {
             </div>
           </div>
         </form>
+
+        {/* Help System */}
+        <HelpSystem 
+          isOpen={isHelpOpen} 
+          onClose={() => setIsHelpOpen(false)} 
+          contextualHelp="asset-registration"
+        />
       </div>
     </div>
   );

@@ -6,6 +6,10 @@ import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { DataTable, Column } from '@/components/ui/DataTable';
 import { formatCurrency as formatCurrencyUtil, formatNumber as formatNumberUtil, getStatusColor, getPriorityColor } from '@/lib/utils';
+import HelpSystem from '@/components/ui/HelpSystem';
+import HelpTooltip from '@/components/ui/HelpTooltip';
+import ExportDialog from '@/components/ui/ExportDialog';
+import { useNotificationHelpers } from '@/components/ui/NotificationSystem';
 
 interface PortfolioMetrics {
   totalProperties: number;
@@ -54,6 +58,9 @@ const PortfolioServicePage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedView, setSelectedView] = useState<'dashboard' | 'properties' | 'analytics'>('dashboard');
+  const [isHelpOpen, setIsHelpOpen] = useState(false);
+  const [isExportDialogOpen, setIsExportDialogOpen] = useState(false);
+  const { showSuccess, showError, showInfo } = useNotificationHelpers();
 
   useEffect(() => {
     fetchPortfolioData();
@@ -309,6 +316,41 @@ const PortfolioServicePage = () => {
     }
   };
 
+  const handleAddProperty = () => {
+    showInfo(
+      'Add Property', 
+      'Property registration form will open here. This feature is currently under development.',
+      {
+        label: 'Got it',
+        onClick: () => {}
+      }
+    );
+  };
+
+  const handleImportProperties = () => {
+    showInfo(
+      'Import Properties',
+      'Bulk property import functionality will be available here. Supported formats: CSV, Excel, JSON.',
+      {
+        label: 'Learn More',
+        onClick: () => setIsHelpOpen(true)
+      }
+    );
+  };
+
+  const availableColumns = [
+    { key: 'name', label: 'Property Name' },
+    { key: 'type', label: 'Type' },
+    { key: 'location', label: 'Location' },
+    { key: 'totalArea', label: 'Total Area' },
+    { key: 'occupiedArea', label: 'Occupied Area' },
+    { key: 'revenue', label: 'Revenue' },
+    { key: 'energyRating', label: 'Energy Rating' },
+    { key: 'propertyManager', label: 'Property Manager' },
+    { key: 'yearBuilt', label: 'Year Built' },
+    { key: 'status', label: 'Status' }
+  ];
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 p-6">
@@ -348,11 +390,17 @@ const PortfolioServicePage = () => {
         <div className="mb-8">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Portfolio Management</h1>
+              <div className="flex items-center gap-2">
+                <h1 className="text-3xl font-bold text-gray-900">Portfolio Management</h1>
+                <HelpTooltip 
+                  content="Comprehensive real estate portfolio management with performance metrics, analytics, and property details. Click the help button for detailed guidance."
+                  title="Portfolio Overview"
+                />
+              </div>
               <p className="text-gray-600 mt-2">Real estate portfolio overview and management</p>
             </div>
             <div className="flex flex-wrap gap-3">
-              <Button variant="outline">
+              <Button variant="outline" onClick={handleImportProperties}>
                 <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                 </svg>
@@ -364,11 +412,23 @@ const PortfolioServicePage = () => {
                 </svg>
                 Refresh Data
               </Button>
-              <Button>
+              <Button variant="outline" onClick={() => setIsExportDialogOpen(true)}>
+                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                </svg>
+                Export Data
+              </Button>
+              <Button onClick={handleAddProperty}>
                 <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                 </svg>
                 Add Property
+              </Button>
+              <Button variant="ghost" onClick={() => setIsHelpOpen(true)}>
+                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z" />
+                </svg>
+                Help
               </Button>
             </div>
           </div>
@@ -657,6 +717,23 @@ const PortfolioServicePage = () => {
             </Card>
           </div>
         )}
+
+        {/* Help System */}
+        <HelpSystem 
+          isOpen={isHelpOpen} 
+          onClose={() => setIsHelpOpen(false)} 
+          contextualHelp="portfolio-overview"
+        />
+
+        {/* Export Dialog */}
+        <ExportDialog
+          isOpen={isExportDialogOpen}
+          onClose={() => setIsExportDialogOpen(false)}
+          data={selectedView === 'properties' ? properties : []}
+          filename="portfolio-data"
+          availableColumns={availableColumns}
+          title="Export Portfolio Data"
+        />
       </div>
     </div>
   );
