@@ -4,7 +4,7 @@
  * and the new high-performance napi-rs packages
  */
 
-import { logger } from '@/config/logger';
+import { logger } from '../config/logger';
 import type { 
   BaseEntity, 
   StandardResponse, 

@@ -5,8 +5,9 @@
  */
 
 import { EventEmitter } from 'events';
-import { logger } from '@/config/logger';
-import type { StandardResponse, ValidationRule, ProductionBusinessLogicBridge } from '../enhanced-business-logic-integration';
+import { logger } from '../config/logger';
+import type { StandardResponse } from '../types/universal-data-standard';
+import type { ValidationRule, ProductionBusinessLogicBridge } from './enhanced-business-logic-integration';
 
 export interface EnterpriseBusinessFeature {
   id: string;
@@ -161,9 +162,6 @@ export class EnterpriseBusinessLogicService extends EventEmitter {
 
     // Advanced Intelligence Domain (2 features)
     this.initializeAdvancedIntelligenceFeatures();
-
-    // Enterprise Features Domain (2 features)
-    this.initializeEnterpriseFeatures();
 
     this.metrics.activeFeatures = this.features.size;
     this.isInitialized = true;
@@ -624,27 +622,6 @@ export class EnterpriseBusinessLogicService extends EventEmitter {
     features.forEach(feature => this.createEnterpriseFeature(feature, 'ADVANCED_INTELLIGENCE'));
   }
 
-  private initializeEnterpriseFeatures(): void {
-    const features = [
-      {
-        id: 'multi-tenant-architecture',
-        name: 'Multi-Tenant Architecture',
-        description: 'Scalable multi-tenant platform with tenant isolation, custom branding, and configuration management',
-        integrationMethods: ['manageTenants', 'isolateData', 'customizeBranding', 'configureSettings', 'monitorUsage'],
-        frontendComponents: ['TenantManager', 'BrandingCustomizer', 'ConfigurationPanel', 'UsageMonitor', 'IsolationViewer']
-      },
-      {
-        id: 'enterprise-security',
-        name: 'Enterprise Security Suite',
-        description: 'Comprehensive security platform with SSO, role-based access, encryption, and threat detection',
-        integrationMethods: ['manageSSOAuth', 'enforceRBAC', 'encryptData', 'detectThreats', 'auditSecurity'],
-        frontendComponents: ['SecurityConsole', 'SSOManager', 'RoleManager', 'EncryptionPanel', 'ThreatDetector']
-      }
-    ];
-
-    features.forEach(feature => this.createEnterpriseFeature(feature, 'ENTERPRISE_FEATURES'));
-  }
-
   /**
    * Create an enterprise feature with full configuration
    */
@@ -827,7 +804,9 @@ export class EnterpriseBusinessLogicService extends EventEmitter {
           featureId,
           operationName,
           executionTime: responseTime,
-          timestamp: new Date().toISOString()
+          timestamp: new Date(),
+          requestId: `${featureId}-${Date.now()}`,
+          apiVersion: '1.0.0',
         }
       };
 

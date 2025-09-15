@@ -1,10 +1,11 @@
 import { PrismaClient } from '@prisma/client';
-import { logger } from '@/config/logger';
+import { logger } from '../../../config/logger';
 import { 
   AssetDepreciationRecord,
   DepreciationMethod,
   AssetFinancialData
 } from './types/AssetTypes';
+import { PrecisionUtils, PrecisionDecimal, PrecisionConfig } from '../../../../shared/precision-utils';
 
 const prisma = new PrismaClient();
 
@@ -389,7 +390,7 @@ export class AssetDepreciationService {
   }
 
   /**
-   * Calculate depreciation amount based on method
+   * Calculate depreciation amount based on method with high precision
    */
   private calculateDepreciationAmount(
     purchasePrice: number,
@@ -398,38 +399,70 @@ export class AssetDepreciationService {
     method: DepreciationMethod,
     year: number
   ): number {
-    const depreciableValue = purchasePrice - salvageValue;
+    if (!PrecisionUtils.isSafePrecision(purchasePrice, PrecisionConfig.CURRENCY) ||
+        !PrecisionUtils.isSafePrecision(salvageValue, PrecisionConfig.CURRENCY)) {
+      logger.warn('Depreciation calculation values exceed safe precision limits', {
+        purchasePrice,
+        salvageValue,
+        method
+      });
+    }
+
+    const depreciableValue = PrecisionUtils.subtract(purchasePrice, salvageValue, PrecisionConfig.CURRENCY);
 
     switch (method) {
       case DepreciationMethod.STRAIGHT_LINE:
-        return depreciableValue / usefulLife;
+        return PrecisionUtils.calculateStraightLineDepreciation(
+          purchasePrice,
+          salvageValue,
+          usefulLife,
+          year,
+          PrecisionConfig.CURRENCY
+        ).annualDepreciation;
 
       case DepreciationMethod.DECLINING_BALANCE:
-        const rate = 1 / usefulLife;
-        const remainingValue = purchasePrice * Math.pow(1 - rate, year - 1);
-        return Math.max(remainingValue * rate, remainingValue - salvageValue);
+        const rate = PrecisionUtils.divide(1, usefulLife, PrecisionConfig.INTEREST_RATE);
+        const remainingValue = PrecisionUtils.multiply(
+          purchasePrice,
+          Math.pow(1 - rate, year - 1),
+          PrecisionConfig.CURRENCY
+        );
+        const calculatedDepreciation = PrecisionUtils.multiply(remainingValue, rate, PrecisionConfig.CURRENCY);
+        const maxDepreciation = PrecisionUtils.subtract(remainingValue, salvageValue, PrecisionConfig.CURRENCY);
+        return Math.max(calculatedDepreciation, maxDepreciation);
 
       case DepreciationMethod.DOUBLE_DECLINING_BALANCE:
-        const doubleRate = 2 / usefulLife;
-        const remainingValueDDB = purchasePrice * Math.pow(1 - doubleRate, year - 1);
-        return Math.max(remainingValueDDB * doubleRate, remainingValueDDB - salvageValue);
+        return PrecisionUtils.calculateDecliningBalanceDepreciation(
+          purchasePrice,
+          PrecisionUtils.divide(2, usefulLife, PrecisionConfig.INTEREST_RATE),
+          year,
+          PrecisionConfig.CURRENCY
+        ).annualDepreciation;
 
       case DepreciationMethod.SUM_OF_YEARS_DIGITS:
-        const sumOfYears = (usefulLife * (usefulLife + 1)) / 2;
-        const yearsFactor = (usefulLife - year + 1) / sumOfYears;
-        return depreciableValue * yearsFactor;
+        const sumOfYears = PrecisionUtils.divide(
+          usefulLife * (usefulLife + 1),
+          2,
+          PrecisionConfig.CURRENCY
+        );
+        const yearsFactor = PrecisionUtils.divide(
+          (usefulLife - year + 1),
+          sumOfYears,
+          PrecisionConfig.RATIOS
+        );
+        return PrecisionUtils.multiply(depreciableValue, yearsFactor, PrecisionConfig.CURRENCY);
 
       case DepreciationMethod.UNITS_OF_PRODUCTION:
-        // This would require usage data - simplified for now
-        return depreciableValue / usefulLife;
+        // This would require usage data - simplified for now with high precision
+        return PrecisionUtils.divide(depreciableValue, usefulLife, PrecisionConfig.CURRENCY);
 
       default:
-        return depreciableValue / usefulLife;
+        return PrecisionUtils.divide(depreciableValue, usefulLife, PrecisionConfig.CURRENCY);
     }
   }
 
   /**
-   * Calculate accumulated depreciation
+   * Calculate accumulated depreciation with high precision
    */
   private calculateAccumulatedDepreciation(
     depreciableValue: number,
@@ -438,28 +471,32 @@ export class AssetDepreciationService {
     method: DepreciationMethod
   ): number {
     if (ageInYears >= usefulLife) {
-      return depreciableValue; // Fully depreciated
+      return PrecisionUtils.roundToPrecision(depreciableValue, PrecisionConfig.CURRENCY);
     }
 
     switch (method) {
       case DepreciationMethod.STRAIGHT_LINE:
-        return (depreciableValue / usefulLife) * ageInYears;
+        const annualDepreciation = PrecisionUtils.divide(depreciableValue, usefulLife, PrecisionConfig.CURRENCY);
+        return PrecisionUtils.multiply(annualDepreciation, ageInYears, PrecisionConfig.CURRENCY);
 
       case DepreciationMethod.DECLINING_BALANCE:
-        const rate = 1 / usefulLife;
-        return depreciableValue * (1 - Math.pow(1 - rate, ageInYears));
+        const rate = PrecisionUtils.divide(1, usefulLife, PrecisionConfig.INTEREST_RATE);
+        const factor = 1 - Math.pow(1 - rate, ageInYears);
+        return PrecisionUtils.multiply(depreciableValue, factor, PrecisionConfig.CURRENCY);
 
       case DepreciationMethod.DOUBLE_DECLINING_BALANCE:
-        const doubleRate = 2 / usefulLife;
-        return depreciableValue * (1 - Math.pow(1 - doubleRate, ageInYears));
+        const doubleRate = PrecisionUtils.divide(2, usefulLife, PrecisionConfig.INTEREST_RATE);
+        const doubleFactor = 1 - Math.pow(1 - doubleRate, ageInYears);
+        return PrecisionUtils.multiply(depreciableValue, doubleFactor, PrecisionConfig.CURRENCY);
 
       default:
-        return (depreciableValue / usefulLife) * ageInYears;
+        const defaultAnnualDepreciation = PrecisionUtils.divide(depreciableValue, usefulLife, PrecisionConfig.CURRENCY);
+        return PrecisionUtils.multiply(defaultAnnualDepreciation, ageInYears, PrecisionConfig.CURRENCY);
     }
   }
 
   /**
-   * Calculate monthly depreciation
+   * Calculate monthly depreciation with high precision
    */
   private calculateMonthlyDepreciation(
     depreciableValue: number,
@@ -472,14 +509,14 @@ export class AssetDepreciationService {
     }
 
     const annualDepreciation = this.calculateDepreciationAmount(
-      depreciableValue,
+      PrecisionUtils.add(depreciableValue, 0, PrecisionConfig.CURRENCY), // Add salvage value back for calculation
       0,
       usefulLife,
       method,
       Math.ceil(ageInYears)
     );
 
-    return annualDepreciation / 12;
+    return PrecisionUtils.divide(annualDepreciation, 12, PrecisionConfig.CURRENCY);
   }
 
   /**
