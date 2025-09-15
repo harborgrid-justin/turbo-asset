@@ -1,5 +1,6 @@
 import { prisma } from '../config/database';
-import { logger } from '@/config/logger';
+import { logger } from '../config/logger';
+import { PrecisionUtils, PrecisionDecimal, PrecisionConfig } from '../shared/precision-utils';
 
 export interface BudgetCreationData {
   organizationId: string;
@@ -147,8 +148,11 @@ export class BudgetForecastService {
         }
       }
 
-      // Calculate total budget amount
-      const totalBudget = data.lineItems.reduce((sum, item) => sum + item.annualAmount, 0);
+      // Calculate total budget amount with high precision
+      const totalBudget = PrecisionUtils.sum(
+        data.lineItems.map(item => item.annualAmount),
+        PrecisionConfig.CURRENCY
+      );
 
       // Create budget record
       const budget = await prisma.budget.create({
@@ -227,12 +231,13 @@ export class BudgetForecastService {
         }
       }
 
-      // Calculate variance from budget if applicable
+      // Calculate variance from budget if applicable with high precision
       let variance = null;
       let variancePercent = null;
       if (data.budgetAmount) {
-        variance = data.forecastAmount - data.budgetAmount;
-        variancePercent = data.budgetAmount > 0 ? (variance / data.budgetAmount) * 100 : 0;
+        variance = PrecisionUtils.subtract(data.forecastAmount, data.budgetAmount, PrecisionConfig.CURRENCY);
+        variancePercent = data.budgetAmount > 0 ? 
+          PrecisionUtils.percentage(variance, data.budgetAmount, PrecisionConfig.PERCENTAGE) : 0;
       }
 
       const forecast = await prisma.forecast.create({
@@ -291,9 +296,12 @@ export class BudgetForecastService {
         }
       });
 
-      // Calculate summary statistics
+      // Calculate summary statistics with high precision
       const totalBudgets = budgets.length;
-      const totalBudgetAmount = budgets.reduce((sum, b) => sum + b.totalBudget, 0);
+      const totalBudgetAmount = PrecisionUtils.sum(
+        budgets.map(b => b.totalBudget),
+        PrecisionConfig.CURRENCY
+      );
       const approvedBudgets = budgets.filter(b => b.status === 'APPROVED').length;
       const pendingApprovals = budgets.filter(b => b.status === 'REVIEW').length;
 
@@ -324,7 +332,7 @@ export class BudgetForecastService {
           }
           const property = propertyMap.get(propertyId)!;
           property.budgetCount++;
-          property.totalAmount += budget.totalBudget;
+          property.totalAmount = PrecisionUtils.add(property.totalAmount, budget.totalBudget, PrecisionConfig.CURRENCY);
         }
       });
 
@@ -336,7 +344,7 @@ export class BudgetForecastService {
 
       return {
         totalBudgets,
-        totalBudgetAmount: Math.round(totalBudgetAmount),
+        totalBudgetAmount: PrecisionUtils.roundToPrecision(totalBudgetAmount, PrecisionConfig.CURRENCY),
         approvedBudgets,
         pendingApprovals,
         budgetsByType,
@@ -421,9 +429,9 @@ export class BudgetForecastService {
       for (const actual of actualData) {
         const lineItem = budget.lineItems.find(li => li.category === actual.category);
         if (lineItem) {
-          const variance = actual.actualAmount - lineItem.annualAmount;
+          const variance = PrecisionUtils.subtract(actual.actualAmount, lineItem.annualAmount, PrecisionConfig.CURRENCY);
           const variancePercent = lineItem.annualAmount > 0 ? 
-            (variance / lineItem.annualAmount) * 100 : 0;
+            PrecisionUtils.percentage(variance, lineItem.annualAmount, PrecisionConfig.PERCENTAGE) : 0;
 
           // Create variance record for significant variances
           if (Math.abs(variancePercent) > 10 || Math.abs(variance) > 5000) {
@@ -508,7 +516,7 @@ export class BudgetForecastService {
           };
         });
 
-        // Calculate scenario results
+        // Calculate scenario results with high precision
         const revenueItems = adjustedLineItems.filter(li => 
           li.category.toLowerCase().includes('revenue')
         );
@@ -516,20 +524,27 @@ export class BudgetForecastService {
           !li.category.toLowerCase().includes('revenue')
         );
 
-        const totalRevenue = revenueItems.reduce((sum, item) => sum + item.adjustedAmount, 0);
-        const totalExpenses = expenseItems.reduce((sum, item) => sum + item.adjustedAmount, 0);
-        const netIncome = totalRevenue - totalExpenses;
+        const totalRevenue = PrecisionUtils.sum(
+          revenueItems.map(item => item.adjustedAmount),
+          PrecisionConfig.CURRENCY
+        );
+        const totalExpenses = PrecisionUtils.sum(
+          expenseItems.map(item => item.adjustedAmount),
+          PrecisionConfig.CURRENCY
+        );
+        const netIncome = PrecisionUtils.subtract(totalRevenue, totalExpenses, PrecisionConfig.CURRENCY);
         const cashFlow = netIncome; // Simplified calculation
-        const roi = totalRevenue > 0 ? (netIncome / totalRevenue) * 100 : 0;
+        const roi = totalRevenue > 0 ? 
+          PrecisionUtils.percentage(netIncome, totalRevenue, PrecisionConfig.PERCENTAGE) : 0;
 
         scenarioResults.push({
           ...scenario,
           results: {
-            totalRevenue: Math.round(totalRevenue),
-            totalExpenses: Math.round(totalExpenses),
-            netIncome: Math.round(netIncome),
-            cashFlow: Math.round(cashFlow),
-            roi: Math.round(roi * 100) / 100
+            totalRevenue: PrecisionUtils.roundToPrecision(totalRevenue, PrecisionConfig.CURRENCY),
+            totalExpenses: PrecisionUtils.roundToPrecision(totalExpenses, PrecisionConfig.CURRENCY),
+            netIncome: PrecisionUtils.roundToPrecision(netIncome, PrecisionConfig.CURRENCY),
+            cashFlow: PrecisionUtils.roundToPrecision(cashFlow, PrecisionConfig.CURRENCY),
+            roi: PrecisionUtils.roundToPrecision(roi, PrecisionConfig.PERCENTAGE)
           },
           lineItemDetails: adjustedLineItems
         });

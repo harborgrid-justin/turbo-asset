@@ -3,8 +3,9 @@
  * This service extends the NAPI-RS modules with comprehensive business logic integration
  */
 
-import { logger } from '@/config/logger';
+import { logger } from '../config/logger';
 import { napiRegistry } from './napi-integration';
+import { PrecisionUtils, PrecisionDecimal, PrecisionConfig } from '../shared/precision-utils';
 import type { 
   BaseEntity, 
   StandardResponse, 
@@ -14,6 +15,7 @@ import type {
 
 // Enhanced interfaces for production-grade features
 export interface ProductionBusinessLogicBridge {
+  serviceName?: string; // Optional for internal usage
   napiServiceName: string;
   businessLogicService: any;
   integrationMethods: string[];
@@ -170,7 +172,6 @@ export class EnhancedBusinessLogicIntegrationService {
     
     enterpriseFeatures.forEach((feature: any) => {
       const bridge: ProductionBusinessLogicBridge = {
-        serviceName: feature.id,
         napiServiceName: feature.id,
         businessLogicService: enterpriseService,
         integrationMethods: feature.integrationMethods,
@@ -1083,7 +1084,7 @@ export class EnhancedBusinessLogicIntegrationService {
   /**
    * Get all service bridges with their configuration
    */
-  getServiceBridges(): ProductionBusinessLogicBridge[] {
+  getServiceBridges(): any[] {
     return Array.from(this.bridges.entries()).map(([serviceName, bridge]) => ({
       serviceName,
       ...bridge
@@ -4064,7 +4065,7 @@ export const productionGradeBusinessLogicService = {
       
       // Unified recommendations
       const recommendations: string[] = [
-        ...esgScore.improvementAreas.map(area => `${area.category}: ${area.recommendation}`),
+        ...esgScore.improvementAreas.map((area: any) => `${area.category}: ${area.recommendation}`),
         ...riskProfile.riskMetrics.probabilityOfLoss > 0.3 ? ['High probability of loss - implement risk mitigation strategies'] : [],
         ...complianceStatus?.requiredActions || []
       ];
@@ -4144,7 +4145,7 @@ export const productionGradeBusinessLogicService = {
         ...failurePrediction.predictions.recommendedAction === 'immediate_action' ? 
           ['URGENT: Schedule immediate maintenance based on failure prediction'] : [],
         ...anomalyDetection.isAnomaly ? 
-          [`Temperature anomaly detected: ${anomalyDetection.contributingFactors.map(f => f.description).join(', ')}`] : [],
+          [`Temperature anomaly detected: ${anomalyDetection.contributingFactors.map((f: any) => f.description).join(', ')}`] : [],
         ...energyOptimization?.recommendations || []
       ];
 
@@ -4248,7 +4249,7 @@ export const productionGradeBusinessLogicService = {
       // Lineage tracking summary
       const lineageTracking = {
         dataSource: latestRun?.sourceSystem || 'unknown',
-        transformationsApplied: latestRun?.transformations.map(t => t.description) || [],
+        transformationsApplied: latestRun?.transformations.map((t: any) => t.description) || [],
         processingTime: processedData.metadata.processingTime,
         recordsProcessed: processedData.metadata.processedRecords
       };
@@ -4323,7 +4324,7 @@ export const productionGradeBusinessLogicService = {
             ['Improve data quality to enhance forecast accuracy']
         ],
         riskMitigation: [
-          ...forecast.confidenceIntervals.upper.some((val, i) => val > forecast.forecastedValues[i] * 1.5) ? 
+          ...forecast.confidenceIntervals.upper.some((val: any, i: number) => val > forecast.forecastedValues[i] * 1.5) ? 
             ['High variability detected - implement buffer capacity'] : [],
           'Monitor actual vs. predicted values for model refinement',
           'Set up alerts for significant deviations from forecast'

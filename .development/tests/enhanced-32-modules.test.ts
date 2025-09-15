@@ -3,7 +3,7 @@
  * Validates complete frontend integration and production-grade features
  */
 
-import { EnhancedBusinessLogicIntegrationService } from '../src/services/enhanced-business-logic-integration';
+import { EnhancedBusinessLogicIntegrationService } from '../../src/services/enhanced-business-logic-integration';
 
 describe('32 High-Performance NAPI-RS Business Logic Modules', () => {
   let enhancedService: EnhancedBusinessLogicIntegrationService;
