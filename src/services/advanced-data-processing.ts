@@ -359,7 +359,7 @@ export class AdvancedDataProcessingEngine {
     }
     
     // Check for unexpected fields
-    const schemaFieldNames = new Set(schema.fields.map(f => f.name));
+    const schemaFieldNames = new Set(schema.fields.map((f: any) => f.name));
     for (const dataField of Object.keys(data)) {
       if (!schemaFieldNames.has(dataField)) {
         warnings.push({
