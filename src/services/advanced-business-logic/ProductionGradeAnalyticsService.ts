@@ -43,16 +43,16 @@ export class ProductionGradeAnalyticsService {
       const lease = await prisma.lease.findUnique({
         where: { id: leaseId },
         include: {
-          tenant: {
-            include: {
-              organization: true
-            }
-          },
+          tenant: true,
           property: {
             include: {
-              building: {
+              buildings: {
                 include: {
-                  spaces: true
+                  floors: {
+                    include: {
+                      spaces: true
+                    }
+                  }
                 }
               }
             }
@@ -105,8 +105,15 @@ export class ProductionGradeAnalyticsService {
               status: 'ACTIVE'
             }
           },
-          spaces: true,
-          building: true
+          buildings: {
+            include: {
+              floors: {
+                include: {
+                  spaces: true
+                }
+              }
+            }
+          }
         }
       });
 

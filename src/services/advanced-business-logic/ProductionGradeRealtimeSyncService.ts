@@ -336,7 +336,7 @@ export class ProductionGradeRealtimeSyncService extends EventEmitter {
         organizationId: result.organizationId,
         metadata: {
           source: 'ui',
-          conflictResolution: resolution.strategy
+          conflictResolution: resolution.strategy !== 'manual' ? resolution.strategy : 'merge'
         }
       });
 

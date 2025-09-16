@@ -432,7 +432,7 @@ export class ProductionGradeAPIGateway {
     if (exactMatch) return exactMatch;
 
     // Try pattern matching for parameterized routes
-    for (const [key, route] of this.routes) {
+    for (const [key, route] of Array.from(this.routes.entries())) {
       const [routeMethod, routePath] = key.split(':');
       if (routeMethod === method && this.matchesPattern(path, routePath)) {
         return route;

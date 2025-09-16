@@ -2,6 +2,9 @@ export { ProductionGradeAnalyticsService } from './ProductionGradeAnalyticsServi
 export { ProductionGradeHelpService } from './ProductionGradeHelpService';
 export { ProductionGradeRealtimeSyncService } from './ProductionGradeRealtimeSyncService';
 export { ProductionGradeAPIGateway } from './ProductionGradeAPIGateway';
+export { ProductionGradeMobileService } from './ProductionGradeMobileService';
+export { ProductionGradeSmartBuildingService } from './ProductionGradeSmartBuildingService';
+export { ProductionGradeSustainabilityService } from './ProductionGradeSustainabilityService';
 
 export type {
   MarketComparisonData,
@@ -28,3 +31,25 @@ export type {
   APIMetrics,
   RequestContext
 } from './ProductionGradeAPIGateway';
+
+export type {
+  MobileUserProfile,
+  OfflineAction,
+  MobileWorkOrder,
+  GeofenceArea
+} from './ProductionGradeMobileService';
+
+export type {
+  IoTDevice,
+  SensorReading,
+  SmartBuildingRule,
+  BuildingInsight,
+  EnergyOptimization
+} from './ProductionGradeSmartBuildingService';
+
+export type {
+  SustainabilityMetrics,
+  ESGReport,
+  ComplianceReport,
+  SustainabilityBenchmark
+} from './ProductionGradeSustainabilityService';
