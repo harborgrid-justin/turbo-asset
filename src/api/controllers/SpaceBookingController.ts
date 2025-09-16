@@ -466,21 +466,25 @@ router.patch('/:id/status', async (req: Request, res: Response): Promise<void> =
     // Set status-specific fields
     const now = new Date();
     switch (status) {
-      case 'CHECKED_IN':
+      case 'CHECKED_IN': {
         updateData.checkInAt = now;
         break;
-      case 'CHECKED_OUT':
+      }
+      case 'CHECKED_OUT': {
         updateData.checkOutAt = now;
         break;
-      case 'CANCELLED':
+      }
+      case 'CANCELLED': {
         updateData.cancelledAt = now;
         if (reason) {
           updateData.cancellationReason = reason;
         }
         break;
-      case 'NO_SHOW':
+      }
+      case 'NO_SHOW': {
         updateData.noShowAt = now;
         break;
+      }
     }
 
     // Update the booking

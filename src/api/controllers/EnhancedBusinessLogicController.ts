@@ -5,12 +5,12 @@
 
 import { Request, Response } from 'express';
 import { logger } from '@/config/logger';
-import { 
-  ProductionGradeBusinessLogic,
-  enhancedBusinessLogicService, 
-  advancedBusinessRules,
-  dataStandardizationEngine
-} from '@/services/enhanced-business-logic-integration';
+import {
+  ProductionGradeAnalyticsService,
+  ProductionGradeHelpService,
+  ProductionGradeRealtimeSyncService,
+  ProductionGradeAPIGateway
+} from '@/services/advanced-business-logic';
 
 export class EnhancedBusinessLogicController {
   /**
@@ -530,6 +530,168 @@ export class EnhancedBusinessLogicController {
         },
       });
 
+    }
+  }
+
+  // New production-grade competitive business logic methods
+  private static analyticsService = new ProductionGradeAnalyticsService();
+  private static helpService = new ProductionGradeHelpService();
+  private static syncService = new ProductionGradeRealtimeSyncService();
+  private static apiGateway = new ProductionGradeAPIGateway();
+
+  /**
+   * Get advanced lease renewal predictions
+   */
+  static async getLeaseRenewalPrediction(req: Request, res: Response): Promise<void> {
+    try {
+      const { leaseId } = req.params;
+      const { organizationId } = req.user!;
+
+      const prediction = await EnhancedBusinessLogicController.analyticsService.predictLeaseRenewal(leaseId);
+
+      logger.info('Lease renewal prediction generated', {
+        leaseId,
+        organizationId,
+        probability: prediction.probability,
+        confidence: prediction.confidence
+      });
+
+      res.json({
+        success: true,
+        data: prediction,
+        metadata: {
+          generatedAt: new Date(),
+          requestId: req.context?.requestId
+        }
+      });
+    } catch (error) {
+      logger.error('Failed to get lease renewal prediction', { error, leaseId: req.params.leaseId });
+      res.status(500).json({
+        success: false,
+        error: 'Failed to generate lease renewal prediction'
+      });
+    }
+  }
+
+  /**
+   * Perform competitive market analysis
+   */
+  static async performMarketAnalysis(req: Request, res: Response): Promise<void> {
+    try {
+      const { organizationId } = req.user!;
+
+      const analysis = await EnhancedBusinessLogicController.analyticsService.performMarketAnalysis(organizationId);
+
+      logger.info('Market analysis completed', {
+        organizationId,
+        marketPosition: analysis.marketPosition,
+        opportunitiesCount: analysis.opportunities.length
+      });
+
+      res.json({
+        success: true,
+        data: analysis,
+        metadata: {
+          analysisType: 'competitive_market',
+          generatedAt: new Date()
+        }
+      });
+    } catch (error) {
+      logger.error('Failed to perform market analysis', { error, organizationId: req.user?.organizationId });
+      res.status(500).json({
+        success: false,
+        error: 'Failed to perform market analysis'
+      });
+    }
+  }
+
+  /**
+   * Get personalized help content
+   */
+  static async getPersonalizedHelp(req: Request, res: Response): Promise<void> {
+    try {
+      const { userId } = req.user!;
+      const { page, section, userAction, errorCode } = req.query;
+
+      const context = {
+        page: page as string,
+        section: section as string,
+        userAction: userAction as string,
+        errorCode: errorCode as string
+      };
+
+      const helpContent = await EnhancedBusinessLogicController.helpService.getPersonalizedHelp(userId, context);
+
+      res.json({
+        success: true,
+        data: helpContent,
+        metadata: {
+          personalizedFor: userId,
+          contextProvided: Object.keys(context).filter(k => context[k as keyof typeof context])
+        }
+      });
+    } catch (error) {
+      logger.error('Failed to get personalized help', { error, userId: req.user?.id });
+      res.status(500).json({
+        success: false,
+        error: 'Failed to retrieve personalized help'
+      });
+    }
+  }
+
+  /**
+   * Get advanced utilization insights
+   */
+  static async getUtilizationInsights(req: Request, res: Response): Promise<void> {
+    try {
+      const { organizationId } = req.user!;
+      const { timeframe = '30d' } = req.query;
+
+      const insights = await EnhancedBusinessLogicController.analyticsService.generateUtilizationInsights(
+        organizationId,
+        timeframe as string
+      );
+
+      res.json({
+        success: true,
+        data: insights,
+        metadata: {
+          timeframe,
+          generatedAt: new Date(),
+          insightTypes: ['trends', 'patterns', 'recommendations', 'cost-optimization']
+        }
+      });
+    } catch (error) {
+      logger.error('Failed to get utilization insights', { error, organizationId: req.user?.organizationId });
+      res.status(500).json({
+        success: false,
+        error: 'Failed to generate utilization insights'
+      });
+    }
+  }
+
+  /**
+   * Get comprehensive health status
+   */
+  static async getHealthStatus(req: Request, res: Response): Promise<void> {
+    try {
+      const health = await EnhancedBusinessLogicController.apiGateway.getHealthStatus();
+
+      res.status(health.status === 'healthy' ? 200 : health.status === 'degraded' ? 206 : 503).json({
+        success: health.status !== 'unhealthy',
+        data: health,
+        metadata: {
+          checkedAt: new Date(),
+          comprehensive: true,
+          services: health.services.length
+        }
+      });
+    } catch (error) {
+      logger.error('Failed to get health status', { error });
+      res.status(500).json({
+        success: false,
+        error: 'Failed to retrieve health status'
+      });
     }
   }
 }

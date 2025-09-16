@@ -174,16 +174,19 @@ export class EnterpriseIntegrationController {
 
       let testResult;
       switch (integration.integrationType) {
-        case 'SALESFORCE':
+        case 'SALESFORCE': {
           await salesforceService.authenticate();
           testResult = { status: 'success', message: 'Salesforce connection successful' };
           break;
-        case 'MICROSOFT365':
+        }
+        case 'MICROSOFT365': {
           await microsoft365Service.authenticate();
           testResult = { status: 'success', message: 'Microsoft 365 connection successful' };
           break;
-        default:
+        }
+        default: {
           testResult = { status: 'success', message: 'Generic connection test successful' };
+        }
       }
 
       res.json(testResult);
@@ -259,10 +262,10 @@ export class EnterpriseIntegrationController {
    */
   async syncWithSalesforce(req: Request, res: Response): Promise<void> {
     try {
-      const { entityType, entityId, operation } = req.body;
+      const { entityType, entityId } = req.body;
 
       switch (entityType) {
-        case 'property':
+        case 'property': {
           const property = await prisma.property.findUnique({
             where: { id: entityId },
           });
@@ -270,7 +273,8 @@ export class EnterpriseIntegrationController {
             await salesforceService.syncPropertyToAccount(property);
           }
           break;
-        case 'user':
+        }
+        case 'user': {
           const user = await prisma.user.findUnique({
             where: { id: entityId },
           });
@@ -278,6 +282,7 @@ export class EnterpriseIntegrationController {
             await salesforceService.syncUserToContact(user);
           }
           break;
+        }
       }
 
       res.json({ message: 'Salesforce sync completed' });
