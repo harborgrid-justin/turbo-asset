@@ -1,11 +1,11 @@
 import request from 'supertest';
 import express from 'express';
-import enhanced-business-logic-controller from '../../src/controllers/enhanced-business-logic-controller';
+import enhancedBusinessLogicController from '../../src/controllers/enhanced-business-logic-controller';
 import { createTestOrganization, createTestUser, testDb } from '../setup';
 
 const app = express();
 app.use(express.json());
-app.use('/enhanced-business-logic-', enhanced-business-logic-controller);
+app.use('/enhanced-business-logic-', enhancedBusinessLogicController);
 
 describe('enhanced-business-logic-controller', () => {
   let organizationId: string;
