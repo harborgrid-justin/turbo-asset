@@ -4,7 +4,7 @@
  * Full frontend-backend integration testing
  */
 
-import { EnterpriseBusinessLogicService } from '../src/services/enterprise-business-logic-48-features';
+import EnterpriseBusinessLogicService from '../src/services/enterprise-business-logic-48-features';
 
 describe('48 Enterprise Business Logic Features - TRIRIGA Competitor', () => {
   let service: EnterpriseBusinessLogicService;

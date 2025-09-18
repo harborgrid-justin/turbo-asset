@@ -956,3 +956,4 @@ export class EnterpriseBusinessLogicService extends EventEmitter {
 
 // Export the service instance
 export default EnterpriseBusinessLogicService;
+export { EnterpriseBusinessLogicService };
