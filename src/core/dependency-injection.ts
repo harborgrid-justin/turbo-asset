@@ -647,35 +647,57 @@ export class EnterpriseContainer extends EventEmitter {
   private cleanupExpiredInstances(): void {
     const cutoffTime = new Date(Date.now() - 3600000); // 1 hour ago
 
-    // Clean up request-scoped instances
-    for (const [requestId, requestMap] of this.requestInstances.entries()) {
-      const expiredServices = Array.from(requestMap.entries()).filter(
-        ([_, instance]) => instance.lastAccessed < cutoffTime
-      );
+    try {
+      // Clean up request-scoped instances
+      for (const [requestId, requestMap] of this.requestInstances.entries()) {
+        const expiredServices = Array.from(requestMap.entries()).filter(
+          ([_, instance]) => instance.lastAccessed < cutoffTime
+        );
 
-      for (const [serviceId] of expiredServices) {
-        requestMap.delete(serviceId);
+        for (const [serviceId, instance] of expiredServices) {
+          // Critical fix: Properly dispose of expired instances
+          try {
+            const definition = this.serviceRegistry.get(serviceId);
+            if (definition?.dispose) {
+              definition.dispose(instance.service);
+            }
+          } catch (error) {
+            logger.warn(`Error disposing service ${serviceId}:`, error);
+          }
+          requestMap.delete(serviceId);
+        }
+
+        if (requestMap.size === 0) {
+          this.requestInstances.delete(requestId);
+        }
       }
 
-      if (requestMap.size === 0) {
-        this.requestInstances.delete(requestId);
-      }
-    }
+      // Clean up session-scoped instances (longer timeout)
+      const sessionCutoffTime = new Date(Date.now() - 86400000); // 24 hours ago
+      for (const [sessionId, sessionMap] of this.sessionInstances.entries()) {
+        const expiredServices = Array.from(sessionMap.entries()).filter(
+          ([_, instance]) => instance.lastAccessed < sessionCutoffTime
+        );
 
-    // Clean up session-scoped instances (longer timeout)
-    const sessionCutoffTime = new Date(Date.now() - 86400000); // 24 hours ago
-    for (const [sessionId, sessionMap] of this.sessionInstances.entries()) {
-      const expiredServices = Array.from(sessionMap.entries()).filter(
-        ([_, instance]) => instance.lastAccessed < sessionCutoffTime
-      );
+        for (const [serviceId, instance] of expiredServices) {
+          // Critical fix: Properly dispose of expired session instances
+          try {
+            const definition = this.serviceRegistry.get(serviceId);
+            if (definition?.dispose) {
+              definition.dispose(instance.service);
+            }
+          } catch (error) {
+            logger.warn(`Error disposing session service ${serviceId}:`, error);
+          }
+          sessionMap.delete(serviceId);
+        }
 
-      for (const [serviceId] of expiredServices) {
-        sessionMap.delete(serviceId);
+        if (sessionMap.size === 0) {
+          this.sessionInstances.delete(sessionId);
+        }
       }
-
-      if (sessionMap.size === 0) {
-        this.sessionInstances.delete(sessionId);
-      }
+    } catch (error) {
+      logger.error('Error during instance cleanup:', error);
     }
   }
 

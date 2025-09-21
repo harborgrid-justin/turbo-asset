@@ -241,29 +241,61 @@ export class ProductionGradeAPIGateway {
   } {
     const allMetrics = Array.from(this.metrics.values());
     
+    if (allMetrics.length === 0) {
+      return {
+        overall: {
+          totalRequests: 0,
+          totalErrors: 0,
+          averageResponseTime: 0,
+          errorRate: 0,
+          requestsPerMinute: 0
+        },
+        byEndpoint: [],
+        topErrors: [],
+        performanceMetrics: {
+          slowestEndpoints: [],
+          mostUsedEndpoints: []
+        }
+      };
+    }
+    
+    // Critical fix: Single pass calculation to avoid multiple iterations
+    let totalRequests = 0;
+    let totalErrors = 0;
+    let totalWeightedResponseTime = 0;
+    let totalWeightedErrorRate = 0;
+    
+    for (const metric of allMetrics) {
+      totalRequests += metric.totalRequests;
+      totalErrors += metric.errorCount;
+      // Critical fix: Weight averages by request count for accuracy
+      totalWeightedResponseTime += metric.averageResponseTime * metric.totalRequests;
+      totalWeightedErrorRate += metric.errorRate * metric.totalRequests;
+    }
+    
     const overall = {
-      totalRequests: allMetrics.reduce((sum, m) => sum + m.totalRequests, 0),
-      totalErrors: allMetrics.reduce((sum, m) => sum + m.errorCount, 0),
-      averageResponseTime: allMetrics.reduce((sum, m) => sum + m.averageResponseTime, 0) / allMetrics.length,
-      errorRate: allMetrics.reduce((sum, m) => sum + m.errorRate, 0) / allMetrics.length,
+      totalRequests,
+      totalErrors,
+      // Critical fix: Properly weighted average response time
+      averageResponseTime: totalRequests > 0 ? totalWeightedResponseTime / totalRequests : 0,
+      // Critical fix: Properly weighted error rate
+      errorRate: totalRequests > 0 ? totalWeightedErrorRate / totalRequests : 0,
       requestsPerMinute: this.calculateRequestsPerMinute()
     };
 
-    const slowestEndpoints = allMetrics
-      .sort((a, b) => b.averageResponseTime - a.averageResponseTime)
-      .slice(0, 10)
-      .map(m => ({
-        endpoint: m.endpoint,
-        averageResponseTime: m.averageResponseTime
-      }));
+    // Critical fix: Sort once and slice for both arrays
+    const sortedByResponseTime = [...allMetrics].sort((a, b) => b.averageResponseTime - a.averageResponseTime);
+    const sortedByRequests = [...allMetrics].sort((a, b) => b.totalRequests - a.totalRequests);
+    
+    const slowestEndpoints = sortedByResponseTime.slice(0, 10).map(m => ({
+      endpoint: m.endpoint,
+      averageResponseTime: m.averageResponseTime
+    }));
 
-    const mostUsedEndpoints = allMetrics
-      .sort((a, b) => b.totalRequests - a.totalRequests)
-      .slice(0, 10)
-      .map(m => ({
-        endpoint: m.endpoint,
-        requestCount: m.totalRequests
-      }));
+    const mostUsedEndpoints = sortedByRequests.slice(0, 10).map(m => ({
+      endpoint: m.endpoint,
+      requestCount: m.totalRequests
+    }));
 
     return {
       overall,

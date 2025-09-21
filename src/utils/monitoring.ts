@@ -179,9 +179,36 @@ export class PerformanceMetricsCollector extends BaseMetricsCollector {
   }
 
   private percentile(values: readonly number[], p: number): number {
+    if (values.length === 0) return 0;
+    if (values.length === 1) return values[0]!;
+    
+    // Critical fix: More efficient percentile calculation for large datasets
+    if (values.length > 1000) {
+      // Use sampling for very large datasets to avoid performance hit
+      const sampleSize = Math.min(1000, values.length);
+      const step = Math.floor(values.length / sampleSize);
+      const sample = [];
+      for (let i = 0; i < values.length; i += step) {
+        sample.push(values[i]!);
+      }
+      return this.percentileExact(sample, p);
+    }
+    
+    return this.percentileExact(values, p);
+  }
+
+  private percentileExact(values: readonly number[], p: number): number {
+    // Critical fix: Use a more accurate percentile calculation
     const sorted = [...values].sort((a, b) => a - b);
-    const index = Math.ceil(sorted.length * p) - 1;
-    return sorted[index] ?? 0;
+    const index = (sorted.length - 1) * p;
+    const lower = Math.floor(index);
+    const upper = Math.ceil(index);
+    const weight = index % 1;
+
+    if (upper >= sorted.length) return sorted[sorted.length - 1]!;
+    if (lower === upper) return sorted[lower]!;
+
+    return sorted[lower]! * (1 - weight) + sorted[upper]! * weight;
   }
 }
 

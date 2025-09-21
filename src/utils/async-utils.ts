@@ -544,27 +544,39 @@ export class AsyncUtils {
   ): (...args: T) => Promise<R> {
     let timeoutId: NodeJS.Timeout | null = null;
     let pendingPromise: Promise<R> | null = null;
+    let resolveFunction: ((value: R) => void) | null = null;
+    let rejectFunction: ((reason?: unknown) => void) | null = null;
 
     return (...args: T): Promise<R> => {
+      // Critical fix: Clear existing timeout
       if (timeoutId !== null) {
         clearTimeout(timeoutId);
+        timeoutId = null;
       }
 
+      // Critical fix: Create new promise only if none exists
       if (pendingPromise === null) {
         pendingPromise = new Promise<R>((resolve, reject) => {
-          timeoutId = setTimeout(async () => {
-            try {
-              const result = await func(...args);
-              resolve(result);
-            } catch (error) {
-              reject(error);
-            } finally {
-              pendingPromise = null;
-              timeoutId = null;
-            }
-          }, delayMs);
+          resolveFunction = resolve;
+          rejectFunction = reject;
         });
       }
+
+      // Critical fix: Set new timeout with current args
+      timeoutId = setTimeout(async () => {
+        try {
+          const result = await func(...args);
+          resolveFunction?.(result);
+        } catch (error) {
+          rejectFunction?.(error);
+        } finally {
+          // Critical fix: Reset all state atomically
+          pendingPromise = null;
+          timeoutId = null;
+          resolveFunction = null;
+          rejectFunction = null;
+        }
+      }, delayMs);
 
       return pendingPromise;
     };
@@ -579,31 +591,42 @@ export class AsyncUtils {
   ): (...args: T) => Promise<R | undefined> {
     let lastCallTime = 0;
     let pendingPromise: Promise<R> | null = null;
+    let pendingTimeoutId: NodeJS.Timeout | null = null;
 
     return async (...args: T): Promise<R | undefined> => {
       const now = Date.now();
       
+      // Critical fix: If enough time has passed, execute immediately
       if (now - lastCallTime >= intervalMs) {
         lastCallTime = now;
         return func(...args);
       }
 
-      // If there's already a pending throttled call, return undefined
+      // Critical fix: If there's already a pending call, don't create another
       if (pendingPromise !== null) {
         return undefined;
       }
 
-      // Schedule the call for the next available time
+      // Critical fix: Schedule the call for the exact next available time
       const delayTime = intervalMs - (now - lastCallTime);
-      pendingPromise = this.delay(delayTime).then(() => func(...args));
+      
+      pendingPromise = new Promise<R>((resolve, reject) => {
+        pendingTimeoutId = setTimeout(async () => {
+          try {
+            lastCallTime = Date.now();
+            const result = await func(...args);
+            resolve(result);
+          } catch (error) {
+            reject(error);
+          } finally {
+            // Critical fix: Clean up atomically
+            pendingPromise = null;
+            pendingTimeoutId = null;
+          }
+        }, delayTime);
+      });
 
-      try {
-        const result = await pendingPromise;
-        lastCallTime = Date.now();
-        return result;
-      } finally {
-        pendingPromise = null;
-      }
+      return pendingPromise;
     };
   }
 

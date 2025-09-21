@@ -312,31 +312,63 @@ export class MemoryCache extends BaseCache {
   }
 
   private async evictIfNecessary(): Promise<void> {
+    // Critical fix: Evict more aggressively to prevent memory bloat
     if (this.cache.size >= this.configuration.maxSize) {
-      const keysToEvict = this.selectKeysForEviction(1);
+      const targetEvictionCount = Math.max(1, Math.floor(this.configuration.maxSize * 0.1)); // Evict 10%
+      const keysToEvict = this.selectKeysForEviction(targetEvictionCount);
+      
       for (const key of keysToEvict) {
+        const entry = this.cache.get(key);
+        if (entry) {
+          // Critical fix: Explicit cleanup for compressed data
+          if (entry.compressed && typeof entry.data === 'string') {
+            // Clear the compressed data reference
+            (entry as { data: string }).data = '';
+          }
+        }
         this.cache.delete(key);
         this.updateEvictionStatistics();
       }
+      
+      logger.debug(`Evicted ${keysToEvict.length} cache entries to free memory`);
     }
   }
 
   private selectKeysForEviction(count: number): string[] {
-    const entries = Array.from(this.cache.entries());
-    
-    switch (this.configuration.evictionPolicy) {
-      case 'LRU': // Least Recently Used
-        entries.sort(([, a], [, b]) => a.lastAccessed.getTime() - b.lastAccessed.getTime());
-        break;
-      case 'LFU': // Least Frequently Used
-        entries.sort(([, a], [, b]) => a.accessCount - b.accessCount);
-        break;
-      case 'FIFO': // First In, First Out
-        entries.sort(([, a], [, b]) => a.createdAt.getTime() - b.createdAt.getTime());
-        break;
+    // Critical fix: Use a more efficient approach for large caches
+    if (this.cache.size <= 100) {
+      // For small caches, use the existing approach
+      const entries = Array.from(this.cache.entries());
+      return this.sortEntriesForEviction(entries).slice(0, count).map(([key]) => key);
     }
 
-    return entries.slice(0, count).map(([key]) => key);
+    // Critical fix: For large caches, use iterator-based approach to avoid memory spike
+    const candidates: Array<[string, CacheEntry<unknown>]> = [];
+    const iterator = this.cache.entries();
+    
+    // Sample entries for eviction consideration
+    const sampleSize = Math.min(this.cache.size, count * 5); // Sample 5x what we need
+    
+    for (let i = 0; i < sampleSize; i++) {
+      const next = iterator.next();
+      if (next.done) break;
+      candidates.push(next.value);
+    }
+
+    return this.sortEntriesForEviction(candidates).slice(0, count).map(([key]) => key);
+  }
+
+  private sortEntriesForEviction(entries: Array<[string, CacheEntry<unknown>]>): Array<[string, CacheEntry<unknown>]> {
+    switch (this.configuration.evictionPolicy) {
+      case 'LRU': // Least Recently Used
+        return entries.sort(([, a], [, b]) => a.lastAccessed.getTime() - b.lastAccessed.getTime());
+      case 'LFU': // Least Frequently Used
+        return entries.sort(([, a], [, b]) => a.accessCount - b.accessCount);
+      case 'FIFO': // First In, First Out
+        return entries.sort(([, a], [, b]) => a.createdAt.getTime() - b.createdAt.getTime());
+      default:
+        return entries;
+    }
   }
 
   public dispose(): void {

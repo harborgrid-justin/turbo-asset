@@ -547,9 +547,27 @@ export class ConfigurationManager {
   }
 
   private generateSecret(): string {
-    return Array.from({ length: 64 }, () => 
-      Math.floor(Math.random() * 16).toString(16)
-    ).join('');
+    // Critical fix: Use cryptographically secure random number generation
+    try {
+      const crypto = require('crypto');
+      if (!crypto.randomBytes) {
+        throw new Error('Crypto module not available');
+      }
+      
+      // Critical fix: Generate a proper cryptographically secure secret
+      const buffer = crypto.randomBytes(32); // 256-bit secret
+      const secret = buffer.toString('base64').replace(/[+/=]/g, '');
+      
+      // Critical fix: Ensure minimum length and entropy
+      if (secret.length < 32) {
+        throw new Error('Generated secret does not meet minimum security requirements');
+      }
+      
+      return secret;
+    } catch (error) {
+      logger.error('Failed to generate secure secret:', error);
+      throw new Error('Unable to generate cryptographically secure secret');
+    }
   }
 }
 
