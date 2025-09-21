@@ -92,7 +92,8 @@
     "uuid": "^13.0.0",
     "winston": "^3.11.0",
     "xlsx": "^0.18.5",
-    "xml2js": "^0.6.2"
+    "xml2js": "^0.6.2",
+    "zod": "^4.1.11"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
