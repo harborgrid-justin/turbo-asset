@@ -8,9 +8,9 @@ import slowDown from 'express-slow-down';
 import helmet from 'helmet';
 import compression from 'compression';
 import { Request, Response, NextFunction } from 'express';
-import { getLogger, LogContext, createCorrelationId } from '../config/enterprise-logger';
-import { getEnvironmentConfig } from '../config/environment-validation';
-import { CustomApiError, RateLimitError } from '../middleware/errorHandler';
+import { logger, LogContext, createCorrelationId } from '@/config/enterprise-logger';
+import { getEnvironmentConfig } from '@/config/environment-validation';
+import { RateLimitError } from '@/core/errors/error-handler';
 
 /**
  * Rate limiting configuration interface
@@ -31,11 +31,10 @@ export interface RateLimitConfig {
  */
 export function createRateLimit(config: Partial<RateLimitConfig> = {}) {
   const env = getEnvironmentConfig();
-  const logger = getLogger();
   
   const defaultConfig: RateLimitConfig = {
     windowMs: 15 * 60 * 1000, // 15 minutes
-    max: env.API_RATE_LIMIT, // from environment
+    max: 1000, // Default rate limit
     message: 'Too many requests from this IP, please try again later',
     standardHeaders: true,
     legacyHeaders: false,
@@ -91,7 +90,6 @@ export function createRateLimit(config: Partial<RateLimitConfig> = {}) {
  * Speed limiting middleware to slow down repeated requests
  */
 export function createSpeedLimit() {
-  const logger = getLogger();
 
   return slowDown({
     windowMs: 15 * 60 * 1000, // 15 minutes
@@ -115,7 +113,6 @@ export function createSpeedLimit() {
  */
 export function createSecurityHeaders() {
   const env = getEnvironmentConfig();
-  const logger = getLogger();
 
   return helmet({
     // Content Security Policy
@@ -209,10 +206,9 @@ export function createCompression() {
  */
 export function createRequestSizeLimit() {
   const env = getEnvironmentConfig();
-  const logger = getLogger();
   
   return (req: Request, res: Response, next: NextFunction): void => {
-    const maxSize = parseInt(env.MAX_REQUEST_SIZE.replace(/\D/g, '')) * 1024 * 1024; // Convert to bytes
+    const maxSize = 10 * 1024 * 1024; // 10MB limit
     
     req.on('data', (chunk) => {
       req.body = req.body || Buffer.alloc(0);
@@ -234,7 +230,7 @@ export function createRequestSizeLimit() {
             message: 'Request entity too large',
             timestamp: new Date().toISOString(),
             details: {
-              maxSize: env.MAX_REQUEST_SIZE,
+              maxSize: '10MB',
               receivedSize: `${Math.round(req.body.length / 1024)}KB`
             }
           }
@@ -251,7 +247,6 @@ export function createRequestSizeLimit() {
  * Bot detection and blocking middleware
  */
 export function createBotProtection() {
-  const logger = getLogger();
   const suspiciousPatterns = [
     /bot/i,
     /crawler/i,
@@ -319,9 +314,7 @@ export function createCorsConfig() {
         return callback(null, true);
       }
       
-      const allowedOrigins = Array.isArray(env.CORS_ORIGIN) 
-        ? env.CORS_ORIGIN 
-        : [env.CORS_ORIGIN as string];
+      const allowedOrigins = env.ALLOWED_ORIGINS?.split(',') || ['*'];
       
       if (allowedOrigins.includes(origin) || allowedOrigins.includes('*')) {
         callback(null, true);
@@ -349,9 +342,6 @@ export function createCorsConfig() {
  * Request timeout middleware
  */
 export function createRequestTimeout() {
-  const env = getEnvironmentConfig();
-  const logger = getLogger();
-  
   return (req: Request, res: Response, next: NextFunction): void => {
     const timeout = setTimeout(() => {
       if (!res.headersSent) {
@@ -362,7 +352,7 @@ export function createRequestTimeout() {
           ip: req.ip,
           path: req.path,
           method: req.method,
-          timeout: env.REQUEST_TIMEOUT
+          timeout: 30000
         });
         
         res.status(408).json({
@@ -374,7 +364,7 @@ export function createRequestTimeout() {
           }
         });
       }
-    }, env.REQUEST_TIMEOUT);
+    }, 30000);
     
     res.on('finish', () => {
       clearTimeout(timeout);

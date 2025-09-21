@@ -4,7 +4,7 @@
  * and the new NAPI-RS performance-optimized services
  */
 
-import { logger } from '@/config/logger';
+import { logger } from '@/config/enterprise-logger';
 import { napiRegistry } from './napi-integration';
 import type { 
   BaseEntity, 
