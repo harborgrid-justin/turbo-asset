@@ -43,26 +43,51 @@ export interface ServiceConfig {
 }
 
 /**
- * Service operation result interface
+ * Service operation result interface with enhanced generics
  */
-export interface ServiceResult<T = unknown> {
+export interface ServiceResult<TData = unknown, TError extends Error = Error> {
   readonly success: boolean;
-  readonly data?: T;
-  readonly error?: Error;
+  readonly data?: TData;
+  readonly error?: TError;
   readonly executionTime: number;
   readonly timestamp: Date;
 }
 
 /**
- * Base service class with enterprise features
+ * Base service interface with generic constraints
  */
-export abstract class BaseService extends EventEmitter {
-  protected readonly config: ServiceConfig;
+export interface IBaseService<TConfig extends ServiceConfig = ServiceConfig> {
+  initialize(): Promise<void>;
+  shutdown(): Promise<void>;
+  getHealthInfo(): ServiceHealthInfo;
+  executeOperation<TResult>(
+    operationName: string,
+    operation: () => Promise<TResult>
+  ): Promise<ServiceResult<TResult>>;
+}
+
+/**
+ * Service health information interface
+ */
+export interface ServiceHealthInfo extends ServiceMetrics {
+  readonly name: string;
+  readonly version: string;
+  readonly isInitialized: boolean;
+}
+
+/**
+ * Base service class with enhanced type safety
+ */
+export abstract class BaseService<TConfig extends ServiceConfig = ServiceConfig> 
+  extends EventEmitter 
+  implements IBaseService<TConfig> {
+  
+  protected readonly config: TConfig;
   protected metrics: ServiceMetrics;
   protected isInitialized: boolean = false;
   protected startTime: Date = new Date();
 
-  constructor(config: ServiceConfig) {
+  constructor(config: TConfig) {
     super();
     this.config = config;
     this.metrics = {
@@ -166,7 +191,7 @@ export abstract class BaseService extends EventEmitter {
   /**
    * Get service health information
    */
-  public getHealthInfo(): ServiceMetrics & { name: string; version: string; isInitialized: boolean } {
+  public getHealthInfo(): ServiceHealthInfo {
     const now = Date.now();
     const uptime = now - this.startTime.getTime();
 

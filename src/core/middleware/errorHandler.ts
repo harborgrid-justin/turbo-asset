@@ -39,24 +39,24 @@ interface AuthenticatedRequest extends Request {
 }
 
 export interface ApiError extends Error {
-  statusCode?: number;
-  code?: string;
-  details?: any;
+  readonly statusCode?: number;
+  readonly code?: string;
+  readonly details?: Record<string, unknown>;
 }
 
 /**
  * Custom API Error class for structured error handling
  */
 export class CustomApiError extends Error implements ApiError {
-  public statusCode: number;
-  public code: string;
-  public details?: any;
+  public readonly statusCode: number;
+  public readonly code: string;
+  public readonly details?: Record<string, unknown>;
 
   constructor(
     message: string,
     statusCode: number = 500,
     code: string = 'INTERNAL_ERROR',
-    details?: any
+    details?: Record<string, unknown>
   ) {
     super(message);
     this.name = 'CustomApiError';
@@ -73,7 +73,7 @@ export class CustomApiError extends Error implements ApiError {
  * Validation Error for request validation failures
  */
 export class ValidationError extends CustomApiError {
-  constructor(message: string, details?: any) {
+  constructor(message: string, details?: Record<string, unknown>) {
     super(message, 400, 'VALIDATION_ERROR', details);
     this.name = 'ValidationError';
   }

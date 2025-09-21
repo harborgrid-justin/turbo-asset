@@ -1,7 +1,9 @@
 /**
- * Input Validation and Type Guards
- * Enterprise-grade validation with comprehensive type checking
+ * Enterprise-grade input validation schemas
+ * Comprehensive validation for all API endpoints and business logic
  */
+
+import * as Joi from 'joi';
 
 /**
  * Validation result interface
@@ -11,6 +13,26 @@ export interface ValidationResult {
   readonly errors: readonly string[];
   readonly warnings: readonly string[];
 }
+
+/**
+ * Common validation patterns
+ */
+export const ValidationPatterns = {
+  // Identity patterns
+  UUID: /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i,
+  EMAIL: /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/,
+  PHONE: /^\+?[1-9]\d{1,14}$/,
+  
+  // Business patterns
+  ASSET_ID: /^AST-[A-Z0-9]{8}$/,
+  WORK_ORDER_ID: /^WO-[A-Z0-9]{10}$/,
+  PROJECT_ID: /^PRJ-[A-Z0-9]{8}$/,
+  SPACE_ID: /^SPC-[A-Z0-9]{8}$/,
+  
+  // Security patterns
+  SAFE_STRING: /^[a-zA-Z0-9\s\-_.,()]+$/,
+  SQL_INJECTION_DETECT: /((\%3D)|(=))[^\n]*((\%27)|(\')|(\-\-)|(\%3B)|(;))/i
+} as const;
 
 /**
  * Validator function type
@@ -58,6 +80,91 @@ export const isUrlString = (value: unknown): value is string => {
     return false;
   }
 };
+
+/**
+ * Base validation schemas
+ */
+export const BaseSchemas = {
+  // Common field types
+  id: Joi.string().uuid().required(),
+  optionalId: Joi.string().uuid().optional(),
+  name: Joi.string().min(1).max(255).pattern(ValidationPatterns.SAFE_STRING).required(),
+  description: Joi.string().max(2000).optional(),
+  email: Joi.string().email().max(320).required(),
+  phone: Joi.string().pattern(ValidationPatterns.PHONE).optional(),
+  
+  // Pagination
+  pagination: Joi.object({
+    page: Joi.number().integer().min(1).default(1),
+    limit: Joi.number().integer().min(1).max(100).default(20),
+    sortBy: Joi.string().max(50).optional(),
+    sortOrder: Joi.string().valid('asc', 'desc').default('asc')
+  }),
+  
+  // Date ranges
+  dateRange: Joi.object({
+    startDate: Joi.date().iso().required(),
+    endDate: Joi.date().iso().min(Joi.ref('startDate')).required()
+  })
+} as const;
+
+/**
+ * Asset Management Validation Schemas
+ */
+export const AssetSchemas = {
+  create: Joi.object({
+    name: BaseSchemas.name,
+    description: BaseSchemas.description,
+    assetType: Joi.string().valid('equipment', 'furniture', 'vehicle', 'building', 'infrastructure').required(),
+    status: Joi.string().valid('active', 'inactive', 'maintenance', 'disposed').default('active'),
+    serialNumber: Joi.string().max(100).optional(),
+    locationId: BaseSchemas.optionalId,
+    ownerId: BaseSchemas.id
+  }),
+  
+  update: Joi.object({
+    id: BaseSchemas.id,
+    name: Joi.string().min(1).max(255).pattern(ValidationPatterns.SAFE_STRING).optional(),
+    description: BaseSchemas.description,
+    status: Joi.string().valid('active', 'inactive', 'maintenance', 'disposed').optional(),
+    locationId: BaseSchemas.optionalId
+  })
+} as const;
+
+/**
+ * Validation middleware factory
+ */
+export function createValidationMiddleware(schema: Joi.ObjectSchema) {
+  return (req: any, res: any, next: any): void => {
+    const { error, value } = schema.validate(req.body, {
+      abortEarly: false,
+      stripUnknown: true,
+      allowUnknown: false
+    });
+
+    if (error) {
+      const validationErrors = error.details.map(detail => ({
+        field: detail.path.join('.'),
+        message: detail.message,
+        value: detail.context?.value
+      }));
+
+      res.status(400).json({
+        success: false,
+        error: {
+          code: 'VALIDATION_ERROR',
+          message: 'Request validation failed',
+          details: validationErrors,
+          timestamp: new Date().toISOString()
+        }
+      });
+      return;
+    }
+
+    req.body = value;
+    next();
+  };
+}
 
 /**
  * Number validation type guards
@@ -165,7 +272,7 @@ export type ValidationSchema<T> = {
     readonly validator: Validator<T[K]>;
     readonly errorMessage?: string;
   };
-};
+}
 
 /**
  * Validates an object against a schema
