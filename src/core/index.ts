@@ -5,6 +5,33 @@
  * This centralizes all core functionality including utilities, configuration, and middleware
  */
 
+// Enhanced production-grade exports
+export { HealthController } from '@/core/health/health-controller';
+export { 
+  errorHandler, 
+  notFoundHandler, 
+  asyncHandler, 
+  timeoutHandler,
+  requestContextMiddleware,
+  BaseError as CustomApiError,
+  ValidationError as CustomValidationError,
+  AuthenticationError as CustomAuthenticationError,
+  NotFoundError as CustomNotFoundError,
+  RateLimitError as CustomRateLimitError
+} from '@/core/errors/error-handler';
+export { logger, createPerformanceTimer, createRequestLogger } from '@/config/enterprise-logger';
+export { 
+  validateEnvironment, 
+  getEnvironmentConfig, 
+  isProduction, 
+  isDevelopment 
+} from '@/config/environment-validation';
+export { applySecurityMiddleware } from '@/core/security/security-middleware';
+export { databaseManager, db } from '@/core/database/connection-manager';
+export { processManager, processHealthMiddleware } from '@/core/process/process-manager';
+export { apiDocumentation, commonValidationSchemas } from '@/core/documentation/api-documentation';
+export { businessLogicIntegration } from '@/services/business-logic-integration';
+
 // Core utilities
 export * from './utils';
 
@@ -15,7 +42,6 @@ export * from './config';
 export * from './middleware';
 
 // Re-export commonly used core functionality
-export { logger } from '@/config/logger';
 export { prisma } from '../config/database';
 export { config } from '../config';
 
