@@ -6,8 +6,14 @@
 
 import { EventEmitter } from 'events';
 import { logger } from '../config/logger';
-import type { StandardResponse } from '../types/universal-data-standard';
-import type { ValidationRule, ProductionBusinessLogicBridge } from './enhanced-business-logic-integration';
+import { BaseService } from '../utils/base-service';
+import { EnterpriseError, ValidationUtils } from '../utils/error-handling';
+import { cacheManager } from '../utils/caching';
+import { Service } from '../utils/dependency-injection';
+import { RetryUtils, CircuitBreaker, type CircuitBreakerOptions } from '../utils/async-utils';
+import { monitoring } from '../utils/monitoring';
+import { HTTP_STATUS, FEATURES, PERFORMANCE } from '../constants';
+import type { StandardResponse } from '../types/enterprise';
 import type {
   BusinessMetrics,
   ExchangeRates,
