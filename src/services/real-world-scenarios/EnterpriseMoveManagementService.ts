@@ -6,6 +6,13 @@
 
 import { EventEmitter } from 'events';
 import { logger } from '@/config/logger';
+import type {
+  ProjectId,
+  QualityControlsResponse,
+  LessonsLearnedResponse,
+  SpaceOptimizationResponse,
+  EmployeeFeedbackResponse
+} from '../../types/enterprise-business-types';
 
 interface GlobalMoveProject {
   projectId: string;
@@ -656,7 +663,7 @@ export class EnterpriseMoveManagementService extends EventEmitter {
     };
   }
 
-  private async optimizeNewSpaceConfiguration(projectId: string): Promise<any> {
+  private async optimizeNewSpaceConfiguration(projectId: ProjectId): Promise<SpaceOptimizationResponse> {
     return {
       optimizationScore: 78, // out of 100
       recommendations: [
@@ -682,7 +689,7 @@ export class EnterpriseMoveManagementService extends EventEmitter {
     };
   }
 
-  private async collectEmployeeFeedback(projectId: string): Promise<any> {
+  private async collectEmployeeFeedback(projectId: ProjectId): Promise<EmployeeFeedbackResponse> {
     return {
       responseRate: 0.73, // 73% response rate
       averageSatisfaction: 7.2, // out of 10
@@ -700,16 +707,22 @@ export class EnterpriseMoveManagementService extends EventEmitter {
         'Need more collaboration spaces',
         'Excellent support from move team'
       ],
-      improvementAreas: [
+      actionItems: [
         'Technology setup and training',
         'Space configuration optimization',
         'Wayfinding and navigation',
         'Parking and transportation'
+      ],
+      successIndicators: [
+        'Employee productivity back to baseline',
+        'Space utilization targets met',
+        'All systems operational',
+        'Customer service levels maintained'
       ]
     };
   }
 
-  private async captureLessonsLearned(projectId: string): Promise<any> {
+  private async captureLessonsLearned(projectId: ProjectId): Promise<LessonsLearnedResponse> {
     return {
       successFactors: [
         'Early and frequent communication',
@@ -851,7 +864,7 @@ export class EnterpriseMoveManagementService extends EventEmitter {
     };
   }
 
-  private async implementQualityControls(projectId: string): Promise<any> {
+  private async implementQualityControls(projectId: ProjectId): Promise<QualityControlsResponse> {
     return {
       qualityProgram: {
         inspectionSchedule: 'Daily',
