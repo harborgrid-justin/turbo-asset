@@ -5,6 +5,7 @@
 
 import { Request, Response } from 'express';
 import { logger } from '@/config/logger';
+import { ErrorHandler } from '@/utils/error-handling';
 import {
   ProductionGradeAnalyticsService,
   ProductionGradeHelpService,
@@ -51,14 +52,13 @@ export class EnhancedBusinessLogicController {
       res.json(result);
     } catch (error: unknown) {
       logger.error('Error executing advanced business logic:', error);
-      res.status(500).json({
-        success: false,
-        error: {
-          code: 'EXECUTION_ERROR',
-          message: 'Failed to execute advanced business logic',
-          details: error instanceof Error ? (error as Error).message : 'Unknown error',
-        },
-      });
+      res.status(500).json(
+        ErrorHandler.createStandardErrorResponse(
+          error,
+          'EXECUTION_ERROR',
+          'Failed to execute advanced business logic'
+        )
+      );
     }
   }
 
@@ -232,14 +232,13 @@ export class EnhancedBusinessLogicController {
       });
     } catch (error: unknown) {
       logger.error('Error calculating lease accounting:', error);
-      res.status(500).json({
-        success: false,
-        error: {
-          code: 'CALCULATION_ERROR',
-          message: 'Failed to calculate lease accounting',
-          details: error instanceof Error ? error.message : 'Unknown error',
-        },
-      });
+      res.status(500).json(
+        ErrorHandler.createStandardErrorResponse(
+          error,
+          'CALCULATION_ERROR',
+          'Failed to calculate lease accounting'
+        )
+      );
     }
   }
 
@@ -296,14 +295,13 @@ export class EnhancedBusinessLogicController {
       });
     } catch (error: unknown) {
       logger.error('Error optimizing space utilization:', error);
-      res.status(500).json({
-        success: false,
-        error: {
-          code: 'OPTIMIZATION_ERROR',
-          message: 'Failed to optimize space utilization',
-          details: error instanceof Error ? error.message : 'Unknown error',
-        },
-      });
+      res.status(500).json(
+        ErrorHandler.createStandardErrorResponse(
+          error,
+          'OPTIMIZATION_ERROR',
+          'Failed to optimize space utilization'
+        )
+      );
     }
   }
 
@@ -362,14 +360,13 @@ export class EnhancedBusinessLogicController {
       });
     } catch (error: unknown) {
       logger.error('Error optimizing maintenance costs:', error);
-      res.status(500).json({
-        success: false,
-        error: {
-          code: 'OPTIMIZATION_ERROR',
-          message: 'Failed to optimize maintenance costs',
-          details: error instanceof Error ? error.message : 'Unknown error',
-        },
-      });
+      res.status(500).json(
+        ErrorHandler.createStandardErrorResponse(
+          error,
+          'OPTIMIZATION_ERROR',
+          'Failed to optimize maintenance costs'
+        )
+      );
     }
   }
 

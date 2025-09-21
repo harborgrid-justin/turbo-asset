@@ -263,10 +263,13 @@ export abstract class BaseService extends EventEmitter {
         const value = (input as Record<string, unknown>)[field];
         validatedInput[field as keyof T] = validator(value) as T[keyof T];
       } catch (error) {
+        // Critical fix: Improve error handling and type safety
         if (error instanceof EnterpriseError && error.code === 'VALIDATION_ERROR') {
-          // Extract validation details from the error
-          const validationError = error as any;
-          if (validationError.validationErrors) {
+          // Extract validation details from the error safely
+          const validationError = error as EnterpriseError & { 
+            validationErrors?: ValidationErrorDetails[] 
+          };
+          if (Array.isArray(validationError.validationErrors)) {
             validationErrors.push(...validationError.validationErrors);
           } else {
             validationErrors.push({
@@ -277,12 +280,19 @@ export abstract class BaseService extends EventEmitter {
             });
           }
         } else {
+          // Critical fix: Safe error message extraction
+          const errorMessage = error instanceof Error ? error.message : 
+                              typeof error === 'string' ? error : 'Unknown validation error';
+          
           validationErrors.push({
             field,
             value: (input as Record<string, unknown>)[field],
             constraint: 'validation',
-            message: error instanceof Error ? error.message : String(error)
+            message: errorMessage
           });
+          
+          // Critical fix: Log unexpected validation errors for debugging
+          logger.warn(`Unexpected validation error for field ${field}:`, error);
         }
       }
     }

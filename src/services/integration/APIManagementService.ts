@@ -274,12 +274,16 @@ export class APIManagementService extends EventEmitter {
         throw new Error('Invalid API key');
       }
 
-      // Get current counts from Redis
-      const [currentMinute, currentHour, currentDay] = await Promise.all([
-        this.redis.get(minuteKey).then((val: string) => parseInt(val) || 0),
-        this.redis.get(hourKey).then((val: string) => parseInt(val) || 0),
-        this.redis.get(dayKey).then((val: string) => parseInt(val) || 0),
+      // Critical fix: Replace promise chains with proper async/await pattern
+      const [minuteResult, hourResult, dayResult] = await Promise.all([
+        this.redis.get(minuteKey),
+        this.redis.get(hourKey),
+        this.redis.get(dayKey)
       ]);
+
+      const currentMinute = parseInt(minuteResult || '0', 10);
+      const currentHour = parseInt(hourResult || '0', 10);
+      const currentDay = parseInt(dayResult || '0', 10);
 
       const status: RateLimitStatus = {
         apiKey,

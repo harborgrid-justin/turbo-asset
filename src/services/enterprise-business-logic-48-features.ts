@@ -762,8 +762,8 @@ export class EnterpriseBusinessLogicService extends EventEmitter {
   async executeFeatureOperation(
     featureId: string, 
     operationName: string, 
-    params: any[] = []
-  ): Promise<StandardResponse<any>> {
+    params: readonly unknown[] = [] // Critical fix: Replace any[] with readonly unknown[]
+  ): Promise<StandardResponse<unknown>> { // Critical fix: Replace any with unknown
     const startTime = Date.now();
     
     try {
@@ -874,7 +874,29 @@ export class EnterpriseBusinessLogicService extends EventEmitter {
   /**
    * Get comprehensive service bridges (for compatibility with existing tests)
    */
-  getServiceBridges(): any[] {
+  getServiceBridges(): Array<{
+    readonly serviceName: string;
+    readonly integrationMethods: readonly string[];
+    readonly metrics: {
+      readonly requestCount: number;
+      readonly successCount: number;
+      readonly failureCount: number;
+      readonly averageResponseTime: number;
+    };
+    readonly rateLimit: {
+      readonly enabled: boolean;
+      readonly maxRequestsPerMinute: number;
+    };
+    readonly validation: {
+      readonly enabled: boolean;
+      readonly strictMode: boolean;
+    };
+    readonly retry: {
+      readonly enabled: boolean;
+      readonly maxAttempts: number;
+    };
+    readonly fallbackEnabled: boolean;
+  }> { // Critical fix: Replace any[] with proper type
     return Array.from(this.bridges.values()).map(bridge => ({
       serviceName: bridge.napiServiceName,
       integrationMethods: bridge.integrationMethods,
@@ -889,7 +911,20 @@ export class EnterpriseBusinessLogicService extends EventEmitter {
   /**
    * Get production metrics
    */
-  getProductionMetrics(): any {
+  getProductionMetrics(): {
+    readonly totalFeatures: number;
+    readonly activeFeatures: number;
+    readonly totalRequests: number;
+    readonly successfulRequests: number;
+    readonly failedRequests: number;
+    readonly successRate: number;
+    readonly averageResponseTime: number;
+    readonly featureBreakdown: ReadonlyMap<string, {
+      readonly requestCount: number;
+      readonly successRate: number;
+      readonly avgResponseTime: number;
+    }>;
+  } { // Critical fix: Replace any with proper interface
     return {
       totalFeatures: this.metrics.totalFeatures,
       activeFeatures: this.metrics.activeFeatures,

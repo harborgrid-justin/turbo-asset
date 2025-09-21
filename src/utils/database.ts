@@ -319,6 +319,16 @@ export class ConnectionPool {
   public async closeAll(): Promise<void> {
     logger.info('Closing all database connections...');
 
+    // Critical fix: Reject all waiting clients before closing
+    const waitingErrors = this.waitingClients.splice(0);
+    for (const client of waitingErrors) {
+      client.reject(new EnterpriseError(
+        'CONNECTION_POOL_CLOSED',
+        'Connection pool is being closed',
+        HTTP_STATUS.SERVICE_UNAVAILABLE
+      ));
+    }
+
     const closePromises = this.connections.map(async (connection) => {
       try {
         await connection.close();
@@ -327,12 +337,12 @@ export class ConnectionPool {
       }
     });
 
-    await Promise.all(closePromises);
+    await Promise.allSettled(closePromises); // Critical fix: Use allSettled to ensure all are processed
 
-    this.connections.length = 0;
-    this.availableConnections.length = 0;
+    // Critical fix: Clear arrays properly to prevent memory leaks
+    this.connections.splice(0);
+    this.availableConnections.splice(0);
     this.busyConnections.clear();
-    this.waitingClients.length = 0;
 
     logger.info('All database connections closed');
   }
@@ -463,12 +473,26 @@ class Connection {
   public async close(): Promise<void> {
     if (this.client) {
       try {
-        // Simulate connection close - in real implementation, close actual database client
+        // Critical fix: Properly close all resources
+        if (typeof this.client?.end === 'function') {
+          await this.client.end();
+        } else if (typeof this.client?.close === 'function') {
+          await this.client.close();
+        } else if (typeof this.client?.disconnect === 'function') {
+          await this.client.disconnect();
+        }
+        
+        // Critical fix: Clear all references to prevent memory leaks
         this.client = null;
         this.isConnectedFlag = false;
-        logger.debug('Database connection closed');
+        
+        logger.debug('Database connection closed and resources released');
       } catch (error) {
         logger.error('Error closing database connection:', error);
+        // Critical fix: Still clear the connection even if close fails
+        this.client = null;
+        this.isConnectedFlag = false;
+        throw error;
       }
     }
   }
