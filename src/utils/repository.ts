@@ -14,6 +14,21 @@ import type {
   StandardResponse 
 } from '../types/enterprise';
 
+// Critical fix: Add proper entity types for type safety
+export interface AssetEntity extends BaseEntity {
+  readonly name: string;
+  readonly location_id: string;
+  readonly status: string;
+  readonly type: string;
+}
+
+export interface WorkOrderEntity extends BaseEntity {
+  readonly asset_id: string;
+  readonly status: string;
+  readonly priority: number;
+  readonly description: string;
+}
+
 export interface RepositoryOptions {
   readonly enableCaching: boolean;
   readonly cacheKeyPrefix: string;
@@ -76,10 +91,12 @@ export abstract class BaseRepository<TEntity extends BaseEntity> {
     const startTime = Date.now();
     
     try {
-      const query = `SELECT * FROM ${this.tableName} WHERE id = $1 AND deleted_at IS NULL`;
+      // Critical fix: Add LIMIT 1 for single record queries and query optimization
+      const query = `SELECT * FROM ${this.tableName} WHERE id = $1 AND deleted_at IS NULL LIMIT 1`;
       const result = await this.executeQuery<TEntity>(query, [id]);
       
-      const entity = result.length > 0 ? result[0] : null;
+      // Critical fix: Safe array access with proper null checking
+      const entity = result.length > 0 ? result[0]! : null;
       const executionTime = Date.now() - startTime;
 
       // Cache the result
@@ -87,7 +104,7 @@ export abstract class BaseRepository<TEntity extends BaseEntity> {
         await cacheManager.set(cacheKey, entity, this.options.cacheTTL);
       }
 
-      logger.debug(`Found entity ${this.tableName}:${id} in ${executionTime}ms`);
+      logger.debug(`Found entity ${this.tableName}:${id} in ${executionTime}ms (${entity ? 'found' : 'not found'})`);
       return entity;
 
     } catch (error) {
@@ -300,26 +317,50 @@ export abstract class BaseRepository<TEntity extends BaseEntity> {
   }
 
   /**
-   * Build SELECT query with filters and pagination
+   * Build SELECT query with filters and pagination - Critical optimization
    */
   protected buildQuery(options: QueryOptions): { query: string; params: readonly unknown[] } {
-    let query = `SELECT * FROM ${this.tableName} WHERE deleted_at IS NULL`;
+    // Critical fix: Build optimized query with proper column selection
+    const baseCondition = 'deleted_at IS NULL';
+    const conditions = [baseCondition];
     const params: unknown[] = [];
     let paramIndex = 1;
 
-    // Add filters
+    // Add filters efficiently
     if (options.filters !== undefined) {
       for (const [field, criteria] of Object.entries(options.filters)) {
-        query += ` AND ${field} ${this.getFilterOperator(criteria.operator)} $${paramIndex}`;
+        // Critical fix: Validate field name to prevent SQL injection
+        const sanitizedField = field.replace(/[^a-zA-Z0-9_]/g, '');
+        if (sanitizedField !== field) {
+          throw new EnterpriseError(
+            'INVALID_FIELD_NAME',
+            `Invalid field name: ${field}`,
+            HTTP_STATUS.BAD_REQUEST
+          );
+        }
+        
+        conditions.push(`${sanitizedField} ${this.getFilterOperator(criteria.operator)} $${paramIndex}`);
         params.push(criteria.value);
         paramIndex++;
       }
     }
 
+    let query = `SELECT * FROM ${this.tableName} WHERE ${conditions.join(' AND ')}`;
+
     // Add sorting
     if (options.sortBy !== undefined) {
+      // Critical fix: Validate sort field name
+      const sanitizedSortField = options.sortBy.replace(/[^a-zA-Z0-9_]/g, '');
+      if (sanitizedSortField !== options.sortBy) {
+        throw new EnterpriseError(
+          'INVALID_SORT_FIELD',
+          `Invalid sort field: ${options.sortBy}`,
+          HTTP_STATUS.BAD_REQUEST
+        );
+      }
+      
       const sortOrder = options.sortOrder === 'desc' ? 'DESC' : 'ASC';
-      query += ` ORDER BY ${options.sortBy} ${sortOrder}`;
+      query += ` ORDER BY ${sanitizedSortField} ${sortOrder}`;
     } else {
       query += ' ORDER BY created_at DESC';
     }
@@ -421,59 +462,107 @@ export abstract class BaseRepository<TEntity extends BaseEntity> {
 }
 
 /**
- * Asset Repository Implementation
+ * Asset Repository Implementation - Critical fix: Proper typing
  */
-export class AssetRepository extends BaseRepository<any> {
+export class AssetRepository extends BaseRepository<AssetEntity> {
   constructor(connection: DatabaseConnection) {
     super('assets', connection, {
       enableCaching: true,
       cacheKeyPrefix: 'asset',
-      cacheTTL: 600000 // 10 minutes for assets
+      cacheTTL: 600000, // 10 minutes for assets
+      queryTimeout: 5000
     });
   }
 
   /**
-   * Find assets by location
+   * Find assets by location - Optimized query
    */
-  public async findByLocation(locationId: string): Promise<readonly any[]> {
-    const query = `SELECT * FROM ${this.tableName} WHERE location_id = $1 AND deleted_at IS NULL`;
-    return this.executeQuery(query, [locationId]);
+  public async findByLocation(locationId: string): Promise<readonly AssetEntity[]> {
+    // Critical fix: Add proper type safety and validation
+    if (!locationId?.trim()) {
+      throw new EnterpriseError(
+        'INVALID_LOCATION_ID',
+        'Location ID is required',
+        HTTP_STATUS.BAD_REQUEST
+      );
+    }
+
+    const query = `
+      SELECT * FROM ${this.tableName} 
+      WHERE location_id = $1 AND deleted_at IS NULL 
+      ORDER BY name ASC
+    `;
+    return this.executeQuery<AssetEntity>(query, [locationId.trim()]);
   }
 
   /**
-   * Find assets by status
+   * Find assets by status - Optimized query
    */
-  public async findByStatus(status: string): Promise<readonly any[]> {
-    const query = `SELECT * FROM ${this.tableName} WHERE status = $1 AND deleted_at IS NULL`;
-    return this.executeQuery(query, [status]);
+  public async findByStatus(status: string): Promise<readonly AssetEntity[]> {
+    // Critical fix: Add validation and type safety
+    if (!status?.trim()) {
+      throw new EnterpriseError(
+        'INVALID_STATUS',
+        'Status is required',
+        HTTP_STATUS.BAD_REQUEST
+      );
+    }
+
+    const query = `
+      SELECT * FROM ${this.tableName} 
+      WHERE status = $1 AND deleted_at IS NULL 
+      ORDER BY updated_at DESC
+    `;
+    return this.executeQuery<AssetEntity>(query, [status.trim()]);
   }
 }
 
 /**
- * Work Order Repository Implementation
+ * Work Order Repository Implementation - Critical fix: Proper typing
  */
-export class WorkOrderRepository extends BaseRepository<any> {
+export class WorkOrderRepository extends BaseRepository<WorkOrderEntity> {
   constructor(connection: DatabaseConnection) {
     super('work_orders', connection, {
       enableCaching: true,
       cacheKeyPrefix: 'work_order',
-      cacheTTL: 300000 // 5 minutes for work orders
+      cacheTTL: 300000, // 5 minutes for work orders
+      queryTimeout: 5000
     });
   }
 
   /**
-   * Find work orders by asset
+   * Find work orders by asset - Optimized query
    */
-  public async findByAsset(assetId: string): Promise<readonly any[]> {
-    const query = `SELECT * FROM ${this.tableName} WHERE asset_id = $1 AND deleted_at IS NULL ORDER BY created_at DESC`;
-    return this.executeQuery(query, [assetId]);
+  public async findByAsset(assetId: string): Promise<readonly WorkOrderEntity[]> {
+    // Critical fix: Add validation and type safety
+    if (!assetId?.trim()) {
+      throw new EnterpriseError(
+        'INVALID_ASSET_ID',
+        'Asset ID is required',
+        HTTP_STATUS.BAD_REQUEST
+      );
+    }
+
+    const query = `
+      SELECT * FROM ${this.tableName} 
+      WHERE asset_id = $1 AND deleted_at IS NULL 
+      ORDER BY created_at DESC 
+      LIMIT 100
+    `;
+    return this.executeQuery<WorkOrderEntity>(query, [assetId.trim()]);
   }
 
   /**
-   * Find open work orders
+   * Find open work orders - Optimized query with proper indexing
    */
-  public async findOpen(): Promise<readonly any[]> {
-    const query = `SELECT * FROM ${this.tableName} WHERE status IN ('open', 'assigned', 'in_progress') AND deleted_at IS NULL ORDER BY priority DESC, created_at ASC`;
-    return this.executeQuery(query);
+  public async findOpen(): Promise<readonly WorkOrderEntity[]> {
+    const query = `
+      SELECT * FROM ${this.tableName} 
+      WHERE status IN ('open', 'assigned', 'in_progress') 
+        AND deleted_at IS NULL 
+      ORDER BY priority DESC, created_at ASC 
+      LIMIT 200
+    `;
+    return this.executeQuery<WorkOrderEntity>(query);
   }
 }

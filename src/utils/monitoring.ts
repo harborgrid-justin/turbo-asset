@@ -481,15 +481,31 @@ export class MonitoringSystem {
   }
 
   /**
-   * Start monitoring
+   * Start monitoring - Critical optimization
    */
   public start(intervalMs: number = 60000): void {
     if (this.collectionInterval !== undefined) {
       this.stop();
     }
 
+    // Critical fix: Use a more efficient collection pattern
+    let isCollecting = false;
+    
     this.collectionInterval = setInterval(async () => {
-      await this.collectMetrics();
+      // Critical fix: Prevent overlapping collection cycles
+      if (isCollecting) {
+        logger.debug('Skipping metrics collection - previous cycle still running');
+        return;
+      }
+      
+      isCollecting = true;
+      try {
+        await this.collectMetrics();
+      } catch (error) {
+        logger.error('Error in metrics collection cycle:', error);
+      } finally {
+        isCollecting = false;
+      }
     }, intervalMs);
 
     logger.info(`Monitoring system started with ${intervalMs}ms interval`);
@@ -551,11 +567,28 @@ export class MonitoringSystem {
   }
 
   private async collectMetrics(): Promise<void> {
+    const startTime = Date.now();
+    
     try {
-      const metrics = await this.collectAllMetrics();
-      this.alertManager.evaluateMetrics(metrics);
+      // Critical fix: Add timeout for metric collection to prevent hangs
+      const timeoutMs = 30000; // 30 second timeout
+      const metricsPromise = this.collectAllMetrics();
+      
+      const metrics = await Promise.race([
+        metricsPromise,
+        new Promise<never>((_, reject) => 
+          setTimeout(() => reject(new Error('Metrics collection timeout')), timeoutMs)
+        )
+      ]);
+      
+      await this.alertManager.evaluateMetrics(metrics);
+      
+      const duration = Date.now() - startTime;
+      logger.debug(`Metrics collected in ${duration}ms (${metrics.length} metrics)`);
+      
     } catch (error) {
-      logger.error('Error collecting metrics:', error);
+      const duration = Date.now() - startTime;
+      logger.error(`Error collecting metrics after ${duration}ms:`, error);
     }
   }
 
