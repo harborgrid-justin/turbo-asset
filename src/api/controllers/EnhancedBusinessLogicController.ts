@@ -5,6 +5,7 @@
 
 import { Request, Response } from 'express';
 import { logger } from '@/config/logger';
+import { ErrorHandler } from '@/utils/error-handling';
 import {
   ProductionGradeAnalyticsService,
   ProductionGradeHelpService,
@@ -18,7 +19,12 @@ export class EnhancedBusinessLogicController {
    */
   static async executeAdvancedBusinessLogic(req: Request, res: Response): Promise<void> {
     try {
-      const { serviceName, methodName, params = [], options = {} } = req.body;
+      const { serviceName, methodName, params = [], options = {} } = req.body as {
+        serviceName?: string;
+        methodName?: string;
+        params?: unknown[];
+        options?: Record<string, unknown>;
+      };
 
       if (!serviceName || !methodName) {
         res.status(400).json({
@@ -28,6 +34,7 @@ export class EnhancedBusinessLogicController {
             message: 'serviceName and methodName are required',
           },
         });
+        return; // Critical fix: Missing return statement
       }
 
       const result = await ProductionGradeBusinessLogic.executeWithAdvancedLogic(
@@ -45,14 +52,13 @@ export class EnhancedBusinessLogicController {
       res.json(result);
     } catch (error: unknown) {
       logger.error('Error executing advanced business logic:', error);
-      res.status(500).json({
-        success: false,
-        error: {
-          code: 'EXECUTION_ERROR',
-          message: 'Failed to execute advanced business logic',
-          details: error instanceof Error ? (error as Error).message : 'Unknown error',
-        },
-      });
+      res.status(500).json(
+        ErrorHandler.createStandardErrorResponse(
+          error,
+          'EXECUTION_ERROR',
+          'Failed to execute advanced business logic'
+        )
+      );
     }
   }
 
@@ -167,7 +173,18 @@ export class EnhancedBusinessLogicController {
    */
   static async calculateLeaseAccounting(req: Request, res: Response): Promise<void> {
     try {
-      const { leaseData } = req.body;
+      const { leaseData } = req.body as {
+        leaseData?: {
+          monthlyPayment: number;
+          leaseTerm: number;
+          incrementalBorrowingRate: number;
+          initialDirectCosts?: number;
+          prepaidLease?: number;
+          leaseIncentives?: number;
+          variablePayments?: number;
+          currency?: string;
+        };
+      };
 
       if (!leaseData) {
         res.status(400).json({
@@ -177,17 +194,31 @@ export class EnhancedBusinessLogicController {
             message: 'leaseData is required',
           },
         });
+        return; // Critical fix: Missing return statement
+      }
 
+      // Critical fix: Validate required fields
+      if (typeof leaseData.monthlyPayment !== 'number' || 
+          typeof leaseData.leaseTerm !== 'number' || 
+          typeof leaseData.incrementalBorrowingRate !== 'number') {
+        res.status(400).json({
+          success: false,
+          error: {
+            code: 'INVALID_LEASE_DATA',
+            message: 'monthlyPayment, leaseTerm, and incrementalBorrowingRate must be numbers',
+          },
+        });
+        return;
       }
 
       const leaseAccountingResult = advancedBusinessRules.calculateLeaseAccounting({
         monthlyPayment: leaseData.monthlyPayment,
         leaseTerm: leaseData.leaseTerm,
         incrementalBorrowingRate: leaseData.incrementalBorrowingRate,
-        initialDirectCosts: leaseData.initialDirectCosts || 0,
-        prepaidLease: leaseData.prepaidLease || 0,
-        leaseIncentives: leaseData.leaseIncentives || 0,
-        variablePayments: leaseData.variablePayments,
+        initialDirectCosts: leaseData.initialDirectCosts ?? 0,
+        prepaidLease: leaseData.prepaidLease ?? 0,
+        leaseIncentives: leaseData.leaseIncentives ?? 0,
+        variablePayments: leaseData.variablePayments ?? 0,
       });
 
       res.json({
@@ -196,20 +227,18 @@ export class EnhancedBusinessLogicController {
         metadata: {
           timestamp: new Date().toISOString(),
           standard: 'ASC 842/IFRS 16',
-          currency: leaseData.currency || 'USD',
+          currency: leaseData.currency ?? 'USD',
         },
       });
     } catch (error: unknown) {
       logger.error('Error calculating lease accounting:', error);
-      res.status(500).json({
-        success: false,
-        error: {
-          code: 'CALCULATION_ERROR',
-          message: 'Failed to calculate lease accounting',
-          details: error instanceof Error ? (error as Error).message : 'Unknown error',
-        },
-      });
-
+      res.status(500).json(
+        ErrorHandler.createStandardErrorResponse(
+          error,
+          'CALCULATION_ERROR',
+          'Failed to calculate lease accounting'
+        )
+      );
     }
   }
 
@@ -218,7 +247,17 @@ export class EnhancedBusinessLogicController {
    */
   static async optimizeSpaceUtilization(req: Request, res: Response): Promise<void> {
     try {
-      const { spaceData } = req.body;
+      const { spaceData } = req.body as {
+        spaceData?: {
+          spaces: Array<{
+            id: string;
+            area: number;
+            currentOccupancy: number;
+            capacity: number;
+          }>;
+          optimizationGoals?: string[];
+        };
+      };
 
       if (!spaceData) {
         res.status(400).json({
@@ -228,7 +267,19 @@ export class EnhancedBusinessLogicController {
             message: 'spaceData is required',
           },
         });
+        return; // Critical fix: Missing return statement
+      }
 
+      // Critical fix: Validate spaces array exists and has valid structure
+      if (!Array.isArray(spaceData.spaces) || spaceData.spaces.length === 0) {
+        res.status(400).json({
+          success: false,
+          error: {
+            code: 'INVALID_SPACE_DATA',
+            message: 'spaceData.spaces must be a non-empty array',
+          },
+        });
+        return;
       }
 
       const optimizationResult = advancedBusinessRules.optimizeSpaceUtilization(spaceData);
@@ -244,15 +295,13 @@ export class EnhancedBusinessLogicController {
       });
     } catch (error: unknown) {
       logger.error('Error optimizing space utilization:', error);
-      res.status(500).json({
-        success: false,
-        error: {
-          code: 'OPTIMIZATION_ERROR',
-          message: 'Failed to optimize space utilization',
-          details: error instanceof Error ? (error as Error).message : 'Unknown error',
-        },
-      });
-
+      res.status(500).json(
+        ErrorHandler.createStandardErrorResponse(
+          error,
+          'OPTIMIZATION_ERROR',
+          'Failed to optimize space utilization'
+        )
+      );
     }
   }
 
@@ -261,7 +310,19 @@ export class EnhancedBusinessLogicController {
    */
   static async optimizeMaintenanceCosts(req: Request, res: Response): Promise<void> {
     try {
-      const { maintenanceData } = req.body;
+      const { maintenanceData } = req.body as {
+        maintenanceData?: {
+          assets: Array<{
+            id: string;
+            type: string;
+            age: number;
+            maintenanceCost: number;
+            condition: string;
+          }>;
+          budget?: number;
+          timeHorizon?: number;
+        };
+      };
 
       if (!maintenanceData) {
         res.status(400).json({
@@ -271,7 +332,19 @@ export class EnhancedBusinessLogicController {
             message: 'maintenanceData is required',
           },
         });
+        return; // Critical fix: Missing return statement
+      }
 
+      // Critical fix: Validate assets array exists
+      if (!Array.isArray(maintenanceData.assets) || maintenanceData.assets.length === 0) {
+        res.status(400).json({
+          success: false,
+          error: {
+            code: 'INVALID_MAINTENANCE_DATA',
+            message: 'maintenanceData.assets must be a non-empty array',
+          },
+        });
+        return;
       }
 
       const optimizationResult = advancedBusinessRules.optimizeMaintenanceCosts(maintenanceData);
@@ -287,15 +360,13 @@ export class EnhancedBusinessLogicController {
       });
     } catch (error: unknown) {
       logger.error('Error optimizing maintenance costs:', error);
-      res.status(500).json({
-        success: false,
-        error: {
-          code: 'OPTIMIZATION_ERROR',
-          message: 'Failed to optimize maintenance costs',
-          details: error instanceof Error ? (error as Error).message : 'Unknown error',
-        },
-      });
-
+      res.status(500).json(
+        ErrorHandler.createStandardErrorResponse(
+          error,
+          'OPTIMIZATION_ERROR',
+          'Failed to optimize maintenance costs'
+        )
+      );
     }
   }
 

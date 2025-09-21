@@ -178,6 +178,51 @@ export class ErrorHandler {
       error: error.toJSON()
     };
   }
+
+  /**
+   * Extract error message safely - Critical fix for code duplication
+   */
+  public static extractErrorMessage(error: unknown): string {
+    if (error instanceof Error) {
+      return error.message;
+    }
+    if (typeof error === 'string') {
+      return error;
+    }
+    if (error && typeof error === 'object') {
+      const obj = error as Record<string, unknown>;
+      if (typeof obj.message === 'string') {
+        return obj.message;
+      }
+    }
+    return 'Unknown error';
+  }
+
+  /**
+   * Create standardized error response for unknown errors
+   */
+  public static createStandardErrorResponse(
+    error: unknown,
+    code: ErrorCode,
+    message: string,
+    statusCode: HttpStatus = HTTP_STATUS.INTERNAL_SERVER_ERROR
+  ): {
+    readonly success: false;
+    readonly error: {
+      readonly code: ErrorCode;
+      readonly message: string;
+      readonly details: string;
+    };
+  } {
+    return {
+      success: false,
+      error: {
+        code,
+        message,
+        details: this.extractErrorMessage(error)
+      }
+    };
+  }
 }
 
 /**

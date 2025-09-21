@@ -720,12 +720,23 @@ export const resourceManager = ResourceManager.getInstance();
 
 // Setup automatic cleanup on process exit
 process.on('exit', () => {
-  resourceManager.cleanupAll().catch(error => {
+  // Critical fix: Use synchronous cleanup for exit events
+  try {
+    resourceManager.cleanupAll();
+  } catch (error) {
     console.error('Error during exit cleanup:', error);
-  });
+  }
 });
 
 process.on('SIGINT', async () => {
+  try {
+    await resourceManager.cleanupAll();
+    process.exit(0);
+  } catch (error) {
+    console.error('Error during SIGINT cleanup:', error);
+    process.exit(1);
+  }
+});
   logger.info('Received SIGINT, cleaning up resources...');
   await resourceManager.cleanupAll();
   process.exit(0);

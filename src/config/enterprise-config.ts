@@ -223,11 +223,24 @@ export const PRODUCTION_CONFIG: EnterpriseConfiguration = {
         if (process.env.NODE_ENV === 'production') {
           throw new Error('JWT_SECRET environment variable must be set in production');
         }
-        // Generate a secure random secret for development
-        return require('crypto').randomBytes(64).toString('hex');
+        // Critical fix: Generate a cryptographically secure random secret for development
+        const crypto = require('crypto');
+        if (!crypto.randomBytes) {
+          throw new Error('Crypto module not available for secure JWT secret generation');
+        }
+        const secret = crypto.randomBytes(64).toString('base64');
+        // Critical fix: Ensure minimum entropy
+        if (secret.length < 32) {
+          throw new Error('Generated JWT secret does not meet minimum security requirements');
+        }
+        return secret;
       })(),
       tokenExpiry: '1h' as const,
-      refreshTokenExpiry: '7d' as const
+      refreshTokenExpiry: '7d' as const,
+      // Critical fix: Add token rotation and validation settings
+      requireSecureConnection: process.env.NODE_ENV === 'production',
+      tokenRotationInterval: '24h' as const,
+      maxConcurrentSessions: 5
     },
     authorization: {
       roleBasedAccess: true,

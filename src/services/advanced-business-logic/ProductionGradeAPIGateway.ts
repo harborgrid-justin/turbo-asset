@@ -119,7 +119,7 @@ export class ProductionGradeAPIGateway {
       userId: req.user?.id,
       organizationId: req.user?.organizationId,
       userAgent: req.get('User-Agent') || '',
-      ipAddress: req.ip || req.connection.remoteAddress || '',
+      ipAddress: this.getSecureClientIP(req), // Critical fix: Use secure IP extraction
       timestamp: new Date(),
       route: req.route?.path || req.path,
       method: req.method
@@ -241,29 +241,61 @@ export class ProductionGradeAPIGateway {
   } {
     const allMetrics = Array.from(this.metrics.values());
     
+    if (allMetrics.length === 0) {
+      return {
+        overall: {
+          totalRequests: 0,
+          totalErrors: 0,
+          averageResponseTime: 0,
+          errorRate: 0,
+          requestsPerMinute: 0
+        },
+        byEndpoint: [],
+        topErrors: [],
+        performanceMetrics: {
+          slowestEndpoints: [],
+          mostUsedEndpoints: []
+        }
+      };
+    }
+    
+    // Critical fix: Single pass calculation to avoid multiple iterations
+    let totalRequests = 0;
+    let totalErrors = 0;
+    let totalWeightedResponseTime = 0;
+    let totalWeightedErrorRate = 0;
+    
+    for (const metric of allMetrics) {
+      totalRequests += metric.totalRequests;
+      totalErrors += metric.errorCount;
+      // Critical fix: Weight averages by request count for accuracy
+      totalWeightedResponseTime += metric.averageResponseTime * metric.totalRequests;
+      totalWeightedErrorRate += metric.errorRate * metric.totalRequests;
+    }
+    
     const overall = {
-      totalRequests: allMetrics.reduce((sum, m) => sum + m.totalRequests, 0),
-      totalErrors: allMetrics.reduce((sum, m) => sum + m.errorCount, 0),
-      averageResponseTime: allMetrics.reduce((sum, m) => sum + m.averageResponseTime, 0) / allMetrics.length,
-      errorRate: allMetrics.reduce((sum, m) => sum + m.errorRate, 0) / allMetrics.length,
+      totalRequests,
+      totalErrors,
+      // Critical fix: Properly weighted average response time
+      averageResponseTime: totalRequests > 0 ? totalWeightedResponseTime / totalRequests : 0,
+      // Critical fix: Properly weighted error rate
+      errorRate: totalRequests > 0 ? totalWeightedErrorRate / totalRequests : 0,
       requestsPerMinute: this.calculateRequestsPerMinute()
     };
 
-    const slowestEndpoints = allMetrics
-      .sort((a, b) => b.averageResponseTime - a.averageResponseTime)
-      .slice(0, 10)
-      .map(m => ({
-        endpoint: m.endpoint,
-        averageResponseTime: m.averageResponseTime
-      }));
+    // Critical fix: Sort once and slice for both arrays
+    const sortedByResponseTime = [...allMetrics].sort((a, b) => b.averageResponseTime - a.averageResponseTime);
+    const sortedByRequests = [...allMetrics].sort((a, b) => b.totalRequests - a.totalRequests);
+    
+    const slowestEndpoints = sortedByResponseTime.slice(0, 10).map(m => ({
+      endpoint: m.endpoint,
+      averageResponseTime: m.averageResponseTime
+    }));
 
-    const mostUsedEndpoints = allMetrics
-      .sort((a, b) => b.totalRequests - a.totalRequests)
-      .slice(0, 10)
-      .map(m => ({
-        endpoint: m.endpoint,
-        requestCount: m.totalRequests
-      }));
+    const mostUsedEndpoints = sortedByRequests.slice(0, 10).map(m => ({
+      endpoint: m.endpoint,
+      requestCount: m.totalRequests
+    }));
 
     return {
       overall,
@@ -454,15 +486,16 @@ export class ProductionGradeAPIGateway {
   }
 
   private async checkRateLimit(req: Request, rateLimit: { windowMs: number; max: number }): Promise<boolean> {
-    const key = req.ip || req.connection.remoteAddress || 'unknown';
+    // Critical fix: Secure IP address extraction to prevent spoofing
+    const clientIP = this.getSecureClientIP(req);
     const now = Date.now();
     const windowStart = now - rateLimit.windowMs;
     
-    if (!this.rateLimitStore.has(key)) {
-      this.rateLimitStore.set(key, []);
+    if (!this.rateLimitStore.has(clientIP)) {
+      this.rateLimitStore.set(clientIP, []);
     }
     
-    const requests = this.rateLimitStore.get(key)!;
+    const requests = this.rateLimitStore.get(clientIP)!;
     
     // Remove old requests outside the window
     const validRequests = requests.filter(r => r.timestamp > windowStart);
@@ -473,13 +506,17 @@ export class ProductionGradeAPIGateway {
     
     // Add current request
     validRequests.push({ timestamp: now, count: 1 });
-    this.rateLimitStore.set(key, validRequests);
+    this.rateLimitStore.set(clientIP, validRequests);
     
     return true;
   }
 
-  private getCachedResponse(req: Request, cache: { ttl: number; key?: string }): any {
-    const cacheKey = cache.key || `${req.method}:${req.path}:${JSON.stringify(req.query)}`;
+  private getCachedResponse(req: Request, cache: { ttl: number; key?: string }): unknown {
+    // Critical fix: Sanitize cache key to prevent injection attacks
+    const sanitizedPath = req.path.replace(/[^a-zA-Z0-9/_-]/g, '');
+    const sanitizedQuery = this.sanitizeQueryForCache(req.query);
+    const cacheKey = cache.key || `${req.method}:${sanitizedPath}:${sanitizedQuery}`;
+    
     const cached = this.cache.get(cacheKey);
     
     if (cached && cached.expires > Date.now()) {
@@ -489,12 +526,69 @@ export class ProductionGradeAPIGateway {
     return null;
   }
 
-  private cacheResponse(req: Request, data: any, cache: { ttl: number; key?: string }): void {
-    const cacheKey = cache.key || `${req.method}:${req.path}:${JSON.stringify(req.query)}`;
+  private cacheResponse(req: Request, data: unknown, cache: { ttl: number; key?: string }): void {
+    // Critical fix: Sanitize cache key to prevent injection attacks
+    const sanitizedPath = req.path.replace(/[^a-zA-Z0-9/_-]/g, '');
+    const sanitizedQuery = this.sanitizeQueryForCache(req.query);
+    const cacheKey = cache.key || `${req.method}:${sanitizedPath}:${sanitizedQuery}`;
+    
     this.cache.set(cacheKey, {
       data,
       expires: Date.now() + cache.ttl * 1000
     });
+  }
+
+  // Critical fix: Add query sanitization for cache keys
+  private sanitizeQueryForCache(query: unknown): string {
+    if (!query || typeof query !== 'object') {
+      return '';
+    }
+    
+    try {
+      const sanitized = Object.entries(query as Record<string, unknown>)
+        .map(([key, value]) => {
+          // Only allow safe characters in cache keys
+          const safeKey = String(key).replace(/[^a-zA-Z0-9_]/g, '');
+          const safeValue = String(value).replace(/[^a-zA-Z0-9_-]/g, '');
+          return `${safeKey}=${safeValue}`;
+        })
+        .slice(0, 10) // Limit number of query parameters
+        .join('&');
+      
+      return sanitized.slice(0, 200); // Limit cache key length
+    } catch (error) {
+      logger.warn('Failed to sanitize query for cache:', error);
+      return 'invalid';
+    }
+  }
+
+  // Critical fix: Secure IP address extraction to prevent spoofing
+  private getSecureClientIP(req: Request): string {
+    // In production, validate trusted proxy configuration
+    const trustProxy = process.env.TRUST_PROXY === 'true';
+    
+    if (trustProxy) {
+      // Only trust specific headers if behind a trusted proxy
+      const xForwardedFor = req.get('X-Forwarded-For');
+      const xRealIP = req.get('X-Real-IP');
+      
+      if (xForwardedFor) {
+        // Take the first IP from X-Forwarded-For (client IP)
+        const ips = xForwardedFor.split(',').map(ip => ip.trim());
+        const clientIP = ips[0];
+        // Basic IP validation
+        if (clientIP && /^[\d.:a-f]+$/.test(clientIP)) {
+          return clientIP;
+        }
+      }
+      
+      if (xRealIP && /^[\d.:a-f]+$/.test(xRealIP)) {
+        return xRealIP;
+      }
+    }
+    
+    // Fallback to direct connection IP
+    return req.socket?.remoteAddress || req.ip || 'unknown';
   }
 
   private async executeMiddleware(middleware: Function, req: Request, res: Response): Promise<void> {
