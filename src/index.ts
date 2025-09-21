@@ -466,6 +466,11 @@ class TurboAssetServer {
 
   async start(): Promise<void> {
     try {
+      // Initialize enterprise system first
+      logger.info('🚀 Initializing Enterprise System...');
+      const { enterpriseSystem } = await import('@/utils');
+      await enterpriseSystem.initialize();
+      
       // Create logs directory if it doesn't exist
       const fs = await import('fs');
       const path = await import('path');
@@ -502,6 +507,13 @@ class TurboAssetServer {
       await businessLogicIntegration.initialize();
       logger.info('✅ Business Logic Integration Service initialized with production features');
 
+      // Check enterprise system health
+      const systemHealth = await enterpriseSystem.getHealthStatus();
+      logger.info('🏥 Enterprise System Health:', {
+        system: systemHealth.system,
+        components: systemHealth.components
+      });
+
       // Start server
       this.server.listen(config.server.port, () => {
         logger.info('🚀 Turbo Asset server started successfully');
@@ -514,15 +526,20 @@ class TurboAssetServer {
       });
 
       // Graceful shutdown handlers
-      process.on('SIGTERM', () => {
-        logger.info('SIGTERM received, initiating graceful shutdown');
-        this.stop();
-      });
+      const gracefulShutdown = async (signal: string) => {
+        logger.info(`${signal} received, initiating graceful shutdown`);
+        try {
+          await this.stop();
+          await enterpriseSystem.shutdown();
+          process.exit(0);
+        } catch (error) {
+          logger.error('Error during graceful shutdown:', error);
+          process.exit(1);
+        }
+      };
 
-      process.on('SIGINT', () => {
-        logger.info('SIGINT received, initiating graceful shutdown');
-        this.stop();
-      });
+      process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+      process.on('SIGINT', () => gracefulShutdown('SIGINT'));
 
       // Handle unhandled promise rejections
       process.on('unhandledRejection', (reason, promise) => {
@@ -533,7 +550,7 @@ class TurboAssetServer {
       // Handle uncaught exceptions
       process.on('uncaughtException', (error) => {
         logger.error('Uncaught Exception', error);
-        process.exit(1);
+        gracefulShutdown('UNCAUGHT_EXCEPTION');
       });
 
     } catch (error: unknown) {

@@ -4,121 +4,153 @@
  */
 
 import { logger } from '../config/logger';
-import { napiRegistry } from './napi-integration';
-import { PrecisionUtils, PrecisionDecimal, PrecisionConfig } from '../shared/precision-utils';
+import { BaseService } from '../utils/base-service';
+import { EnterpriseError, ValidationUtils } from '../utils/error-handling';
+import { cacheManager } from '../utils/caching';
+import { container, Service } from '../utils/dependency-injection';
+import { PermissionManager } from '../utils/security';
+import { HTTP_STATUS, PERFORMANCE, RATE_LIMITS } from '../constants';
 import type { 
-  BaseEntity, 
   StandardResponse, 
-  PaginationParams,
-  PaginatedResponse 
-} from '../types/universal-data-standard';
+  SecurityContext,
+  QueryOptions
+} from '../types/enterprise';
 
 // Enhanced interfaces for production-grade features
 export interface ProductionBusinessLogicBridge {
-  serviceName?: string; // Optional for internal usage
-  napiServiceName: string;
-  businessLogicService: any;
-  integrationMethods: string[];
-  fallbackEnabled: boolean;
-  healthCheck?: () => Promise<boolean>;
-  metrics: {
-    callCount: number;
-    successCount: number;
-    failureCount: number;
-    avgResponseTime: number;
-    lastHealthCheck?: Date;
-    circuitBreakerStatus: 'CLOSED' | 'OPEN' | 'HALF_OPEN';
-    lastFailureTime?: Date;
-  };
-  rateLimit: {
-    maxRequestsPerMinute: number;
-    requestWindow: Map<number, number>;
-    blockUntil?: Date;
-  };
-  validation: {
-    rules: Map<string, ValidationRule[]>;
-    enabled: boolean;
-  };
-  retry: {
-    maxAttempts: number;
-    backoffMultiplier: number;
-    baseDelayMs: number;
-  };
+  readonly serviceName?: string;
+  readonly napiServiceName: string;
+  readonly businessLogicService: BusinessLogicService;
+  readonly integrationMethods: readonly string[];
+  readonly fallbackEnabled: boolean;
+  readonly healthCheck: () => Promise<boolean>;
+  readonly metrics: ServiceMetrics;
+  readonly rateLimit: RateLimitConfiguration;
+  readonly validation: ValidationConfiguration;
+  readonly retry: RetryConfiguration;
+}
+
+export interface BusinessLogicService {
+  healthCheck(): Promise<boolean>;
+  processOperation(methodName: string, ...args: readonly unknown[]): Promise<unknown>;
+}
+
+export interface ServiceMetrics {
+  readonly callCount: number;
+  readonly successCount: number;
+  readonly failureCount: number;
+  readonly avgResponseTime: number;
+  readonly lastHealthCheck?: Date;
+  readonly circuitBreakerStatus: 'CLOSED' | 'OPEN' | 'HALF_OPEN';
+  readonly lastFailureTime?: Date;
+}
+
+export interface RateLimitConfiguration {
+  readonly maxRequestsPerMinute: number;
+  readonly requestWindow: Map<number, number>;
+  readonly blockUntil?: Date;
+}
+
+export interface ValidationConfiguration {
+  readonly rules: Map<string, readonly ValidationRule[]>;
+  readonly enabled: boolean;
+}
+
+export interface RetryConfiguration {
+  readonly maxAttempts: number;
+  readonly backoffMultiplier: number;
+  readonly baseDelayMs: number;
 }
 
 export interface ValidationRule {
-  field: string;
-  type: 'required' | 'string' | 'number' | 'email' | 'custom';
-  min?: number;
-  max?: number;
-  pattern?: RegExp;
-  customValidator?: (value: any) => boolean;
-  message: string;
+  readonly field: string;
+  readonly type: 'required' | 'string' | 'number' | 'email' | 'custom';
+  readonly min?: number;
+  readonly max?: number;
+  readonly pattern?: RegExp;
+  readonly customValidator?: (value: unknown) => boolean;
+  readonly message: string;
 }
 
 export interface ProductionMetrics {
-  totalRequests: number;
-  successfulRequests: number;
-  failedRequests: number;
-  averageResponseTime: number;
-  serviceHealth: Map<string, 'HEALTHY' | 'DEGRADED' | 'UNHEALTHY'>;
-  circuitBreakerMetrics: Map<string, {
-    status: 'CLOSED' | 'OPEN' | 'HALF_OPEN';
-    failureCount: number;
-    successCount: number;
-    lastStatusChange: Date;
-  }>;
-  rateLimitMetrics: Map<string, {
-    requestsInWindow: number;
-    windowStart: Date;
-    blockedRequests: number;
-  }>;
-  validationMetrics: Map<string, {
-    totalValidations: number;
-    failedValidations: number;
-    commonFailures: Map<string, number>;
-  }>;
+  readonly totalRequests: number;
+  readonly successfulRequests: number;
+  readonly failedRequests: number;
+  readonly averageResponseTime: number;
+  readonly serviceHealth: Map<string, 'HEALTHY' | 'DEGRADED' | 'UNHEALTHY'>;
+  readonly circuitBreakerMetrics: Map<string, CircuitBreakerMetrics>;
+  readonly rateLimitMetrics: Map<string, RateLimitMetrics>;
+  readonly validationMetrics: Map<string, ValidationMetrics>;
+}
+
+export interface CircuitBreakerMetrics {
+  readonly status: 'CLOSED' | 'OPEN' | 'HALF_OPEN';
+  readonly failureCount: number;
+  readonly successCount: number;
+  readonly lastStatusChange: Date;
+}
+
+export interface RateLimitMetrics {
+  readonly requestsInWindow: number;
+  readonly windowStart: Date;
+  readonly blockedRequests: number;
+}
+
+export interface ValidationMetrics {
+  readonly totalValidations: number;
+  readonly failedValidations: number;
+  readonly commonFailures: Map<string, number>;
+}
+
+export interface ServiceHealthDetails {
+  readonly status: 'HEALTHY' | 'DEGRADED' | 'UNHEALTHY';
+  readonly napiServiceHealth: boolean;
+  readonly businessLogicHealth: boolean;
+  readonly circuitBreakerStatus: string;
+  readonly lastHealthCheck: Date;
+  readonly responseTime: number;
+  readonly errorRate: number;
 }
 
 export interface ComprehensiveHealthStatus {
-  overallHealth: 'HEALTHY' | 'DEGRADED' | 'UNHEALTHY';
-  serviceDetails: Map<string, {
-    status: 'HEALTHY' | 'DEGRADED' | 'UNHEALTHY';
-    napiServiceHealth: boolean;
-    businessLogicHealth: boolean;
-    circuitBreakerStatus: string;
-    lastHealthCheck: Date;
-    responseTime: number;
-    errorRate: number;
-  }>;
-  systemMetrics: {
-    totalServices: number;
-    healthyServices: number;
-    degradedServices: number;
-    unhealthyServices: number;
-    circuitBreakersOpen: number;
-    rateLimitedServices: number;
-  };
+  readonly overallHealth: 'HEALTHY' | 'DEGRADED' | 'UNHEALTHY';
+  readonly serviceDetails: Map<string, ServiceHealthDetails>;
+  readonly systemMetrics: SystemMetrics;
+}
+
+export interface SystemMetrics {
+  readonly totalServices: number;
+  readonly healthyServices: number;
+  readonly degradedServices: number;
+  readonly unhealthyServices: number;
+  readonly circuitBreakersOpen: number;
+  readonly rateLimitedServices: number;
 }
 
 /**
  * Enhanced Business Logic Integration Service with Production-Grade Features
  */
-export class EnhancedBusinessLogicIntegrationService {
+@Service({
+  name: 'EnhancedBusinessLogicIntegrationService',
+  lifecycle: 'singleton'
+})
+export class EnhancedBusinessLogicIntegrationService extends BaseService {
   private static instance: EnhancedBusinessLogicIntegrationService;
-  private bridges: Map<string, ProductionBusinessLogicBridge> = new Map();
-  private globalMetrics: ProductionMetrics;
-  private healthCheckInterval: NodeJS.Timeout | null = null;
-  private metricsCleanupInterval: NodeJS.Timeout | null = null;
+  private readonly bridges = new Map<string, ProductionBusinessLogicBridge>();
+  private readonly globalMetrics: ProductionMetrics;
+  private healthCheckInterval?: NodeJS.Timeout;
+  private metricsCleanupInterval?: NodeJS.Timeout;
 
-  // Production configuration
-  private readonly CIRCUIT_BREAKER_THRESHOLD = 5; // failures to open circuit
-  private readonly CIRCUIT_BREAKER_TIMEOUT = 60000; // 1 minute
-  private readonly HEALTH_CHECK_INTERVAL = 60000; // 1 minute
-  private readonly METRICS_CLEANUP_INTERVAL = 300000; // 5 minutes
-  private readonly DEFAULT_RATE_LIMIT = 500; // requests per minute
+  // Production configuration constants
+  private static readonly CIRCUIT_BREAKER_THRESHOLD = PERFORMANCE.CIRCUIT_BREAKER_FAILURE_THRESHOLD;
+  private static readonly CIRCUIT_BREAKER_TIMEOUT = PERFORMANCE.CIRCUIT_BREAKER_RECOVERY_TIMEOUT_MS;
+  private static readonly HEALTH_CHECK_INTERVAL = 60000; // 1 minute
+  private static readonly METRICS_CLEANUP_INTERVAL = 300000; // 5 minutes
+  private static readonly DEFAULT_RATE_LIMIT = RATE_LIMITS.DEFAULT_REQUESTS_PER_MINUTE;
 
   private constructor() {
+    super('EnhancedBusinessLogicIntegrationService', '2.0.0');
+
     this.globalMetrics = {
       totalRequests: 0,
       successfulRequests: 0,
@@ -159,53 +191,117 @@ export class EnhancedBusinessLogicIntegrationService {
   }
 
   /**
+   * Health check implementation for the service
+   */
+  protected async performHealthCheck(): Promise<void> {
+    const startTime = Date.now();
+    let healthyServices = 0;
+    let totalServices = 0;
+
+    for (const [serviceName, bridge] of this.bridges) {
+      totalServices++;
+      try {
+        const isHealthy = await Promise.race([
+          bridge.healthCheck(),
+          new Promise<boolean>((_, reject) => 
+            setTimeout(() => reject(new Error('Health check timeout')), 5000)
+          )
+        ]);
+
+        if (isHealthy) {
+          healthyServices++;
+          this.globalMetrics.serviceHealth.set(serviceName, 'HEALTHY');
+        } else {
+          this.globalMetrics.serviceHealth.set(serviceName, 'DEGRADED');
+        }
+      } catch (error) {
+        this.globalMetrics.serviceHealth.set(serviceName, 'UNHEALTHY');
+        logger.warn(`Health check failed for service ${serviceName}:`, error);
+      }
+    }
+
+    const healthRatio = totalServices > 0 ? healthyServices / totalServices : 1;
+    
+    if (healthRatio < 0.5) {
+      throw new EnterpriseError(
+        'SYSTEM_ERROR',
+        `System health degraded: ${healthyServices}/${totalServices} services healthy`,
+        HTTP_STATUS.SERVICE_UNAVAILABLE
+      );
+    }
+
+    logger.debug(`Health check completed in ${Date.now() - startTime}ms: ${healthyServices}/${totalServices} services healthy`);
+  }
+
+  /**
    * Initialize core service bridges with enhanced production features
    * Now supporting 48 enterprise business features to compete with IBM TRIRIGA
    */
   private initializeCoreBridges(): void {
-    // Import and integrate the 48-feature enterprise service
-    const { EnterpriseBusinessLogicService } = require('./enterprise-business-logic-48-features');
-    const enterpriseService = EnterpriseBusinessLogicService.getInstance();
-    
-    // Get all 48 features and convert to bridge format
-    const enterpriseFeatures = enterpriseService.getEnterpriseFeatures();
-    
-    enterpriseFeatures.forEach((feature: any) => {
-      const bridge: ProductionBusinessLogicBridge = {
-        napiServiceName: feature.id,
-        businessLogicService: enterpriseService,
-        integrationMethods: feature.integrationMethods,
-        fallbackEnabled: true,
-        healthCheck: async () => feature.status === 'ACTIVE',
-        metrics: {
-          callCount: 0,
-          successCount: 0,
-          failureCount: 0,
-          avgResponseTime: 0,
-          lastHealthCheck: new Date(),
-          circuitBreakerStatus: 'CLOSED' as const,
-          lastFailureTime: undefined,
-        },
-        rateLimit: {
-          maxRequestsPerMinute: feature.configuration.limits.requestsPerMinute || 1000,
-          requestWindow: new Map<number, number>(),
-          blockUntil: undefined,
-        },
-        validation: {
-          rules: new Map([['default', feature.validationRules]]),
-          enabled: true,
-        },
-        retry: {
-          maxAttempts: 3,
-          backoffMultiplier: 2,
-          baseDelayMs: 1000,
-        },
-      };
+    try {
+      // Import and integrate the 48-feature enterprise service
+      const { EnterpriseBusinessLogicService } = require('./enterprise-business-logic-48-features');
+      const enterpriseService = EnterpriseBusinessLogicService.getInstance();
+      
+      // Get all 48 features and convert to bridge format
+      const enterpriseFeatures = enterpriseService.getEnterpriseFeatures();
+      
+      for (const feature of enterpriseFeatures) {
+        const bridge: ProductionBusinessLogicBridge = {
+          napiServiceName: feature.id,
+          businessLogicService: enterpriseService,
+          integrationMethods: Object.freeze(feature.integrationMethods),
+          fallbackEnabled: true,
+          healthCheck: async () => {
+            try {
+              return feature.status === 'ACTIVE' && await enterpriseService.healthCheck();
+            } catch {
+              return false;
+            }
+          },
+          metrics: {
+            callCount: 0,
+            successCount: 0,
+            failureCount: 0,
+            avgResponseTime: 0,
+            lastHealthCheck: new Date(),
+            circuitBreakerStatus: 'CLOSED',
+            lastFailureTime: undefined,
+          },
+          rateLimit: {
+            maxRequestsPerMinute: feature.configuration?.limits?.requestsPerMinute ?? EnhancedBusinessLogicIntegrationService.DEFAULT_RATE_LIMIT,
+            requestWindow: new Map<number, number>(),
+            blockUntil: undefined,
+          },
+          validation: {
+            rules: new Map([['default', Object.freeze(feature.validationRules ?? [])]]),
+            enabled: true,
+          },
+          retry: {
+            maxAttempts: 3,
+            backoffMultiplier: 2,
+            baseDelayMs: 1000,
+          },
+        };
 
-      this.bridges.set(feature.id, bridge);
-    });
+        this.bridges.set(feature.id, bridge);
+        logger.debug(`Initialized bridge for enterprise feature: ${feature.id}`);
+      }
+
+      logger.info(`Successfully initialized ${enterpriseFeatures.length} enterprise feature bridges`);
+    } catch (error) {
+      logger.error('Failed to initialize enterprise features, falling back to legacy services:', error);
+      this.initializeLegacyServices();
+    }
 
     // Legacy compatibility bridges for existing 32 modules
+    this.initializeLegacyServices();
+  }
+
+  /**
+   * Initialize legacy service bridges
+   */
+  private initializeLegacyServices(): void {
     const coreServices = [
       // Business Operations Domain (6 services)
       {
@@ -214,8 +310,8 @@ export class EnhancedBusinessLogicIntegrationService {
         integrationMethods: ['calculateDepreciation', 'trackLifecycle', 'planReplacement', 'optimizeCosts'],
         rateLimit: 600,
         validationRules: [
-          { field: 'name', type: 'required', min: 2, max: 100, message: 'Asset name is required (2-100 characters)' },
-          { field: 'type', type: 'required', message: 'Asset type is required' },
+          { field: 'name', type: 'required' as const, min: 2, max: 100, message: 'Asset name is required (2-100 characters)' },
+          { field: 'type', type: 'required' as const, message: 'Asset type is required' },
           { field: 'locationId', type: 'required', message: 'Location ID is required' },
         ]
       },
