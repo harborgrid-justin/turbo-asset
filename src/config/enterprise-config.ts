@@ -220,15 +220,11 @@ export const PRODUCTION_CONFIG: EnterpriseConfiguration = {
     authentication: {
       enabled: true,
       jwtSecret: process.env.JWT_SECRET || (() => {
-        const secret = process.env.NODE_ENV === 'production' 
-          ? undefined 
-          : 'dev-only-secret-change-in-production-' + Math.random().toString(36);
-        
-        if (!secret || secret.length < 32) {
-          throw new Error('JWT_SECRET environment variable must be set and at least 32 characters long in production');
+        if (process.env.NODE_ENV === 'production') {
+          throw new Error('JWT_SECRET environment variable must be set in production');
         }
-        
-        return secret;
+        // Generate a secure random secret for development
+        return require('crypto').randomBytes(64).toString('hex');
       })(),
       tokenExpiry: '1h' as const,
       refreshTokenExpiry: '7d' as const

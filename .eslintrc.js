@@ -46,7 +46,7 @@ module.exports = {
     'no-console': 'error',
     'consistent-return': 'error',
     'curly': 'error',
-    'eqeqeq': ['error', 'strict'],
+    'eqeqeq': ['error', 'always'],
     'no-duplicate-imports': 'error',
     'no-magic-numbers': ['warn', { 
       ignore: [-1, 0, 1, 2, 100, 1000],
