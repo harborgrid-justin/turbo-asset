@@ -8,6 +8,15 @@ import { EventEmitter } from 'events';
 import { logger } from '../config/logger';
 import type { StandardResponse } from '../types/universal-data-standard';
 import type { ValidationRule, ProductionBusinessLogicBridge } from './enhanced-business-logic-integration';
+import type {
+  BusinessMetrics,
+  ExchangeRates,
+  ConsolidationAdjustment,
+  ConsolidatedPosition,
+  SpaceUtilizationInfo,
+  UtilizationTrend,
+  OptimizationOpportunity
+} from '../types/enterprise-business-types';
 
 export interface EnterpriseBusinessFeature {
   id: string;
@@ -102,7 +111,7 @@ export class EnterpriseBusinessLogicService extends EventEmitter {
   private isInitialized = false;
 
   // Performance metrics
-  private metrics = {
+  private metrics: BusinessMetrics = {
     totalFeatures: 48,
     activeFeatures: 0,
     totalOperations: 0,
@@ -1899,7 +1908,7 @@ export class EnterpriseBusinessLogicService extends EventEmitter {
     ];
   }
 
-  private getCurrentExchangeRates(): any {
+  private getCurrentExchangeRates(): ExchangeRates {
     return {
       'EUR/USD': 1.18,
       'GBP/USD': 1.33,
@@ -1909,7 +1918,7 @@ export class EnterpriseBusinessLogicService extends EventEmitter {
     };
   }
 
-  private calculateConsolidationAdjustments(params: any): any[] {
+  private calculateConsolidationAdjustments(params: unknown): ConsolidationAdjustment[] {
     return [
       { type: 'Goodwill Impairment', amount: Math.random() * 100000 },
       { type: 'Minority Interest', amount: Math.random() * 50000 },
@@ -1917,7 +1926,7 @@ export class EnterpriseBusinessLogicService extends EventEmitter {
     ];
   }
 
-  private calculateConsolidatedPosition(params: any): any {
+  private calculateConsolidatedPosition(params: unknown): ConsolidatedPosition {
     return {
       totalAssets: Math.random() * 50000000 + 10000000,
       totalLiabilities: Math.random() * 30000000 + 5000000,
@@ -1926,21 +1935,21 @@ export class EnterpriseBusinessLogicService extends EventEmitter {
     };
   }
 
-  private identifyUnderutilizedSpaces(params: any): any[] {
+  private identifyUnderutilizedSpaces(params: unknown): SpaceUtilizationInfo[] {
     return [
       { spaceId: 'SP-001', utilizationRate: 45, area: 1200, cost: 15000 },
       { spaceId: 'SP-002', utilizationRate: 38, area: 800, cost: 9600 }
     ];
   }
 
-  private identifyOverutilizedSpaces(params: any): any[] {
+  private identifyOverutilizedSpaces(params: unknown): SpaceUtilizationInfo[] {
     return [
       { spaceId: 'SP-003', utilizationRate: 95, area: 2000, cost: 25000 },
       { spaceId: 'SP-004', utilizationRate: 88, area: 1500, cost: 18750 }
     ];
   }
 
-  private analyzeUtilizationTrends(params: any): any {
+  private analyzeUtilizationTrends(params: unknown): UtilizationTrend {
     return {
       weeklyTrend: Math.random() > 0.5 ? 'INCREASING' : 'DECREASING',
       monthlyTrend: Math.random() > 0.5 ? 'STABLE' : 'VOLATILE',
@@ -1949,11 +1958,11 @@ export class EnterpriseBusinessLogicService extends EventEmitter {
     };
   }
 
-  private calculateCostPerSquareFoot(params: any): number {
+  private calculateCostPerSquareFoot(params: unknown): number {
     return Math.random() * 50 + 20; // $20-70 per sq ft
   }
 
-  private identifyOptimizationOpportunities(params: any): any[] {
+  private identifyOptimizationOpportunities(params: unknown): OptimizationOpportunity[] {
     return [
       { opportunity: 'Consolidate underutilized spaces', potentialSavings: Math.random() * 100000 },
       { opportunity: 'Implement flexible workspace', potentialSavings: Math.random() * 75000 },

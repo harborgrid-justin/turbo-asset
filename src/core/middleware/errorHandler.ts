@@ -1,6 +1,43 @@
 import { Request, Response, NextFunction } from 'express';
 import { logger } from '@/config/logger';
 
+/**
+ * Request context interface for error logging
+ */
+interface RequestContext {
+  readonly method: string;
+  readonly url: string;
+  readonly ip: string;
+  readonly userAgent: string | undefined;
+  readonly userId: string | undefined;
+  readonly organizationId: string | undefined;
+}
+
+/**
+ * Error response interface
+ */
+interface ErrorResponse {
+  readonly success: false;
+  readonly error: {
+    readonly code: string;
+    readonly message: string;
+    readonly details?: Record<string, unknown>;
+    readonly timestamp: string;
+    readonly path: string;
+    readonly stack?: string;
+    readonly name?: string;
+  };
+}
+
+/**
+ * Authenticated request interface
+ */
+interface AuthenticatedRequest extends Request {
+  readonly user?: {
+    readonly id: string;
+  };
+}
+
 export interface ApiError extends Error {
   statusCode?: number;
   code?: string;
@@ -133,6 +170,21 @@ export class ServiceUnavailableError extends CustomApiError {
 }
 
 /**
+ * Extract request context for error logging
+ */
+function extractRequestContext(req: Request): RequestContext {
+  const authReq = req as AuthenticatedRequest;
+  return {
+    method: req.method,
+    url: req.url,
+    ip: req.ip,
+    userAgent: req.get('User-Agent'),
+    userId: authReq.user?.id,
+    organizationId: req.params?.organizationId,
+  };
+}
+
+/**
  * Global error handler middleware
  */
 export const errorHandler = (
@@ -142,21 +194,14 @@ export const errorHandler = (
   next: NextFunction
 ): void => {
   // Log the error
-  const requestInfo = {
-    method: req.method,
-    url: req.url,
-    ip: req.ip,
-    userAgent: req.get('User-Agent'),
-    userId: (req as any).user?.id,
-    organizationId: req.params?.organizationId,
-  };
+  const requestInfo = extractRequestContext(req);
 
   if (error instanceof CustomApiError) {
     logger.warn('API Error', {
       ...requestInfo,
       error: {
         name: error.name,
-        message: (error as Error).message,
+        message: error.message,
         code: error.code,
         statusCode: error.statusCode,
         details: error.details,
@@ -164,35 +209,37 @@ export const errorHandler = (
       },
     });
 
-    res.status(error.statusCode).json({
+    const errorResponse: ErrorResponse = {
       success: false,
       error: {
         code: error.code,
-        message: (error as Error).message,
+        message: error.message,
         details: error.details,
         timestamp: new Date().toISOString(),
         path: req.path,
         ...(process.env.NODE_ENV === 'development' && { stack: error.stack }),
       },
-    });
+    };
+
+    res.status(error.statusCode).json(errorResponse);
   } else {
     // Handle unexpected errors
     logger.error('Unhandled Error', {
       ...requestInfo,
       error: {
         name: error.name,
-        message: (error as Error).message,
+        message: error.message,
         stack: error.stack,
       },
     });
 
-    res.status(500).json({
+    const errorResponse: ErrorResponse = {
       success: false,
       error: {
         code: 'INTERNAL_ERROR',
         message: process.env.NODE_ENV === 'production' 
           ? 'An unexpected error occurred' 
-          : (error as Error).message,
+          : error.message,
         timestamp: new Date().toISOString(),
         path: req.path,
         ...(process.env.NODE_ENV === 'development' && { 
@@ -200,20 +247,22 @@ export const errorHandler = (
           name: error.name 
         }),
       },
-    });
+    };
 
-
-    return;
+    res.status(500).json(errorResponse);
   }
 };
 
 /**
  * Async error wrapper to catch promise rejections
  */
+/**
+ * Async error wrapper to catch promise rejections
+ */
 export const asyncHandler = (
-  fn: (req: Request, res: Response, next: NextFunction) => Promise<any>
+  fn: (req: Request, res: Response, next: NextFunction) => Promise<void>
 ) => {
-  return (req: Request, res: Response, next: NextFunction) => {
+  return (req: Request, res: Response, next: NextFunction): void => {
     Promise.resolve(fn(req, res, next)).catch(next);
   };
 };
@@ -231,18 +280,17 @@ export const notFoundHandler = (req: Request, res: Response): void => {
     userAgent: req.get('User-Agent'),
   });
 
-  res.status(404).json({
+  const errorResponse: ErrorResponse = {
     success: false,
     error: {
       code: error.code,
-      message: (error as Error).message,
+      message: error.message,
       timestamp: new Date().toISOString(),
       path: req.path,
     },
-  });
+  };
 
-
-  return;
+  res.status(404).json(errorResponse);
 };
 
 /**
@@ -262,48 +310,4 @@ export const timeoutHandler = (timeoutMs: number = 30000) => {
     
     next();
   };
-};
-
-/**
- * Validation helper function
- */
-export const validateRequired = (data: any, fields: string[]): void => {
-  const missing: string[] = [];
-  
-  for (const field of fields) {
-    if (!data || data[field] === undefined || data[field] === null || data[field] === '') {
-      missing.push(field);
-    }
-  }
-  
-  if (missing.length > 0) {
-    throw new ValidationError(
-      `Missing required fields: ${missing.join(', ')}`,
-      { missingFields: missing }
-    );
-  }
-};
-
-/**
- * Sanitize error for client response
- */
-export const sanitizeError = (error: any): any => {
-  const sanitized: any = {
-    message: (error as Error).message,
-    code: error.code || 'UNKNOWN_ERROR',
-    timestamp: new Date().toISOString(),
-  };
-
-  // Add stack trace only in development
-  if (process.env.NODE_ENV === 'development') {
-    sanitized.stack = error.stack;
-    sanitized.name = error.name;
-  }
-
-  // Add details if available
-  if (error.details) {
-    sanitized.details = error.details;
-  }
-
-  return sanitized;
 };
