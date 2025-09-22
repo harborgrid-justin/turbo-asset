@@ -37,11 +37,11 @@ export * from './constants/DocumentConstants';
  * document lifecycle management.
  */
 export class DocumentLifecycleService {
-  private uploadService: DocumentUploadService;
-  private retrievalService: DocumentRetrievalService;
-  private managementService: DocumentManagementService;
-  private permissionService: DocumentPermissionService;
-  private analyticsService: DocumentAnalyticsService;
+  private readonly uploadService: DocumentUploadService;
+  private readonly retrievalService: DocumentRetrievalService;
+  private readonly managementService: DocumentManagementService;
+  private readonly permissionService: DocumentPermissionService;
+  private readonly analyticsService: DocumentAnalyticsService;
 
   constructor() {
     // Initialize all sub-services
@@ -65,56 +65,56 @@ export class DocumentLifecycleService {
    * Upload a new document
    */
   async uploadDocument(file: Express.Multer.File, uploadedById: string, metadata: any = {}) {
-    return this.uploadService.uploadDocument(file, uploadedById, metadata);
+    return await this.uploadService.uploadDocument(file, uploadedById, metadata);
   }
 
   /**
    * Get documents with filtering
    */
   async getDocuments(organizationId: string, filters: any = {}, pagination: any = {}) {
-    return this.retrievalService.getDocuments(organizationId, filters, pagination);
+    return await this.retrievalService.getDocuments(organizationId, filters, pagination);
   }
 
   /**
    * Get document by ID
    */
   async getDocument(organizationId: string, documentId: string) {
-    return this.retrievalService.getDocument(organizationId, documentId);
+    return await this.retrievalService.getDocument(organizationId, documentId);
   }
 
   /**
    * Update document
    */
   async updateDocument(organizationId: string, documentId: string, updates: any) {
-    return this.managementService.updateDocument(organizationId, documentId, updates);
+    return await this.managementService.updateDocument(organizationId, documentId, updates);
   }
 
   /**
    * Delete document
    */
   async deleteDocument(organizationId: string, documentId: string, permanent: boolean = false) {
-    return this.managementService.deleteDocument(organizationId, documentId, permanent);
+    await this.managementService.deleteDocument(organizationId, documentId, permanent);
   }
 
   /**
    * Share document with users
    */
   async shareDocument(organizationId: string, documentId: string, sharingRequest: any) {
-    return this.permissionService.shareDocument(organizationId, documentId, sharingRequest);
+    await this.permissionService.shareDocument(organizationId, documentId, sharingRequest);
   }
 
   /**
    * Get document analytics
    */
   async getDocumentAnalytics(organizationId: string, options: any = {}) {
-    return this.analyticsService.getDocumentAnalytics(organizationId, options);
+    return await this.analyticsService.getDocumentAnalytics(organizationId, options);
   }
 
   /**
    * Search documents
    */
   async searchDocuments(organizationId: string, searchCriteria: any, pagination: any = {}) {
-    return this.retrievalService.searchDocuments(organizationId, searchCriteria, pagination);
+    return await this.retrievalService.searchDocuments(organizationId, searchCriteria, pagination);
   }
 
   /**
@@ -128,6 +128,6 @@ export class DocumentLifecycleService {
    * Check document permissions
    */
   async checkDocumentPermission(documentId: string, userId: string, action: 'READ' | 'WRITE' | 'DELETE') {
-    return this.permissionService.checkDocumentPermission(documentId, userId, action);
+    return await this.permissionService.checkDocumentPermission(documentId, userId, action);
   }
 }

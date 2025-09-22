@@ -548,7 +548,7 @@ export class AssetWorkOrderService {
    * Map asset criticality to work order priority
    */
   private mapCriticalityToPriority(criticality: string): WorkOrderPriority {
-    switch (criticality?.toUpperCase()) {
+    switch (criticality.toUpperCase()) {
       case 'CRITICAL':
         return WorkOrderPriority.HIGH;
       case 'HIGH':
@@ -566,7 +566,7 @@ export class AssetWorkOrderService {
    * Get required skills for maintenance type
    */
   private getRequiredSkillsForMaintenanceType(type: string): string[] {
-    switch (type?.toUpperCase()) {
+    switch (type.toUpperCase()) {
       case 'PREVENTIVE':
         return ['preventive_maintenance', 'inspection'];
       case 'PREDICTIVE':

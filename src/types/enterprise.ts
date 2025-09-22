@@ -60,7 +60,7 @@ export interface SoftDeletableEntity extends BaseEntity {
 }
 
 export interface AuditableEntity extends BaseEntity {
-  readonly auditTrail: ReadonlyArray<AuditEntry>;
+  readonly auditTrail: readonly AuditEntry[];
 }
 
 export interface AuditEntry {
@@ -81,8 +81,8 @@ export interface User extends BaseEntity {
   readonly username: string;
   readonly firstName: string;
   readonly lastName: string;
-  readonly roles: ReadonlyArray<Role>;
-  readonly permissions: ReadonlyArray<Permission>;
+  readonly roles: readonly Role[];
+  readonly permissions: readonly Permission[];
   readonly isActive: boolean;
   readonly lastLoginAt?: Date;
   readonly profileSettings: UserProfileSettings;
@@ -91,7 +91,7 @@ export interface User extends BaseEntity {
 export interface Role extends BaseEntity {
   readonly name: string;
   readonly description: string;
-  readonly permissions: ReadonlyArray<Permission>;
+  readonly permissions: readonly Permission[];
   readonly isSystemRole: boolean;
 }
 
@@ -124,7 +124,7 @@ export interface ServiceConfiguration {
   readonly environment: 'development' | 'staging' | 'production';
   readonly features: Record<string, boolean>;
   readonly limits: Record<string, number>;
-  readonly endpoints: ReadonlyArray<string>;
+  readonly endpoints: readonly string[];
 }
 
 export interface DatabaseConfiguration {
@@ -173,8 +173,8 @@ export interface WorkflowDefinition extends BaseEntity {
   readonly name: string;
   readonly description: string;
   readonly version: string;
-  readonly steps: ReadonlyArray<WorkflowStep>;
-  readonly triggers: ReadonlyArray<WorkflowTrigger>;
+  readonly steps: readonly WorkflowStep[];
+  readonly triggers: readonly WorkflowTrigger[];
   readonly isActive: boolean;
 }
 
@@ -183,8 +183,8 @@ export interface WorkflowStep {
   readonly name: string;
   readonly type: WorkflowStepType;
   readonly configuration: Record<string, unknown>;
-  readonly conditions: ReadonlyArray<WorkflowCondition>;
-  readonly nextSteps: ReadonlyArray<string>;
+  readonly conditions: readonly WorkflowCondition[];
+  readonly nextSteps: readonly string[];
 }
 
 export type WorkflowStepType = 'manual' | 'automatic' | 'system' | 'approval' | 'notification';
@@ -206,7 +206,7 @@ export interface WorkflowInstance extends BaseEntity {
   readonly status: WorkflowStatus;
   readonly currentStep: string;
   readonly variables: Record<string, unknown>;
-  readonly history: ReadonlyArray<WorkflowStepExecution>;
+  readonly history: readonly WorkflowStepExecution[];
 }
 
 export type WorkflowStatus = 'pending' | 'running' | 'paused' | 'completed' | 'failed' | 'cancelled';
@@ -234,7 +234,7 @@ export interface Asset extends AuditableEntity, SoftDeletableEntity {
   readonly financials: AssetFinancials;
   readonly maintenance: AssetMaintenance;
   readonly specifications: Record<string, unknown>;
-  readonly documents: ReadonlyArray<Document>;
+  readonly documents: readonly Document[];
 }
 
 export interface AssetCategory extends BaseEntity {
@@ -287,8 +287,8 @@ export interface AssetFinancials {
 export type DepreciationMethod = 'straight_line' | 'declining_balance' | 'sum_of_years' | 'units_of_production';
 
 export interface AssetMaintenance {
-  readonly maintenanceSchedule: ReadonlyArray<MaintenanceSchedule>;
-  readonly workOrders: ReadonlyArray<WorkOrder>;
+  readonly maintenanceSchedule: readonly MaintenanceSchedule[];
+  readonly workOrders: readonly WorkOrder[];
   readonly lastMaintenanceDate?: Date;
   readonly nextMaintenanceDate?: Date;
 }
@@ -301,8 +301,8 @@ export interface MaintenanceSchedule extends BaseEntity {
   readonly estimatedDuration: number;
   readonly cost: number;
   readonly instructions: string;
-  readonly requiredSkills: ReadonlyArray<string>;
-  readonly requiredParts: ReadonlyArray<RequiredPart>;
+  readonly requiredSkills: readonly string[];
+  readonly requiredParts: readonly RequiredPart[];
 }
 
 export type MaintenanceType = 'preventive' | 'predictive' | 'corrective' | 'emergency';
@@ -335,9 +335,9 @@ export interface WorkOrder extends AuditableEntity {
   readonly actualHours?: number;
   readonly estimatedCost: number;
   readonly actualCost?: number;
-  readonly parts: ReadonlyArray<WorkOrderPart>;
-  readonly labor: ReadonlyArray<WorkOrderLabor>;
-  readonly notes: ReadonlyArray<WorkOrderNote>;
+  readonly parts: readonly WorkOrderPart[];
+  readonly labor: readonly WorkOrderLabor[];
+  readonly notes: readonly WorkOrderNote[];
 }
 
 export type WorkOrderPriority = 'low' | 'medium' | 'high' | 'critical' | 'emergency';
@@ -372,11 +372,11 @@ export interface Document extends AuditableEntity {
   readonly fileSize: number;
   readonly mimeType: string;
   readonly category: DocumentCategory;
-  readonly tags: ReadonlyArray<string>;
+  readonly tags: readonly string[];
   readonly securityClassification: SecurityClassification;
   readonly retention: DocumentRetention;
-  readonly versions: ReadonlyArray<DocumentVersion>;
-  readonly permissions: ReadonlyArray<DocumentPermission>;
+  readonly versions: readonly DocumentVersion[];
+  readonly permissions: readonly DocumentPermission[];
 }
 
 export interface DocumentCategory extends BaseEntity {
@@ -408,7 +408,7 @@ export interface DocumentVersion {
 export interface DocumentPermission {
   readonly userId?: string;
   readonly roleId?: string;
-  readonly permissions: ReadonlyArray<DocumentPermissionType>;
+  readonly permissions: readonly DocumentPermissionType[];
 }
 
 export type DocumentPermissionType = 'read' | 'write' | 'delete' | 'share' | 'approve';
@@ -440,7 +440,7 @@ export interface QueryOptions {
   readonly sortBy?: string;
   readonly sortOrder?: 'asc' | 'desc';
   readonly filters?: Record<string, FilterCriteria>;
-  readonly includes?: ReadonlyArray<string>;
+  readonly includes?: readonly string[];
 }
 
 export interface FilterCriteria {

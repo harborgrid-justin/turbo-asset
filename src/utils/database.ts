@@ -271,7 +271,7 @@ export class ConnectionPool {
     }
 
     // Wait for connection to become available
-    return new Promise((resolve, reject) => {
+    return await new Promise((resolve, reject) => {
       this.waitingClients.push({
         resolve,
         reject,
@@ -511,7 +511,7 @@ class Connection {
 export class DatabaseManager implements DatabaseConnection {
   private static instance: DatabaseManager;
   private connectionPool?: ConnectionPool;
-  private queryOptimizer = new QueryOptimizer();
+  private readonly queryOptimizer = new QueryOptimizer();
 
   private constructor() {}
 
@@ -553,7 +553,7 @@ export class DatabaseManager implements DatabaseConnection {
     const optimized = this.queryOptimizer.optimizeQuery(sql, params);
 
     // Execute with retry
-    return RetryUtils.retry(
+    return await RetryUtils.retry(
       async () => {
         const connection = await this.connectionPool!.getConnection();
         
@@ -601,8 +601,8 @@ export class DatabaseManager implements DatabaseConnection {
       await connection.query('BEGIN');
 
       const transactionContext: TransactionContext = {
-        query: <T>(sql: string, params?: readonly unknown[]) => 
-          connection.query<T>(sql, params),
+        query: async <T>(sql: string, params?: readonly unknown[]) => 
+          await connection.query<T>(sql, params),
         
         commit: async () => {
           await connection.query('COMMIT');

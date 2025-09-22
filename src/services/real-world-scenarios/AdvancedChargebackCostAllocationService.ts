@@ -12,12 +12,12 @@ interface EnterpriseChargebackModel {
   modelName: string;
   organizationId: string;
   allocationMethod: 'DIRECT' | 'ACTIVITY_BASED' | 'USAGE_BASED' | 'HYBRID' | 'AI_OPTIMIZED';
-  costCategories: {
+  costCategories: Array<{
     category: string;
     percentage: number;
     allocationDrivers: string[];
     adjustmentFactors: any[];
-  }[];
+  }>;
   businessRules: any[];
   effectiveDate: Date;
   reviewFrequency: 'MONTHLY' | 'QUARTERLY' | 'ANNUALLY';
@@ -49,14 +49,14 @@ interface DepartmentAllocation {
   departmentId: string;
   departmentName: string;
   costCenter: string;
-  allocations: {
+  allocations: Array<{
     category: string;
     directCosts: number;
     allocatedCosts: number;
     allocationPercentage: number;
     allocationMethod: string;
     drivers: any[];
-  }[];
+  }>;
   totalAllocated: number;
   costPerEmployee: number;
   costPerSqFt: number;

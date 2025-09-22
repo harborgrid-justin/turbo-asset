@@ -152,11 +152,11 @@ export interface ForecastResult {
 
 export class ProductionBusinessIntelligenceService extends EventEmitter {
   private static instance: ProductionBusinessIntelligenceService;
-  private metricCache: Map<string, BusinessMetric> = new Map();
-  private reportCache: Map<string, AnalyticsReport> = new Map();
-  private queryExecutionStats: Map<string, any> = new Map();
-  private dataConnections: Map<string, any> = new Map();
-  private mlModels: Map<string, any> = new Map();
+  private readonly metricCache: Map<string, BusinessMetric> = new Map();
+  private readonly reportCache: Map<string, AnalyticsReport> = new Map();
+  private readonly queryExecutionStats: Map<string, any> = new Map();
+  private readonly dataConnections: Map<string, any> = new Map();
+  private readonly mlModels: Map<string, any> = new Map();
 
   private constructor() {
     super();

@@ -363,8 +363,8 @@ export class PrecisionUtils {
  * High-precision decimal class for critical financial calculations
  */
 export class PrecisionDecimal {
-  private value: number;
-  private precision: number;
+  private readonly value: number;
+  private readonly precision: number;
 
   constructor(value: number | string, precision: number = PrecisionUtils.getOptimalPrecision('currency')) {
     if (typeof value === 'string') {

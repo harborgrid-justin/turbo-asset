@@ -542,8 +542,8 @@ export class MoveManagementOperationsService {
     byType: { [key: string]: { count: number; averageCost: number; averageDuration: number } };
     byStatus: { [key: string]: number };
     trends: {
-      monthlyVolume: { month: string; count: number; cost: number }[];
-      costTrends: { category: string; trend: 'INCREASING' | 'DECREASING' | 'STABLE' }[];
+      monthlyVolume: Array<{ month: string; count: number; cost: number }>;
+      costTrends: Array<{ category: string; trend: 'INCREASING' | 'DECREASING' | 'STABLE' }>;
     };
     performance: {
       onTimeCompletion: number;
@@ -658,7 +658,7 @@ export class MoveManagementOperationsService {
   private calculateMonthlyVolume(
     moves: any[], 
     period: { startDate: Date; endDate: Date }
-  ): { month: string; count: number; cost: number }[] {
+  ): Array<{ month: string; count: number; cost: number }> {
     const monthlyData: { [key: string]: { count: number; cost: number } } = {};
 
     moves.forEach(move => {

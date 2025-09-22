@@ -214,12 +214,12 @@ export class FinancialConsolidationService {
       });
 
       // Create line items
-      const lineItemPromises = data.lineItems.map((item, index) => {
+      const lineItemPromises = data.lineItems.map(async (item, index) => {
         const variance = item.budgetAmount ? item.actualAmount - item.budgetAmount : null;
         const variancePercent = item.budgetAmount && item.budgetAmount !== 0 ? 
           (variance! / item.budgetAmount) * 100 : null;
 
-        return prisma.financialLineItem.create({
+        return await prisma.financialLineItem.create({
           data: {
             statementId: statement.id,
             lineNumber: item.lineNumber || index + 1,

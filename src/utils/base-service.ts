@@ -350,8 +350,8 @@ export abstract class BaseService extends EventEmitter {
         const aValue = (a as any)[options.sortBy!];
         const bValue = (b as any)[options.sortBy!];
         
-        if (aValue < bValue) return -1 * sortOrder;
-        if (aValue > bValue) return 1 * sortOrder;
+        if (aValue < bValue) {return -1 * sortOrder;}
+        if (aValue > bValue) {return 1 * sortOrder;}
         return 0;
       });
     }
@@ -386,15 +386,15 @@ export abstract class BaseService extends EventEmitter {
   }
 
   private getHealthStatus(): 'healthy' | 'degraded' | 'unhealthy' {
-    if (!this.configuration.enabled) return 'unhealthy';
-    if (this.circuitBreaker.state === 'OPEN') return 'unhealthy';
-    if (this.circuitBreaker.state === 'HALF_OPEN') return 'degraded';
+    if (!this.configuration.enabled) {return 'unhealthy';}
+    if (this.circuitBreaker.state === 'OPEN') {return 'unhealthy';}
+    if (this.circuitBreaker.state === 'HALF_OPEN') {return 'degraded';}
     
     const errorRate = this.metrics.operationCount > 0 
       ? this.metrics.errorCount / this.metrics.operationCount 
       : 0;
     
-    if (errorRate > 0.1) return 'degraded'; // More than 10% error rate
+    if (errorRate > 0.1) {return 'degraded';} // More than 10% error rate
     return 'healthy';
   }
 
@@ -439,7 +439,7 @@ export abstract class BaseService extends EventEmitter {
 
   private getCachedData<T>(key: string): T | null {
     const cached = this.cache.get(key);
-    if (cached === undefined) return null;
+    if (cached === undefined) {return null;}
     
     if (new Date() > cached.expiry) {
       this.cache.delete(key);
@@ -465,8 +465,8 @@ export abstract class BaseService extends EventEmitter {
     }
   }
 
-  private createTimeoutPromise<T>(timeout: number): Promise<T> {
-    return new Promise((_, reject) => {
+  private async createTimeoutPromise<T>(timeout: number): Promise<T> {
+    return await new Promise((_, reject) => {
       setTimeout(() => {
         reject(new EnterpriseError(
           'TIMEOUT_ERROR',

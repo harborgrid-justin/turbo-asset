@@ -483,7 +483,7 @@ export class TechnicianMobileService {
       if (filters?.priority) {
         where.priority = { in: filters.priority };
       }
-      if (filters?.dateFrom && filters?.dateTo) {
+      if (filters?.dateFrom && filters.dateTo) {
         where.scheduledDate = {
           gte: filters.dateFrom,
           lte: filters.dateTo,
@@ -894,7 +894,7 @@ export class TechnicianMobileService {
             conflicts.push({
               type: 'TIME_ENTRY',
               data: timeEntry,
-              error: error instanceof Error ? (error as Error).message : 'Unknown error',
+              error: error instanceof Error ? (error).message : 'Unknown error',
             });
           }
         }
@@ -910,7 +910,7 @@ export class TechnicianMobileService {
             conflicts.push({
               type: 'WORK_ORDER_UPDATE',
               data: update,
-              error: error instanceof Error ? (error as Error).message : 'Unknown error',
+              error: error instanceof Error ? (error).message : 'Unknown error',
             });
           }
         }
@@ -926,7 +926,7 @@ export class TechnicianMobileService {
             conflicts.push({
               type: 'INVENTORY_REQUEST',
               data: request,
-              error: error instanceof Error ? (error as Error).message : 'Unknown error',
+              error: error instanceof Error ? (error).message : 'Unknown error',
             });
           }
         }

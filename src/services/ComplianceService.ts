@@ -96,7 +96,7 @@ export interface JournalEntryTemplate {
  */
 export class ComplianceService {
   
-  private journalEntryTemplates: Map<string, JournalEntryTemplate> = new Map([
+  private readonly journalEntryTemplates: Map<string, JournalEntryTemplate> = new Map([
     ['INITIAL_RECOGNITION', {
       entryType: 'INITIAL_RECOGNITION',
       description: 'Initial recognition of lease liability and ROU asset',
@@ -402,14 +402,14 @@ export class ComplianceService {
         } catch (error: unknown) {
           logger.error('Failed to process lease accounting', {
             leaseId: lease.id,
-            error: error instanceof Error ? (error as Error).message : 'Unknown error'
+            error: error instanceof Error ? (error).message : 'Unknown error'
           });
           
           results.push({
             leaseId: lease.id,
             leaseNumber: lease.leaseNumber,
             status: 'ERROR',
-            error: error instanceof Error ? (error as Error).message : 'Unknown error'
+            error: error instanceof Error ? (error).message : 'Unknown error'
           });
           
           errors++;
@@ -575,7 +575,7 @@ export class ComplianceService {
         }
 
         const currentRecord = currentRecords[0];
-        const lease = currentRecord.lease;
+        const {lease} = currentRecord;
 
         // Recalculate with new discount rate
         const leasePayments = this.generateLeasePaymentSchedule(lease);
@@ -797,7 +797,7 @@ export class ComplianceService {
     leaseLiability: number,
     monthlyDepreciation: number,
     leaseTermMonths: number
-  ): Array<any> {
+  ): any[] {
     const entries = [];
 
     // Initial recognition entry

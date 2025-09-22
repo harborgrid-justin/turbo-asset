@@ -112,7 +112,7 @@ router.get('/status', async (req, res) => {
     res.status(500).json({
       success: false,
       status: 'error',
-      error: error instanceof Error ? (error as Error).message : 'Unknown error'
+      error: error instanceof Error ? (error).message : 'Unknown error'
     });
 
     return;
@@ -203,7 +203,7 @@ router.post('/bulk-execute', async (req, res) => {
         results.push({
           operationId: operation.id || results.length + 1,
           success: false,
-          error: error instanceof Error ? (error as Error).message : 'Unknown error'
+          error: error instanceof Error ? (error).message : 'Unknown error'
         });
       }
     }
@@ -230,7 +230,7 @@ router.post('/bulk-execute', async (req, res) => {
     res.status(500).json({
       success: false,
       error: 'Bulk execution failed',
-      details: error instanceof Error ? (error as Error).message : 'Unknown error'
+      details: error instanceof Error ? (error).message : 'Unknown error'
     });
 
     return;

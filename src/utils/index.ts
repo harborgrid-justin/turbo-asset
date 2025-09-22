@@ -214,8 +214,8 @@ export class EnterpriseSystem {
       }
     };
 
-    process.on('SIGTERM', () => shutdownHandler('SIGTERM'));
-    process.on('SIGINT', () => shutdownHandler('SIGINT'));
+    process.on('SIGTERM', async () => await shutdownHandler('SIGTERM'));
+    process.on('SIGINT', async () => await shutdownHandler('SIGINT'));
 
     // Handle uncaught exceptions
     process.on('uncaughtException', (error) => {

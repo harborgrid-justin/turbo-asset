@@ -103,7 +103,7 @@ export class PortfolioMetricsService {
       });
 
       const trends = snapshots.map(snapshot => {
-        const kpiData = snapshot.kpis as any;
+        const kpiData = snapshot.kpis;
         const value = this.extractKPIValue(kpiData, kpiType);
         
         return {
@@ -588,23 +588,23 @@ export class PortfolioMetricsService {
 
   // Space utilization helper methods
   private async getTotalSpacesCount(organizationId: string): Promise<number> {
-    return prisma.space.count({ where: { organizationId } });
+    return await prisma.space.count({ where: { organizationId } });
   }
 
   private async getOccupiedSpacesCount(organizationId: string): Promise<number> {
-    return prisma.space.count({ 
+    return await prisma.space.count({ 
       where: { organizationId, status: 'OCCUPIED' } 
     });
   }
 
   private async getAvailableSpacesCount(organizationId: string): Promise<number> {
-    return prisma.space.count({ 
+    return await prisma.space.count({ 
       where: { organizationId, status: 'AVAILABLE' } 
     });
   }
 
   private async getUnderConstructionSpacesCount(organizationId: string): Promise<number> {
-    return prisma.space.count({ 
+    return await prisma.space.count({ 
       where: { organizationId, status: 'UNDER_CONSTRUCTION' } 
     });
   }
@@ -661,11 +661,11 @@ export class PortfolioMetricsService {
   // For brevity, I'll stop here but these would continue for all the metrics
 
   private async getTotalTenantsCount(organizationId: string): Promise<number> {
-    return prisma.tenant.count({ where: { organizationId } });
+    return await prisma.tenant.count({ where: { organizationId } });
   }
 
   private async getNewTenantsCount(organizationId: string, year: number): Promise<number> {
-    return prisma.tenant.count({
+    return await prisma.tenant.count({
       where: {
         organizationId,
         createdAt: {

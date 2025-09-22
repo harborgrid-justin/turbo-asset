@@ -10,8 +10,8 @@ import path from 'path';
  * consolidated code patterns and reduced redundancy.
  */
 export class SDKGeneratorService {
-  private schemaCache: Map<string, any> = new Map();
-  private generatedSDKs: Map<string, string> = new Map();
+  private readonly schemaCache: Map<string, any> = new Map();
+  private readonly generatedSDKs: Map<string, string> = new Map();
 
   /**
    * Generate SDK for specified language

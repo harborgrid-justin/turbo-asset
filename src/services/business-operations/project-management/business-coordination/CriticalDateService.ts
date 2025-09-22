@@ -23,11 +23,11 @@ import {
 } from './constants';
 
 export class CriticalDateService extends EventEmitter implements ICriticalDateService {
-  private cache = new Map<string, CriticalDate>();
-  private notificationScheduler = new Map<string, NodeJS.Timeout>();
+  private readonly cache = new Map<string, CriticalDate>();
+  private readonly notificationScheduler = new Map<string, NodeJS.Timeout>();
   private readonly cacheTTL = BUSINESS_OPERATIONS_CONFIG.CACHING.CRITICAL_DATE_CACHE_TTL * 1000;
 
-  constructor(private context: BusinessOperationsContext) {
+  constructor(private readonly context: BusinessOperationsContext) {
     super();
     logger.info('Critical Date Service initialized', {
       organizationId: context.organizationId,

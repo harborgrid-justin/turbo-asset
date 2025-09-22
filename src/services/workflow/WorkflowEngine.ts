@@ -5,7 +5,7 @@ import { NotificationService } from './NotificationService';
 import cron from 'node-cron';
 
 export class WorkflowEngine {
-  private notificationService: NotificationService;
+  private readonly notificationService: NotificationService;
 
   constructor() {
     this.notificationService = new NotificationService();
@@ -208,7 +208,7 @@ export class WorkflowEngine {
     if (roles.length > 0) {
       const usersByRole = await prisma.user.findMany({
         where: {
-          role: { in: roles as any },
+          role: { in: roles },
           isActive: true,
         },
       });
@@ -285,7 +285,7 @@ export class WorkflowEngine {
    * Move workflow to next step
    */
   private async moveToNextStep(instanceId: string, currentStep: WorkflowStep): Promise<void> {
-    const nextSteps = currentStep.nextSteps;
+    const {nextSteps} = currentStep;
     
     if (!nextSteps || nextSteps.length === 0) {
       // Workflow complete
@@ -619,7 +619,7 @@ export class WorkflowEngine {
         steps: template.steps.map(step => ({
           id: step.id,
           name: step.name,
-          type: step.type as any,
+          type: step.type,
           approvers: step.approvers,
           roles: step.roles,
           condition: step.condition,
@@ -738,12 +738,12 @@ export class WorkflowEngine {
 
       // Filter by entity ID in the data field
       const filteredInstances = instances.filter(instance => 
-        (instance.data as any)?.entityId === entityId
+        (instance.data)?.entityId === entityId
       );
 
       return filteredInstances.map(instance => ({
         instanceId: instance.id,
-        definitionName: (instance.definition as any).name,
+        definitionName: (instance.definition).name,
         status: instance.status,
         initiatedBy: instance.initiatedById,
         startedAt: instance.createdAt,

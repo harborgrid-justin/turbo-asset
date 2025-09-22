@@ -108,9 +108,9 @@ export interface GeofenceArea {
  * mobile capabilities with offline-first architecture
  */
 export class ProductionGradeMobileService {
-  private offlineQueue = new Map<string, OfflineAction[]>();
-  private geofences = new Map<string, GeofenceArea[]>();
-  private activeUsers = new Set<string>();
+  private readonly offlineQueue = new Map<string, OfflineAction[]>();
+  private readonly geofences = new Map<string, GeofenceArea[]>();
+  private readonly activeUsers = new Set<string>();
 
   /**
    * Register mobile user with device capabilities
@@ -479,7 +479,7 @@ export class ProductionGradeMobileService {
         userId,
         workOrderId,
         photoId: uploadResult.photoId,
-        aiDetectedIssues: aiAnalysis?.issues.length || 0
+        aiDetectedIssues: aiAnalysis.issues.length || 0
       });
 
       return {
@@ -552,11 +552,11 @@ export class ProductionGradeMobileService {
   private determineCapabilities(profile: MobileUserProfile): string[] {
     const capabilities = ['basic_sync', 'notifications'];
     
-    if (profile.capabilities.camera) capabilities.push('photo_capture', 'barcode_scanning');
-    if (profile.capabilities.gps) capabilities.push('location_tracking', 'geofencing');
-    if (profile.capabilities.biometric) capabilities.push('biometric_auth');
-    if (profile.capabilities.nfc) capabilities.push('nfc_tagging');
-    if (profile.capabilities.offline) capabilities.push('offline_mode', 'data_sync');
+    if (profile.capabilities.camera) {capabilities.push('photo_capture', 'barcode_scanning');}
+    if (profile.capabilities.gps) {capabilities.push('location_tracking', 'geofencing');}
+    if (profile.capabilities.biometric) {capabilities.push('biometric_auth');}
+    if (profile.capabilities.nfc) {capabilities.push('nfc_tagging');}
+    if (profile.capabilities.offline) {capabilities.push('offline_mode', 'data_sync');}
 
     return capabilities;
   }

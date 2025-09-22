@@ -112,12 +112,12 @@ export type FeatureStatus = 'ACTIVE' | 'INACTIVE' | 'MAINTENANCE' | 'DEPRECATED'
  */
 export class EnterpriseBusinessLogicService extends EventEmitter {
   private static instance: EnterpriseBusinessLogicService;
-  private features: Map<string, EnterpriseBusinessFeature> = new Map();
-  private bridges: Map<string, ProductionBusinessLogicBridge> = new Map();
+  private readonly features: Map<string, EnterpriseBusinessFeature> = new Map();
+  private readonly bridges: Map<string, ProductionBusinessLogicBridge> = new Map();
   private isInitialized = false;
 
   // Performance metrics
-  private metrics: BusinessMetrics = {
+  private readonly metrics: BusinessMetrics = {
     totalFeatures: 48,
     activeFeatures: 0,
     totalOperations: 0,
@@ -280,7 +280,7 @@ export class EnterpriseBusinessLogicService extends EventEmitter {
       }
     ];
 
-    features.forEach(feature => this.createEnterpriseFeature(feature, 'CORE_OPERATIONS'));
+    features.forEach(feature => { this.createEnterpriseFeature(feature, 'CORE_OPERATIONS'); });
   }
 
   /**
@@ -332,7 +332,7 @@ export class EnterpriseBusinessLogicService extends EventEmitter {
       }
     ];
 
-    features.forEach(feature => this.createEnterpriseFeature(feature, 'FINANCIAL_MANAGEMENT'));
+    features.forEach(feature => { this.createEnterpriseFeature(feature, 'FINANCIAL_MANAGEMENT'); });
   }
 
   /**
@@ -377,7 +377,7 @@ export class EnterpriseBusinessLogicService extends EventEmitter {
       }
     ];
 
-    features.forEach(feature => this.createEnterpriseFeature(feature, 'SPACE_MANAGEMENT'));
+    features.forEach(feature => { this.createEnterpriseFeature(feature, 'SPACE_MANAGEMENT'); });
   }
 
   /**
@@ -429,7 +429,7 @@ export class EnterpriseBusinessLogicService extends EventEmitter {
       }
     ];
 
-    features.forEach(feature => this.createEnterpriseFeature(feature, 'ASSET_OPERATIONS'));
+    features.forEach(feature => { this.createEnterpriseFeature(feature, 'ASSET_OPERATIONS'); });
   }
 
   /**
@@ -467,7 +467,7 @@ export class EnterpriseBusinessLogicService extends EventEmitter {
       }
     ];
 
-    features.forEach(feature => this.createEnterpriseFeature(feature, 'DOCUMENT_MANAGEMENT'));
+    features.forEach(feature => { this.createEnterpriseFeature(feature, 'DOCUMENT_MANAGEMENT'); });
   }
 
   /**
@@ -505,7 +505,7 @@ export class EnterpriseBusinessLogicService extends EventEmitter {
       }
     ];
 
-    features.forEach(feature => this.createEnterpriseFeature(feature, 'WORKFLOW_AUTOMATION'));
+    features.forEach(feature => { this.createEnterpriseFeature(feature, 'WORKFLOW_AUTOMATION'); });
   }
 
   /**
@@ -536,7 +536,7 @@ export class EnterpriseBusinessLogicService extends EventEmitter {
       }
     ];
 
-    features.forEach(feature => this.createEnterpriseFeature(feature, 'COMPLIANCE_GOVERNANCE'));
+    features.forEach(feature => { this.createEnterpriseFeature(feature, 'COMPLIANCE_GOVERNANCE'); });
   }
 
   private initializeAnalyticsReportingFeatures(): void {
@@ -564,7 +564,7 @@ export class EnterpriseBusinessLogicService extends EventEmitter {
       }
     ];
 
-    features.forEach(feature => this.createEnterpriseFeature(feature, 'ANALYTICS_REPORTING'));
+    features.forEach(feature => { this.createEnterpriseFeature(feature, 'ANALYTICS_REPORTING'); });
   }
 
   private initializeIntegrationConnectivityFeatures(): void {
@@ -592,7 +592,7 @@ export class EnterpriseBusinessLogicService extends EventEmitter {
       }
     ];
 
-    features.forEach(feature => this.createEnterpriseFeature(feature, 'INTEGRATION_CONNECTIVITY'));
+    features.forEach(feature => { this.createEnterpriseFeature(feature, 'INTEGRATION_CONNECTIVITY'); });
   }
 
   private initializeMobileExperienceFeatures(): void {
@@ -613,7 +613,7 @@ export class EnterpriseBusinessLogicService extends EventEmitter {
       }
     ];
 
-    features.forEach(feature => this.createEnterpriseFeature(feature, 'MOBILE_EXPERIENCE'));
+    features.forEach(feature => { this.createEnterpriseFeature(feature, 'MOBILE_EXPERIENCE'); });
   }
 
   private initializeAdvancedIntelligenceFeatures(): void {
@@ -634,7 +634,7 @@ export class EnterpriseBusinessLogicService extends EventEmitter {
       }
     ];
 
-    features.forEach(feature => this.createEnterpriseFeature(feature, 'ADVANCED_INTELLIGENCE'));
+    features.forEach(feature => { this.createEnterpriseFeature(feature, 'ADVANCED_INTELLIGENCE'); });
   }
 
   /**
@@ -763,7 +763,7 @@ export class EnterpriseBusinessLogicService extends EventEmitter {
     featureId: string, 
     operationName: string, 
     params: readonly unknown[] = [] // Critical fix: Replace any[] with readonly unknown[]
-  ): Promise<StandardResponse<unknown>> { // Critical fix: Replace any with unknown
+  ): Promise<StandardResponse> { // Critical fix: Replace any with unknown
     const startTime = Date.now();
     
     try {
@@ -1012,27 +1012,27 @@ export class EnterpriseBusinessLogicService extends EventEmitter {
     // Route to category-specific business logic
     switch (feature.category) {
       case 'CORE_OPERATIONS':
-        return this.executeCoreOperationsLogic(featureId, operationName, params);
+        return await this.executeCoreOperationsLogic(featureId, operationName, params);
       case 'FINANCIAL_MANAGEMENT':
-        return this.executeFinancialManagementLogic(featureId, operationName, params);
+        return await this.executeFinancialManagementLogic(featureId, operationName, params);
       case 'SPACE_MANAGEMENT':
-        return this.executeSpaceManagementLogic(featureId, operationName, params);
+        return await this.executeSpaceManagementLogic(featureId, operationName, params);
       case 'ASSET_OPERATIONS':
-        return this.executeAssetOperationsLogic(featureId, operationName, params);
+        return await this.executeAssetOperationsLogic(featureId, operationName, params);
       case 'DOCUMENT_MANAGEMENT':
-        return this.executeDocumentManagementLogic(featureId, operationName, params);
+        return await this.executeDocumentManagementLogic(featureId, operationName, params);
       case 'WORKFLOW_AUTOMATION':
-        return this.executeWorkflowAutomationLogic(featureId, operationName, params);
+        return await this.executeWorkflowAutomationLogic(featureId, operationName, params);
       case 'COMPLIANCE_GOVERNANCE':
-        return this.executeComplianceGovernanceLogic(featureId, operationName, params);
+        return await this.executeComplianceGovernanceLogic(featureId, operationName, params);
       case 'ANALYTICS_REPORTING':
-        return this.executeAnalyticsReportingLogic(featureId, operationName, params);
+        return await this.executeAnalyticsReportingLogic(featureId, operationName, params);
       case 'INTEGRATION_CONNECTIVITY':
-        return this.executeIntegrationConnectivityLogic(featureId, operationName, params);
+        return await this.executeIntegrationConnectivityLogic(featureId, operationName, params);
       case 'MOBILE_EXPERIENCE':
-        return this.executeMobileExperienceLogic(featureId, operationName, params);
+        return await this.executeMobileExperienceLogic(featureId, operationName, params);
       case 'ADVANCED_INTELLIGENCE':
-        return this.executeAdvancedIntelligenceLogic(featureId, operationName, params);
+        return await this.executeAdvancedIntelligenceLogic(featureId, operationName, params);
       default:
         return this.executeGenericBusinessLogic(featureId, operationName, params);
     }
@@ -1074,9 +1074,9 @@ export class EnterpriseBusinessLogicService extends EventEmitter {
    * Get performance rating based on response time
    */
   private getPerformanceRating(currentTime: number, averageTime: number): string {
-    if (currentTime < averageTime * 0.8) return 'EXCELLENT';
-    if (currentTime < averageTime * 1.2) return 'GOOD';
-    if (currentTime < averageTime * 1.5) return 'FAIR';
+    if (currentTime < averageTime * 0.8) {return 'EXCELLENT';}
+    if (currentTime < averageTime * 1.2) {return 'GOOD';}
+    if (currentTime < averageTime * 1.5) {return 'FAIR';}
     return 'POOR';
   }
 
@@ -1097,9 +1097,9 @@ export class EnterpriseBusinessLogicService extends EventEmitter {
   private async executeCoreOperationsLogic(featureId: string, operationName: string, params: any[]): Promise<any> {
     switch (featureId) {
       case 'capital-project-management':
-        return this.executeCapitalProjectLogic(operationName, params);
+        return await this.executeCapitalProjectLogic(operationName, params);
       case 'contract-lifecycle-management':
-        return this.executeContractLifecycleLogic(operationName, params);
+        return await this.executeContractLifecycleLogic(operationName, params);
       case 'vendor-broker-management':
         return this.executeVendorBrokerLogic(operationName, params);
       case 'lease-administration':
@@ -1107,9 +1107,9 @@ export class EnterpriseBusinessLogicService extends EventEmitter {
       case 'critical-date-management':
         return this.executeCriticalDateLogic(operationName, params);
       case 'cam-reconciliation':
-        return this.executeCAMReconciliationLogic(operationName, params);
+        return await this.executeCAMReconciliationLogic(operationName, params);
       case 'space-utilization-analytics':
-        return this.executeSpaceUtilizationLogic(operationName, params);
+        return await this.executeSpaceUtilizationLogic(operationName, params);
       case 'maintenance-operations':
         return this.executeMaintenanceOperationsLogic(operationName, params);
       default:
@@ -1123,7 +1123,7 @@ export class EnterpriseBusinessLogicService extends EventEmitter {
   private async executeFinancialManagementLogic(featureId: string, operationName: string, params: any[]): Promise<any> {
     switch (featureId) {
       case 'financial-consolidation':
-        return this.executeFinancialConsolidationLogic(operationName, params);
+        return await this.executeFinancialConsolidationLogic(operationName, params);
       case 'chargeback-allocation':
         return this.executeChargebackAllocationLogic(operationName, params);
       case 'financial-analytics':

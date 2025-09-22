@@ -25,10 +25,10 @@ import {
 } from './constants';
 
 export class ContractLifecycleService extends EventEmitter implements IContractLifecycleService {
-  private cache = new Map<string, Contract>();
+  private readonly cache = new Map<string, Contract>();
   private readonly cacheTTL = BUSINESS_OPERATIONS_CONFIG.CACHING.CONTRACT_CACHE_TTL * 1000;
 
-  constructor(private context: BusinessOperationsContext) {
+  constructor(private readonly context: BusinessOperationsContext) {
     super();
     logger.info('Contract Lifecycle Service initialized', {
       organizationId: context.organizationId,
@@ -761,7 +761,7 @@ export class ContractLifecycleService extends EventEmitter implements IContractL
   }
 
   private calculateNextReviewDate(contract: Contract): Date | null {
-    if (!contract.renewalTerms || !contract.renewalTerms.noticePeriod) {return null;}
+    if (!contract.renewalTerms?.noticePeriod) {return null;}
     
     const reviewDate = new Date(contract.expirationDate);
     if (contract.renewalTerms.noticePeriodUnit === 'DAYS') {

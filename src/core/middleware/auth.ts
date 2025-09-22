@@ -90,11 +90,11 @@ export const authenticate = (req: Request, res: Response, next: NextFunction): v
   const hasAPIKey = req.headers['x-api-key'];
 
   if (hasJWTToken) {
-    return authenticateJWT(req, res, next);
+    authenticateJWT(req, res, next); return;
   } else if (hasAPIKey) {
-    return authenticateAPIKey(req, res, next);
+    authenticateAPIKey(req, res, next); return;
   } else {
-    return next(new AuthenticationError('Authentication required. Provide either JWT token or API key.'));
+    next(new AuthenticationError('Authentication required. Provide either JWT token or API key.')); return;
   }
 };
 
@@ -106,7 +106,7 @@ export const optionalAuth = (req: Request, res: Response, next: NextFunction): v
   const hasAPIKey = req.headers['x-api-key'];
 
   if (hasJWTToken || hasAPIKey) {
-    return authenticate(req, res, next);
+    authenticate(req, res, next); return;
   } else {
     // No authentication provided, but that's okay
     next();
@@ -205,7 +205,7 @@ export const requireOrganizationAccess = (req: Request, res: Response, next: Nex
     }
 
     // Super admins can access any organization
-    const isSuperAdmin = req.user?.roles?.includes('super_admin');
+    const isSuperAdmin = req.user?.roles.includes('super_admin');
     
     if (userOrgId !== organizationId && !isSuperAdmin) {
       logger.warn('Organization access denied', {
@@ -246,7 +246,7 @@ export const requireResourceOwnership = (resourceIdParam: string = 'id') => {
       // This is a placeholder implementation
       const isOwner = true; // Mock ownership check
       
-      if (!isOwner && !req.user?.roles?.includes('super_admin')) {
+      if (!isOwner && !req.user?.roles.includes('super_admin')) {
         logger.warn('Resource ownership denied', {
           userId,
           resourceId,

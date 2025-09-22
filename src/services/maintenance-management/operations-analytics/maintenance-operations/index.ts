@@ -53,7 +53,7 @@ export interface MaintenanceSummary {
  * comprehensive maintenance operations management.
  */
 export class MaintenanceOperationsManager {
-  private workOrderService: WorkOrderManagementService;
+  private readonly workOrderService: WorkOrderManagementService;
 
   constructor() {
     // Initialize all sub-services
@@ -283,7 +283,7 @@ export class MaintenanceOperationsManager {
   private generateMaintenanceRecommendations(
     metrics: MaintenanceMetrics,
     analytics: any
-  ): Array<any> {
+  ): any[] {
     const recommendations = [];
 
     // Efficiency recommendations

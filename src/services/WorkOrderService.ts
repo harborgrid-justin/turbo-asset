@@ -543,7 +543,7 @@ export class WorkOrderService {
   }): Promise<any> {
     try {
       // Calculate hours worked if not provided
-      let hoursWorked = timeEntryData.hoursWorked;
+      let {hoursWorked} = timeEntryData;
       if (!hoursWorked && timeEntryData.endTime) {
         const timeDiff = timeEntryData.endTime.getTime() - timeEntryData.startTime.getTime();
         hoursWorked = timeDiff / (1000 * 60 * 60); // Convert to hours

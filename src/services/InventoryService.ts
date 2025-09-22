@@ -919,7 +919,7 @@ export class InventoryService {
             });
           }
         } catch (error: unknown) {
-          errors.push(`Item ${item.itemName}: ${error instanceof Error ? (error as Error).message : 'Unknown error'}`);
+          errors.push(`Item ${item.itemName}: ${error instanceof Error ? (error).message : 'Unknown error'}`);
         }
       }
 

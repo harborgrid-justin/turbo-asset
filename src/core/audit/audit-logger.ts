@@ -88,9 +88,9 @@ export class EnterpriseAuditLogger {
       id: this.generateEventId(),
       timestamp: new Date().toISOString(),
       correlationId: event.correlationId || createCorrelationId(),
-      eventType: event.eventType || AuditEventType.RECORD_READ,
-      severity: event.severity || AuditSeverity.LOW,
-      outcome: event.outcome || AuditOutcome.SUCCESS,
+      eventType: (event.eventType != null) || AuditEventType.RECORD_READ,
+      severity: (event.severity != null) || AuditSeverity.LOW,
+      outcome: (event.outcome != null) || AuditOutcome.SUCCESS,
       userId: event.userId,
       ipAddress: event.ipAddress || 'unknown',
       userAgent: event.userAgent,
@@ -201,7 +201,7 @@ export class EnterpriseAuditLogger {
  */
 export function createAuditMiddleware(auditLogger: EnterpriseAuditLogger) {
   return (req: Request, res: Response, next: NextFunction): void => {
-    const user = (req as any).user;
+    const {user} = (req as any);
     
     // Log sensitive operations
     if (req.method !== 'GET' || res.statusCode >= 400) {

@@ -115,10 +115,10 @@ export interface APIGatewayConfig {
 
 export class APIManagementService extends EventEmitter {
   private redis: any;
-  private apiKeysCache: Map<string, APIKey> = new Map();
-  private endpointsCache: Map<string, APIEndpoint> = new Map();
-  private rateLimitCache: Map<string, RateLimitStatus> = new Map();
-  private usageBuffer: any[] = [];
+  private readonly apiKeysCache: Map<string, APIKey> = new Map();
+  private readonly endpointsCache: Map<string, APIEndpoint> = new Map();
+  private readonly rateLimitCache: Map<string, RateLimitStatus> = new Map();
+  private readonly usageBuffer: any[] = [];
 
   constructor() {
     super();
@@ -254,7 +254,7 @@ export class APIManagementService extends EventEmitter {
 
       return null;
     } catch (error: unknown) {
-      logger.error('API key validation failed', { apiKey: apiKey.substring(0, 8) + '...', error });
+      logger.error('API key validation failed', { apiKey: `${apiKey.substring(0, 8)  }...`, error });
       return null;
     }
   }
@@ -307,7 +307,7 @@ export class APIManagementService extends EventEmitter {
 
       return status;
     } catch (error: unknown) {
-      logger.error('Rate limit check failed', { apiKey: apiKey.substring(0, 8) + '...', error });
+      logger.error('Rate limit check failed', { apiKey: `${apiKey.substring(0, 8)  }...`, error });
       throw error;
     }
   }
@@ -336,7 +336,7 @@ export class APIManagementService extends EventEmitter {
 
       await pipeline.exec();
     } catch (error: unknown) {
-      logger.error('Rate limit increment failed', { apiKey: apiKey.substring(0, 8) + '...', error });
+      logger.error('Rate limit increment failed', { apiKey: `${apiKey.substring(0, 8)  }...`, error });
     }
   }
 
@@ -398,7 +398,7 @@ export class APIManagementService extends EventEmitter {
 
       this.emit('api:request', usageRecord);
     } catch (error: unknown) {
-      logger.error('API usage logging failed', { apiKey: apiKey.substring(0, 8) + '...', error });
+      logger.error('API usage logging failed', { apiKey: `${apiKey.substring(0, 8)  }...`, error });
     }
   }
 
@@ -483,7 +483,7 @@ export class APIManagementService extends EventEmitter {
 
       return usage;
     } catch (error: unknown) {
-      logger.error('API key usage retrieval failed', { apiKey: apiKey.substring(0, 8) + '...', error });
+      logger.error('API key usage retrieval failed', { apiKey: `${apiKey.substring(0, 8)  }...`, error });
       throw error;
     }
   }
@@ -540,7 +540,7 @@ export class APIManagementService extends EventEmitter {
       );
     } catch (error: unknown) {
       logger.error('Endpoint permission check failed', {
-        apiKey: apiKey.substring(0, 8) + '...',
+        apiKey: `${apiKey.substring(0, 8)  }...`,
         method,
         path,
         error,
@@ -610,9 +610,9 @@ export class APIManagementService extends EventEmitter {
       this.apiKeysCache.delete(apiKey);
       this.rateLimitCache.delete(apiKey);
 
-      logger.info('API key revoked', { apiKey: apiKey.substring(0, 8) + '...' });
+      logger.info('API key revoked', { apiKey: `${apiKey.substring(0, 8)  }...` });
     } catch (error: unknown) {
-      logger.error('API key revocation failed', { apiKey: apiKey.substring(0, 8) + '...', error });
+      logger.error('API key revocation failed', { apiKey: `${apiKey.substring(0, 8)  }...`, error });
       throw error;
     }
   }

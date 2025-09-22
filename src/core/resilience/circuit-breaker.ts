@@ -304,13 +304,13 @@ export class EnterpriseCircuitBreaker<TResult = any> extends EventEmitter {
   }
 
   private calculateFailureRate(calls: CallRecord[]): number {
-    if (calls.length === 0) return 0;
+    if (calls.length === 0) {return 0;}
     const failures = calls.filter(call => !call.success).length;
     return (failures / calls.length) * 100;
   }
 
   private calculateSlowCallRate(calls: CallRecord[]): number {
-    if (calls.length === 0) return 0;
+    if (calls.length === 0) {return 0;}
     const slowCalls = calls.filter(call => call.slow).length;
     return (slowCalls / calls.length) * 100;
   }

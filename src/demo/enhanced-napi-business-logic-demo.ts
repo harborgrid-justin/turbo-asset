@@ -7,10 +7,10 @@ import { EventEmitter } from 'events';
 
 // Mock logger for demo
 const logger = {
-  info: (msg: string, meta?: any) => console.log(`INFO: ${msg}`, meta),
-  error: (msg: string, meta?: any) => console.error(`ERROR: ${msg}`, meta),
-  warn: (msg: string, meta?: any) => console.warn(`WARN: ${msg}`, meta),
-  debug: (msg: string, meta?: any) => console.debug(`DEBUG: ${msg}`, meta),
+  info: (msg: string, meta?: any) => { console.log(`INFO: ${msg}`, meta); },
+  error: (msg: string, meta?: any) => { console.error(`ERROR: ${msg}`, meta); },
+  warn: (msg: string, meta?: any) => { console.warn(`WARN: ${msg}`, meta); },
+  debug: (msg: string, meta?: any) => { console.debug(`DEBUG: ${msg}`, meta); },
 };
 
 // Enhanced interfaces for production-grade features
@@ -69,9 +69,9 @@ export interface ProductionMetrics {
  */
 export class EnhancedBusinessLogicIntegrationService extends EventEmitter {
   private static instance: EnhancedBusinessLogicIntegrationService;
-  private bridges: Map<string, ProductionBusinessLogicBridge> = new Map();
+  private readonly bridges: Map<string, ProductionBusinessLogicBridge> = new Map();
   private globalMetrics: ProductionMetrics;
-  private started: Date;
+  private readonly started: Date;
 
   private constructor() {
     super();

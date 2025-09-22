@@ -26,10 +26,10 @@ import {
 } from './constants';
 
 export class CAMReconciliationService extends EventEmitter implements ICAMReconciliationService {
-  private cache = new Map<string, CAMReconciliation>();
+  private readonly cache = new Map<string, CAMReconciliation>();
   private readonly cacheTTL = BUSINESS_OPERATIONS_CONFIG.CACHING.CAM_CACHE_TTL * 1000;
 
-  constructor(private context: BusinessOperationsContext) {
+  constructor(private readonly context: BusinessOperationsContext) {
     super();
     logger.info('CAM Reconciliation Service initialized', {
       organizationId: context.organizationId,
@@ -866,7 +866,7 @@ export class CAMReconciliationService extends EventEmitter implements ICAMReconc
         
         // Dispute Overview
         disputeOverview: {
-          totalDisputes: reconciliation.disputes?.length || 0,
+          totalDisputes: reconciliation.disputes.length || 0,
           activeDisputes: this.countActiveDisputes(reconciliation),
           resolvedDisputes: this.countResolvedDisputes(reconciliation),
           escalatedDisputes: this.countEscalatedDisputes(reconciliation),

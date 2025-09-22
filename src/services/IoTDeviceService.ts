@@ -289,17 +289,17 @@ export class IoTDeviceService {
           deviceId: device.id,
           assetId: assetId || device.assetId,
           monitoringType: this.determineMonitoringType(device.deviceType, device.sensorTypes),
-          overallCondition: analysis.overallCondition as any,
+          overallCondition: analysis.overallCondition,
           healthScore: analysis.healthScore,
           riskScore: analysis.riskScore,
-          trendDirection: analysis.trendDirection as any,
+          trendDirection: analysis.trendDirection,
           changeRate: analysis.changeRate,
           predictedFailureDate: analysis.predictedFailureDate,
           confidenceLevel: analysis.confidenceLevel,
           remainingUsefulLife: analysis.remainingUsefulLife,
-          alertLevel: analysis.alertLevel as any,
-          recommendedAction: analysis.recommendedAction as any,
-          urgencyLevel: analysis.urgencyLevel as any,
+          alertLevel: analysis.alertLevel,
+          recommendedAction: analysis.recommendedAction,
+          urgencyLevel: analysis.urgencyLevel,
           analysisMethod: analysis.analysisMethod,
           dataPoints: device.sensorReadings.length,
           anomalies: analysis.anomalies,
@@ -664,7 +664,7 @@ export class IoTDeviceService {
           processed++;
         } catch (error: unknown) {
           failed++;
-          errors.push(`Reading from ${reading.deviceId}: ${error instanceof Error ? (error as Error).message : 'Unknown error'}`);
+          errors.push(`Reading from ${reading.deviceId}: ${error instanceof Error ? (error).message : 'Unknown error'}`);
         }
       }
 

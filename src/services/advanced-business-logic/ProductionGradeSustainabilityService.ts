@@ -543,7 +543,7 @@ export class ProductionGradeSustainabilityService {
       
       // Update progress for each goal
       const updatedGoals = await Promise.all(
-        goals.map(goal => this.updateGoalProgress(goal, organizationId))
+        goals.map(async goal => await this.updateGoalProgress(goal, organizationId))
       );
       
       // Calculate overall progress
@@ -814,10 +814,10 @@ export class ProductionGradeSustainabilityService {
 
   private determineCertificationLevel(standard: string, score: number, maxScore: number): string {
     const percentage = (score / maxScore) * 100;
-    if (percentage >= 90) return 'Platinum';
-    if (percentage >= 80) return 'Gold';
-    if (percentage >= 60) return 'Silver';
-    if (percentage >= 50) return 'Certified';
+    if (percentage >= 90) {return 'Platinum';}
+    if (percentage >= 80) {return 'Gold';}
+    if (percentage >= 60) {return 'Silver';}
+    if (percentage >= 50) {return 'Certified';}
     return 'Not Certified';
   }
 

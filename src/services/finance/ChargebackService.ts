@@ -29,14 +29,14 @@ interface ChargebackReport {
     name: string;
     costCenter?: string;
   };
-  allocations: {
+  allocations: Array<{
     category: string;
     totalCost: number;
     allocatedCost: number;
     allocationBasis: number;
     method: string;
     spaces?: any[];
-  }[];
+  }>;
   totalAllocated: number;
   costPerSqFt?: number;
   costPerEmployee?: number;
@@ -150,7 +150,7 @@ export class ChargebackService {
           logger.error('Failed to process rule allocation', {
             ruleId: rule.id,
             ruleName: rule.name,
-            error: error instanceof Error ? (error as Error).message : 'Unknown error',
+            error: error instanceof Error ? (error).message : 'Unknown error',
           });
         }
       }
@@ -482,7 +482,7 @@ export class ChargebackService {
       const reports: ChargebackReport[] = [];
 
       for (const [deptId, deptAllocations] of departmentAllocations.entries()) {
-        const department = deptAllocations[0].department;
+        const {department} = deptAllocations[0];
         
         // Group allocations by category
         const categoryAllocations = new Map<string, any[]>();

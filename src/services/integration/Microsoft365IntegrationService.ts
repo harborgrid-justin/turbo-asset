@@ -58,10 +58,10 @@ export interface TeamsChannel {
 }
 
 export class Microsoft365IntegrationService {
-  private graphClient: AxiosInstance;
+  private readonly graphClient: AxiosInstance;
   private token: Microsoft365Token | null = null;
 
-  constructor(private config: Microsoft365Config) {
+  constructor(private readonly config: Microsoft365Config) {
     this.graphClient = axios.create({
       baseURL: 'https://graph.microsoft.com/v1.0',
       timeout: 30000,

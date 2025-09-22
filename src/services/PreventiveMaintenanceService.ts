@@ -319,15 +319,15 @@ export class PreventiveMaintenanceService {
       // Create work order
       const workOrder = await workOrderService.createWorkOrder({
         title: `PM: ${pm.title}`,
-        description: pm.description || `Preventive maintenance for ${pm.asset?.assetName}`,
+        description: pm.description || `Preventive maintenance for ${pm.asset.assetName}`,
         priority: pm.priority,
         type: 'PREVENTIVE',
         category: 'PREVENTIVE_MAINTENANCE',
         assetId: pm.assetId,
-        location: pm.asset?.location || 'Unknown',
-        building: pm.asset?.building,
-        floor: pm.asset?.floor,
-        room: pm.asset?.room,
+        location: pm.asset.location || 'Unknown',
+        building: pm.asset.building,
+        floor: pm.asset.floor,
+        room: pm.asset.room,
         requestedDate: new Date(),
         scheduledDate,
         dueDate: pm.nextDue,
@@ -857,7 +857,7 @@ export class PreventiveMaintenanceService {
           success++;
         } catch (error: unknown) {
           failed++;
-          errors.push(`PM ${pmId}: ${error instanceof Error ? (error as Error).message : 'Unknown error'}`);
+          errors.push(`PM ${pmId}: ${error instanceof Error ? (error).message : 'Unknown error'}`);
         }
       }
 

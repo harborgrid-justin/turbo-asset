@@ -73,7 +73,7 @@ router.get('/', async (req: Request, res: Response): Promise<void> => {
     logger.error('Failed to get properties', error);
     res.status(500).json({
       error: 'Failed to get properties',
-      message: error instanceof Error ? (error as Error).message : 'Unknown error',
+      message: error instanceof Error ? (error).message : 'Unknown error',
     });
 
     return;
@@ -135,7 +135,7 @@ router.get('/:id', async (req: Request, res: Response): Promise<void> => {
     logger.error('Failed to get property', error);
     res.status(500).json({
       error: 'Failed to get property',
-      message: error instanceof Error ? (error as Error).message : 'Unknown error',
+      message: error instanceof Error ? (error).message : 'Unknown error',
     });
 
     return;
@@ -237,7 +237,7 @@ router.post('/', async (req: Request, res: Response): Promise<void> => {
     logger.error('Failed to create property', error);
     res.status(500).json({
       error: 'Failed to create property',
-      message: error instanceof Error ? (error as Error).message : 'Unknown error',
+      message: error instanceof Error ? (error).message : 'Unknown error',
     });
 
     return;
@@ -347,7 +347,7 @@ router.put('/:id', async (req: Request, res: Response): Promise<void> => {
     logger.error('Failed to update property', error);
     res.status(500).json({
       error: 'Failed to update property',
-      message: error instanceof Error ? (error as Error).message : 'Unknown error',
+      message: error instanceof Error ? (error).message : 'Unknown error',
     });
 
     return;
@@ -391,7 +391,7 @@ router.delete('/:id', async (req: Request, res: Response): Promise<void> => {
     logger.error('Failed to delete property', error);
     res.status(500).json({
       error: 'Failed to delete property',
-      message: error instanceof Error ? (error as Error).message : 'Unknown error',
+      message: error instanceof Error ? (error).message : 'Unknown error',
     });
 
     return;

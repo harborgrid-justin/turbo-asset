@@ -50,7 +50,7 @@ export function withErrorHandling<T = unknown>(
         error: {
           code: 'INTERNAL_ERROR',
           message: 'An internal error occurred',
-          details: error instanceof Error ? (error as Error).message : 'Unknown error',
+          details: error instanceof Error ? (error).message : 'Unknown error',
           timestamp: new Date().toISOString(),
           requestId: req.headers['x-request-id'] as string
         }

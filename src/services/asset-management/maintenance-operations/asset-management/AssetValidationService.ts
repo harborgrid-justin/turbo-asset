@@ -370,7 +370,7 @@ export class AssetValidationService {
       errors.push(`Invalid criticality: ${assetData.criticality}`);
     }
 
-    if (assetData.depreciationMethod && 
+    if ((assetData.depreciationMethod != null) && 
         !Object.values(DepreciationMethod).includes(assetData.depreciationMethod as DepreciationMethod)) {
       errors.push(`Invalid depreciation method: ${assetData.depreciationMethod}`);
     }
@@ -390,7 +390,7 @@ export class AssetValidationService {
     }
 
     // Depreciation method requires purchase price and useful life
-    if (assetData.depreciationMethod && assetData.depreciationMethod !== DepreciationMethod.STRAIGHT_LINE) {
+    if ((assetData.depreciationMethod != null) && assetData.depreciationMethod !== DepreciationMethod.STRAIGHT_LINE) {
       if (!assetData.purchasePrice) {
         errors.push('Purchase price required for depreciation calculations');
       }
@@ -536,8 +536,7 @@ export class AssetValidationService {
           }
         }
 
-        if (assetSettings.restrictedCategories && 
-            assetSettings.restrictedCategories.includes(assetData.category)) {
+        if (assetSettings.restrictedCategories?.includes(assetData.category)) {
           errors.push(`Asset category '${assetData.category}' is restricted for this organization`);
         }
       }
@@ -559,7 +558,7 @@ export class AssetValidationService {
       select: { settings: true }
     });
 
-    const settings = organization?.settings as any;
+    const settings = organization?.settings;
     return settings?.assetManagement || {
       requiresPrefix: false,
       requiredPrefix: '',

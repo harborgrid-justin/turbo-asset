@@ -180,7 +180,7 @@ function extractRequestContext(req: Request): RequestContext {
     ip: req.ip,
     userAgent: req.get('User-Agent'),
     userId: authReq.user?.id,
-    organizationId: req.params?.organizationId,
+    organizationId: req.params.organizationId,
   };
 }
 
@@ -305,8 +305,8 @@ export const timeoutHandler = (timeoutMs: number = 30000) => {
       }
     }, timeoutMs);
 
-    res.on('finish', () => clearTimeout(timeout));
-    res.on('close', () => clearTimeout(timeout));
+    res.on('finish', () => { clearTimeout(timeout); });
+    res.on('close', () => { clearTimeout(timeout); });
     
     next();
   };

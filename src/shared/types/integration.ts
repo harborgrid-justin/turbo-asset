@@ -239,7 +239,7 @@ export interface APISchema {
   name: string;
   version: string;
   schema: Record<string, any>; // JSON Schema
-  examples?: Record<string, any>[];
+  examples?: Array<Record<string, any>>;
   documentation?: string;
 }
 

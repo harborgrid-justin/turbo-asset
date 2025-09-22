@@ -42,10 +42,10 @@ export interface BulkExportOptions {
 }
 
 export class BulkDataService {
-  private importQueue: Bull.Queue;
-  private exportQueue: Bull.Queue;
-  private customFieldService: CustomFieldService;
-  private i18nService: InternationalizationService;
+  private readonly importQueue: Bull.Queue;
+  private readonly exportQueue: Bull.Queue;
+  private readonly customFieldService: CustomFieldService;
+  private readonly i18nService: InternationalizationService;
 
   constructor() {
     this.importQueue = new Bull('bulk-import', { redis: redis as any });
@@ -80,7 +80,7 @@ export class BulkDataService {
       });
 
       return {
-        jobId: job.id!.toString(),
+        jobId: job.id.toString(),
         total: csvData.length,
         processed: 0,
         successful: 0,
@@ -119,7 +119,7 @@ export class BulkDataService {
       });
 
       return {
-        jobId: job.id!.toString(),
+        jobId: job.id.toString(),
         total: jsonData.length,
         processed: 0,
         successful: 0,
@@ -146,7 +146,7 @@ export class BulkDataService {
       });
 
       return {
-        jobId: job.id!.toString(),
+        jobId: job.id.toString(),
       };
     } catch (error: unknown) {
       logger.error('Failed to create export job', error);
@@ -201,11 +201,11 @@ export class BulkDataService {
    */
   private setupQueueProcessors(): void {
     this.importQueue.process('import', async (job) => {
-      return this.processImportJob(job.data);
+      return await this.processImportJob(job.data);
     });
 
     this.exportQueue.process('export', async (job) => {
-      return this.processExportJob(job.data);
+      return await this.processExportJob(job.data);
     });
 
     // Error handling
@@ -281,7 +281,7 @@ export class BulkDataService {
         result.failed++;
         result.errors.push({
           row: i + 1,
-          message: error instanceof Error ? (error as Error).message : 'Unknown error',
+          message: error instanceof Error ? (error).message : 'Unknown error',
           data: row,
         });
       }

@@ -74,11 +74,11 @@ export interface SustainabilityMetricData {
 }
 
 export class EnergyManagementService extends EventEmitter {
-  private meterCache: Map<string, EnergyMeter> = new Map();
-  private readingsCache: Map<string, EnergyReading[]> = new Map();
-  private metricsCache: Map<string, SustainabilityMetrics[]> = new Map();
+  private readonly meterCache: Map<string, EnergyMeter> = new Map();
+  private readonly readingsCache: Map<string, EnergyReading[]> = new Map();
+  private readonly metricsCache: Map<string, SustainabilityMetrics[]> = new Map();
 
-  constructor(private context?: InfrastructureContext) {
+  constructor(private readonly context?: InfrastructureContext) {
     super();
     this.setupCacheManagement();
     logger.info('Energy Management Service initialized');
@@ -185,8 +185,8 @@ export class EnergyManagementService extends EventEmitter {
           meterId: readingData.meterId,
           readingDate: readingData.readingDate,
           reading: readingData.reading,
-          previousReading: previousReading,
-          consumption: consumption,
+          previousReading,
+          consumption,
           readingType: readingData.readingType as any,
           readingMethod: readingData.readingMethod as any,
           rate: readingData.rate,
@@ -271,9 +271,9 @@ export class EnergyManagementService extends EventEmitter {
           baseline: metricData.baseline,
           target: metricData.target,
           benchmarkValue: metricData.benchmarkValue,
-          percentageChange: percentageChange,
+          percentageChange,
           trendDirection: trendDirection as any,
-          carbonFootprint: carbonFootprint,
+          carbonFootprint,
           certifications: metricData.certifications || [],
         },
       });
@@ -345,7 +345,7 @@ export class EnergyManagementService extends EventEmitter {
 
       // Group by utility type
       const byUtilityType = consumptionData.reduce((acc, reading) => {
-        const utilityType = reading.meter.utilityType;
+        const {utilityType} = reading.meter;
         if (!acc[utilityType]) {
           acc[utilityType] = { consumption: 0, cost: 0, readings: 0 };
         }

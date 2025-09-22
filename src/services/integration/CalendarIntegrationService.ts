@@ -33,8 +33,8 @@ interface UserCalendarAuth {
 }
 
 export class CalendarIntegrationService {
-  private outlookClient: AxiosInstance;
-  private googleClient: AxiosInstance;
+  private readonly outlookClient: AxiosInstance;
+  private readonly googleClient: AxiosInstance;
 
   constructor() {
     // Initialize Outlook Graph API client
@@ -209,7 +209,7 @@ export class CalendarIntegrationService {
             logger.error('Failed to sync booking to calendar', { 
               userId: user.id, 
               provider: auth.provider,
-              error: error instanceof Error ? (error as Error).message : 'Unknown error'
+              error: error instanceof Error ? (error).message : 'Unknown error'
             });
           }
         }
@@ -439,7 +439,7 @@ export class CalendarIntegrationService {
           logger.error('Failed to get free/busy data', {
             userId,
             provider: auth.provider,
-            error: error instanceof Error ? (error as Error).message : 'Unknown error',
+            error: error instanceof Error ? (error).message : 'Unknown error',
           });
         }
       }
@@ -491,7 +491,7 @@ export class CalendarIntegrationService {
         const batch = bookings.slice(i, i + batchSize);
         
         await Promise.allSettled(
-          batch.map((booking: any) => this.syncBookingToCalendar(booking.id))
+          batch.map(async (booking: any) => { await this.syncBookingToCalendar(booking.id); })
         );
 
         // Small delay between batches to avoid rate limiting

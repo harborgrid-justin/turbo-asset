@@ -654,7 +654,7 @@ export class SpaceStandardsComplianceService {
     const nonCompliantByCategory = assessments
       .filter(a => a.complianceStatus === 'NON_COMPLIANT')
       .reduce((acc, assessment) => {
-        const category = assessment.standard.category;
+        const {category} = assessment.standard;
         if (!acc[category]) {
           acc[category] = [];
         }

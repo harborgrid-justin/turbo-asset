@@ -25,10 +25,10 @@ import {
 } from './constants';
 
 export class LeaseManagementService extends EventEmitter implements ILeaseManagementService {
-  private cache = new Map<string, Lease>();
+  private readonly cache = new Map<string, Lease>();
   private readonly cacheTTL = BUSINESS_OPERATIONS_CONFIG.CACHING.LEASE_CACHE_TTL * 1000;
 
-  constructor(private context: BusinessOperationsContext) {
+  constructor(private readonly context: BusinessOperationsContext) {
     super();
     logger.info('Lease Management Service initialized', {
       organizationId: context.organizationId,
@@ -261,7 +261,7 @@ export class LeaseManagementService extends EventEmitter implements ILeaseManage
         throw new Error('Lease not found');
       }
 
-      const rentSchedule = lease.rentDetails.rentSchedule;
+      const {rentSchedule} = lease.rentDetails;
       const applicableSchedule = rentSchedule.find(schedule =>
         date >= schedule.startDate && date <= schedule.endDate
       );
@@ -921,7 +921,7 @@ export class LeaseManagementService extends EventEmitter implements ILeaseManage
   }
 
   private calculateEscalationRate(lease: Lease): number {
-    const escalations = lease.rentDetails.escalations;
+    const {escalations} = lease.rentDetails;
     if (escalations.length === 0) {return 0;}
     
     const totalEscalation = escalations.reduce((sum, esc) => sum + esc.value, 0);

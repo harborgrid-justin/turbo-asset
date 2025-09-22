@@ -32,7 +32,7 @@ export interface HealthChecker {
 }
 
 export class HealthController {
-  private checkers: Map<string, HealthChecker> = new Map();
+  private readonly checkers: Map<string, HealthChecker> = new Map();
   private readonly startTime = Date.now();
   private readonly config = getEnvironmentConfig();
 
@@ -60,7 +60,7 @@ export class HealthController {
   public async performHealthChecks(): Promise<HealthCheckResult> {
     const startTime = Date.now();
     const checks: Record<string, CheckResult> = {};
-    const promises: Promise<void>[] = [];
+    const promises: Array<Promise<void>> = [];
 
     for (const [name, checker] of this.checkers) {
       const promise = this.executeChecker(name, checker)

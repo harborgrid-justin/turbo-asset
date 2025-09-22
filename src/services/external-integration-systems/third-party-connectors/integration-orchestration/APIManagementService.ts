@@ -109,13 +109,13 @@ export interface IntegrationContext {
 }
 
 export class APIManagementService extends EventEmitter {
-  private endpoints: Map<string, APIEndpoint> = new Map();
-  private apiKeys: Map<string, APIKey> = new Map();
+  private readonly endpoints: Map<string, APIEndpoint> = new Map();
+  private readonly apiKeys: Map<string, APIKey> = new Map();
   private metricsBuffer: APIMetrics[] = [];
-  private rateLimitCache: Map<string, { count: number; resetTime: Date }> = new Map();
-  private documentationCache: Map<string, any> = new Map();
+  private readonly rateLimitCache: Map<string, { count: number; resetTime: Date }> = new Map();
+  private readonly documentationCache: Map<string, any> = new Map();
 
-  constructor(private context?: IntegrationContext) {
+  constructor(private readonly context?: IntegrationContext) {
     super();
     this.setupMetricsFlush();
     this.setupRateLimitCleanup();
@@ -173,7 +173,7 @@ export class APIManagementService extends EventEmitter {
       logger.error('Failed to create API endpoint', {
         path: endpointData.path,
         method: endpointData.method,
-        error: error instanceof Error ? (error as Error).message : 'Unknown error'
+        error: error instanceof Error ? (error).message : 'Unknown error'
       });
       throw error;
     }
@@ -293,7 +293,7 @@ export class APIManagementService extends EventEmitter {
     } catch (error: unknown) {
       logger.error('Failed to create API key', {
         keyName: keyData.name,
-        error: error instanceof Error ? (error as Error).message : 'Unknown error'
+        error: error instanceof Error ? (error).message : 'Unknown error'
       });
       throw error;
     }
@@ -791,7 +791,7 @@ export class APIManagementService extends EventEmitter {
 
   async exportConfiguration(): Promise<{
     endpoints: APIEndpoint[];
-    apiKeys: Omit<APIKey, 'key'>[];
+    apiKeys: Array<Omit<APIKey, 'key'>>;
     version: string;
     exportedAt: Date;
   }> {

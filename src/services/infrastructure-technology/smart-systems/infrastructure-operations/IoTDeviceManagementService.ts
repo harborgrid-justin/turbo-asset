@@ -71,11 +71,11 @@ export interface ConditionMonitoringData {
 }
 
 export class IoTDeviceManagementService extends EventEmitter {
-  private deviceCache: Map<string, IoTDevice> = new Map();
-  private readingsCache: Map<string, SensorReading[]> = new Map();
-  private conditionCache: Map<string, ConditionMonitoring> = new Map();
+  private readonly deviceCache: Map<string, IoTDevice> = new Map();
+  private readonly readingsCache: Map<string, SensorReading[]> = new Map();
+  private readonly conditionCache: Map<string, ConditionMonitoring> = new Map();
 
-  constructor(private context?: InfrastructureContext) {
+  constructor(private readonly context?: InfrastructureContext) {
     super();
     this.setupCacheManagement();
     logger.info('IoT Device Management Service initialized');
@@ -181,7 +181,7 @@ export class IoTDeviceManagementService extends EventEmitter {
           calibrationOffset: readingData.calibrationOffset,
           temperature: readingData.temperature,
           humidity: readingData.humidity,
-          quality: quality,
+          quality,
           timestamp: new Date(),
         },
       });
@@ -399,8 +399,8 @@ export class IoTDeviceManagementService extends EventEmitter {
         alertsCritical: criticalAlerts,
         averageBatteryLevel: avgBatteryLevel,
         averageSignalStrength: avgSignalStrength,
-        dataQualityScore: dataQualityScore,
-        uptimePercentage: uptimePercentage,
+        dataQualityScore,
+        uptimePercentage,
       };
 
       logger.debug(`IoT metrics calculated for organization: ${organizationId}`);

@@ -176,8 +176,8 @@ export class BudgetForecastService {
       });
 
       // Create budget line items
-      const lineItemPromises = data.lineItems.map((item, index) => {
-        return prisma.budgetLineItem.create({
+      const lineItemPromises = data.lineItems.map(async (item, index) => {
+        return await prisma.budgetLineItem.create({
           data: {
             budgetId: budget.id,
             lineNumber: index + 1,
@@ -607,7 +607,7 @@ export class BudgetForecastService {
             logger.error('Failed to generate forecast', {
               period,
               method,
-              error: error instanceof Error ? (error as Error).message : 'Unknown error'
+              error: error instanceof Error ? (error).message : 'Unknown error'
             });
           }
         }

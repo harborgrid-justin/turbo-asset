@@ -31,7 +31,7 @@ export class APIManagementController {
       // Remove sensitive data from response
       const sanitizedKeys = apiKeys.map(key => ({
         ...key,
-        apiKey: key.apiKey.substring(0, 8) + '...',
+        apiKey: `${key.apiKey.substring(0, 8)  }...`,
       }));
 
       res.json({
@@ -110,7 +110,7 @@ export class APIManagementController {
 
       res.json({
         ...apiKey,
-        apiKey: apiKey.apiKey.substring(0, 8) + '...',
+        apiKey: `${apiKey.apiKey.substring(0, 8)  }...`,
       });
     } catch (error: unknown) {
       logger.error('Failed to update API key', { error });
@@ -342,7 +342,7 @@ export class APIManagementController {
             }
             return acc;
           }, {} as Record<string, number>)
-        ).sort(([, a], [, b]) => (b as number) - (a as number)).slice(0, 10),
+        ).sort(([, a], [, b]) => (b) - (a)).slice(0, 10),
       };
 
       res.json(analytics);
@@ -479,7 +479,7 @@ export class APIManagementController {
           return acc;
         }, {} as Record<string, number>),
         errorsByApiKey: errors.reduce((acc, error) => {
-          const keyPrefix = error.apiKey.substring(0, 8) + '...';
+          const keyPrefix = `${error.apiKey.substring(0, 8)  }...`;
           acc[keyPrefix] = (acc[keyPrefix] || 0) + 1;
           return acc;
         }, {} as Record<string, number>),
@@ -493,7 +493,7 @@ export class APIManagementController {
             acc[error.endpoint] = (acc[error.endpoint] || 0) + 1;
             return acc;
           }, {} as Record<string, number>)
-        ).sort(([, a], [, b]) => (b as number) - (a as number)).slice(0, 10),
+        ).sort(([, a], [, b]) => (b) - (a)).slice(0, 10),
       };
 
       res.json(analysis);

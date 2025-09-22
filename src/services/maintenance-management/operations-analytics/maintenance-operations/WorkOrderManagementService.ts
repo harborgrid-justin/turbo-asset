@@ -332,7 +332,7 @@ export class WorkOrderManagementService {
 
       const workOrdersWithCostEstimates = workOrders.filter(wo => wo.estimatedCost && wo.actualCost);
       const plannedVsActualCost = workOrdersWithCostEstimates.length > 0
-        ? (workOrdersWithCostEstimates.reduce((sum, wo) => sum + (wo.estimatedCost! / wo.actualCost!), 0) / workOrdersWithCostEstimates.length) * 100
+        ? (workOrdersWithCostEstimates.reduce((sum, wo) => sum + (wo.estimatedCost! / wo.actualCost), 0) / workOrdersWithCostEstimates.length) * 100
         : 100;
 
       const firstTimeFixRate = this.calculateFirstTimeFixRate(workOrders);

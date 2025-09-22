@@ -471,13 +471,13 @@ export class FinancialConsolidationService {
     // Apply account mapping before aggregation
     statements.forEach(statement => {
       statement.lineItems.forEach((lineItem: any) => {
-        if (rule.mappingRules && rule.mappingRules[lineItem.accountCode]) {
+        if (rule.mappingRules?.[lineItem.accountCode]) {
           lineItem.accountCode = rule.mappingRules[lineItem.accountCode];
         }
       });
     });
 
-    return this.performAggregation(statements, rule);
+    return await this.performAggregation(statements, rule);
   }
 
   /**

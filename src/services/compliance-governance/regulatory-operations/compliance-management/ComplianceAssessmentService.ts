@@ -117,10 +117,10 @@ export interface JournalEntryTemplate {
  * Migrated from legacy ComplianceService with enhanced domain architecture
  */
 export class ComplianceAssessmentService extends EventEmitter {
-  private complianceCache: Map<string, ComplianceAssessment> = new Map();
-  private context?: ComplianceContext;
+  private readonly complianceCache: Map<string, ComplianceAssessment> = new Map();
+  private readonly context?: ComplianceContext;
   
-  private journalEntryTemplates: Map<string, JournalEntryTemplate> = new Map([
+  private readonly journalEntryTemplates: Map<string, JournalEntryTemplate> = new Map([
     ['INITIAL_RECOGNITION', {
       entryType: 'INITIAL_RECOGNITION',
       description: 'Initial recognition of lease liability and ROU asset',
@@ -334,7 +334,7 @@ export class ComplianceAssessmentService extends EventEmitter {
     leaseLiability: number,
     monthlyDepreciation: number,
     leaseTermMonths: number
-  ): Array<any> {
+  ): any[] {
     const entries = [];
     
     // Initial recognition entry

@@ -379,7 +379,7 @@ export class ProductionGradeAnalyticsService {
 
   // Additional helper methods would be implemented here...
   private calculatePaymentReliability(paymentHistory: Array<{ paidOnTime: boolean }> | null): number {
-    if (!paymentHistory || paymentHistory.length === 0) return 0.5;
+    if (!paymentHistory || paymentHistory.length === 0) {return 0.5;}
     
     const onTimePayments = paymentHistory.filter(p => p.paidOnTime).length;
     return onTimePayments / paymentHistory.length;

@@ -55,7 +55,7 @@ export interface AcousticSpec {
   speechPrivacyClass: 'CONFIDENTIAL' | 'NORMAL' | 'PUBLIC';
   soundMasking: boolean;
   speechIntelligibilityIndex: number;
-  reverberation: { frequency: number; rt60: number }[];
+  reverberation: Array<{ frequency: number; rt60: number }>;
 }
 
 export interface AccessibilityFeature {
@@ -143,7 +143,7 @@ export interface CirculationPath {
   type: 'PRIMARY' | 'SECONDARY' | 'EMERGENCY';
   width: number;
   accessibility: boolean;
-  waypoints: { x: number; y: number }[];
+  waypoints: Array<{ x: number; y: number }>;
 }
 
 export interface TemplateVariant {

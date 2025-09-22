@@ -664,9 +664,9 @@ export class SentimentAnalysisService extends EventEmitter {
   ): Promise<DetailedSentiment> {
     // Use workplace sentiment model if available, otherwise fallback to NLP service
     if (this.workplaceSentimentModel) {
-      return this.performMLSentimentAnalysis(content, source, language, employeeContext);
+      return await this.performMLSentimentAnalysis(content, source, language, employeeContext);
     } else {
-      return this.performBasicSentimentAnalysis(content, language);
+      return await this.performBasicSentimentAnalysis(content, language);
     }
   }
 
@@ -713,7 +713,7 @@ export class SentimentAnalysisService extends EventEmitter {
 
     } catch (error: unknown) {
       logger.warn('ML sentiment analysis failed, using fallback', error);
-      return this.performBasicSentimentAnalysis(content, language);
+      return await this.performBasicSentimentAnalysis(content, language);
     }
   }
 
@@ -968,7 +968,7 @@ export class SentimentAnalysisService extends EventEmitter {
         feedback.topics[0] || { topic: 'general', relevance: 0, keywords: [], category: 'GENERAL' }
       );
       
-      const category = dominantTopic.category;
+      const {category} = dominantTopic;
       if (!topicGroups[category]) {
         topicGroups[category] = [];
       }

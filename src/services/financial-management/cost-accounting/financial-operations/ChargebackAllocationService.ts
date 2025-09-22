@@ -29,14 +29,14 @@ interface ChargebackReport {
     name: string;
     costCenter?: string;
   };
-  allocations: {
+  allocations: Array<{
     category: string;
     totalCost: number;
     allocatedCost: number;
     allocationBasis: number;
     method: string;
     spaces?: any[];
-  }[];
+  }>;
   totalAllocated: number;
   costPerSqFt?: number;
   costPerEmployee?: number;
@@ -277,13 +277,13 @@ export class ChargebackAllocationService {
   ): Promise<any[]> {
     switch (allocationMethod) {
       case 'SQUARE_FOOTAGE':
-        return this.getSpaceAllocationBasis(organizationId, spaceId);
+        return await this.getSpaceAllocationBasis(organizationId, spaceId);
       case 'EMPLOYEE_COUNT':
-        return this.getEmployeeAllocationBasis(organizationId, departmentId);
+        return await this.getEmployeeAllocationBasis(organizationId, departmentId);
       case 'EQUAL_SPLIT':
-        return this.getEqualSplitBasis(organizationId, departmentId);
+        return await this.getEqualSplitBasis(organizationId, departmentId);
       case 'USAGE_BASED':
-        return this.getUsageAllocationBasis(organizationId, spaceId);
+        return await this.getUsageAllocationBasis(organizationId, spaceId);
       default:
         throw new Error(`Unsupported allocation method: ${allocationMethod}`);
     }

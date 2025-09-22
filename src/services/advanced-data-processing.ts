@@ -103,9 +103,9 @@ export interface RealTimeValidationResult {
  */
 export class AdvancedDataProcessingEngine {
   private static instance: AdvancedDataProcessingEngine;
-  private streamConfigs: Map<string, DataStreamConfig> = new Map();
-  private dataLineage: DataLineageEntry[] = [];
-  private organizationSchemas: Map<string, Map<string, any>> = new Map();
+  private readonly streamConfigs: Map<string, DataStreamConfig> = new Map();
+  private readonly dataLineage: DataLineageEntry[] = [];
+  private readonly organizationSchemas: Map<string, Map<string, any>> = new Map();
   
   static getInstance(): AdvancedDataProcessingEngine {
     if (!AdvancedDataProcessingEngine.instance) {
@@ -263,7 +263,7 @@ export class AdvancedDataProcessingEngine {
       } catch (error: unknown) {
         errors.push({
           recordId: record.id || 'unknown',
-          error: error instanceof Error ? (error as Error).message : 'Unknown processing error'
+          error: error instanceof Error ? (error).message : 'Unknown processing error'
         });
       }
     }
@@ -487,7 +487,7 @@ export class AdvancedDataProcessingEngine {
     const errors: string[] = [];
     
     // Validate schema
-    if (!config.schema || !config.schema.version || !config.schema.fields) {
+    if (!config.schema.version || !config.schema.fields) {
       errors.push('Schema must have version and fields');
     }
     
@@ -565,7 +565,7 @@ export class AdvancedDataProcessingEngine {
 
   private async validateRecord(record: any, config: DataStreamConfig): Promise<RealTimeValidationResult> {
     // This would call the real-time validation method
-    return this.validateRealTime(record, config.schema.version, config.organizationId);
+    return await this.validateRealTime(record, config.schema.version, config.organizationId);
   }
 
   private async enrichRecord(record: any, config: DataStreamConfig, organizationId: string): Promise<any> {
@@ -741,7 +741,7 @@ export class AdvancedDataProcessingEngine {
       'elevator': 'Elevator',
       'electrical': 'Electrical'
     };
-    return typeMap[type?.toLowerCase()] || type;
+    return typeMap[type.toLowerCase()] || type;
   }
 
   private standardizeStatus(status: string): string {
@@ -751,7 +751,7 @@ export class AdvancedDataProcessingEngine {
       'maintenance': 'Under Maintenance',
       'retired': 'Retired'
     };
-    return statusMap[status?.toLowerCase()] || status;
+    return statusMap[status.toLowerCase()] || status;
   }
 
   private standardizeUnit(unit: string): string {
@@ -763,7 +763,7 @@ export class AdvancedDataProcessingEngine {
       'psi': 'PSI',
       'kpa': 'kPa'
     };
-    return unitMap[unit?.toLowerCase()] || unit;
+    return unitMap[unit.toLowerCase()] || unit;
   }
 
   private standardizeNumericValue(value: any): number | null {
@@ -786,7 +786,7 @@ export class AdvancedDataProcessingEngine {
   }
 
   private standardizeCurrencyCode(currency: string): string {
-    return currency?.toUpperCase() || 'USD';
+    return currency.toUpperCase() || 'USD';
   }
 
   // Quality metric calculations

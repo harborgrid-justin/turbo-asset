@@ -484,8 +484,8 @@ export class ComputerVisionService extends EventEmitter {
         const chunks = this.chunkArray(images, maxConcurrency);
         
         for (const chunk of chunks) {
-          const chunkPromises = chunk.map(image => 
-            this.assessFacilityCondition(image.facilityId, image.imageData, {
+          const chunkPromises = chunk.map(async image => 
+            await this.assessFacilityCondition(image.facilityId, image.imageData, {
               metadata: image.metadata,
               includeDetailedAnalysis: false,
               generateReport: false
@@ -1079,7 +1079,7 @@ export class ComputerVisionService extends EventEmitter {
   }
 
   private async simulateDelay(ms: number): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    await new Promise(resolve => setTimeout(resolve, ms));
   }
 
   private generateAssessmentId(): string {

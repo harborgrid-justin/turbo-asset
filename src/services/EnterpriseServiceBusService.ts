@@ -62,9 +62,9 @@ export class EnterpriseServiceBusService extends EventEmitter {
   private deadLetterQueue: Queue;
   private processingQueue: Queue;
   private redis: any;
-  private endpoints: Map<string, IntegrationEndpoint> = new Map();
-  private flows: Map<string, ESBFlow> = new Map();
-  private transformations: Map<string, MessageTransformation> = new Map();
+  private readonly endpoints: Map<string, IntegrationEndpoint> = new Map();
+  private readonly flows: Map<string, ESBFlow> = new Map();
+  private readonly transformations: Map<string, MessageTransformation> = new Map();
 
   constructor() {
     super();
@@ -124,37 +124,37 @@ export class EnterpriseServiceBusService extends EventEmitter {
   private setupQueueProcessors(): void {
     // Point-to-point message processor
     this.messageQueue.process('point-to-point', async (job: Job<ESBMessage>) => {
-      return this.processPointToPointMessage(job.data);
+      await this.processPointToPointMessage(job.data);
     });
 
     // Publish-subscribe processor
     this.messageQueue.process('publish-subscribe', async (job: Job<ESBMessage>) => {
-      return this.processPublishSubscribeMessage(job.data);
+      await this.processPublishSubscribeMessage(job.data);
     });
 
     // Request-reply processor
     this.messageQueue.process('request-reply', async (job: Job<ESBMessage>) => {
-      return this.processRequestReplyMessage(job.data);
+      await this.processRequestReplyMessage(job.data);
     });
 
     // Message routing processor
     this.messageQueue.process('message-routing', async (job: Job<ESBMessage>) => {
-      return this.processMessageRouting(job.data);
+      await this.processMessageRouting(job.data);
     });
 
     // Content-based routing processor
     this.messageQueue.process('content-routing', async (job: Job<ESBMessage>) => {
-      return this.processContentBasedRouting(job.data);
+      await this.processContentBasedRouting(job.data);
     });
 
     // Message transformation processor
-    this.processingQueue.process('transform', async (job: Job<any>) => {
-      return this.processMessageTransformation(job.data);
+    this.processingQueue.process('transform', async (job: Job) => {
+      return await this.processMessageTransformation(job.data);
     });
 
     // Dead letter queue processor
     this.deadLetterQueue.process('retry', async (job: Job<ESBMessage>) => {
-      return this.processDeadLetterMessage(job.data);
+      await this.processDeadLetterMessage(job.data);
     });
   }
 
@@ -519,7 +519,7 @@ export class EnterpriseServiceBusService extends EventEmitter {
       endpoint,
     });
 
-    return transformationJob.finished();
+    return await transformationJob.finished();
   }
 
   /**

@@ -265,7 +265,7 @@ export class EnterprisePerformanceMonitor extends EventEmitter {
     let output = '';
     
     for (const [name, metricArray] of this.metrics) {
-      if (metricArray.length === 0) continue;
+      if (metricArray.length === 0) {continue;}
       
       const latest = metricArray[metricArray.length - 1];
       

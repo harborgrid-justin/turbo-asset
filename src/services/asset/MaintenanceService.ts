@@ -702,7 +702,7 @@ export class MaintenanceService {
             success++;
           } catch (error: unknown) {
             failed++;
-            errors.push(`Asset ${update.assetId}: ${error instanceof Error ? (error as Error).message : 'Unknown error'}`);
+            errors.push(`Asset ${update.assetId}: ${error instanceof Error ? (error).message : 'Unknown error'}`);
           }
         });
 
@@ -762,7 +762,7 @@ export class MaintenanceService {
       const costByCategory: { [category: string]: number } = {};
       workOrders.forEach((wo) => {
         if (wo.asset) {
-          const category = wo.asset.category;
+          const {category} = wo.asset;
           costByCategory[category] = (costByCategory[category] || 0) + wo.actualCost;
         }
       });
@@ -771,7 +771,7 @@ export class MaintenanceService {
       const costByCriticality: { [criticality: string]: number } = {};
       workOrders.forEach((wo) => {
         if (wo.asset) {
-          const criticality = wo.asset.criticality;
+          const {criticality} = wo.asset;
           costByCriticality[criticality] = (costByCriticality[criticality] || 0) + wo.actualCost;
         }
       });
@@ -849,7 +849,7 @@ export class MaintenanceService {
       const workOrderPromises = urgentIssues.map(async (issue, index) => {
         const workOrderNumber = `URGENT-${assetId}-${Date.now()}-${index}`;
         
-        return prisma.workOrder.create({
+        return await prisma.workOrder.create({
           data: {
             workOrderNumber,
             title: `Urgent Issue: ${issue}`,

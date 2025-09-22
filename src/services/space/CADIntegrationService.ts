@@ -45,7 +45,7 @@ interface CADCoordinateMapping {
 
 interface SpaceMapping {
   spaceId: string;
-  cadBoundary: { x: number; y: number }[];
+  cadBoundary: Array<{ x: number; y: number }>;
   area: number;
   spaceType: string;
   spaceName?: string;
@@ -63,8 +63,8 @@ interface CADAnnotation {
 }
 
 export class CADIntegrationService extends EventEmitter {
-  private processingQueue: Map<string, any> = new Map();
-  private versionHistory: Map<string, any[]> = new Map();
+  private readonly processingQueue: Map<string, any> = new Map();
+  private readonly versionHistory: Map<string, any[]> = new Map();
 
   constructor() {
     super();
@@ -287,7 +287,7 @@ export class CADIntegrationService extends EventEmitter {
         } catch (error: unknown) {
           errors.push({
             spaceId: mapping.spaceId,
-            error: error instanceof Error ? (error as Error).message : 'Unknown error',
+            error: error instanceof Error ? (error).message : 'Unknown error',
           });
         }
       }
@@ -545,7 +545,7 @@ export class CADIntegrationService extends EventEmitter {
       const progress = this.calculateProcessingProgress(processingInfo);
 
       return {
-        status: cadFile.status as any,
+        status: cadFile.status,
         progress,
         message: cadFile.processingMessage || undefined,
         result: cadFile.status === 'PROCESSED' ? cadFile.metadata : undefined,
@@ -675,7 +675,7 @@ export class CADIntegrationService extends EventEmitter {
         processingInfo.cadFile.id,
         'FAILED',
         0,
-        `Processing failed: ${error instanceof Error ? (error as Error).message : 'Unknown error'}`
+        `Processing failed: ${error instanceof Error ? (error).message : 'Unknown error'}`
       );
 
       // Remove from processing queue
@@ -700,7 +700,7 @@ export class CADIntegrationService extends EventEmitter {
   }
 
   private async simulateProcessingStage(duration: number): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, duration));
+    await new Promise(resolve => setTimeout(resolve, duration));
   }
 
   private async extractCADContents(uploadData: CADFileUpload, options: CADProcessingOptions): Promise<any> {

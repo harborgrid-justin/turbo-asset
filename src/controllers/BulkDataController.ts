@@ -84,7 +84,7 @@ router.post('/import', upload.single('file'), async (req: Request, res: Response
     logger.error('Failed to start import job', error);
     res.status(500).json({
       error: 'Failed to start import job',
-      message: error instanceof Error ? (error as Error).message : 'Unknown error',
+      message: error instanceof Error ? (error).message : 'Unknown error',
     });
 
     return;
@@ -141,7 +141,7 @@ router.post('/export', async (req: Request, res: Response) => {
     logger.error('Failed to start export job', error);
     res.status(500).json({
       error: 'Failed to start export job',
-      message: error instanceof Error ? (error as Error).message : 'Unknown error',
+      message: error instanceof Error ? (error).message : 'Unknown error',
     });
 
     return;
@@ -169,7 +169,7 @@ router.get('/import/:jobId/status', async (req: Request, res: Response) => {
     logger.error('Failed to get import job status', error);
     res.status(500).json({
       error: 'Failed to get import job status',
-      message: error instanceof Error ? (error as Error).message : 'Unknown error',
+      message: error instanceof Error ? (error).message : 'Unknown error',
     });
 
     return;
@@ -197,7 +197,7 @@ router.get('/export/:jobId/status', async (req: Request, res: Response) => {
     logger.error('Failed to get export job status', error);
     res.status(500).json({
       error: 'Failed to get export job status',
-      message: error instanceof Error ? (error as Error).message : 'Unknown error',
+      message: error instanceof Error ? (error).message : 'Unknown error',
     });
 
     return;
@@ -212,7 +212,7 @@ router.get('/export/:jobId/download', async (req: Request, res: Response) => {
     const { jobId } = req.params;
     const result = await bulkDataService.getExportJobStatus(jobId);
 
-    if (!result || !result.filePath) {
+    if (!result?.filePath) {
       res.status(404).json({
         error: 'Export file not found',
       });
@@ -225,7 +225,7 @@ router.get('/export/:jobId/download', async (req: Request, res: Response) => {
     logger.error('Failed to download export file', error);
     res.status(500).json({
       error: 'Failed to download export file',
-      message: error instanceof Error ? (error as Error).message : 'Unknown error',
+      message: error instanceof Error ? (error).message : 'Unknown error',
     });
 
     return;

@@ -22,10 +22,10 @@ export interface SyncOperation {
 }
 
 export class IntegrationService {
-  private sapClient: AxiosInstance;
-  private oracleClient: AxiosInstance;
-  private workdayClient: AxiosInstance;
-  private serviceNowClient: AxiosInstance;
+  private readonly sapClient: AxiosInstance;
+  private readonly oracleClient: AxiosInstance;
+  private readonly workdayClient: AxiosInstance;
+  private readonly serviceNowClient: AxiosInstance;
 
   constructor() {
     this.sapClient = this.createAxiosInstance(config.external.sap);
@@ -262,7 +262,7 @@ export class IntegrationService {
       data: {
         syncStatus: status,
         lastSyncAt: new Date(),
-        syncData: responseData as any,
+        syncData: responseData,
       },
     });
   }

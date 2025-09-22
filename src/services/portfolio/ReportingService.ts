@@ -97,9 +97,9 @@ export interface AlertRule {
 }
 
 export class ReportingService extends EventEmitter {
-  private scheduledReports: Map<string, any> = new Map();
-  private alertRules: Map<string, AlertRule> = new Map();
-  private benchmarkCache: Map<string, BenchmarkingData[]> = new Map();
+  private readonly scheduledReports: Map<string, any> = new Map();
+  private readonly alertRules: Map<string, AlertRule> = new Map();
+  private readonly benchmarkCache: Map<string, BenchmarkingData[]> = new Map();
 
   constructor() {
     super();

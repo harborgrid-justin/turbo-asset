@@ -156,7 +156,7 @@ export class InternationalizationService {
     try {
       return new Intl.NumberFormat(lng, {
         style: 'currency',
-        currency: currency,
+        currency,
       }).format(amount);
     } catch {
       return `${currency} ${amount.toFixed(2)}`;

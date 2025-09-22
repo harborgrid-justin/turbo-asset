@@ -80,7 +80,7 @@ export function createRateLimit(config: Partial<RateLimitConfig> = {}) {
     },
     keyGenerator: config.keyGenerator || ((req: Request) => {
       // Use user ID if authenticated, otherwise IP
-      const user = (req as any).user;
+      const {user} = (req as any);
       return user ? `user:${user.id}` : `ip:${req.ip}`;
     })
   });
@@ -311,7 +311,7 @@ export function createCorsConfig() {
     origin: (origin: string | undefined, callback: (error: Error | null, allow?: boolean) => void) => {
       // Allow requests with no origin (mobile apps, Postman, etc.)
       if (!origin) {
-        return callback(null, true);
+        callback(null, true); return;
       }
       
       const allowedOrigins = env.ALLOWED_ORIGINS?.split(',') || ['*'];

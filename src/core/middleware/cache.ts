@@ -7,7 +7,7 @@ import { logger } from '@/config/logger';
  * In production, this should be replaced with Redis
  */
 class MemoryCacheStore {
-  private cache: Map<string, {
+  private readonly cache: Map<string, {
     value: any;
     expiresAt: number;
     tags: string[];
@@ -68,10 +68,10 @@ class MemoryCacheStore {
    */
   getStats(): {
     size: number;
-    entries: { key: string; hitCount: number; age: number; tags: string[] }[];
+    entries: Array<{ key: string; hitCount: number; age: number; tags: string[] }>;
     hitRate: number;
   } {
-    const entries: { key: string; hitCount: number; age: number; tags: string[] }[] = [];
+    const entries: Array<{ key: string; hitCount: number; age: number; tags: string[] }> = [];
     let totalHits = 0;
     
     for (const [key, entry] of this.cache.entries()) {
@@ -126,8 +126,8 @@ export interface CacheOptions {
  * Advanced caching middleware
  */
 export class CacheManager {
-  private store: MemoryCacheStore;
-  private defaultTTL: number = 300; // 5 minutes
+  private readonly store: MemoryCacheStore;
+  private readonly defaultTTL: number = 300; // 5 minutes
 
   constructor(defaultTTL: number = 300) {
     this.store = new MemoryCacheStore();
@@ -152,9 +152,9 @@ export class CacheManager {
 
     // Default key generation
     const url = req.originalUrl || req.url;
-    const method = req.method;
+    const {method} = req;
     const userId = (req as any).user?.id || 'anonymous';
-    const organizationId = req.params?.organizationId || 'no-org';
+    const organizationId = req.params.organizationId || 'no-org';
     
     // Include relevant headers in key
     const relevantHeaders = ['accept', 'accept-language', 'x-api-version'];
@@ -185,12 +185,12 @@ export class CacheManager {
     return (req: Request, res: Response, next: NextFunction): void => {
       // Skip caching for certain methods
       if (skipMethods.includes(req.method)) {
-        return next();
+        next(); return;
       }
 
       // Skip if condition returns false
       if (condition && !condition(req, res)) {
-        return next();
+        next(); return;
       }
 
       const cacheKey = this.generateKey(req, keyGenerator);
@@ -354,7 +354,7 @@ export const orgCache = cacheManager.middleware({
   ttl: 1800, // 30 minutes
   tags: ['organization-specific'],
   keyGenerator: (req) => {
-    const orgId = req.params?.organizationId || 'no-org';
+    const orgId = req.params.organizationId || 'no-org';
     const url = req.originalUrl || req.url;
     return createHash('md5').update(`org:${orgId}:${url}`).digest('hex');
   },

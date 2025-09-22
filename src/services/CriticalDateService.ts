@@ -239,7 +239,7 @@ export class CriticalDateService {
           importance: cd.importance,
           entityType: cd.lease ? 'lease' : 'contract',
           entityName: cd.lease ? 
-            `${cd.lease.leaseNumber} - ${cd.lease.tenant?.name}` :
+            `${cd.lease.leaseNumber} - ${cd.lease.tenant.name}` :
             `${cd.contract?.contractNumber}`,
           actionRequired: cd.actionRequired || 'Review required',
           responsibleParty: 'TBD' // Would be extracted from escalation rules
@@ -262,7 +262,7 @@ export class CriticalDateService {
             lastEscalated: latestAlert?.escalatedAt || cd.dateValue,
             entityType: cd.lease ? 'lease' : 'contract',
             entityName: cd.lease ? 
-              `${cd.lease.leaseNumber} - ${cd.lease.tenant?.name}` :
+              `${cd.lease.leaseNumber} - ${cd.lease.tenant.name}` :
               `${cd.contract?.contractNumber}`
           };
         })
@@ -383,7 +383,7 @@ export class CriticalDateService {
         } catch (error: unknown) {
           logger.error('Failed to process alerts for critical date', {
             criticalDateId: criticalDate.id,
-            error: error instanceof Error ? (error as Error).message : 'Unknown error'
+            error: error instanceof Error ? (error).message : 'Unknown error'
           });
           results.errors++;
         }
@@ -505,10 +505,10 @@ export class CriticalDateService {
           (new Date(alert.scheduledFor).getTime() - now.getTime()) / (1000 * 60 * 60 * 24)
         ),
         entityName: alert.criticalDate.lease ? 
-          `${alert.criticalDate.lease.leaseNumber} - ${alert.criticalDate.lease.tenant?.name}` :
+          `${alert.criticalDate.lease.leaseNumber} - ${alert.criticalDate.lease.tenant.name}` :
           `${alert.criticalDate.contract?.contractNumber}`,
-        propertyName: alert.criticalDate.lease?.property?.name || 
-          alert.criticalDate.contract?.lease?.property?.name
+        propertyName: alert.criticalDate.lease?.property.name || 
+          alert.criticalDate.contract?.lease.property.name
       }));
     } catch (error: unknown) {
       logger.error('Failed to search alerts', error);
@@ -727,7 +727,7 @@ export class CriticalDateService {
           results.push({
             criticalDateId: update.criticalDateId,
             status: 'ERROR',
-            error: error instanceof Error ? (error as Error).message : 'Unknown error'
+            error: error instanceof Error ? (error).message : 'Unknown error'
           });
         }
       }
@@ -845,7 +845,7 @@ export class CriticalDateService {
     // Check for overdue items that need escalation
     if (daysDifference < 0) { // Date has passed
       const daysOverdue = Math.abs(daysDifference);
-      const escalationRules = criticalDate.escalationRules as any;
+      const {escalationRules} = criticalDate;
       
       if (escalationRules?.levels) {
         const applicableRule = escalationRules.levels.find((rule: any) => 
@@ -1001,9 +1001,9 @@ Immediate attention is required to resolve this overdue item.`;
         ),
         entityType: cd.lease ? 'lease' : 'contract',
         entityName: cd.lease ? 
-          `${cd.lease.leaseNumber} - ${cd.lease.tenant?.name}` :
+          `${cd.lease.leaseNumber} - ${cd.lease.tenant.name}` :
           `${cd.contract?.contractNumber}`,
-        propertyName: cd.lease?.property?.name || cd.contract?.lease?.property?.name,
+        propertyName: cd.lease?.property.name || cd.contract?.lease.property.name,
         actionRequired: cd.actionRequired
       }))
     };
@@ -1081,9 +1081,9 @@ Immediate attention is required to resolve this overdue item.`;
         currentEscalationLevel: cd.alerts[0]?.escalationLevel || 0,
         entityType: cd.lease ? 'lease' : 'contract',
         entityName: cd.lease ? 
-          `${cd.lease.leaseNumber} - ${cd.lease.tenant?.name}` :
+          `${cd.lease.leaseNumber} - ${cd.lease.tenant.name}` :
           `${cd.contract?.contractNumber}`,
-        propertyName: cd.lease?.property?.name || cd.contract?.lease?.property?.name,
+        propertyName: cd.lease?.property.name || cd.contract?.lease.property.name,
         actionRequired: cd.actionRequired
       }))
     };

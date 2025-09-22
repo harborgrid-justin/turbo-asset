@@ -20,9 +20,9 @@ export class CustomFieldService {
           isRequired: fieldDefinition.isRequired,
           isUnique: fieldDefinition.isUnique,
           defaultValue: fieldDefinition.defaultValue,
-          validationRules: fieldDefinition.validationRules as any,
-          options: fieldDefinition.options as any,
-          dependencies: fieldDefinition.dependencies as any,
+          validationRules: fieldDefinition.validationRules,
+          options: fieldDefinition.options,
+          dependencies: fieldDefinition.dependencies,
           displayOrder: fieldDefinition.displayOrder,
           isActive: fieldDefinition.isActive,
           organizationId,
@@ -65,7 +65,7 @@ export class CustomFieldService {
       return definitions.map((def: any) => ({
         id: def.id,
         name: def.name,
-        fieldType: def.fieldType as any,
+        fieldType: def.fieldType,
         entityType: def.entityType,
         isRequired: def.isRequired,
         isUnique: def.isUnique,
@@ -113,7 +113,7 @@ export class CustomFieldService {
         },
       });
 
-      const stringValue = this.serializeValue(value, fieldDef.fieldType as any);
+      const stringValue = this.serializeValue(value, fieldDef.fieldType);
 
       if (existingValue) {
         await prisma.customFieldValue.update({
@@ -208,7 +208,7 @@ export class CustomFieldService {
           try {
             await this.validateFieldValue(fieldDef, value);
           } catch (error: unknown) {
-            errors[fieldDef.name] = error instanceof Error ? (error as Error).message : 'Invalid value';
+            errors[fieldDef.name] = error instanceof Error ? (error).message : 'Invalid value';
           }
         }
 
@@ -414,9 +414,9 @@ export class CustomFieldService {
         },
         data: {
           ...updates,
-          validationRules: updates.validationRules as any,
-          options: updates.options as any,
-          dependencies: updates.dependencies as any,
+          validationRules: updates.validationRules,
+          options: updates.options,
+          dependencies: updates.dependencies,
         },
       });
 

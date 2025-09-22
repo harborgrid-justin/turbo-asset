@@ -66,9 +66,9 @@ export class ComplianceManagementOperationsManager extends EventEmitter {
   private dataGovernanceService: DataGovernanceService;
   private emergencyPlanningService: EmergencyPlanningService;
   
-  private complianceCache: Map<string, ComplianceAssessment> = new Map();
-  private policiesCache: Map<string, DataGovernancePolicy> = new Map();
-  private plansCache: Map<string, EmergencyPlan> = new Map();
+  private readonly complianceCache: Map<string, ComplianceAssessment> = new Map();
+  private readonly policiesCache: Map<string, DataGovernancePolicy> = new Map();
+  private readonly plansCache: Map<string, EmergencyPlan> = new Map();
 
   constructor() {
     super();
@@ -163,7 +163,7 @@ export class ComplianceManagementOperationsManager extends EventEmitter {
     } catch (error: unknown) {
       logger.error('Compliance provisioning failed', {
         organizationId: options.organizationId,
-        error: error instanceof Error ? (error as Error).message : 'Unknown error',
+        error: error instanceof Error ? (error).message : 'Unknown error',
       });
       throw error;
     }
@@ -245,7 +245,7 @@ export class ComplianceManagementOperationsManager extends EventEmitter {
     } catch (error: unknown) {
       logger.error('Compliance dashboard generation failed', {
         organizationId,
-        error: error instanceof Error ? (error as Error).message : 'Unknown error'
+        error: error instanceof Error ? (error).message : 'Unknown error'
       });
       throw error;
     }
@@ -316,7 +316,7 @@ export class ComplianceManagementOperationsManager extends EventEmitter {
     } catch (error: unknown) {
       logger.error('Compliance health check failed', {
         organizationId,
-        error: error instanceof Error ? (error as Error).message : 'Unknown error'
+        error: error instanceof Error ? (error).message : 'Unknown error'
       });
       throw error;
     }

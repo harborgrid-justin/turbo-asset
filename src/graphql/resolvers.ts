@@ -63,7 +63,7 @@ export const resolvers = {
   // Custom Scalars
   DateTime: DateTimeScalar,
   JSON: JSONScalar,
-  Upload: Upload,
+  Upload,
 
   // Root Query Resolvers
   Query: {

@@ -215,7 +215,7 @@ export interface BulkOperationResult<T> {
   totalItems: number;
   successCount: number;
   errorCount: number;
-  results: BulkItemResult<T>[];
+  results: Array<BulkItemResult<T>>;
   startedAt: Date;
   completedAt: Date;
 }

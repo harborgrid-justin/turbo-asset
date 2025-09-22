@@ -160,11 +160,11 @@ export interface EnergyOptimization {
  * building automation, energy optimization, and predictive maintenance
  */
 export class ProductionGradeSmartBuildingService extends EventEmitter {
-  private devices = new Map<string, IoTDevice>();
-  private sensorData = new Map<string, SensorReading[]>();
-  private automationRules = new Map<string, SmartBuildingRule>();
-  private buildingInsights = new Map<string, BuildingInsight[]>();
-  private energyOptimizations = new Map<string, EnergyOptimization>();
+  private readonly devices = new Map<string, IoTDevice>();
+  private readonly sensorData = new Map<string, SensorReading[]>();
+  private readonly automationRules = new Map<string, SmartBuildingRule>();
+  private readonly buildingInsights = new Map<string, BuildingInsight[]>();
+  private readonly energyOptimizations = new Map<string, EnergyOptimization>();
 
   constructor() {
     super();
@@ -615,11 +615,11 @@ export class ProductionGradeSmartBuildingService extends EventEmitter {
   private determineDeviceCapabilities(device: IoTDevice): string[] {
     const capabilities = ['monitoring', 'data_collection'];
     
-    if (device.type === 'actuator') capabilities.push('control', 'automation');
-    if (device.category === 'hvac') capabilities.push('climate_control', 'energy_monitoring');
-    if (device.category === 'lighting') capabilities.push('light_control', 'occupancy_detection');
-    if (device.category === 'security') capabilities.push('access_control', 'intrusion_detection');
-    if (device.category === 'energy') capabilities.push('energy_metering', 'load_monitoring');
+    if (device.type === 'actuator') {capabilities.push('control', 'automation');}
+    if (device.category === 'hvac') {capabilities.push('climate_control', 'energy_monitoring');}
+    if (device.category === 'lighting') {capabilities.push('light_control', 'occupancy_detection');}
+    if (device.category === 'security') {capabilities.push('access_control', 'intrusion_detection');}
+    if (device.category === 'energy') {capabilities.push('energy_metering', 'load_monitoring');}
 
     return capabilities;
   }

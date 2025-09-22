@@ -34,7 +34,7 @@ export class DigitalTwinService extends EventEmitter {
 
   // Real-time data streaming
   private readonly dataStreamInterval = 5000; // 5 seconds
-  private dataStreamTimers: Map<string, NodeJS.Timeout> = new Map();
+  private readonly dataStreamTimers: Map<string, NodeJS.Timeout> = new Map();
 
   constructor() {
     super();
@@ -319,8 +319,8 @@ export class DigitalTwinService extends EventEmitter {
 
       if (parallelScenarios && !realTime) {
         // Run scenarios in parallel for faster processing
-        const scenarioPromises = parameters.scenarios.map(scenario =>
-          this.runSingleScenario(twin, simulationType, scenario, simulationFeatures)
+        const scenarioPromises = parameters.scenarios.map(async scenario =>
+          await this.runSingleScenario(twin, simulationType, scenario, simulationFeatures)
         );
         
         const results = await Promise.all(scenarioPromises);
@@ -526,7 +526,7 @@ export class DigitalTwinService extends EventEmitter {
    */
   async optimizeTwin(
     twinId: string,
-    optimizationGoals: ('ENERGY_EFFICIENCY' | 'OCCUPANT_COMFORT' | 'COST_REDUCTION' | 'MAINTENANCE_OPTIMIZATION')[],
+    optimizationGoals: Array<'ENERGY_EFFICIENCY' | 'OCCUPANT_COMFORT' | 'COST_REDUCTION' | 'MAINTENANCE_OPTIMIZATION'>,
     options: {
       timeHorizon?: number;
       includeConstraints?: boolean;
@@ -1420,7 +1420,7 @@ export class DigitalTwinService extends EventEmitter {
   }
 
   private async simulateDelay(ms: number): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    await new Promise(resolve => setTimeout(resolve, ms));
   }
 
   private generateRealisticSensorValue(sensorType: string, currentValue: number): number {

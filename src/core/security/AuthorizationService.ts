@@ -352,7 +352,7 @@ export class EnterpriseAuthorizationService {
     evaluatedPolicies.push(...policyResults.map(r => r.policyId));
     
     // Check for explicit DENY first
-    const denyResult = policyResults.find(r => r.policyId.includes('DENY') && r.allowed === false);
+    const denyResult = policyResults.find(r => r.policyId.includes('DENY') && !r.allowed);
     if (denyResult) {
       return {
         granted: false,
@@ -363,7 +363,7 @@ export class EnterpriseAuthorizationService {
     }
     
     // Check for explicit ALLOW
-    const allowResult = policyResults.find(r => r.allowed === true);
+    const allowResult = policyResults.find(r => r.allowed);
     if (allowResult) {
       return {
         granted: true,

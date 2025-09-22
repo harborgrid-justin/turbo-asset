@@ -64,9 +64,9 @@ interface RealWorldScenario {
 }
 
 export class Phase3RealWorldBusinessLogicIntegrationService extends EventEmitter {
-  private corporateRealEstateService: CorporateRealEstateManagementService;
-  private moveManagementService: EnterpriseMoveManagementService;
-  private chargebackService: AdvancedChargebackCostAllocationService;
+  private readonly corporateRealEstateService: CorporateRealEstateManagementService;
+  private readonly moveManagementService: EnterpriseMoveManagementService;
+  private readonly chargebackService: AdvancedChargebackCostAllocationService;
 
   constructor() {
     super();

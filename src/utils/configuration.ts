@@ -199,9 +199,9 @@ export class EnvironmentProvider implements ConfigurationProvider {
     const errors: string[] = [];
 
     if (config.database) {
-      if (!config.database.host) errors.push('Database host is required');
-      if (!config.database.database) errors.push('Database name is required');
-      if (!config.database.username) errors.push('Database username is required');
+      if (!config.database.host) {errors.push('Database host is required');}
+      if (!config.database.database) {errors.push('Database name is required');}
+      if (!config.database.username) {errors.push('Database username is required');}
       if (config.database.port < 1 || config.database.port > 65535) {
         errors.push('Database port must be between 1 and 65535');
       }
@@ -412,7 +412,7 @@ export class ConfigurationManager {
    */
   public async reload(): Promise<EnvironmentConfig> {
     logger.info('Reloading configuration...');
-    return this.load();
+    return await this.load();
   }
 
   private mergeConfigs(configs: Array<Partial<EnvironmentConfig>>): Partial<EnvironmentConfig> {

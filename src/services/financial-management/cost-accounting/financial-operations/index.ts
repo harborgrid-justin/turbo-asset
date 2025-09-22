@@ -55,9 +55,9 @@ export interface FinancialSummary {
  * comprehensive financial operations management.
  */
 export class FinancialOperationsManager {
-  private budgetForecastService: BudgetForecastService;
-  private chargebackService: ChargebackAllocationService;
-  private consolidationService: FinancialConsolidationService;
+  private readonly budgetForecastService: BudgetForecastService;
+  private readonly chargebackService: ChargebackAllocationService;
+  private readonly consolidationService: FinancialConsolidationService;
 
   constructor() {
     // Initialize all sub-services
@@ -314,7 +314,7 @@ export class FinancialOperationsManager {
     metrics: FinancialMetrics, 
     budgetSummary: any, 
     allocationSummary: any
-  ): Array<any> {
+  ): any[] {
     const alerts = [];
 
     // Budget variance alerts
@@ -417,7 +417,7 @@ export class FinancialOperationsManager {
     budgetPerformance: any,
     allocationEfficiency: any,
     consolidationTrends: any
-  ): Array<any> {
+  ): any[] {
     const recommendations = [];
 
     if (budgetPerformance.forecastAccuracy < 80) {

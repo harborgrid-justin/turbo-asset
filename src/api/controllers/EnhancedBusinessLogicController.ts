@@ -161,7 +161,7 @@ export class EnhancedBusinessLogicController {
         error: {
           code: 'CALCULATION_ERROR',
           message: 'Failed to calculate asset depreciation',
-          details: error instanceof Error ? (error as Error).message : 'Unknown error',
+          details: error instanceof Error ? (error).message : 'Unknown error',
         },
       });
 
@@ -407,7 +407,7 @@ export class EnhancedBusinessLogicController {
         error: {
           code: 'CONSOLIDATION_ERROR',
           message: 'Failed to perform financial consolidation',
-          details: error instanceof Error ? (error as Error).message : 'Unknown error',
+          details: error instanceof Error ? (error).message : 'Unknown error',
         },
       });
 
@@ -450,7 +450,7 @@ export class EnhancedBusinessLogicController {
         error: {
           code: 'STANDARDIZATION_ERROR',
           message: 'Failed to standardize asset data',
-          details: error instanceof Error ? (error as Error).message : 'Unknown error',
+          details: error instanceof Error ? (error).message : 'Unknown error',
         },
       });
 
@@ -493,7 +493,7 @@ export class EnhancedBusinessLogicController {
         error: {
           code: 'STANDARDIZATION_ERROR',
           message: 'Failed to standardize space data',
-          details: error instanceof Error ? (error as Error).message : 'Unknown error',
+          details: error instanceof Error ? (error).message : 'Unknown error',
         },
       });
 
@@ -605,10 +605,10 @@ export class EnhancedBusinessLogicController {
   }
 
   // New production-grade competitive business logic methods
-  private static analyticsService = new ProductionGradeAnalyticsService();
-  private static helpService = new ProductionGradeHelpService();
-  private static syncService = new ProductionGradeRealtimeSyncService();
-  private static apiGateway = new ProductionGradeAPIGateway();
+  private static readonly analyticsService = new ProductionGradeAnalyticsService();
+  private static readonly helpService = new ProductionGradeHelpService();
+  private static readonly syncService = new ProductionGradeRealtimeSyncService();
+  private static readonly apiGateway = new ProductionGradeAPIGateway();
 
   /**
    * Get advanced lease renewal predictions

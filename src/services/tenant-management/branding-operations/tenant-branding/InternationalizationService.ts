@@ -41,10 +41,10 @@ interface FormattingContext {
 }
 
 export class InternationalizationService extends EventEmitter {
-  private translationCache: Map<string, TranslationCache> = new Map();
-  private localizationConfigs: Map<string, LocalizationConfig> = new Map();
-  private currencyRates: Map<string, CurrencyRate> = new Map();
-  private formatters: Map<string, Intl.NumberFormat | Intl.DateTimeFormat> = new Map();
+  private readonly translationCache: Map<string, TranslationCache> = new Map();
+  private readonly localizationConfigs: Map<string, LocalizationConfig> = new Map();
+  private readonly currencyRates: Map<string, CurrencyRate> = new Map();
+  private readonly formatters: Map<string, Intl.NumberFormat | Intl.DateTimeFormat> = new Map();
 
   constructor() {
     super();
@@ -81,7 +81,7 @@ export class InternationalizationService extends EventEmitter {
     } catch (error: unknown) {
       logger.error('Localization setup failed', {
         organizationId,
-        error: error instanceof Error ? (error as Error).message : 'Unknown error',
+        error: error instanceof Error ? (error).message : 'Unknown error',
       });
       throw error;
     }
@@ -111,7 +111,7 @@ export class InternationalizationService extends EventEmitter {
 
       // Get translation from cache
       const orgTranslations = this.translationCache.get(context.organizationId);
-      let translation = orgTranslations?.[language]?.[key];
+      let translation = orgTranslations?.[language][key];
 
       // Try fallback language
       if (!translation && config.fallbackLanguage) {
@@ -133,7 +133,7 @@ export class InternationalizationService extends EventEmitter {
       logger.error('Failed to get localized text', {
         organizationId: context.organizationId,
         key,
-        error: error instanceof Error ? (error as Error).message : 'Unknown error',
+        error: error instanceof Error ? (error).message : 'Unknown error',
       });
       return options?.fallback || key;
     }
@@ -182,7 +182,7 @@ export class InternationalizationService extends EventEmitter {
       logger.error('Number formatting failed', {
         organizationId: context.organizationId,
         value,
-        error: error instanceof Error ? (error as Error).message : 'Unknown error',
+        error: error instanceof Error ? (error).message : 'Unknown error',
       });
       return value.toString();
     }
@@ -235,7 +235,7 @@ export class InternationalizationService extends EventEmitter {
       logger.error('Date formatting failed', {
         organizationId: context.organizationId,
         date,
-        error: error instanceof Error ? (error as Error).message : 'Unknown error',
+        error: error instanceof Error ? (error).message : 'Unknown error',
       });
       return date.toLocaleDateString();
     }
@@ -283,7 +283,7 @@ export class InternationalizationService extends EventEmitter {
         amount,
         fromCurrency,
         toCurrency,
-        error: error instanceof Error ? (error as Error).message : 'Unknown error',
+        error: error instanceof Error ? (error).message : 'Unknown error',
       });
       
       // Return original amount as fallback
@@ -330,7 +330,7 @@ export class InternationalizationService extends EventEmitter {
       logger.error('Failed to update translations', {
         organizationId,
         language,
-        error: error instanceof Error ? (error as Error).message : 'Unknown error',
+        error: error instanceof Error ? (error).message : 'Unknown error',
       });
       throw error;
     }
@@ -360,7 +360,7 @@ export class InternationalizationService extends EventEmitter {
    */
   private detectUserLanguage(context: MultiTenantContext): string | null {
     const config = this.localizationConfigs.get(context.organizationId);
-    if (!config || !config.autoDetectLanguage) {
+    if (!config?.autoDetectLanguage) {
       return null;
     }
 
@@ -532,7 +532,7 @@ export class InternationalizationService extends EventEmitter {
       logger.error('Failed to load translations', {
         organizationId,
         languages,
-        error: error instanceof Error ? (error as Error).message : 'Unknown error',
+        error: error instanceof Error ? (error).message : 'Unknown error',
       });
     }
   }
@@ -588,7 +588,7 @@ export class InternationalizationService extends EventEmitter {
       logger.error('Failed to update currency rate', {
         from,
         to,
-        error: error instanceof Error ? (error as Error).message : 'Unknown error',
+        error: error instanceof Error ? (error).message : 'Unknown error',
       });
     }
   }

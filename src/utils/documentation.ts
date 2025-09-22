@@ -563,7 +563,7 @@ export class DocumentationAnalyzer {
 
   private static extractImplementsClause(sourceCode: string): readonly string[] {
     const match = sourceCode.match(/class\s+\w+.*?implements\s+([^{]+)/);
-    if (!match) return [];
+    if (!match) {return [];}
     
     return match[1].split(',').map(impl => impl.trim());
   }
@@ -655,8 +655,8 @@ export class DocumentationAnalyzer {
   }
 
   private static extractVisibility(sourceCode: string, memberName: string): 'public' | 'private' | 'protected' {
-    if (sourceCode.includes(`private ${memberName}`)) return 'private';
-    if (sourceCode.includes(`protected ${memberName}`)) return 'protected';
+    if (sourceCode.includes(`private ${memberName}`)) {return 'private';}
+    if (sourceCode.includes(`protected ${memberName}`)) {return 'protected';}
     return 'public';
   }
 }

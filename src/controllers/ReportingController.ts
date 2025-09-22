@@ -3,7 +3,7 @@ import { ReportingService } from '../services/ReportingService';
 import { logger } from '@/config/logger';
 
 export class ReportingController {
-  private reportingService: ReportingService;
+  private readonly reportingService: ReportingService;
 
   constructor() {
     this.reportingService = new ReportingService();

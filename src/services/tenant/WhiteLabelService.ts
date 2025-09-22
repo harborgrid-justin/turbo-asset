@@ -121,9 +121,9 @@ export interface SubsidiaryConfiguration {
 }
 
 export class WhiteLabelService extends EventEmitter {
-  private brandingCache: Map<string, any> = new Map();
-  private themeCache: Map<string, ThemeConfiguration> = new Map();
-  private domainCache: Map<string, string> = new Map(); // domain -> organizationId
+  private readonly brandingCache: Map<string, any> = new Map();
+  private readonly themeCache: Map<string, ThemeConfiguration> = new Map();
+  private readonly domainCache: Map<string, string> = new Map(); // domain -> organizationId
 
   constructor() {
     super();
@@ -750,8 +750,8 @@ export class WhiteLabelService extends EventEmitter {
     if (!branding) {return template;}
 
     // Apply branding to email template
-    let htmlContent = template.htmlContent;
-    const textContent = template.textContent;
+    let {htmlContent} = template;
+    const {textContent} = template;
 
     // Replace branding placeholders
     htmlContent = htmlContent

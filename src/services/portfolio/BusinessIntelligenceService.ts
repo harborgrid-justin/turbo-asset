@@ -160,7 +160,7 @@ export class BusinessIntelligenceService {
       }
 
       // Replace parameters in SQL query
-      let sqlQuery = report.sqlQuery;
+      let {sqlQuery} = report;
       for (const [key, value] of Object.entries(parameters)) {
         sqlQuery = sqlQuery.replace(new RegExp(`\\$\\{${key}\\}`, 'g'), value);
       }
@@ -254,7 +254,7 @@ export class BusinessIntelligenceService {
       for (const widget of widgets) {
         try {
           if (widget.type === 'chart' || widget.type === 'table') {
-            const reportId = widget.configuration.reportId;
+            const {reportId} = widget.configuration;
             if (reportId) {
               const reportData = await this.executeReport(reportId, parameters);
               widgetData[widget.id] = reportData;
@@ -340,13 +340,13 @@ export class BusinessIntelligenceService {
       ).filter(Boolean);
 
       if (whereConditions.length > 0) {
-        sql += ' WHERE ' + whereConditions.join(' AND ');
+        sql += ` WHERE ${  whereConditions.join(' AND ')}`;
       }
     }
 
     // Build GROUP BY clause
     if (builder.groupBy && builder.groupBy.length > 0) {
-      sql += ' GROUP BY ' + builder.groupBy.join(', ');
+      sql += ` GROUP BY ${  builder.groupBy.join(', ')}`;
     }
 
     // Build ORDER BY clause
@@ -354,7 +354,7 @@ export class BusinessIntelligenceService {
       const orderClauses = builder.orderBy.map(order => 
         `${order.field} ${order.direction.toUpperCase()}`
       );
-      sql += ' ORDER BY ' + orderClauses.join(', ');
+      sql += ` ORDER BY ${  orderClauses.join(', ')}`;
     }
 
     // Add LIMIT clause

@@ -66,13 +66,13 @@ export const isNonEmptyString = (value: unknown): value is string => {
 };
 
 export const isEmailString = (value: unknown): value is string => {
-  if (!isString(value)) return false;
+  if (!isString(value)) {return false;}
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(value);
 };
 
 export const isUrlString = (value: unknown): value is string => {
-  if (!isString(value)) return false;
+  if (!isString(value)) {return false;}
   try {
     new URL(value);
     return true;
@@ -204,7 +204,7 @@ export const isDate = (value: unknown): value is Date => {
 };
 
 export const isISODateString = (value: unknown): value is string => {
-  if (!isString(value)) return false;
+  if (!isString(value)) {return false;}
   const date = new Date(value);
   return isDate(date) && date.toISOString() === value;
 };
@@ -213,8 +213,8 @@ export const isISODateString = (value: unknown): value is string => {
  * Array validation type guards
  */
 export const isArray = <T>(value: unknown, itemValidator?: Validator<T>): value is T[] => {
-  if (!Array.isArray(value)) return false;
-  if (!itemValidator) return true;
+  if (!Array.isArray(value)) {return false;}
+  if (!itemValidator) {return true;}
   return value.every(itemValidator);
 };
 
@@ -240,7 +240,7 @@ export const hasRequiredProperties = <K extends string>(
   obj: unknown,
   keys: readonly K[]
 ): obj is Record<K, unknown> => {
-  if (!isObject(obj)) return false;
+  if (!isObject(obj)) {return false;}
   return keys.every(key => key in obj);
 };
 
@@ -258,7 +258,7 @@ export const isEnumValue = <T extends string | number>(
  * UUID validation type guard
  */
 export const isUUID = (value: unknown): value is string => {
-  if (!isString(value)) return false;
+  if (!isString(value)) {return false;}
   const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
   return uuidRegex.test(value);
 };

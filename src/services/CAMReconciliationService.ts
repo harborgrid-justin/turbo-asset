@@ -155,12 +155,12 @@ export class CAMReconciliationService {
       });
 
       // Create expense line items
-      const expensePromises = data.expenses.map(expense => {
+      const expensePromises = data.expenses.map(async expense => {
         const expenseVariance = expense.actualAmount - expense.budgetedAmount;
         const expenseVariancePercent = expense.budgetedAmount > 0 ? 
           (expenseVariance / expense.budgetedAmount) * 100 : 0;
 
-        return prisma.cAMExpense.create({
+        return await prisma.cAMExpense.create({
           data: {
             reconciliationId: reconciliation.id,
             expenseCategory: expense.category,
@@ -687,13 +687,13 @@ export class CAMReconciliationService {
         } catch (error: unknown) {
           logger.error('Failed to process reconciliation for lease', {
             leaseId: lease.id,
-            error: error instanceof Error ? (error as Error).message : 'Unknown error'
+            error: error instanceof Error ? (error).message : 'Unknown error'
           });
           
           results.push({
             leaseId: lease.id,
             status: 'ERROR',
-            error: error instanceof Error ? (error as Error).message : 'Unknown error'
+            error: error instanceof Error ? (error).message : 'Unknown error'
           });
           
           errors++;
@@ -735,11 +735,11 @@ export class CAMReconciliationService {
       return Math.abs(variancePercent) > 15 || Math.abs(variance) > 2000; // Significant thresholds
     });
 
-    const variancePromises = significantVariances.map(expense => {
+    const variancePromises = significantVariances.map(async expense => {
       const variance = expense.actualAmount - expense.budgetedAmount;
       const variancePercent = expense.budgetedAmount > 0 ? (variance / expense.budgetedAmount) * 100 : 0;
 
-      return prisma.cAMVariance.create({
+      return await prisma.cAMVariance.create({
         data: {
           reconciliationId,
           varianceType: 'BUDGET',

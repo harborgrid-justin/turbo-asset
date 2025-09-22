@@ -5,7 +5,7 @@ import { NotificationService } from './NotificationService';
 import cron from 'node-cron';
 
 export class WorkflowEngine {
-  private notificationService: NotificationService;
+  private readonly notificationService: NotificationService;
 
   constructor() {
     this.notificationService = new NotificationService();
@@ -285,7 +285,7 @@ export class WorkflowEngine {
    * Move workflow to next step
    */
   private async moveToNextStep(instanceId: string, currentStep: WorkflowStep): Promise<void> {
-    const nextSteps = currentStep.nextSteps;
+    const {nextSteps} = currentStep;
     
     if (!nextSteps || nextSteps.length === 0) {
       // Workflow complete
@@ -619,7 +619,7 @@ export class WorkflowEngine {
         steps: template.steps.map(step => ({
           id: step.id,
           name: step.name,
-          type: step.type as any,
+          type: step.type,
           approvers: step.approvers,
           roles: step.roles,
           condition: step.condition,

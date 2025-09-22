@@ -25,9 +25,9 @@ export interface NAPIServiceConfig {
 
 export class NAPIServiceRegistry {
   private static instance: NAPIServiceRegistry;
-  private services: Map<string, any> = new Map();
-  private configs: Map<string, NAPIServiceConfig> = new Map();
-  private metrics: Map<string, ModuleMetrics[]> = new Map();
+  private readonly services: Map<string, any> = new Map();
+  private readonly configs: Map<string, NAPIServiceConfig> = new Map();
+  private readonly metrics: Map<string, ModuleMetrics[]> = new Map();
 
   static getInstance(): NAPIServiceRegistry {
     if (!NAPIServiceRegistry.instance) {
@@ -60,7 +60,7 @@ export class NAPIServiceRegistry {
       
       if (config.fallbackToTs) {
         logger.info(`Falling back to TypeScript implementation for ${config.serviceName}`);
-        return this.loadTypeScriptFallback(config);
+        return await this.loadTypeScriptFallback(config);
       }
       
       return false;
@@ -226,7 +226,7 @@ export class NAPIServiceRegistry {
     args: any[],
     timeout: number
   ): Promise<T> {
-    return new Promise((resolve, reject) => {
+    return await new Promise((resolve, reject) => {
       const timeoutId = setTimeout(() => {
         reject(new Error(`Method execution timed out after ${timeout}ms`));
       }, timeout);
@@ -584,7 +584,7 @@ export class NAPIServiceRegistry {
     logger.info('Initializing NAPI services...');
     
     const results = await Promise.allSettled(
-      serviceConfigs.map(config => this.registerService(config))
+      serviceConfigs.map(async config => await this.registerService(config))
     );
 
     const successful = results.filter(r => r.status === 'fulfilled' && r.value).length;
