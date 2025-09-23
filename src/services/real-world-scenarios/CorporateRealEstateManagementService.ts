@@ -32,14 +32,14 @@ interface SpaceOptimizationRecommendation {
   buildingName: string;
   currentUtilization: number;
   targetUtilization: number;
-  recommendations: {
+  recommendations: Array<{
     type: 'CONSOLIDATE' | 'EXPAND' | 'RECONFIGURE' | 'SUBLEASE';
     impact: string;
     estimatedSavings: number;
     implementationCost: number;
     paybackPeriod: number;
     priority: 'HIGH' | 'MEDIUM' | 'LOW';
-  }[];
+  }>;
   potentialAnnualSavings: number;
 }
 

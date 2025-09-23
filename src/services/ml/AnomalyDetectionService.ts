@@ -48,7 +48,7 @@ export class AnomalyDetectionService extends EventEmitter {
     }
   };
 
-  private anomalyBuffer: Map<string, Anomaly[]> = new Map();
+  private readonly anomalyBuffer: Map<string, Anomaly[]> = new Map();
   private readonly maxBufferSize = 1000;
 
   constructor() {
@@ -783,7 +783,7 @@ export class AnomalyDetectionService extends EventEmitter {
     
     hourlyBuckets.forEach((count, hour) => {
       timeline.push({
-        timestamp: new Date(hour + ':00:00'),
+        timestamp: new Date(`${hour  }:00:00`),
         count
       });
     });

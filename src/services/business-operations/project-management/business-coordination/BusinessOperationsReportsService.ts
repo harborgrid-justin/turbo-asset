@@ -77,7 +77,7 @@ export interface VisualizationConfig {
   groupBy?: string;
   aggregation?: 'SUM' | 'AVG' | 'COUNT' | 'MAX' | 'MIN';
   colors?: string[];
-  thresholds?: { value: number; color: string; label: string }[];
+  thresholds?: Array<{ value: number; color: string; label: string }>;
 }
 
 export interface Dashboard {
@@ -86,7 +86,7 @@ export interface Dashboard {
   description: string;
   category: 'EXECUTIVE' | 'OPERATIONAL' | 'DEPARTMENTAL' | 'PERSONAL';
   widgets: DashboardWidget[];
-  permissions: { role: string; access: 'READ' | 'WRITE' | 'ADMIN' }[];
+  permissions: Array<{ role: string; access: 'READ' | 'WRITE' | 'ADMIN' }>;
   isPublic: boolean;
   tags: string[];
   createdBy: string;
@@ -125,12 +125,12 @@ export interface PerformanceKPI {
 }
 
 export class BusinessOperationsReportsService extends EventEmitter {
-  private reportCache = new Map<string, any>();
-  private dashboardCache = new Map<string, Dashboard>();
-  private kpiCache = new Map<string, any>();
+  private readonly reportCache = new Map<string, any>();
+  private readonly dashboardCache = new Map<string, Dashboard>();
+  private readonly kpiCache = new Map<string, any>();
   private readonly cacheTTL = BUSINESS_OPERATIONS_CONFIG.CACHING.DEFAULT_TTL * 1000;
 
-  constructor(private context: BusinessOperationsContext) {
+  constructor(private readonly context: BusinessOperationsContext) {
     super();
     logger.info('Business Operations Reports Service initialized', {
       organizationId: context.organizationId,
@@ -242,7 +242,7 @@ export class BusinessOperationsReportsService extends EventEmitter {
           forecastAccuracy: financialSummary.forecastAccuracy || {}
         },
 
-        insights: insights,
+        insights,
         
         recommendations: {
           immediate: insights.filter(i => i.impact === 'HIGH' && i.isActionable).slice(0, 5),
@@ -807,7 +807,7 @@ export class BusinessOperationsReportsService extends EventEmitter {
     return widgets.map(widget => ({
       ...widget,
       id: widget.id || this.generateWidgetId(),
-      isVisible: widget.isVisible !== false,
+      isVisible: widget.isVisible,
       refreshInterval: widget.refreshInterval || 300000, // 5 minutes default
       position: widget.position || { x: 0, y: 0, width: 4, height: 4 }
     }));

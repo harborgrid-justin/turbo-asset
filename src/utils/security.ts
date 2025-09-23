@@ -118,15 +118,15 @@ export class PasswordSecurity {
     }
 
     // Bonus for longer passwords
-    if (password.length >= 12) score += 10;
-    if (password.length >= 16) score += 10;
+    if (password.length >= 12) {score += 10;}
+    if (password.length >= 16) {score += 10;}
 
     // Determine strength
     let strength: PasswordValidationResult['strength'];
-    if (score < 40) strength = 'weak';
-    else if (score < 60) strength = 'fair';
-    else if (score < 80) strength = 'good';
-    else strength = 'strong';
+    if (score < 40) {strength = 'weak';}
+    else if (score < 60) {strength = 'fair';}
+    else if (score < 80) {strength = 'good';}
+    else {strength = 'strong';}
 
     return {
       isValid: errors.length === 0,
@@ -151,7 +151,7 @@ export class PasswordSecurity {
    */
   public static async verifyPassword(password: string, hash: string): Promise<boolean> {
     // Simulate bcrypt verification - in real implementation, use bcrypt library
-    if (!hash.startsWith('bcrypt:')) return false;
+    if (!hash.startsWith('bcrypt:')) {return false;}
     const [, , , originalPassword] = hash.split(':');
     return password === originalPassword;
   }
@@ -292,7 +292,7 @@ export class InputSanitizer {
     }
 
     // Basic sanitization
-    let sanitized = email.trim().toLowerCase();
+    const sanitized = email.trim().toLowerCase();
     
     // Validate email format
     const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
@@ -440,7 +440,7 @@ export class RateLimiter {
    */
   public getResetTime(identifier: string): number {
     const userAttempts = this.attempts.get(identifier) || [];
-    if (userAttempts.length === 0) return 0;
+    if (userAttempts.length === 0) {return 0;}
 
     const oldestAttempt = Math.min(...userAttempts.map(a => a.timestamp));
     const resetTime = oldestAttempt + this.windowMs;

@@ -15,11 +15,11 @@ const prisma = new PrismaClient();
  * Part of the Asset Management domain within Turbo Asset IWMS
  */
 export class AssetCreateService {
-  private validationService: AssetValidationService;
-  private workOrderService: AssetWorkOrderService;
-  private notificationService: AssetNotificationService;
-  private depreciationService: AssetDepreciationService;
-  private auditService: AssetAuditService;
+  private readonly validationService: AssetValidationService;
+  private readonly workOrderService: AssetWorkOrderService;
+  private readonly notificationService: AssetNotificationService;
+  private readonly depreciationService: AssetDepreciationService;
+  private readonly auditService: AssetAuditService;
 
   constructor() {
     this.validationService = new AssetValidationService();
@@ -68,7 +68,7 @@ export class AssetCreateService {
             purchasePrice: assetData.purchasePrice,
             purchaseDate: assetData.purchaseDate,
             warrantyExpiry: assetData.warrantyExpiry,
-            depreciationMethod: assetData.depreciationMethod || 'STRAIGHT_LINE',
+            depreciationMethod: (assetData.depreciationMethod != null) || 'STRAIGHT_LINE',
             usefulLife: assetData.usefulLife || 10,
             salvageValue: assetData.salvageValue || 0,
             currentValue: assetData.currentValue || assetData.purchasePrice,
@@ -86,7 +86,7 @@ export class AssetCreateService {
             purchasePrice: assetData.purchasePrice,
             usefulLife: assetData.usefulLife,
             salvageValue: assetData.salvageValue || 0,
-            method: assetData.depreciationMethod || 'STRAIGHT_LINE',
+            method: (assetData.depreciationMethod != null) || 'STRAIGHT_LINE',
             purchaseDate: assetData.purchaseDate || new Date(),
           });
         }
@@ -231,13 +231,13 @@ export class AssetCreateService {
         building: modifications.building || sourceAsset.building,
         floor: modifications.floor || sourceAsset.floor,
         room: modifications.room || sourceAsset.room,
-        status: modifications.status || 'OPERATIONAL',
-        condition: modifications.condition || 'NEW',
-        criticality: modifications.criticality || sourceAsset.criticality,
+        status: (modifications.status != null) || 'OPERATIONAL',
+        condition: (modifications.condition != null) || 'NEW',
+        criticality: (modifications.criticality != null) || sourceAsset.criticality,
         purchasePrice: modifications.purchasePrice || sourceAsset.purchasePrice,
         purchaseDate: modifications.purchaseDate || new Date(),
         warrantyExpiry: modifications.warrantyExpiry || null,
-        depreciationMethod: modifications.depreciationMethod || sourceAsset.depreciationMethod,
+        depreciationMethod: (modifications.depreciationMethod != null) || sourceAsset.depreciationMethod,
         usefulLife: modifications.usefulLife || sourceAsset.usefulLife,
         salvageValue: modifications.salvageValue || sourceAsset.salvageValue,
         currentValue: modifications.currentValue || modifications.purchasePrice || sourceAsset.purchasePrice,
@@ -251,7 +251,7 @@ export class AssetCreateService {
       const clonedAsset = await this.createMaintenanceAsset(clonedAssetData);
 
       // Copy preventive maintenance schedules if requested
-      if (!modifications.skipMaintenanceCloning && sourceAsset.preventiveMaintenance?.length > 0) {
+      if (!modifications.skipMaintenanceCloning && sourceAsset.preventiveMaintenance.length > 0) {
         await this.workOrderService.cloneMaintenanceSchedules(
           sourceAssetId,
           clonedAsset.id,

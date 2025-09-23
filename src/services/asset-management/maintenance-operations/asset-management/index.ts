@@ -51,15 +51,15 @@ export * from './types/AssetTypes';
  * asset lifecycle management.
  */
 export class AssetManagementService {
-  private createService: AssetCreateService;
-  private retrievalService: AssetRetrievalService;
-  private updateService: AssetUpdateService;
-  private validationService: AssetValidationService;
-  private workOrderService: AssetWorkOrderService;
-  private notificationService: AssetNotificationService;
-  private depreciationService: AssetDepreciationService;
-  private auditService: AssetAuditService;
-  private importExportService: AssetImportExportService;
+  private readonly createService: AssetCreateService;
+  private readonly retrievalService: AssetRetrievalService;
+  private readonly updateService: AssetUpdateService;
+  private readonly validationService: AssetValidationService;
+  private readonly workOrderService: AssetWorkOrderService;
+  private readonly notificationService: AssetNotificationService;
+  private readonly depreciationService: AssetDepreciationService;
+  private readonly auditService: AssetAuditService;
+  private readonly importExportService: AssetImportExportService;
 
   constructor() {
     // Initialize all sub-services
@@ -166,7 +166,7 @@ export class AssetManagementService {
  * Alias for AssetManagementService to match BusinessLogicIntegrationService expectations
  */
 export class AssetOperationsManager {
-  private assetManagementService: AssetManagementService;
+  private readonly assetManagementService: AssetManagementService;
 
   constructor() {
     this.assetManagementService = new AssetManagementService();
@@ -183,9 +183,9 @@ export class AssetOperationsManager {
   get audit() { return this.assetManagementService.audit; }
   get importExport() { return this.assetManagementService.importExport; }
 
-  async getServiceHealth() { return this.assetManagementService.getServiceHealth(); }
-  async initialize() { return this.assetManagementService.initialize(); }
-  async shutdown() { return this.assetManagementService.shutdown(); }
+  async getServiceHealth() { return await this.assetManagementService.getServiceHealth(); }
+  async initialize() { await this.assetManagementService.initialize(); }
+  async shutdown() { await this.assetManagementService.shutdown(); }
 
   // Business logic integration methods expected by the integration service
   async calculateDepreciation(...args: any[]) { return this.assetManagementService.depreciation; }

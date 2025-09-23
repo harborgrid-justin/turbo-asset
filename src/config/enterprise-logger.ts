@@ -40,8 +40,8 @@ export function createCorrelationId(): string {
  * Enhanced logger with enterprise features
  */
 class EnterpriseLogger {
-  private winston: winston.Logger;
-  private config = getEnvironmentConfig();
+  private readonly winston: winston.Logger;
+  private readonly config = getEnvironmentConfig();
   private performanceMetrics: PerformanceMetrics[] = [];
   private readonly maxMetricsBuffer = 1000;
 
@@ -73,7 +73,7 @@ class EnterpriseLogger {
         winston.format.colorize(),
         winston.format.printf(({ timestamp, level, message, metadata }) => {
           const metaStr = Object.keys(metadata).length > 0 ? 
-            '\n' + JSON.stringify(metadata, null, 2) : '';
+            `\n${  JSON.stringify(metadata, null, 2)}` : '';
           return `${timestamp} [${level}]: ${message}${metaStr}`;
         })
       );
@@ -422,7 +422,7 @@ class EnterpriseLogger {
    * Flush all logs (useful for graceful shutdown)
    */
   public async flush(): Promise<void> {
-    return new Promise((resolve) => {
+    await new Promise((resolve) => {
       this.winston.on('finish', resolve);
       this.winston.end();
     });
@@ -487,12 +487,12 @@ export function createPerformanceTimer(operation: string, context?: LogContext):
 export function createRequestLogger(baseContext?: LogContext) {
   return {
     info: (message: string, additionalContext?: LogContext) => 
-      logger.info(message, { ...baseContext, ...additionalContext }),
+      { logger.info(message, { ...baseContext, ...additionalContext }); },
     warn: (message: string, additionalContext?: LogContext) => 
-      logger.warn(message, { ...baseContext, ...additionalContext }),
+      { logger.warn(message, { ...baseContext, ...additionalContext }); },
     error: (message: string, error?: Error | unknown, additionalContext?: LogContext) => 
-      logger.error(message, error, { ...baseContext, ...additionalContext }),
+      { logger.error(message, error, { ...baseContext, ...additionalContext }); },
     debug: (message: string, additionalContext?: LogContext) => 
-      logger.debug(message, { ...baseContext, ...additionalContext }),
+      { logger.debug(message, { ...baseContext, ...additionalContext }); },
   };
 }

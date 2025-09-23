@@ -60,7 +60,7 @@ export interface CADLayerInfo {
 
 export interface SpaceMapping {
   spaceId: string;
-  cadBoundary: { x: number; y: number }[];
+  cadBoundary: Array<{ x: number; y: number }>;
   area: number;
   spaceType: string;
   spaceName?: string;
@@ -96,9 +96,9 @@ export interface CADExportOptions {
 }
 
 export class CADIntegrationService extends EventEmitter {
-  private processingQueue: Map<string, any> = new Map();
-  private versionHistory: Map<string, any[]> = new Map();
-  private context?: InfrastructureContext;
+  private readonly processingQueue: Map<string, any> = new Map();
+  private readonly versionHistory: Map<string, any[]> = new Map();
+  private readonly context?: InfrastructureContext;
 
   constructor(context?: InfrastructureContext) {
     super();
@@ -235,10 +235,10 @@ export class CADIntegrationService extends EventEmitter {
         where: { id: cadFile.id },
         data: {
           status: 'PROCESSED',
-          layers: layers,
-          dimensions: dimensions,
-          thumbnailUrl: thumbnailUrl,
-          spaceMappings: spaceMappings,
+          layers,
+          dimensions,
+          thumbnailUrl,
+          spaceMappings,
           processedAt: new Date(),
           processingDuration: Date.now() - processing.startedAt.getTime()
         }
@@ -266,7 +266,7 @@ export class CADIntegrationService extends EventEmitter {
       const processing = this.processingQueue.get(processingId);
       if (processing) {
         processing.status = 'FAILED';
-        processing.error = error instanceof Error ? (error as Error).message : 'Unknown error';
+        processing.error = error instanceof Error ? (error).message : 'Unknown error';
       }
 
       logger.error('CAD file processing failed', {
@@ -280,7 +280,7 @@ export class CADIntegrationService extends EventEmitter {
         where: { id: cadFile.id },
         data: {
           status: 'FAILED',
-          error: error instanceof Error ? (error as Error).message : 'Processing failed'
+          error: error instanceof Error ? (error).message : 'Processing failed'
         }
       });
     }
@@ -481,11 +481,11 @@ export interface SpaceDetectionResult {
 }
 
 export class CADIntegrationService extends EventEmitter {
-  private drawingCache: Map<string, CADDrawing> = new Map();
-  private analysisCache: Map<string, SpaceAnalysisResult> = new Map();
-  private processingQueue: Map<string, any> = new Map();
+  private readonly drawingCache: Map<string, CADDrawing> = new Map();
+  private readonly analysisCache: Map<string, SpaceAnalysisResult> = new Map();
+  private readonly processingQueue: Map<string, any> = new Map();
 
-  constructor(private context?: InfrastructureContext) {
+  constructor(private readonly context?: InfrastructureContext) {
     super();
     logger.info('CAD Integration Service initialized with infrastructure context');
   }
@@ -537,7 +537,7 @@ export class CADIntegrationService extends EventEmitter {
 
       // Start background processing
       if (options.autoProcess) {
-        setImmediate(() => this.processCADDrawing(drawingId));
+        setImmediate(async () => await this.processCADDrawing(drawingId));
       }
 
       this.emit(EVENTS.CAD_DRAWING_IMPORTED, {
@@ -573,7 +573,7 @@ export class CADIntegrationService extends EventEmitter {
     } catch (error: unknown) {
       logger.error('CAD drawing import failed', {
         fileName: options.fileName,
-        error: error instanceof Error ? (error as Error).message : 'Unknown error'
+        error: error instanceof Error ? (error).message : 'Unknown error'
       });
       throw error;
     }
@@ -633,7 +633,7 @@ export class CADIntegrationService extends EventEmitter {
       this.emit(EVENTS.CAD_PROCESSING_COMPLETED, {
         drawingId,
         processingTime,
-        spacesDetected: spaceAnalysis?.spaces?.length || 0
+        spacesDetected: spaceAnalysis?.spaces.length || 0
       });
 
       logger.info('CAD drawing processing completed', {
@@ -641,7 +641,7 @@ export class CADIntegrationService extends EventEmitter {
         processingTime,
         layerCount: layers.length,
         annotationCount: annotations.length,
-        spacesDetected: spaceAnalysis?.spaces?.length || 0
+        spacesDetected: spaceAnalysis?.spaces.length || 0
       });
 
       return {
@@ -654,14 +654,14 @@ export class CADIntegrationService extends EventEmitter {
     } catch (error: unknown) {
       logger.error('CAD drawing processing failed', {
         drawingId,
-        error: error instanceof Error ? (error as Error).message : 'Unknown error'
+        error: error instanceof Error ? (error).message : 'Unknown error'
       });
 
       // Update processing status
       const processingTask = this.processingQueue.get(drawingId);
       if (processingTask) {
         processingTask.status = 'failed';
-        processingTask.error = error instanceof Error ? (error as Error).message : 'Unknown error';
+        processingTask.error = error instanceof Error ? (error).message : 'Unknown error';
         this.processingQueue.set(drawingId, processingTask);
       }
 
@@ -721,7 +721,7 @@ export class CADIntegrationService extends EventEmitter {
       
       for (const drawing of drawings) {
         const spaceAnalysis = this.analysisCache.get(drawing.id);
-        if (spaceAnalysis && spaceAnalysis.spaces) {
+        if (spaceAnalysis?.spaces) {
           allSpaces.push(...spaceAnalysis.spaces);
           totalArea += spaceAnalysis.totalArea || 0;
         }
@@ -790,7 +790,7 @@ export class CADIntegrationService extends EventEmitter {
       logger.error('Space analysis report generation failed', {
         organizationId,
         buildingId,
-        error: error instanceof Error ? (error as Error).message : 'Unknown error'
+        error: error instanceof Error ? (error).message : 'Unknown error'
       });
       throw error;
     }
@@ -850,7 +850,7 @@ export class CADIntegrationService extends EventEmitter {
       logger.error('CAD drawing export failed', {
         drawingId: options.drawingId,
         format: options.format,
-        error: error instanceof Error ? (error as Error).message : 'Unknown error'
+        error: error instanceof Error ? (error).message : 'Unknown error'
       });
       throw error;
     }
@@ -934,7 +934,7 @@ export class CADIntegrationService extends EventEmitter {
       return result;
     } catch (error: unknown) {
       result.isValid = false;
-      result.errors.push(`Validation error: ${error instanceof Error ? (error as Error).message : 'Unknown error'}`);
+      result.errors.push(`Validation error: ${error instanceof Error ? (error).message : 'Unknown error'}`);
       return result;
     }
   }
@@ -1145,9 +1145,9 @@ export class CADIntegrationService extends EventEmitter {
         buildingId: d.buildingId,
         floorId: d.floorId || '',
         fileName: d.fileName,
-        fileFormat: d.fileFormat as any,
+        fileFormat: d.fileFormat,
         fileSize: d.fileSize,
-        status: d.status as any,
+        status: d.status,
         layers: [],
         annotations: [],
         metadata: d.metadata ? JSON.parse(d.metadata as string) : {}
@@ -1274,9 +1274,9 @@ export class CADIntegrationService extends EventEmitter {
         buildingId: drawing.buildingId,
         floorId: drawing.floorId || '',
         fileName: drawing.fileName,
-        fileFormat: drawing.fileFormat as any,
+        fileFormat: drawing.fileFormat,
         fileSize: drawing.fileSize,
-        status: drawing.status as any,
+        status: drawing.status,
         layers: [],
         annotations: [],
         metadata: drawing.metadata ? JSON.parse(drawing.metadata as string) : {}

@@ -442,7 +442,7 @@ export const validateConfiguration = (config: EnterpriseConfiguration): boolean 
     }
 
     // Validate monitoring thresholds
-    const thresholds = config.monitoring.alerting.thresholds;
+    const {thresholds} = config.monitoring.alerting;
     if (thresholds.errorRate < 0 || thresholds.errorRate > 100) {
       throw new Error('Error rate threshold must be between 0 and 100 percent');
     }

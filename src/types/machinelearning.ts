@@ -815,7 +815,7 @@ export interface MLApiResponse<T = any> {
 
 export interface BatchPredictionRequest {
   modelId: string;
-  data: Record<string, any>[];
+  data: Array<Record<string, any>>;
   options?: {
     includeConfidence?: boolean;
     includeFeatureImportance?: boolean;

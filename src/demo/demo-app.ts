@@ -135,12 +135,12 @@ app.get('/demo/asset-lifecycle', async (req, res) => {
         depreciation: {
           success: assetDepreciationResult.success,
           data: assetDepreciationResult.data.depreciation,
-          executionTime: assetDepreciationResult.metadata.responseTime + 'ms'
+          executionTime: `${assetDepreciationResult.metadata.responseTime  }ms`
         },
         lifecycle: {
           success: lifecycleTrackingResult.success,
           data: lifecycleTrackingResult.data.lifecycle,
-          executionTime: lifecycleTrackingResult.metadata.responseTime + 'ms'
+          executionTime: `${lifecycleTrackingResult.metadata.responseTime  }ms`
         }
       },
       insights: {
@@ -157,7 +157,7 @@ app.get('/demo/asset-lifecycle', async (req, res) => {
     console.error('Asset Lifecycle Demo Error:', error);
     res.status(500).json({
       error: 'Asset Lifecycle Demo Failed',
-      details: error instanceof Error ? (error as Error).message : 'Unknown error'
+      details: error instanceof Error ? (error).message : 'Unknown error'
     });
 
     return;
@@ -237,7 +237,7 @@ app.get('/demo/financial-consolidation', async (req, res) => {
       results: {
         consolidation: consolidationResult.data.consolidation,
         exchangeRates: consolidationResult.data.exchangeRates,
-        executionTime: consolidationResult.metadata.responseTime + 'ms'
+        executionTime: `${consolidationResult.metadata.responseTime  }ms`
       },
       insights: {
         totalRevenue: consolidationResult.data.consolidation?.totalRevenue,
@@ -254,7 +254,7 @@ app.get('/demo/financial-consolidation', async (req, res) => {
     console.error('Financial Consolidation Demo Error:', error);
     res.status(500).json({
       error: 'Financial Consolidation Demo Failed',
-      details: error instanceof Error ? (error as Error).message : 'Unknown error'
+      details: error instanceof Error ? (error).message : 'Unknown error'
     });
 
     return;
@@ -302,12 +302,12 @@ app.get('/demo/space-analytics', async (req, res) => {
         utilization: {
           success: utilizationResult.success,
           data: utilizationResult.data.utilization,
-          executionTime: utilizationResult.metadata.responseTime + 'ms'
+          executionTime: `${utilizationResult.metadata.responseTime  }ms`
         },
         optimization: {
           success: optimizationResult.success,
           data: optimizationResult.data.optimization,
-          executionTime: optimizationResult.metadata.responseTime + 'ms'
+          executionTime: `${optimizationResult.metadata.responseTime  }ms`
         }
       },
       insights: {
@@ -325,7 +325,7 @@ app.get('/demo/space-analytics', async (req, res) => {
     console.error('Space Analytics Demo Error:', error);
     res.status(500).json({
       error: 'Space Analytics Demo Failed',
-      details: error instanceof Error ? (error as Error).message : 'Unknown error'
+      details: error instanceof Error ? (error).message : 'Unknown error'
     });
 
     return;
@@ -381,14 +381,14 @@ app.get('/demo/predictive-analysis', async (req, res) => {
           prediction: predictiveResult.data.analysis?.prediction,
           confidence: `${(predictiveResult.data.analysis?.confidence * 100).toFixed(1)}%`,
           recommendations: predictiveResult.data.analysis?.recommendations,
-          executionTime: predictiveResult.metadata.responseTime + 'ms'
+          executionTime: `${predictiveResult.metadata.responseTime  }ms`
         },
         anomalies: {
           success: anomalyResult.success,
           detected: anomalyResult.data.anomalies?.detected,
           severity: anomalyResult.data.anomalies?.severity,
           affectedSystems: anomalyResult.data.anomalies?.affectedSystems,
-          executionTime: anomalyResult.metadata.responseTime + 'ms'
+          executionTime: `${anomalyResult.metadata.responseTime  }ms`
         }
       },
       insights: {
@@ -405,7 +405,7 @@ app.get('/demo/predictive-analysis', async (req, res) => {
     console.error('Predictive Analysis Demo Error:', error);
     res.status(500).json({
       error: 'Predictive Analysis Demo Failed',
-      details: error instanceof Error ? (error as Error).message : 'Unknown error'
+      details: error instanceof Error ? (error).message : 'Unknown error'
     });
 
     return;
@@ -523,7 +523,7 @@ app.get('/demo/load-test', async (req, res) => {
     console.error('Load Test Demo Error:', error);
     res.status(500).json({
       error: 'Load Test Demo Failed',
-      details: error instanceof Error ? (error as Error).message : 'Unknown error'
+      details: error instanceof Error ? (error).message : 'Unknown error'
     });
 
     return;

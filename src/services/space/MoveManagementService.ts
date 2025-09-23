@@ -191,7 +191,7 @@ export class MoveManagementService {
         organizationId: data.organizationId,
       });
 
-      return this.getMoveRequest(moveRequest.id, data.organizationId);
+      return await this.getMoveRequest(moveRequest.id, data.organizationId);
     } catch (error: unknown) {
       logger.error('Failed to create move request', error);
       throw error;
@@ -435,7 +435,7 @@ export class MoveManagementService {
         organizationId,
       });
 
-      return this.getMoveRequest(id, organizationId);
+      return await this.getMoveRequest(id, organizationId);
     } catch (error: unknown) {
       logger.error('Failed to process move request', error);
       throw error;
@@ -623,7 +623,7 @@ export class MoveManagementService {
         organizationId,
       });
 
-      return this.getMoveRequest(id, organizationId);
+      return await this.getMoveRequest(id, organizationId);
     } catch (error: unknown) {
       logger.error('Failed to update move status', error);
       throw error;
@@ -673,7 +673,7 @@ export class MoveManagementService {
       const costsByCategory = new Map<string, number>();
       moves.forEach(move => {
         move.costs.forEach(cost => {
-          const category = cost.category;
+          const {category} = cost;
           costsByCategory.set(category, (costsByCategory.get(category) || 0) + (cost.actualCost || 0));
         });
       });
@@ -841,7 +841,7 @@ export class MoveManagementService {
     moveRequests: string[],
     constraints: {
       availableVendors?: string[];
-      timeWindows?: { start: Date; end: Date }[];
+      timeWindows?: Array<{ start: Date; end: Date }>;
       resourceLimits?: { [key: string]: number };
       priorities?: { [moveId: string]: number };
     } = {}
@@ -855,7 +855,7 @@ export class MoveManagementService {
     try {
       // Get move request details
       const moves = await Promise.all(
-        moveRequests.map(id => this.getMoveRequest(id, organizationId))
+        moveRequests.map(async id => await this.getMoveRequest(id, organizationId))
       );
 
       // Analyze resource requirements
@@ -972,9 +972,9 @@ export class MoveManagementService {
   async manageMoveApprovals(
     organizationId: string,
     workflowConfig: {
-      approvalLevels: { level: number; approverRole: string; condition?: string }[];
-      autoApprovalRules?: { condition: string; action: string }[];
-      escalationRules?: { timeLimit: number; escalateTo: string }[];
+      approvalLevels: Array<{ level: number; approverRole: string; condition?: string }>;
+      autoApprovalRules?: Array<{ condition: string; action: string }>;
+      escalationRules?: Array<{ timeLimit: number; escalateTo: string }>;
     }
   ): Promise<{
     workflowId: string;

@@ -256,7 +256,7 @@ export class SpaceUtilizationService {
         AND utilization_type = 'OCCUPANCY'
         AND record_date >= NOW() - INTERVAL '24 hours'
         ORDER BY space_id, record_date DESC
-      ` as any[];
+      `;
 
       // Enrich with space information
       const enrichedData = await Promise.all(
@@ -299,7 +299,7 @@ export class SpaceUtilizationService {
   /**
    * Process sensor data and create utilization records
    */
-  async processSensorData(sensorData: {
+  async processSensorData(sensorData: Array<{
     sensorId: string;
     spaceId: string;
     data: {
@@ -310,7 +310,7 @@ export class SpaceUtilizationService {
       [key: string]: any;
     };
     timestamp: Date;
-  }[]): Promise<void> {
+  }>): Promise<void> {
     try {
       const utilizationRecords: UtilizationRecord[] = [];
 
@@ -531,7 +531,7 @@ export class SpaceUtilizationService {
         AND su.utilization_type = 'UTILIZATION'
         GROUP BY s.id, s.name, s.type, s.capacity, s.area, DATE_TRUNC('day', su.record_date)
         ORDER BY s.id, date DESC
-      ` as any[];
+      `;
 
       // Calculate growth trends and predictions
       const predictions = this.calculateGrowthPredictions(historicalData, timeHorizon);
@@ -567,7 +567,7 @@ export class SpaceUtilizationService {
    * Process real-time sensor data with advanced analytics
    */
   async processRealtimeSensorData(
-    sensorData: {
+    sensorData: Array<{
       sensorId: string;
       spaceId: string;
       sensorType: string;
@@ -575,7 +575,7 @@ export class SpaceUtilizationService {
       unit: string;
       timestamp: Date;
       metadata?: any;
-    }[]
+    }>
   ): Promise<{
     processed: number;
     alerts: any[];

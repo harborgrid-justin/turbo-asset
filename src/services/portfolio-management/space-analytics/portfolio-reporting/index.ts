@@ -45,13 +45,13 @@ export * from './constants/PortfolioReportingConstants';
  * portfolio analytics, reporting, and visualization capabilities.
  */
 export class PortfolioReportingManager {
-  private dashboardService: PortfolioDashboardService;
-  private financialAnalysisService: PortfolioFinancialAnalysisService;
-  private reportingService: PortfolioReportingService;
-  private metricsService: PortfolioMetricsService;
-  private alertService: PortfolioAlertService;
-  private exportService: PortfolioDataExportService;
-  private visualizationService: PortfolioVisualizationService;
+  private readonly dashboardService: PortfolioDashboardService;
+  private readonly financialAnalysisService: PortfolioFinancialAnalysisService;
+  private readonly reportingService: PortfolioReportingService;
+  private readonly metricsService: PortfolioMetricsService;
+  private readonly alertService: PortfolioAlertService;
+  private readonly exportService: PortfolioDataExportService;
+  private readonly visualizationService: PortfolioVisualizationService;
 
   constructor() {
     // Initialize all sub-services

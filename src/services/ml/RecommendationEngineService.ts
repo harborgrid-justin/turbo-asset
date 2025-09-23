@@ -184,7 +184,7 @@ export class RecommendationEngineService extends EventEmitter {
       timeline?: string;
       qualityRequirements?: string[];
       complianceRequirements?: string[];
-      preferredVendorTypes?: ('LOCAL' | 'NATIONAL' | 'INTERNATIONAL')[];
+      preferredVendorTypes?: Array<'LOCAL' | 'NATIONAL' | 'INTERNATIONAL'>;
       riskTolerance?: 'LOW' | 'MEDIUM' | 'HIGH';
     },
     options: {
@@ -1275,7 +1275,7 @@ export class RecommendationEngineService extends EventEmitter {
   }
 
   private calculateOverallScore(recommendation: any, requirements: any, riskTolerance: string): number {
-    let score = recommendation.score;
+    let {score} = recommendation;
     
     // Adjust for risk tolerance
     if (recommendation.riskAssessment) {
@@ -1465,7 +1465,7 @@ export class RecommendationEngineService extends EventEmitter {
   private calculateLeaseFinancialImpact(currentLease: any, recommendation: LeaseRecommendation, timeHorizon: number): number {
     // Calculate the financial impact of the recommendation
     const currentAnnualRent = currentLease.monthlyRent * 12;
-    const projectedSavings = recommendation.recommendations?.reduce((sum, rec) => {
+    const projectedSavings = recommendation.recommendations.reduce((sum, rec) => {
       if (rec.aspect === 'RENT') {
         return sum + (currentAnnualRent * rec.impact);
       }

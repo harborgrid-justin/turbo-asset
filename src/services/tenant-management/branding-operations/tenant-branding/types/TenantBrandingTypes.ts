@@ -151,7 +151,7 @@ export interface AccessConfiguration {
     groupMapping?: Record<string, string[]>;
   };
   multiFactorRequired: boolean;
-  allowedMfaMethods?: ('totp' | 'sms' | 'email' | 'push' | 'hardware')[];
+  allowedMfaMethods?: Array<'totp' | 'sms' | 'email' | 'push' | 'hardware'>;
   sessionTimeout: number;
   maxConcurrentSessions?: number;
   passwordPolicy: {

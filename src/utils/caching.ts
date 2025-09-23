@@ -110,8 +110,8 @@ export abstract class BaseCache {
     tags?: readonly string[]
   ): Promise<void> {
     await Promise.all(
-      Array.from(entries.entries()).map(([key, value]) =>
-        this.set(key, value, ttl, tags)
+      Array.from(entries.entries()).map(async ([key, value]) =>
+        { await this.set(key, value, ttl, tags); }
       )
     );
   }
@@ -130,7 +130,7 @@ export abstract class BaseCache {
       }
     }
 
-    await Promise.all(keysToDelete.map(key => this.delete(key)));
+    await Promise.all(keysToDelete.map(async key => await this.delete(key)));
   }
 
   protected abstract getCacheEntry(key: string): Promise<CacheEntry | null>;
@@ -250,7 +250,7 @@ export class MemoryCache extends BaseCache {
   }
 
   public async clear(): Promise<void> {
-    const size = this.cache.size;
+    const {size} = this.cache;
     this.cache.clear();
     logger.debug(`Cleared ${size} cache entries`);
   }
@@ -343,7 +343,7 @@ export class MemoryCache extends BaseCache {
     }
 
     // Critical fix: For large caches, use iterator-based approach to avoid memory spike
-    const candidates: Array<[string, CacheEntry<unknown>]> = [];
+    const candidates: Array<[string, CacheEntry]> = [];
     const iterator = this.cache.entries();
     
     // Sample entries for eviction consideration
@@ -351,14 +351,14 @@ export class MemoryCache extends BaseCache {
     
     for (let i = 0; i < sampleSize; i++) {
       const next = iterator.next();
-      if (next.done) break;
+      if (next.done) {break;}
       candidates.push(next.value);
     }
 
     return this.sortEntriesForEviction(candidates).slice(0, count).map(([key]) => key);
   }
 
-  private sortEntriesForEviction(entries: Array<[string, CacheEntry<unknown>]>): Array<[string, CacheEntry<unknown>]> {
+  private sortEntriesForEviction(entries: Array<[string, CacheEntry]>): Array<[string, CacheEntry]> {
     switch (this.configuration.evictionPolicy) {
       case 'LRU': // Least Recently Used
         return entries.sort(([, a], [, b]) => a.lastAccessed.getTime() - b.lastAccessed.getTime());
@@ -412,7 +412,7 @@ export class CacheManager {
       );
     }
 
-    return cache.get<T>(key);
+    return await cache.get<T>(key);
   }
 
   /**
@@ -434,7 +434,7 @@ export class CacheManager {
       );
     }
 
-    return cache.set(key, value, ttl, tags);
+    await cache.set(key, value, ttl, tags);
   }
 
   /**
@@ -442,7 +442,7 @@ export class CacheManager {
    */
   public async delete(key: string): Promise<void> {
     await Promise.all(
-      Array.from(this.caches.values()).map(cache => cache.delete(key))
+      Array.from(this.caches.values()).map(async cache => await cache.delete(key))
     );
   }
 
@@ -451,7 +451,7 @@ export class CacheManager {
    */
   public async clear(): Promise<void> {
     await Promise.all(
-      Array.from(this.caches.values()).map(cache => cache.clear())
+      Array.from(this.caches.values()).map(async cache => { await cache.clear(); })
     );
   }
 
@@ -473,7 +473,7 @@ export class CacheManager {
    */
   public async invalidateByTags(tags: readonly string[]): Promise<void> {
     await Promise.all(
-      Array.from(this.caches.values()).map(cache => cache.invalidateByTags(tags))
+      Array.from(this.caches.values()).map(async cache => { await cache.invalidateByTags(tags); })
     );
   }
 }

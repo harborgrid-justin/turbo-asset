@@ -33,7 +33,7 @@ export interface DocumentationResult {
  */
 export class APIDocumentationService {
   private static instance: APIDocumentationService;
-  private documentationCache: Map<string, any> = new Map();
+  private readonly documentationCache: Map<string, any> = new Map();
 
   static getInstance(): APIDocumentationService {
     if (!APIDocumentationService.instance) {

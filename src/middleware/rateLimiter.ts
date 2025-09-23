@@ -7,7 +7,7 @@ import { logger } from '@/config/logger';
  * In production, this should be replaced with Redis
  */
 class MemoryStore {
-  private store: Map<string, { count: number; resetTime: number }> = new Map();
+  private readonly store: Map<string, { count: number; resetTime: number }> = new Map();
 
   async get(key: string): Promise<{ count: number; resetTime: number } | null> {
     const data = this.store.get(key);
@@ -75,8 +75,8 @@ export interface RateLimitConfig {
  * Advanced rate limiter with multiple strategies
  */
 export class RateLimiter {
-  private store: MemoryStore;
-  private config: Required<RateLimitConfig>;
+  private readonly store: MemoryStore;
+  private readonly config: Required<RateLimitConfig>;
 
   constructor(config: RateLimitConfig = {}) {
     this.store = new MemoryStore();
@@ -94,7 +94,7 @@ export class RateLimiter {
     };
 
     // Start cleanup interval
-    setInterval(() => this.store.cleanup(), this.config.windowMs);
+    setInterval(() => { this.store.cleanup(); }, this.config.windowMs);
   }
 
   private defaultKeyGenerator(req: Request): string {
@@ -106,7 +106,7 @@ export class RateLimiter {
       try {
         // Skip if configured to skip this request
         if (this.config.skip(req)) {
-          return next();
+          next(); return;
         }
 
         const key = this.config.keyGenerator(req);
@@ -268,7 +268,7 @@ export const createTieredRateLimit = (getTier: (req: Request) => 'free' | 'premi
     enterprise: { windowMs: 60 * 60 * 1000, max: 10000 }, // 10000/hour
   };
 
-  return (req: Request, res: Response, next: NextFunction) => {
+  return async (req: Request, res: Response, next: NextFunction) => {
     const tier = getTier(req);
     const config = tierLimits[tier];
     
@@ -278,7 +278,7 @@ export const createTieredRateLimit = (getTier: (req: Request) => 'free' | 'premi
       message: `Rate limit exceeded for ${tier} tier. Upgrade for higher limits.`,
     });
 
-    return rateLimiter.middleware()(req, res, next);
+    await rateLimiter.middleware()(req, res, next);
   };
 };
 
@@ -286,11 +286,11 @@ export const createTieredRateLimit = (getTier: (req: Request) => 'free' | 'premi
  * Rate limiter based on API key
  */
 export const createAPIKeyRateLimit = (getAPIKeyLimits: (apiKey: string) => { windowMs: number; max: number }) => {
-  return (req: Request, res: Response, next: NextFunction) => {
+  return async (req: Request, res: Response, next: NextFunction) => {
     const apiKey = req.headers['x-api-key'] as string;
     
     if (!apiKey) {
-      return next();
+      next(); return;
     }
 
     try {
@@ -301,10 +301,10 @@ export const createAPIKeyRateLimit = (getAPIKeyLimits: (apiKey: string) => { win
         message: 'API key rate limit exceeded.',
       });
 
-      return rateLimiter.middleware()(req, res, next);
+      await rateLimiter.middleware()(req, res, next); return;
     } catch (error: unknown) {
       // If we can't get limits, use default
-      return apiRateLimit.middleware()(req, res, next);
+      await apiRateLimit.middleware()(req, res, next); return;
     }
   };
 };

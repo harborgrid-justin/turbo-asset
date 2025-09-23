@@ -155,7 +155,7 @@ export class PerformanceMetricsCollector extends BaseMetricsCollector {
       // Filter metrics from last minute
       const recentMetrics = data.filter(m => now - m.timestamp.getTime() < 60000);
       
-      if (recentMetrics.length === 0) continue;
+      if (recentMetrics.length === 0) {continue;}
 
       // Calculate statistics
       const durations = recentMetrics.map(m => m.duration);
@@ -179,8 +179,8 @@ export class PerformanceMetricsCollector extends BaseMetricsCollector {
   }
 
   private percentile(values: readonly number[], p: number): number {
-    if (values.length === 0) return 0;
-    if (values.length === 1) return values[0]!;
+    if (values.length === 0) {return 0;}
+    if (values.length === 1) {return values[0]!;}
     
     // Critical fix: More efficient percentile calculation for large datasets
     if (values.length > 1000) {
@@ -205,8 +205,8 @@ export class PerformanceMetricsCollector extends BaseMetricsCollector {
     const upper = Math.ceil(index);
     const weight = index % 1;
 
-    if (upper >= sorted.length) return sorted[sorted.length - 1]!;
-    if (lower === upper) return sorted[lower]!;
+    if (upper >= sorted.length) {return sorted[sorted.length - 1]!;}
+    if (lower === upper) {return sorted[lower]!;}
 
     return sorted[lower]! * (1 - weight) + sorted[upper]! * weight;
   }
@@ -269,8 +269,8 @@ export class SystemMetricsCollector extends BaseMetricsCollector {
  */
 export class DatabaseMetricsCollector extends BaseMetricsCollector {
   private connectionCount = 0;
-  private activeQueries = 0;
-  private queryMetrics = new Map<string, { count: number; totalTime: number }>();
+  private readonly activeQueries = 0;
+  private readonly queryMetrics = new Map<string, { count: number; totalTime: number }>();
 
   constructor() {
     super('database');
@@ -356,7 +356,7 @@ export class AlertManager {
    */
   public evaluateMetrics(metrics: readonly MetricData[]): void {
     for (const rule of this.rules.values()) {
-      if (!rule.enabled) continue;
+      if (!rule.enabled) {continue;}
 
       const relevantMetrics = metrics.filter(m => m.name === rule.condition.metric);
       
@@ -548,8 +548,8 @@ export class MonitoringSystem {
     const unhealthyServices = Object.values(services).filter(s => s.status === 'unhealthy').length;
 
     let overallStatus: SystemHealth['status'] = 'healthy';
-    if (unhealthyServices > 0) overallStatus = 'unhealthy';
-    else if (degradedServices > 0) overallStatus = 'degraded';
+    if (unhealthyServices > 0) {overallStatus = 'unhealthy';}
+    else if (degradedServices > 0) {overallStatus = 'degraded';}
 
     return {
       status: overallStatus,
@@ -577,7 +577,7 @@ export class MonitoringSystem {
       const metrics = await Promise.race([
         metricsPromise,
         new Promise<never>((_, reject) => 
-          setTimeout(() => reject(new Error('Metrics collection timeout')), timeoutMs)
+          setTimeout(() => { reject(new Error('Metrics collection timeout')); }, timeoutMs)
         )
       ]);
       
@@ -632,8 +632,8 @@ export class MonitoringSystem {
       const requestsPerSecond = requestCountMetric?.value ?? 0;
 
       let status: ServiceHealth['status'] = 'healthy';
-      if (errorRate > 0.1 || responseTime > PERFORMANCE.MAX_RESPONSE_TIME_MS) status = 'degraded';
-      if (errorRate > 0.5 || responseTime > PERFORMANCE.MAX_RESPONSE_TIME_MS * 5) status = 'unhealthy';
+      if (errorRate > 0.1 || responseTime > PERFORMANCE.MAX_RESPONSE_TIME_MS) {status = 'degraded';}
+      if (errorRate > 0.5 || responseTime > PERFORMANCE.MAX_RESPONSE_TIME_MS * 5) {status = 'unhealthy';}
 
       services[serviceName] = {
         name: serviceName,

@@ -27,7 +27,7 @@ export interface DocumentVersion {
 }
 
 export class DocumentService {
-  private uploadDir: string;
+  private readonly uploadDir: string;
 
   constructor() {
     this.uploadDir = path.join(process.cwd(), 'uploads');
@@ -217,7 +217,7 @@ export class DocumentService {
     file: any;
     uploadedBy: string;
   }): Promise<string> {
-    return this.uploadDocument(data.file, data.uploadedBy, {
+    return await this.uploadDocument(data.file, data.uploadedBy, {
       title: data.title,
       description: data.description,
       category: data.category,
@@ -236,7 +236,7 @@ export class DocumentService {
     changeNotes?: string,
     uploadedBy?: string
   ): Promise<string> {
-    return this.uploadDocumentVersion(documentId, file, changeNotes);
+    return await this.uploadDocumentVersion(documentId, file, changeNotes);
   }
 
   /**
@@ -1298,7 +1298,7 @@ export class DocumentService {
 
       // Calculate document type distribution
       const typeDistribution = documents.reduce((acc, doc) => {
-        const mimeType = doc.mimeType;
+        const {mimeType} = doc;
         acc[mimeType] = (acc[mimeType] || 0) + 1;
         return acc;
       }, {} as Record<string, number>);
@@ -1641,8 +1641,8 @@ export class DocumentService {
       
       // Search using semantic terms
       const semanticResults = await Promise.all(
-        semanticTerms.map(term => 
-          this.searchDocuments(organizationId, {
+        semanticTerms.map(async term => 
+          await this.searchDocuments(organizationId, {
             query: term,
             limit: 10,
           })

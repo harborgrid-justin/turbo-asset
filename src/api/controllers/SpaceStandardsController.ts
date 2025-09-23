@@ -85,7 +85,7 @@ router.post('/', async (req: Request, res: Response): Promise<void> => {
     const validCategories = ['OFFICE', 'MEETING', 'COMMON', 'SUPPORT', 'SPECIALIZED'];
     if (!validCategories.includes(category)) {
       res.status(400).json({
-        error: 'Invalid category. Valid values are: ' + validCategories.join(', '),
+        error: `Invalid category. Valid values are: ${  validCategories.join(', ')}`,
       });
 
       return;
@@ -122,14 +122,14 @@ router.post('/', async (req: Request, res: Response): Promise<void> => {
     return;
   } catch (error: unknown) {
     logger.error('Failed to create space standard', error);
-    if (error instanceof Error && (error as Error).message.includes('validation')) {
-      res.status(400).json({ error: (error as Error).message });
+    if (error instanceof Error && (error).message.includes('validation')) {
+      res.status(400).json({ error: (error).message });
 
       return;
     } else {
       res.status(500).json({
         error: 'Failed to create space standard',
-        message: error instanceof Error ? (error as Error).message : 'Unknown error',
+        message: error instanceof Error ? (error).message : 'Unknown error',
       });
 
       return;
@@ -197,7 +197,7 @@ router.get('/:organizationId', async (req: Request, res: Response): Promise<void
     logger.error('Failed to get space standards', error);
     res.status(500).json({
       error: 'Failed to get space standards',
-      message: error instanceof Error ? (error as Error).message : 'Unknown error',
+      message: error instanceof Error ? (error).message : 'Unknown error',
     });
 
     return;
@@ -297,14 +297,14 @@ router.post('/:standardId/configuration', async (req: Request, res: Response): P
     res.json(result);
   } catch (error: unknown) {
     logger.error('Failed to generate space configuration', error);
-    if (error instanceof Error && (error as Error).message.includes('not found')) {
-      res.status(404).json({ error: (error as Error).message });
+    if (error instanceof Error && (error).message.includes('not found')) {
+      res.status(404).json({ error: (error).message });
 
       return;
     } else {
       res.status(500).json({
         error: 'Failed to generate space configuration',
-        message: error instanceof Error ? (error as Error).message : 'Unknown error',
+        message: error instanceof Error ? (error).message : 'Unknown error',
       });
 
       return;
@@ -360,7 +360,7 @@ router.post('/configuration/validate', async (req: Request, res: Response): Prom
     logger.error('Failed to validate space configuration', error);
     res.status(500).json({
       error: 'Failed to validate space configuration',
-      message: error instanceof Error ? (error as Error).message : 'Unknown error',
+      message: error instanceof Error ? (error).message : 'Unknown error',
     });
 
     return;
@@ -459,7 +459,7 @@ router.post('/:organizationId/templates', async (req: Request, res: Response): P
     logger.error('Failed to generate planning templates', error);
     res.status(500).json({
       error: 'Failed to generate planning templates',
-      message: error instanceof Error ? (error as Error).message : 'Unknown error',
+      message: error instanceof Error ? (error).message : 'Unknown error',
     });
 
     return;
@@ -577,7 +577,7 @@ router.get('/analytics/:organizationId', async (req: Request, res: Response): Pr
     logger.error('Failed to get space standards analytics', error);
     res.status(500).json({
       error: 'Failed to get space standards analytics',
-      message: error instanceof Error ? (error as Error).message : 'Unknown error',
+      message: error instanceof Error ? (error).message : 'Unknown error',
     });
 
     return;
@@ -659,9 +659,9 @@ router.post('/:standardId/clone', async (req: Request, res: Response): Promise<v
     };
 
     // Remove ID and timestamps to create new record
-    delete (clonedStandard as any).id;
-    delete (clonedStandard as any).createdAt;
-    delete (clonedStandard as any).updatedAt;
+    delete (clonedStandard).id;
+    delete (clonedStandard).createdAt;
+    delete (clonedStandard).updatedAt;
 
     const newStandard = await standardsService.createSpaceStandard(clonedStandard);
 
@@ -673,7 +673,7 @@ router.post('/:standardId/clone', async (req: Request, res: Response): Promise<v
     logger.error('Failed to clone space standard', error);
     res.status(500).json({
       error: 'Failed to clone space standard',
-      message: error instanceof Error ? (error as Error).message : 'Unknown error',
+      message: error instanceof Error ? (error).message : 'Unknown error',
     });
 
     return;

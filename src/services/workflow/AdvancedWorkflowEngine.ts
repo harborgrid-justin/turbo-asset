@@ -245,11 +245,11 @@ export interface WorkflowAnalytics {
  * Advanced Workflow Engine that exceeds IBM TRIRIGA capabilities
  */
 export class AdvancedWorkflowEngine extends EventEmitter {
-  private workflows = new Map<string, WorkflowDefinition>();
-  private instances = new Map<string, WorkflowInstance>();
-  private analytics = new Map<string, WorkflowAnalytics>();
-  private cache = new Map<string, any>();
-  private aiModels = new Map<string, any>();
+  private readonly workflows = new Map<string, WorkflowDefinition>();
+  private readonly instances = new Map<string, WorkflowInstance>();
+  private readonly analytics = new Map<string, WorkflowAnalytics>();
+  private readonly cache = new Map<string, any>();
+  private readonly aiModels = new Map<string, any>();
 
   constructor() {
     super();
@@ -822,12 +822,12 @@ export class AdvancedWorkflowEngine extends EventEmitter {
   }
 
   private async determineNextSteps(instance: WorkflowInstance, currentStep: WorkflowStep, action: string, data: Record<string, any>): Promise<string[]> {
-    return currentStep.nextSteps?.map(rule => rule.targetStepId).filter(Boolean) || [];
+    return currentStep.nextSteps.map(rule => rule.targetStepId).filter(Boolean) || [];
   }
 
   private async evaluateSLAStatus(instance: WorkflowInstance, workflow: WorkflowDefinition): Promise<'ON_TRACK' | 'AT_RISK' | 'BREACHED'> {
     const elapsed = Date.now() - instance.startedAt.getTime();
-    const slaThreshold = (workflow.slaConfig?.defaultTimeoutHours || 24) * 60 * 60 * 1000;
+    const slaThreshold = (workflow.slaConfig.defaultTimeoutHours || 24) * 60 * 60 * 1000;
     return elapsed > slaThreshold ? 'BREACHED' : elapsed > slaThreshold * 0.8 ? 'AT_RISK' : 'ON_TRACK';
   }
 
@@ -843,7 +843,7 @@ export class AdvancedWorkflowEngine extends EventEmitter {
   private async getOptimalAssignment(instance: WorkflowInstance, step: WorkflowStep): Promise<{assignees: string[], confidence: number}> {
     if (this.aiModels.has('workflow-routing-optimizer')) {
       const result = await this.runAIModel('workflow-routing-optimizer', {
-        step: step,
+        step,
         context: instance.contextData
       });
       return result.result;

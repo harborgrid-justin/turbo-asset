@@ -25,11 +25,11 @@ import { IntegrationService } from '../IntegrationService';
  * coordinating between various external system connectors.
  */
 export class EnterpriseConnectorsService {
-  private microsoft365Service: Microsoft365IntegrationService;
-  private salesforceService: SalesforceIntegrationService;
-  private calendarService: CalendarIntegrationService;
-  private cadService: CADIntegrationService;
-  private integrationService: IntegrationService;
+  private readonly microsoft365Service: Microsoft365IntegrationService;
+  private readonly salesforceService: SalesforceIntegrationService;
+  private readonly calendarService: CalendarIntegrationService;
+  private readonly cadService: CADIntegrationService;
+  private readonly integrationService: IntegrationService;
 
   constructor() {
     // Initialize all integration services

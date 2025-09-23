@@ -113,9 +113,9 @@ export interface KPIConfiguration {
 }
 
 export class BusinessIntelligenceService extends EventEmitter {
-  private dashboardCache: Map<string, any> = new Map();
-  private reportCache: Map<string, any> = new Map();
-  private context?: InfrastructureContext;
+  private readonly dashboardCache: Map<string, any> = new Map();
+  private readonly reportCache: Map<string, any> = new Map();
+  private readonly context?: InfrastructureContext;
 
   constructor(context?: InfrastructureContext) {
     super();

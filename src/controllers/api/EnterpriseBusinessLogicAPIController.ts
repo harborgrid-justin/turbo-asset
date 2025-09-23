@@ -10,7 +10,7 @@ import { logger } from '../config/logger';
 
 export class EnterpriseBusinessLogicAPIController {
   private static instance: EnterpriseBusinessLogicAPIController;
-  private enterpriseService: typeof EnterpriseBusinessLogicService;
+  private readonly enterpriseService: typeof EnterpriseBusinessLogicService;
 
   private constructor() {
     this.enterpriseService = EnterpriseBusinessLogicService.getInstance();
@@ -454,7 +454,7 @@ export class EnterpriseBusinessLogicAPIController {
   private calculateCategoryStats(features: any[]): any {
     const categoryStats = {};
     features.forEach(feature => {
-      const category = feature.category;
+      const {category} = feature;
       if (!categoryStats[category]) {
         categoryStats[category] = {
           count: 0,

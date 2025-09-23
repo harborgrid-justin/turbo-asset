@@ -79,7 +79,7 @@ router.post('/calculate-lease-accounting', async (req: Request, res: Response): 
     logger.error('Failed to calculate lease accounting', error);
     res.status(500).json({
       error: 'Failed to calculate lease accounting',
-      message: error instanceof Error ? (error as Error).message : 'Unknown error'
+      message: error instanceof Error ? (error).message : 'Unknown error'
     });
 
     return;
@@ -134,7 +134,7 @@ router.post('/lease-accounting-records', async (req: Request, res: Response): Pr
     logger.error('Failed to create lease accounting record', error);
     res.status(500).json({
       error: 'Failed to create lease accounting record',
-      message: error instanceof Error ? (error as Error).message : 'Unknown error'
+      message: error instanceof Error ? (error).message : 'Unknown error'
     });
 
     return;
@@ -183,7 +183,7 @@ router.post('/bulk-lease-accounting', async (req: Request, res: Response): Promi
     logger.error('Failed to process bulk lease accounting', error);
     res.status(500).json({
       error: 'Failed to process bulk lease accounting',
-      message: error instanceof Error ? (error as Error).message : 'Unknown error'
+      message: error instanceof Error ? (error).message : 'Unknown error'
     });
 
     return;
@@ -241,7 +241,7 @@ router.get('/reports/:organizationId', async (req: Request, res: Response): Prom
     logger.error('Failed to generate compliance report', error);
     res.status(500).json({
       error: 'Failed to generate compliance report',
-      message: error instanceof Error ? (error as Error).message : 'Unknown error'
+      message: error instanceof Error ? (error).message : 'Unknown error'
     });
 
     return;
@@ -305,7 +305,7 @@ router.post('/update-discount-rates', async (req: Request, res: Response): Promi
     logger.error('Failed to update discount rates', error);
     res.status(500).json({
       error: 'Failed to update discount rates',
-      message: error instanceof Error ? (error as Error).message : 'Unknown error'
+      message: error instanceof Error ? (error).message : 'Unknown error'
     });
 
     return;
@@ -363,7 +363,7 @@ router.get('/disclosure-notes/:organizationId', async (req: Request, res: Respon
     logger.error('Failed to generate disclosure notes', error);
     res.status(500).json({
       error: 'Failed to generate disclosure notes',
-      message: error instanceof Error ? (error as Error).message : 'Unknown error'
+      message: error instanceof Error ? (error).message : 'Unknown error'
     });
 
     return;
@@ -416,7 +416,7 @@ router.get('/lease-accounting-records', async (req: Request, res: Response): Pro
     logger.error('Failed to get lease accounting records', error);
     res.status(500).json({
       error: 'Failed to get lease accounting records',
-      message: error instanceof Error ? (error as Error).message : 'Unknown error'
+      message: error instanceof Error ? (error).message : 'Unknown error'
     });
 
     return;
@@ -469,7 +469,7 @@ router.get('/journal-entries', async (req: Request, res: Response): Promise<void
     logger.error('Failed to get journal entries', error);
     res.status(500).json({
       error: 'Failed to get journal entries',
-      message: error instanceof Error ? (error as Error).message : 'Unknown error'
+      message: error instanceof Error ? (error).message : 'Unknown error'
     });
 
     return;
@@ -524,7 +524,7 @@ router.put('/lease-accounting-records/:recordId/status', async (req: Request, re
     logger.error('Failed to update accounting record status', error);
     res.status(500).json({
       error: 'Failed to update accounting record status',
-      message: error instanceof Error ? (error as Error).message : 'Unknown error'
+      message: error instanceof Error ? (error).message : 'Unknown error'
     });
 
     return;
@@ -569,7 +569,7 @@ router.post('/journal-entries/:entryId/approve', async (req: Request, res: Respo
     logger.error('Failed to approve journal entry', error);
     res.status(500).json({
       error: 'Failed to approve journal entry',
-      message: error instanceof Error ? (error as Error).message : 'Unknown error'
+      message: error instanceof Error ? (error).message : 'Unknown error'
     });
 
     return;
@@ -631,7 +631,7 @@ router.get('/dashboard/:organizationId', async (req: Request, res: Response): Pr
     logger.error('Failed to get compliance dashboard', error);
     res.status(500).json({
       error: 'Failed to get compliance dashboard',
-      message: error instanceof Error ? (error as Error).message : 'Unknown error'
+      message: error instanceof Error ? (error).message : 'Unknown error'
     });
 
     return;

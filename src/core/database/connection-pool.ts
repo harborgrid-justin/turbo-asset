@@ -117,14 +117,14 @@ export class EnterpriseDatabasePool {
   private readonly logger = getLogger();
   private readonly config: DatabaseConfig;
   private pool: Pool | null = null;
-  private circuitBreaker: EnterpriseCircuitBreaker;
-  private queryStatistics = new Map<string, QueryStatistics>();
-  private preparedStatements = new Map<string, PreparedStatement>();
+  private readonly circuitBreaker: EnterpriseCircuitBreaker;
+  private readonly queryStatistics = new Map<string, QueryStatistics>();
+  private readonly preparedStatements = new Map<string, PreparedStatement>();
   private isInitialized = false;
-  private startTime = Date.now();
+  private readonly startTime = Date.now();
 
   // Pool statistics tracking
-  private poolStats: PoolStatistics = {
+  private readonly poolStats: PoolStatistics = {
     totalConnections: 0,
     idleConnections: 0,
     activeConnections: 0,
@@ -235,7 +235,7 @@ export class EnterpriseDatabasePool {
     const timer = createTimer('database-query', { correlationId });
     const queryHash = this.generateQueryHash(text);
 
-    return this.circuitBreaker.execute(
+    return await this.circuitBreaker.execute(
       async () => {
         const client = await this.acquireConnection(context);
         
@@ -319,14 +319,14 @@ export class EnterpriseDatabasePool {
     const correlationId = context?.correlationId || createCorrelationId();
     const timer = createTimer('database-transaction', { correlationId });
 
-    return this.circuitBreaker.execute(
+    return await this.circuitBreaker.execute(
       async () => {
         const client = await this.acquireConnection(context);
         
         try {
           await client.query('BEGIN');
           
-          if (isolationLevel) {
+          if (isolationLevel != null) {
             await client.query(`SET TRANSACTION ISOLATION LEVEL ${isolationLevel}`);
           }
 
@@ -370,7 +370,7 @@ export class EnterpriseDatabasePool {
 
     const correlationId = context?.correlationId || createCorrelationId();
     
-    return this.query(
+    return await this.query(
       `EXECUTE ${statementName}${params ? `(${params.map((_, i) => `$${i + 1}`).join(', ')})` : ''}`,
       params,
       { ...context, correlationId }
@@ -421,7 +421,7 @@ export class EnterpriseDatabasePool {
 
     const timeout = context?.timeout || this.config.acquireTimeoutMillis;
     
-    return new Promise((resolve, reject) => {
+    return await new Promise((resolve, reject) => {
       const timeoutId = setTimeout(() => {
         reject(new Error('Connection acquisition timeout'));
       }, timeout);
@@ -508,7 +508,7 @@ export class EnterpriseDatabasePool {
    * Setup pool event handlers
    */
   private setupEventHandlers(): void {
-    if (!this.pool) return;
+    if (!this.pool) {return;}
 
     this.pool.on('connect', (client) => {
       this.logger.debug('New database connection established');
@@ -545,7 +545,7 @@ export class EnterpriseDatabasePool {
     executionTime: number,
     rowsAffected: number
   ): void {
-    if (!this.config.enableStatistics) return;
+    if (!this.config.enableStatistics) {return;}
 
     const existing = this.queryStatistics.get(queryHash);
     

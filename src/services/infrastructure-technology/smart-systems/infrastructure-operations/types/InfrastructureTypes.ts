@@ -258,7 +258,7 @@ export interface InfrastructureContext {
 
 export interface InfrastructureProvisioningOptions {
   organizationId: string;
-  systems: ('IOT' | 'ENERGY' | 'CAD' | 'BI' | 'PREDICTIVE')[];
+  systems: Array<'IOT' | 'ENERGY' | 'CAD' | 'BI' | 'PREDICTIVE'>;
   settings: {
     iotEnabled: boolean;
     energyManagement: boolean;

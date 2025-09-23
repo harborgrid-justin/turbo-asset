@@ -74,7 +74,7 @@ export class MockDataProvider {
   private static instance: MockDataProvider;
   
   // Configuration from central config
-  private mockConfig = config.mockData || {
+  private readonly mockConfig = config.mockData || {
     assetCount: 100,
     workOrderCount: 50,
     spaceCount: 50,

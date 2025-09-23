@@ -30,8 +30,8 @@ export const generateRequestId = (): string => {
   return `req_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 };
 
-export const sleep = (ms: number): Promise<void> => {
-  return new Promise(resolve => setTimeout(resolve, ms));
+export const sleep = async (ms: number): Promise<void> => {
+  await new Promise(resolve => setTimeout(resolve, ms));
 };
 
 export const retry = async <T>(

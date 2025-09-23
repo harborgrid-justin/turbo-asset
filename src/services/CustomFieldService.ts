@@ -65,7 +65,7 @@ export class CustomFieldService {
       return definitions.map((def: any) => ({
         id: def.id,
         name: def.name,
-        fieldType: def.fieldType as any,
+        fieldType: def.fieldType,
         entityType: def.entityType,
         isRequired: def.isRequired,
         isUnique: def.isUnique,
@@ -208,7 +208,7 @@ export class CustomFieldService {
           try {
             await this.validateFieldValue(fieldDef, value);
           } catch (error: unknown) {
-            errors[fieldDef.name] = error instanceof Error ? (error as Error).message : 'Invalid value';
+            errors[fieldDef.name] = error instanceof Error ? (error).message : 'Invalid value';
           }
         }
 
@@ -593,9 +593,9 @@ export class CustomFieldService {
       }, {} as Record<string, number>);
 
       const mostCommonValues = Object.entries(valueCounts)
-        .sort(([, a], [, b]) => (b as number) - (a as number))
+        .sort(([, a], [, b]) => (b) - (a))
         .slice(0, 10)
-        .map(([value, count]) => ({ value, count: count as number }));
+        .map(([value, count]) => ({ value, count }));
 
       // Usage by entity
       const usageByEntity = values.reduce((acc, v) => {

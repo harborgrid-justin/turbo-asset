@@ -204,7 +204,7 @@ export class EnhancedBusinessLogicIntegrationService extends BaseService {
         const isHealthy = await Promise.race([
           bridge.healthCheck(),
           new Promise<boolean>((_, reject) => 
-            setTimeout(() => reject(new Error('Health check timeout')), 5000)
+            setTimeout(() => { reject(new Error('Health check timeout')); }, 5000)
           )
         ]);
 
@@ -1574,7 +1574,7 @@ export class EnhancedBusinessLogicIntegrationService extends BaseService {
    * Execute service with fallback support (alias for backwards compatibility)
    */
   async executeWithFallback(serviceName: string, methodName: string, params: any[], options: any = {}): Promise<StandardResponse> {
-    return this.executeProductionOperation(serviceName, methodName, params, options);
+    return await this.executeProductionOperation(serviceName, methodName, params, options);
   }
 
   getBridgeInfo(serviceName: string): ProductionBusinessLogicBridge | null {
@@ -1660,7 +1660,7 @@ export class EnhancedBusinessLogicIntegrationService extends BaseService {
   }
 
   private async sleep(ms: number): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    await new Promise(resolve => setTimeout(resolve, ms));
   }
 
   private generateRequestId(): string {
@@ -1922,10 +1922,10 @@ export class AdvancedBusinessRulesEngine {
     }>;
   } {
     const { spaces, occupancyTargets, constraints } = spaceData;
-    const recommendations: Array<any> = [];
+    const recommendations: any[] = [];
     let totalPotentialSavings = 0;
     let totalRequiredInvestment = 0;
-    const consolidationOpportunities: Array<any> = [];
+    const consolidationOpportunities: any[] = [];
 
     spaces.forEach(space => {
       const currentUtilization = space.currentOccupancy / space.capacity;
@@ -2071,10 +2071,10 @@ export class AdvancedBusinessRulesEngine {
       urgency: 'immediate' | 'within_30_days' | 'within_90_days';
     }>;
   } {
-    const recommendations: Array<any> = [];
+    const recommendations: any[] = [];
     let totalCurrentCost = 0;
     let totalProjectedCost = 0;
-    const criticalAssetAlerts: Array<any> = [];
+    const criticalAssetAlerts: any[] = [];
 
     maintenanceData.assets.forEach(asset => {
       // Calculate current annual maintenance cost
@@ -2258,7 +2258,7 @@ export class AdvancedBusinessRulesEngine {
     let consolidatedCashFlow = 0;
 
     const currencyExposure: Record<string, number> = {};
-    const entityBreakdown: Array<any> = [];
+    const entityBreakdown: any[] = [];
 
     // Step 1: Convert all entities to base currency
     entities.forEach(entity => {
@@ -2432,8 +2432,8 @@ export class AdvancedDataStandardizationEngine {
       transformation: string;
     }>;
   } {
-    const standardizationIssues: Array<any> = [];
-    const transformationLog: Array<any> = [];
+    const standardizationIssues: any[] = [];
+    const transformationLog: any[] = [];
     let dataQualityScore = 100;
 
     // Asset ID standardization
@@ -2615,7 +2615,7 @@ export class AdvancedDataStandardizationEngine {
       suggestion: string;
     }>;
   } {
-    const standardizationIssues: Array<any> = [];
+    const standardizationIssues: any[] = [];
     let dataQualityScore = 100;
 
     // Space ID standardization
@@ -3243,7 +3243,7 @@ export class AdvancedFinancialAnalyticsEngine {
     let cumulativeCost = initialCost;
     let cumulativePV = initialCost;
     
-    const yearlyBreakdown: Array<any> = [];
+    const yearlyBreakdown: any[] = [];
     const costPerCategory = {
       maintenance: 0,
       energy: 0,
@@ -3689,7 +3689,7 @@ export class AdvancedComplianceEngine {
     else {performanceLevel = 'Lagging';}
     
     // Improvement areas identification
-    const improvementAreas: Array<any> = [];
+    const improvementAreas: any[] = [];
     
     if (environmental.energyEfficiency < 70) {
       improvementAreas.push({
@@ -3793,7 +3793,7 @@ export class AdvancedComplianceEngine {
     requiredActions: string[];
     auditRisk: 'Low' | 'Medium' | 'High';
   } {
-    const violations: Array<any> = [];
+    const violations: any[] = [];
     let complianceScore = 100;
     
     // Check depreciation consistency
@@ -4101,7 +4101,7 @@ export const productionGradeBusinessLogicService = {
       };
       
     } catch (error: unknown) {
-      throw new Error(`Comprehensive asset analysis failed: ${error instanceof Error ? (error as Error).message : 'Unknown error'}`);
+      throw new Error(`Comprehensive asset analysis failed: ${error instanceof Error ? (error).message : 'Unknown error'}`);
     }
   },
   
@@ -4174,7 +4174,7 @@ export const productionGradeBusinessLogicService = {
       };
       
     } catch (error: unknown) {
-      throw new Error(`Organizational assessment failed: ${error instanceof Error ? (error as Error).message : 'Unknown error'}`);
+      throw new Error(`Organizational assessment failed: ${error instanceof Error ? (error).message : 'Unknown error'}`);
     }
   },
 
@@ -4276,7 +4276,7 @@ export const productionGradeBusinessLogicService = {
       };
 
     } catch (error: unknown) {
-      throw new Error(`Predictive asset analysis failed: ${error instanceof Error ? (error as Error).message : 'Unknown error'}`);
+      throw new Error(`Predictive asset analysis failed: ${error instanceof Error ? (error).message : 'Unknown error'}`);
     }
   },
 
@@ -4358,7 +4358,7 @@ export const productionGradeBusinessLogicService = {
       };
 
     } catch (error: unknown) {
-      throw new Error(`Real-time data processing failed: ${error instanceof Error ? (error as Error).message : 'Unknown error'}`);
+      throw new Error(`Real-time data processing failed: ${error instanceof Error ? (error).message : 'Unknown error'}`);
     }
   },
 
@@ -4434,7 +4434,7 @@ export const productionGradeBusinessLogicService = {
       };
 
     } catch (error: unknown) {
-      throw new Error(`Demand forecasting failed: ${error instanceof Error ? (error as Error).message : 'Unknown error'}`);
+      throw new Error(`Demand forecasting failed: ${error instanceof Error ? (error).message : 'Unknown error'}`);
     }
   }
 };

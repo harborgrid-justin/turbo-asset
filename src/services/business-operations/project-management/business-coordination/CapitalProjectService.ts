@@ -26,10 +26,10 @@ import {
 } from './constants';
 
 export class CapitalProjectService extends EventEmitter implements ICapitalProjectService {
-  private cache = new Map<string, CapitalProject>();
+  private readonly cache = new Map<string, CapitalProject>();
   private readonly cacheTTL = BUSINESS_OPERATIONS_CONFIG.CACHING.PROJECT_CACHE_TTL * 1000;
 
-  constructor(private context: BusinessOperationsContext) {
+  constructor(private readonly context: BusinessOperationsContext) {
     super();
     logger.info('Capital Project Service initialized', { 
       organizationId: context.organizationId,
@@ -665,11 +665,11 @@ export class CapitalProjectService extends EventEmitter implements ICapitalProje
 
   private analyzeBudgetAllocation(project: CapitalProject): any {
     return {
-      design: (project.budgetBreakdown?.designCost || 0) / (project.approvedBudget || 1) * 100,
-      construction: (project.budgetBreakdown?.constructionCost || 0) / (project.approvedBudget || 1) * 100,
-      equipment: (project.budgetBreakdown?.equipmentCost || 0) / (project.approvedBudget || 1) * 100,
-      contingency: (project.budgetBreakdown?.contingencyCost || 0) / (project.approvedBudget || 1) * 100,
-      other: (project.budgetBreakdown?.otherCosts || 0) / (project.approvedBudget || 1) * 100
+      design: (project.budgetBreakdown.designCost || 0) / (project.approvedBudget || 1) * 100,
+      construction: (project.budgetBreakdown.constructionCost || 0) / (project.approvedBudget || 1) * 100,
+      equipment: (project.budgetBreakdown.equipmentCost || 0) / (project.approvedBudget || 1) * 100,
+      contingency: (project.budgetBreakdown.contingencyCost || 0) / (project.approvedBudget || 1) * 100,
+      other: (project.budgetBreakdown.otherCosts || 0) / (project.approvedBudget || 1) * 100
     };
   }
 
@@ -697,7 +697,7 @@ export class CapitalProjectService extends EventEmitter implements ICapitalProje
   }
 
   private analyzeContingencyUsage(project: CapitalProject): any {
-    const contingencyBudget = project.budgetBreakdown?.contingencyCost || 0;
+    const contingencyBudget = project.budgetBreakdown.contingencyCost || 0;
     const contingencyUsed = this.calculateContingencyUsed(project);
     
     return {
@@ -733,7 +733,7 @@ export class CapitalProjectService extends EventEmitter implements ICapitalProje
 
   private identifyCriticalPath(project: CapitalProject): any[] {
     // Simplified critical path identification
-    const criticalTasks = project.tasks?.filter(task => task.isCritical) || [];
+    const criticalTasks = project.tasks.filter(task => task.isCritical) || [];
     
     return criticalTasks.map(task => ({
       taskId: task.id,
@@ -855,8 +855,8 @@ export class CapitalProjectService extends EventEmitter implements ICapitalProje
   }
 
   private calculateReworkRatio(project: CapitalProject): number {
-    const totalWork = project.tasks?.length || 0;
-    const reworkTasks = project.tasks?.filter(t => this.hasRework(t)).length || 0;
+    const totalWork = project.tasks.length || 0;
+    const reworkTasks = project.tasks.filter(t => this.hasRework(t)).length || 0;
     return totalWork > 0 ? reworkTasks / totalWork : 0;
   }
 

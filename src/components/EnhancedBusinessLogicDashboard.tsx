@@ -154,7 +154,7 @@ export const EnhancedBusinessLogicDashboard: React.FC = () => {
       fetchServiceBridges();
     }, refreshInterval);
 
-    return () => clearInterval(interval);
+    return () => { clearInterval(interval); };
   }, [autoRefresh, refreshInterval]);
 
   // Manual refresh
@@ -232,14 +232,14 @@ export const EnhancedBusinessLogicDashboard: React.FC = () => {
             <input
               type="checkbox"
               checked={autoRefresh}
-              onChange={(e) => setAutoRefresh(e.target.checked)}
+              onChange={(e) => { setAutoRefresh(e.target.checked); }}
               className="rounded"
             />
           </div>
           
           <select
             value={refreshInterval}
-            onChange={(e) => setRefreshInterval(Number(e.target.value))}
+            onChange={(e) => { setRefreshInterval(Number(e.target.value)); }}
             className="border border-gray-300 rounded px-2 py-1 text-sm"
           >
             <option value={10000}>10s</option>
@@ -449,7 +449,7 @@ export const EnhancedBusinessLogicDashboard: React.FC = () => {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                     <button
-                      onClick={() => resetServiceMetrics(bridge.serviceName)}
+                      onClick={async () => { await resetServiceMetrics(bridge.serviceName); }}
                       className="text-indigo-600 hover:text-indigo-900 text-sm"
                     >
                       Reset Metrics

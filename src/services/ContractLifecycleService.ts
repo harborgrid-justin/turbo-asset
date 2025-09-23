@@ -190,8 +190,8 @@ export class ContractLifecycleService {
 
       // Create milestones if provided
       if (data.milestones && data.milestones.length > 0) {
-        const milestonePromises = data.milestones.map(milestone => {
-          return prisma.contractMilestone.create({
+        const milestonePromises = data.milestones.map(async milestone => {
+          return await prisma.contractMilestone.create({
             data: {
               contractId: contract.id,
               milestoneName: milestone.milestoneName,
@@ -211,8 +211,8 @@ export class ContractLifecycleService {
 
       // Create vendor assignments if provided
       if (data.vendors && data.vendors.length > 0) {
-        const vendorPromises = data.vendors.map(vendorAssignment => {
-          return prisma.contractVendor.create({
+        const vendorPromises = data.vendors.map(async vendorAssignment => {
+          return await prisma.contractVendor.create({
             data: {
               contractId: contract.id,
               vendorId: vendorAssignment.vendorId,

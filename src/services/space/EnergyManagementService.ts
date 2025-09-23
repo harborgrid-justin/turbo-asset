@@ -208,7 +208,7 @@ export class EnergyManagementService {
       }
 
       // Get previous reading if not provided
-      let previousReading = readingData.previousReading;
+      let {previousReading} = readingData;
       if (!previousReading && meter.readings.length > 0) {
         previousReading = meter.readings[0].reading;
       }
@@ -352,7 +352,7 @@ export class EnergyManagementService {
       let totalCost = 0;
 
       readings.forEach(reading => {
-        const utilityType = reading.meter.utilityType;
+        const {utilityType} = reading.meter;
         const consumption = reading.consumption || 0;
         const cost = reading.cost || 0;
 
@@ -374,7 +374,7 @@ export class EnergyManagementService {
       
       readings.forEach(reading => {
         const monthKey = reading.readingDate.toISOString().substring(0, 7);
-        const utilityType = reading.meter.utilityType;
+        const {utilityType} = reading.meter;
         
         if (!monthlyData.has(monthKey)) {
           monthlyData.set(monthKey, new Map());
@@ -848,7 +848,7 @@ export class EnergyManagementService {
     // Group readings by meter for analysis
     const readingsByMeter = new Map<string, any[]>();
     readings.forEach(reading => {
-      const meterId = reading.meterId;
+      const {meterId} = reading;
       if (!readingsByMeter.has(meterId)) {
         readingsByMeter.set(meterId, []);
       }
@@ -911,7 +911,7 @@ export class EnergyManagementService {
     const patterns: { [utilityType: string]: any } = {};
 
     readings.forEach(reading => {
-      const utilityType = reading.meter.utilityType;
+      const {utilityType} = reading.meter;
       
       if (!patterns[utilityType]) {
         patterns[utilityType] = {

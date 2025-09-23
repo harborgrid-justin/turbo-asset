@@ -678,7 +678,7 @@ export class Fortune100FinancialAnalyticsEngine {
   /**
    * Comprehensive financial analysis dispatcher for Fortune 100 companies
    */
-  static performAdvancedAnalysis(analysisType: string, data: any): StandardResponse<any> {
+  static performAdvancedAnalysis(analysisType: string, data: any): StandardResponse {
     try {
       let result: any;
       
@@ -711,7 +711,7 @@ export class Fortune100FinancialAnalyticsEngine {
         success: false,
         error: {
           code: 'FINANCIAL_ANALYSIS_FAILED',
-          message: `Financial analysis failed: ${error instanceof Error ? (error as Error).message : 'Unknown error'}`
+          message: `Financial analysis failed: ${error instanceof Error ? (error).message : 'Unknown error'}`
         },
         data: null
       };

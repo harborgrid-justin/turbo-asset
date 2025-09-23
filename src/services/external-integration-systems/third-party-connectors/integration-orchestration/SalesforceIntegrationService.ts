@@ -150,16 +150,16 @@ export interface SyncOperation {
 }
 
 export class SalesforceIntegrationService extends EventEmitter {
-  private client: AxiosInstance;
+  private readonly client: AxiosInstance;
   private accessToken: string | null = null;
   private instanceUrl: string | null = null;
   private tokenExpiresAt: Date | null = null;
-  private integrationCache: Map<string, any> = new Map();
-  private schemaCache: Map<string, any> = new Map();
+  private readonly integrationCache: Map<string, any> = new Map();
+  private readonly schemaCache: Map<string, any> = new Map();
 
   constructor(
-    private config: SalesforceConfig,
-    private context?: IntegrationContext
+    private readonly config: SalesforceConfig,
+    private readonly context?: IntegrationContext
   ) {
     super();
     
@@ -195,7 +195,7 @@ export class SalesforceIntegrationService extends EventEmitter {
           const originalRequest = error.config;
           if (!originalRequest._retry) {
             originalRequest._retry = true;
-            return this.client.request(originalRequest);
+            return await this.client.request(originalRequest);
           }
         }
         
@@ -276,7 +276,7 @@ export class SalesforceIntegrationService extends EventEmitter {
       });
     } catch (error: unknown) {
       logger.error('Salesforce authentication failed', { 
-        error: error instanceof Error ? (error as Error).message : 'Unknown error',
+        error: error instanceof Error ? (error).message : 'Unknown error',
         loginUrl: this.config.loginUrl
       });
       throw error;
@@ -789,7 +789,7 @@ export class SalesforceIntegrationService extends EventEmitter {
         const accounts = await this.getAccounts(1000);
         syncOperation.results.accounts = accounts.length;
       } catch (error: unknown) {
-        syncOperation.errors.push(`Accounts sync failed: ${error instanceof Error ? (error as Error).message : 'Unknown error'}`);
+        syncOperation.errors.push(`Accounts sync failed: ${error instanceof Error ? (error).message : 'Unknown error'}`);
       }
 
       // Sync contacts
@@ -797,7 +797,7 @@ export class SalesforceIntegrationService extends EventEmitter {
         const contacts = await this.getContacts(undefined, 1000);
         syncOperation.results.contacts = contacts.length;
       } catch (error: unknown) {
-        syncOperation.errors.push(`Contacts sync failed: ${error instanceof Error ? (error as Error).message : 'Unknown error'}`);
+        syncOperation.errors.push(`Contacts sync failed: ${error instanceof Error ? (error).message : 'Unknown error'}`);
       }
 
       // Sync opportunities
@@ -805,7 +805,7 @@ export class SalesforceIntegrationService extends EventEmitter {
         const opportunities = await this.getOpportunities(undefined, 1000);
         syncOperation.results.opportunities = opportunities.length;
       } catch (error: unknown) {
-        syncOperation.errors.push(`Opportunities sync failed: ${error instanceof Error ? (error as Error).message : 'Unknown error'}`);
+        syncOperation.errors.push(`Opportunities sync failed: ${error instanceof Error ? (error).message : 'Unknown error'}`);
       }
 
       // Sync leads
@@ -813,7 +813,7 @@ export class SalesforceIntegrationService extends EventEmitter {
         const leads = await this.getLeads(1000);
         syncOperation.results.leads = leads.length;
       } catch (error: unknown) {
-        syncOperation.errors.push(`Leads sync failed: ${error instanceof Error ? (error as Error).message : 'Unknown error'}`);
+        syncOperation.errors.push(`Leads sync failed: ${error instanceof Error ? (error).message : 'Unknown error'}`);
       }
 
       // Sync cases
@@ -821,7 +821,7 @@ export class SalesforceIntegrationService extends EventEmitter {
         const cases = await this.getCases(undefined, 1000);
         syncOperation.results.cases = cases.length;
       } catch (error: unknown) {
-        syncOperation.errors.push(`Cases sync failed: ${error instanceof Error ? (error as Error).message : 'Unknown error'}`);
+        syncOperation.errors.push(`Cases sync failed: ${error instanceof Error ? (error).message : 'Unknown error'}`);
       }
 
       syncOperation.completedAt = new Date();
@@ -843,7 +843,7 @@ export class SalesforceIntegrationService extends EventEmitter {
     } catch (error: unknown) {
       syncOperation.status = 'failed';
       syncOperation.completedAt = new Date();
-      syncOperation.errors.push(`Sync failed: ${error instanceof Error ? (error as Error).message : 'Unknown error'}`);
+      syncOperation.errors.push(`Sync failed: ${error instanceof Error ? (error).message : 'Unknown error'}`);
 
       logger.error('Salesforce data sync failed', { syncId, error });
     }

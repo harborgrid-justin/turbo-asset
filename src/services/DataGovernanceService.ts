@@ -94,9 +94,9 @@ export interface MasterDataManagement {
 }
 
 export class DataGovernanceService extends EventEmitter {
-  private dataLineageCache: Map<string, DataLineage> = new Map();
-  private qualityMetricsCache: Map<string, DataQualityMetrics> = new Map();
-  private policiesCache: Map<string, any> = new Map();
+  private readonly dataLineageCache: Map<string, DataLineage> = new Map();
+  private readonly qualityMetricsCache: Map<string, DataQualityMetrics> = new Map();
+  private readonly policiesCache: Map<string, any> = new Map();
 
   constructor() {
     super();
@@ -440,7 +440,7 @@ export class DataGovernanceService extends EventEmitter {
     }
 
     // Load from database
-    return this.loadDataLineage(entityType, entityId);
+    return await this.loadDataLineage(entityType, entityId);
   }
 
   /**

@@ -16,9 +16,9 @@ const prisma = new PrismaClient();
  * Part of the Asset Management domain within Turbo Asset IWMS
  */
 export class AssetUpdateService {
-  private validationService: AssetValidationService;
-  private notificationService: AssetNotificationService;
-  private auditService: AssetAuditService;
+  private readonly validationService: AssetValidationService;
+  private readonly notificationService: AssetNotificationService;
+  private readonly auditService: AssetAuditService;
 
   constructor() {
     this.validationService = new AssetValidationService();

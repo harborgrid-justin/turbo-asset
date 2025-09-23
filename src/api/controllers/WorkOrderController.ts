@@ -68,7 +68,7 @@ router.get('/', async (req, res) => {
     logger.error('Failed to search work orders', error);
     res.status(500).json({
       error: 'Failed to search work orders',
-      message: error instanceof Error ? (error as Error).message : 'Unknown error',
+      message: error instanceof Error ? (error).message : 'Unknown error',
     });
 
     return;
@@ -132,7 +132,7 @@ router.post('/', async (req, res) => {
     logger.error('Failed to create work order', error);
     res.status(500).json({
       error: 'Failed to create work order',
-      message: error instanceof Error ? (error as Error).message : 'Unknown error',
+      message: error instanceof Error ? (error).message : 'Unknown error',
     });
 
     return;
@@ -165,9 +165,9 @@ router.get('/:id', async (req, res) => {
     });
   } catch (error: unknown) {
     logger.error('Failed to get work order', error);
-    res.status(error instanceof Error && (error as Error).message === 'Work order not found' ? 404 : 500).json({
+    res.status(error instanceof Error && (error).message === 'Work order not found' ? 404 : 500).json({
       error: 'Failed to get work order',
-      message: error instanceof Error ? (error as Error).message : 'Unknown error',
+      message: error instanceof Error ? (error).message : 'Unknown error',
     });
   }
 });
@@ -229,7 +229,7 @@ router.put('/:id/status', async (req, res) => {
     logger.error('Failed to update work order status', error);
     res.status(500).json({
       error: 'Failed to update work order status',
-      message: error instanceof Error ? (error as Error).message : 'Unknown error',
+      message: error instanceof Error ? (error).message : 'Unknown error',
     });
 
     return;
@@ -287,7 +287,7 @@ router.post('/:id/tasks', async (req, res) => {
     logger.error('Failed to add work order task', error);
     res.status(500).json({
       error: 'Failed to add work order task',
-      message: error instanceof Error ? (error as Error).message : 'Unknown error',
+      message: error instanceof Error ? (error).message : 'Unknown error',
     });
 
     return;
@@ -344,7 +344,7 @@ router.post('/:id/materials', async (req, res) => {
     logger.error('Failed to add work order material', error);
     res.status(500).json({
       error: 'Failed to add work order material',
-      message: error instanceof Error ? (error as Error).message : 'Unknown error',
+      message: error instanceof Error ? (error).message : 'Unknown error',
     });
 
     return;
@@ -404,7 +404,7 @@ router.post('/:id/time-entries', async (req, res) => {
     logger.error('Failed to record time entry', error);
     res.status(500).json({
       error: 'Failed to record time entry',
-      message: error instanceof Error ? (error as Error).message : 'Unknown error',
+      message: error instanceof Error ? (error).message : 'Unknown error',
     });
 
     return;
@@ -440,7 +440,7 @@ router.post('/:id/time-entries', async (req, res) => {
  */
 router.put('/tasks/:taskId/status', async (req, res) => {
   try {
-    const taskId = req.params.taskId;
+    const {taskId} = req.params;
     const updatedBy = req.headers['x-user-id'] as string;
     const { status, actualHours, notes } = req.body;
 
@@ -468,7 +468,7 @@ router.put('/tasks/:taskId/status', async (req, res) => {
     logger.error('Failed to update task status', error);
     res.status(500).json({
       error: 'Failed to update task status',
-      message: error instanceof Error ? (error as Error).message : 'Unknown error',
+      message: error instanceof Error ? (error).message : 'Unknown error',
     });
 
     return;
@@ -538,7 +538,7 @@ router.put('/:id/assign', async (req, res) => {
     logger.error('Failed to assign work order', error);
     res.status(500).json({
       error: 'Failed to assign work order',
-      message: error instanceof Error ? (error as Error).message : 'Unknown error',
+      message: error instanceof Error ? (error).message : 'Unknown error',
     });
 
     return;
@@ -592,7 +592,7 @@ router.get('/metrics', async (req, res) => {
     logger.error('Failed to get work order metrics', error);
     res.status(500).json({
       error: 'Failed to get work order metrics',
-      message: error instanceof Error ? (error as Error).message : 'Unknown error',
+      message: error instanceof Error ? (error).message : 'Unknown error',
     });
 
     return;
@@ -662,7 +662,7 @@ router.get('/technician/:technicianId/schedule', async (req, res) => {
     logger.error('Failed to get technician schedule', error);
     res.status(500).json({
       error: 'Failed to get technician schedule',
-      message: error instanceof Error ? (error as Error).message : 'Unknown error',
+      message: error instanceof Error ? (error).message : 'Unknown error',
     });
 
     return;

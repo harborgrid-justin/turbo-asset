@@ -430,11 +430,11 @@ export class ProductionGradeHelpService {
   }
 
   private async getContextualHelp(page?: string, section?: string): Promise<ContextualHelp | null> {
-    if (!page) return null;
+    if (!page) {return null;}
     
     // Implementation would retrieve contextual help
     return {
-      page: page,
+      page,
       section: section || '',
       tips: [],
       quickActions: []

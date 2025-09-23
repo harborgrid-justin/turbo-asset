@@ -69,7 +69,7 @@ export class EnterpriseCacheService {
   private client: RedisClientType | null = null;
   private readonly logger = getLogger();
   private readonly config: CacheConfig;
-  private statistics: CacheStatistics = {
+  private readonly statistics: CacheStatistics = {
     hits: 0,
     misses: 0,
     hitRate: 0,
@@ -161,7 +161,7 @@ export class EnterpriseCacheService {
    * Configure Redis for optimal performance
    */
   private async configureRedis(): Promise<void> {
-    if (!this.client) return;
+    if (!this.client) {return;}
 
     try {
       // Set memory policy
@@ -434,7 +434,7 @@ export class EnterpriseCacheService {
    * Add keys to tag index
    */
   private async addToTagIndex(tags: readonly string[], key: string, ttl: number): Promise<void> {
-    if (!this.client || !this.client.isOpen) return;
+    if (!this.client || !this.client.isOpen) {return;}
 
     for (const tag of tags) {
       const tagKey = `${this.config.keyPrefix}tags:${tag}`;
@@ -447,7 +447,7 @@ export class EnterpriseCacheService {
    * Remove keys from tag index
    */
   private async removeFromTagIndex(tags: readonly string[], key: string): Promise<void> {
-    if (!this.client || !this.client.isOpen) return;
+    if (!this.client || !this.client.isOpen) {return;}
 
     for (const tag of tags) {
       const tagKey = `${this.config.keyPrefix}tags:${tag}`;
@@ -508,12 +508,12 @@ export function createCacheMiddleware(
   return (req: Request, res: Response, next: NextFunction): void => {
     // Skip caching if specified
     if (options.skip && options.skip(req, res)) {
-      return next();
+      next(); return;
     }
 
     // Only cache GET requests
     if (req.method !== 'GET') {
-      return next();
+      next(); return;
     }
 
     const keyGenerator = options.keyGenerator || ((req: Request): CacheKey => ({

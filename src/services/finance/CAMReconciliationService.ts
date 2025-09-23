@@ -432,9 +432,9 @@ export class CAMReconciliationService {
           disputeDate: new Date(),
           resolutionDate: null,
           auditTrail: {
-            ...reconciliation.auditTrail as any,
+            ...reconciliation.auditTrail,
             disputeHistory: [
-              ...((reconciliation.auditTrail as any)?.disputeHistory || []),
+              ...((reconciliation.auditTrail)?.disputeHistory || []),
               {
                 date: new Date(),
                 action: 'DISPUTE_FILED',
@@ -526,9 +526,9 @@ export class CAMReconciliationService {
           additionalRent: finalAmount > 0 ? finalAmount : 0,
           refundDue: finalAmount < 0 ? Math.abs(finalAmount) : 0,
           auditTrail: {
-            ...reconciliation.auditTrail as any,
+            ...reconciliation.auditTrail,
             disputeHistory: [
-              ...((reconciliation.auditTrail as any)?.disputeHistory || []),
+              ...((reconciliation.auditTrail)?.disputeHistory || []),
               {
                 date: new Date(),
                 action: 'DISPUTE_RESOLVED',
@@ -687,13 +687,13 @@ export class CAMReconciliationService {
         } catch (error: unknown) {
           logger.error('Failed to process reconciliation for lease', {
             leaseId: lease.id,
-            error: error instanceof Error ? (error as Error).message : 'Unknown error'
+            error: error instanceof Error ? (error).message : 'Unknown error'
           });
           
           results.push({
             leaseId: lease.id,
             status: 'ERROR',
-            error: error instanceof Error ? (error as Error).message : 'Unknown error'
+            error: error instanceof Error ? (error).message : 'Unknown error'
           });
           
           errors++;

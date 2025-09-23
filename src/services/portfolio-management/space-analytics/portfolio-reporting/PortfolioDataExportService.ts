@@ -188,7 +188,7 @@ export class PortfolioDataExportService {
           dateRange: exportRequest.dateRange,
           filters: exportRequest.filters,
         },
-        data: data,
+        data,
       };
       
       // Generate file

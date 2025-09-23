@@ -58,9 +58,9 @@ export interface SpaceSummary {
  * to provide comprehensive space operations management.
  */
 export class SpaceOperationsManager {
-  private utilizationService: SpaceUtilizationAnalyticsService;
-  private moveService: MoveManagementOperationsService;
-  private complianceService: SpaceStandardsComplianceService;
+  private readonly utilizationService: SpaceUtilizationAnalyticsService;
+  private readonly moveService: MoveManagementOperationsService;
+  private readonly complianceService: SpaceStandardsComplianceService;
 
   constructor() {
     // Initialize all sub-services
@@ -329,7 +329,7 @@ export class SpaceOperationsManager {
     utilizationMetrics: any,
     moveMetrics: any,
     complianceMetrics: any
-  ): Promise<Array<any>> {
+  ): Promise<any[]> {
     const recommendations = [];
 
     // Utilization-based recommendations

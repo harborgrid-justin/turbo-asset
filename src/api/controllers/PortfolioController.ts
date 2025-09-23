@@ -50,7 +50,7 @@ router.get('/dashboard', async (req: Request, res: Response): Promise<void> => {
     logger.error('Failed to get portfolio dashboard', error);
     res.status(500).json({
       error: 'Failed to get portfolio dashboard',
-      message: error instanceof Error ? (error as Error).message : 'Unknown error',
+      message: error instanceof Error ? (error).message : 'Unknown error',
     });
 
     return;
@@ -84,7 +84,7 @@ router.get('/properties/:id/drilldown', async (req: Request, res: Response): Pro
     logger.error('Failed to get property drill-down', error);
     res.status(500).json({
       error: 'Failed to get property drill-down',
-      message: error instanceof Error ? (error as Error).message : 'Unknown error',
+      message: error instanceof Error ? (error).message : 'Unknown error',
     });
 
     return;
@@ -134,7 +134,7 @@ router.get('/utilization/analytics', async (req: Request, res: Response): Promis
     logger.error('Failed to get utilization analytics', error);
     res.status(500).json({
       error: 'Failed to get utilization analytics',
-      message: error instanceof Error ? (error as Error).message : 'Unknown error',
+      message: error instanceof Error ? (error).message : 'Unknown error',
     });
 
     return;
@@ -171,7 +171,7 @@ router.get('/occupancy/realtime', async (req: Request, res: Response): Promise<v
     logger.error('Failed to get real-time occupancy', error);
     res.status(500).json({
       error: 'Failed to get real-time occupancy',
-      message: error instanceof Error ? (error as Error).message : 'Unknown error',
+      message: error instanceof Error ? (error).message : 'Unknown error',
     });
 
     return;
@@ -209,7 +209,7 @@ router.get('/moves/analytics', async (req: Request, res: Response): Promise<void
     logger.error('Failed to get move analytics', error);
     res.status(500).json({
       error: 'Failed to get move analytics',
-      message: error instanceof Error ? (error as Error).message : 'Unknown error',
+      message: error instanceof Error ? (error).message : 'Unknown error',
     });
 
     return;
@@ -242,7 +242,7 @@ router.get('/chargeback/analytics', async (req: Request, res: Response): Promise
     logger.error('Failed to get chargeback analytics', error);
     res.status(500).json({
       error: 'Failed to get chargeback analytics',
-      message: error instanceof Error ? (error as Error).message : 'Unknown error',
+      message: error instanceof Error ? (error).message : 'Unknown error',
     });
 
     return;
@@ -286,7 +286,7 @@ router.get('/chargeback/report', async (req: Request, res: Response): Promise<vo
     logger.error('Failed to generate chargeback report', error);
     res.status(500).json({
       error: 'Failed to generate chargeback report',
-      message: error instanceof Error ? (error as Error).message : 'Unknown error',
+      message: error instanceof Error ? (error).message : 'Unknown error',
     });
 
     return;
@@ -336,7 +336,7 @@ router.get('/utilization/report', async (req: Request, res: Response): Promise<v
     logger.error('Failed to get utilization report', error);
     res.status(500).json({
       error: 'Failed to get utilization report',
-      message: error instanceof Error ? (error as Error).message : 'Unknown error',
+      message: error instanceof Error ? (error).message : 'Unknown error',
     });
 
     return;
@@ -372,7 +372,7 @@ router.post('/utilization/record', async (req: Request, res: Response): Promise<
     logger.error('Failed to record utilization data', error);
     res.status(500).json({
       error: 'Failed to record utilization data',
-      message: error instanceof Error ? (error as Error).message : 'Unknown error',
+      message: error instanceof Error ? (error).message : 'Unknown error',
     });
 
     return;
@@ -420,7 +420,7 @@ router.post('/utilization/sensor-data', async (req: Request, res: Response): Pro
     logger.error('Failed to process sensor data', error);
     res.status(500).json({
       error: 'Failed to process sensor data',
-      message: error instanceof Error ? (error as Error).message : 'Unknown error',
+      message: error instanceof Error ? (error).message : 'Unknown error',
     });
 
     return;
@@ -460,7 +460,7 @@ router.get('/summary', async (req: Request, res: Response): Promise<void> => {
     logger.error('Failed to get portfolio summary', error);
     res.status(500).json({
       error: 'Failed to get portfolio summary',
-      message: error instanceof Error ? (error as Error).message : 'Unknown error',
+      message: error instanceof Error ? (error).message : 'Unknown error',
     });
 
     return;

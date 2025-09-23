@@ -76,13 +76,13 @@ interface MoveRiskAssessment {
 }
 
 interface EmployeeImpactAnalysis {
-  affectedDepartments: {
+  affectedDepartments: Array<{
     departmentId: string;
     departmentName: string;
     employeeCount: number;
     criticality: 'LOW' | 'MEDIUM' | 'HIGH';
     moveComplexity: 'SIMPLE' | 'MODERATE' | 'COMPLEX';
-  }[];
+  }>;
   communicationPlan: {
     timeline: any[];
     channels: string[];

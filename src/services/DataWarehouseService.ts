@@ -61,9 +61,9 @@ export interface ETLMetrics {
 }
 
 export class DataWarehouseService extends EventEmitter {
-  private scheduledJobs: Map<string, any> = new Map();
-  private runningPipelines: Map<string, ETLMetrics> = new Map();
-  private connections: Map<string, any> = new Map();
+  private readonly scheduledJobs: Map<string, any> = new Map();
+  private readonly runningPipelines: Map<string, ETLMetrics> = new Map();
+  private readonly connections: Map<string, any> = new Map();
 
   constructor() {
     super();
@@ -256,13 +256,13 @@ export class DataWarehouseService extends EventEmitter {
   private async extractData(sourceConfig: DataSource): Promise<any[]> {
     switch (sourceConfig.type) {
       case 'DATABASE':
-        return this.extractFromDatabase(sourceConfig);
+        return await this.extractFromDatabase(sourceConfig);
       case 'API':
-        return this.extractFromAPI(sourceConfig);
+        return await this.extractFromAPI(sourceConfig);
       case 'FILE':
-        return this.extractFromFile(sourceConfig);
+        return await this.extractFromFile(sourceConfig);
       case 'STREAM':
-        return this.extractFromStream(sourceConfig);
+        return await this.extractFromStream(sourceConfig);
       default:
         throw new Error(`Unsupported source type: ${sourceConfig.type}`);
     }
@@ -309,7 +309,7 @@ export class DataWarehouseService extends EventEmitter {
       const fs = require('fs').promises;
       const path = require('path');
       
-      const filePath = sourceConfig.configuration.filePath;
+      const {filePath} = sourceConfig.configuration;
       const fileContent = await fs.readFile(filePath, 'utf8');
 
       switch (path.extname(filePath).toLowerCase()) {
@@ -344,7 +344,7 @@ export class DataWarehouseService extends EventEmitter {
     try {
       if (transformationSQL.trim().startsWith('SELECT')) {
         // SQL transformation using in-memory SQL engine
-        return this.executeSQLTransformation(data, transformationSQL);
+        return await this.executeSQLTransformation(data, transformationSQL);
       } else {
         // Custom transformation logic
         return this.executeCustomTransformation(data, transformationSQL);

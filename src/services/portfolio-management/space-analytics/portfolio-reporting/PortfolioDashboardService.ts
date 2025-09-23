@@ -479,15 +479,15 @@ export class PortfolioDashboardService {
   }
 
   private async getPortfolioAlertsForDashboard(query: PortfolioQuery): Promise<any[]> {
-    return this.getPortfolioAlerts(query.organizationId);
+    return await this.getPortfolioAlerts(query.organizationId);
   }
 
   private async getPerformanceIndicatorsForDashboard(query: PortfolioQuery): Promise<any> {
-    return this.getPortfolioPerformanceIndicators(query.organizationId);
+    return await this.getPortfolioPerformanceIndicators(query.organizationId);
   }
 
   private async getActiveLeaseCount(organizationId: string): Promise<number> {
-    return prisma.lease.count({
+    return await prisma.lease.count({
       where: {
         organizationId,
         status: 'ACTIVE',
@@ -505,7 +505,7 @@ export class PortfolioDashboardService {
   }
 
   private async getOccupiedSpacesCount(organizationId: string): Promise<number> {
-    return prisma.space.count({
+    return await prisma.space.count({
       where: {
         organizationId,
         status: 'OCCUPIED'
@@ -514,7 +514,7 @@ export class PortfolioDashboardService {
   }
 
   private async getAvailableSpacesCount(organizationId: string): Promise<number> {
-    return prisma.space.count({
+    return await prisma.space.count({
       where: {
         organizationId,
         status: 'AVAILABLE'

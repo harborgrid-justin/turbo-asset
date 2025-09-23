@@ -123,8 +123,8 @@ interface DrillIssue {
 }
 
 export class EmergencyPlanningService extends EventEmitter {
-  private plansCache: Map<string, EmergencyPlan> = new Map();
-  private context?: ComplianceContext;
+  private readonly plansCache: Map<string, EmergencyPlan> = new Map();
+  private readonly context?: ComplianceContext;
 
   constructor(context?: ComplianceContext) {
     super();

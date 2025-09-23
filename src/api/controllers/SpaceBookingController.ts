@@ -128,7 +128,7 @@ router.get('/', async (req: Request, res: Response): Promise<void> => {
     logger.error('Failed to get space bookings', error);
     res.status(500).json({
       error: 'Failed to get space bookings',
-      message: error instanceof Error ? (error as Error).message : 'Unknown error',
+      message: error instanceof Error ? (error).message : 'Unknown error',
     });
 
     return;
@@ -213,7 +213,7 @@ router.get('/:id', async (req: Request, res: Response): Promise<void> => {
     logger.error('Failed to get space booking', error);
     res.status(500).json({
       error: 'Failed to get space booking',
-      message: error instanceof Error ? (error as Error).message : 'Unknown error',
+      message: error instanceof Error ? (error).message : 'Unknown error',
     });
 
     return;
@@ -396,7 +396,7 @@ router.post('/', async (req: Request, res: Response): Promise<void> => {
     logger.error('Failed to create space booking', error);
     res.status(500).json({
       error: 'Failed to create space booking',
-      message: error instanceof Error ? (error as Error).message : 'Unknown error',
+      message: error instanceof Error ? (error).message : 'Unknown error',
     });
 
     return;
@@ -424,7 +424,7 @@ router.patch('/:id/status', async (req: Request, res: Response): Promise<void> =
     const validStatuses = ['CONFIRMED', 'CHECKED_IN', 'CHECKED_OUT', 'CANCELLED', 'NO_SHOW'];
     if (!validStatuses.includes(status)) {
       res.status(400).json({
-        error: 'Invalid status. Valid values are: ' + validStatuses.join(', '),
+        error: `Invalid status. Valid values are: ${  validStatuses.join(', ')}`,
       });
 
       return;
@@ -535,7 +535,7 @@ router.patch('/:id/status', async (req: Request, res: Response): Promise<void> =
     logger.error('Failed to update space booking status', error);
     res.status(500).json({
       error: 'Failed to update space booking status',
-      message: error instanceof Error ? (error as Error).message : 'Unknown error',
+      message: error instanceof Error ? (error).message : 'Unknown error',
     });
 
     return;
@@ -684,7 +684,7 @@ router.get('/availability/check', async (req: Request, res: Response): Promise<v
     logger.error('Failed to check space availability', error);
     res.status(500).json({
       error: 'Failed to check space availability',
-      message: error instanceof Error ? (error as Error).message : 'Unknown error',
+      message: error instanceof Error ? (error).message : 'Unknown error',
     });
 
     return;

@@ -27,11 +27,11 @@ import {
 } from './constants';
 
 export class VendorBrokerService extends EventEmitter implements IVendorBrokerService {
-  private vendorCache = new Map<string, Vendor>();
-  private brokerCache = new Map<string, Broker>();
+  private readonly vendorCache = new Map<string, Vendor>();
+  private readonly brokerCache = new Map<string, Broker>();
   private readonly cacheTTL = BUSINESS_OPERATIONS_CONFIG.CACHING.VENDOR_CACHE_TTL * 1000;
 
-  constructor(private context: BusinessOperationsContext) {
+  constructor(private readonly context: BusinessOperationsContext) {
     super();
     logger.info('Vendor Broker Service initialized', {
       organizationId: context.organizationId,
@@ -481,7 +481,7 @@ export class VendorBrokerService extends EventEmitter implements IVendorBrokerSe
         throw new Error('Vendor not found');
       }
 
-      const ratings = vendor.ratings;
+      const {ratings} = vendor;
       
       if (ratings.length === 0) {
         return this.initializeVendorPerformance();
@@ -863,7 +863,7 @@ export class VendorBrokerService extends EventEmitter implements IVendorBrokerSe
   }
 
   private calculateBrokerPerformance(broker: Broker): BrokerPerformance {
-    const deals = broker.deals;
+    const {deals} = broker;
     const closedDeals = deals.filter(d => d.status === 'CLOSED');
     
     const totalVolume = closedDeals.reduce((sum, d) => sum + d.dealValue, 0);
@@ -880,7 +880,7 @@ export class VendorBrokerService extends EventEmitter implements IVendorBrokerSe
   }
 
   private calculateCommission(broker: Broker, dealValue: number): number {
-    const commission = broker.commission;
+    const {commission} = broker;
     
     if (commission.tieredRates && commission.tieredRates.length > 0) {
       const applicableRate = commission.tieredRates.find(rate => 

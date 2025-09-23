@@ -116,10 +116,10 @@ export interface OptimizationOpportunity {
  * Advanced Intelligence Service that exceeds IBM TRIRIGA with AI/ML capabilities
  */
 export class AdvancedIntelligenceService extends EventEmitter {
-  private models = new Map<string, PredictiveModel>();
-  private insights = new Map<string, IntelligenceInsight[]>();
-  private cache = new Map<string, any>();
-  private realTimeProcessors = new Map<string, NodeJS.Timer>();
+  private readonly models = new Map<string, PredictiveModel>();
+  private readonly insights = new Map<string, IntelligenceInsight[]>();
+  private readonly cache = new Map<string, any>();
+  private readonly realTimeProcessors = new Map<string, NodeJS.Timer>();
 
   constructor() {
     super();
@@ -442,10 +442,10 @@ export class AdvancedIntelligenceService extends EventEmitter {
 
     return {
       model: model.id,
-      prediction: baseResults[model.id as keyof typeof baseResults]?.prediction || {},
+      prediction: baseResults[model.id as keyof typeof baseResults].prediction || {},
       confidence: model.accuracy,
-      timeframe: baseResults[model.id as keyof typeof baseResults]?.timeframe || 'TBD',
-      factors: baseResults[model.id as keyof typeof baseResults]?.factors || []
+      timeframe: baseResults[model.id as keyof typeof baseResults].timeframe || 'TBD',
+      factors: baseResults[model.id as keyof typeof baseResults].factors || []
     };
   }
 

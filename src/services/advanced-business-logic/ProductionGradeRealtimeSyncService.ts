@@ -62,11 +62,11 @@ export interface SyncStatus {
  * seamless frontend-backend integration with conflict resolution
  */
 export class ProductionGradeRealtimeSyncService extends EventEmitter {
-  private activeConnections = new Map<string, Set<string>>(); // userId -> connectionIds
-  private subscriptions = new Map<string, SyncSubscription>();
-  private pendingChanges = new Map<string, SyncEvent[]>(); // userId -> changes
-  private conflictQueue = new Map<string, ConflictResolution[]>();
-  private syncMetrics = new Map<string, any>();
+  private readonly activeConnections = new Map<string, Set<string>>(); // userId -> connectionIds
+  private readonly subscriptions = new Map<string, SyncSubscription>();
+  private readonly pendingChanges = new Map<string, SyncEvent[]>(); // userId -> changes
+  private readonly conflictQueue = new Map<string, ConflictResolution[]>();
+  private readonly syncMetrics = new Map<string, any>();
 
   constructor() {
     super();
@@ -567,7 +567,7 @@ export class ProductionGradeRealtimeSyncService extends EventEmitter {
     // Implementation would apply the change to the database
     return {
       data: change.data,
-      version: 'v' + Date.now(),
+      version: `v${  Date.now()}`,
       organizationId: 'org-123'
     };
   }
@@ -589,8 +589,8 @@ export class ProductionGradeRealtimeSyncService extends EventEmitter {
   }
 
   private calculateSyncHealth(metrics: any): 'healthy' | 'degraded' | 'offline' {
-    if (metrics.errorRate > 0.1) return 'degraded';
-    if (metrics.isConnected === false) return 'offline';
+    if (metrics.errorRate > 0.1) {return 'degraded';}
+    if (metrics.isConnected === false) {return 'offline';}
     return 'healthy';
   }
 

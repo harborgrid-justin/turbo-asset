@@ -23,7 +23,7 @@ export interface DocumentMetadata {
  * - Upload directory management
  */
 export class DocumentUploadService {
-  private uploadDir: string;
+  private readonly uploadDir: string;
 
   constructor() {
     this.uploadDir = path.join(process.cwd(), 'uploads');
@@ -50,8 +50,8 @@ export class DocumentUploadService {
         cb(null, this.uploadDir);
       },
       filename: (req, file, cb) => {
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        const fileName = file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname);
+        const uniqueSuffix = `${Date.now()  }-${  Math.round(Math.random() * 1E9)}`;
+        const fileName = `${file.fieldname  }-${  uniqueSuffix  }${path.extname(file.originalname)}`;
         cb(null, fileName);
       },
     });
@@ -243,7 +243,7 @@ export class DocumentUploadService {
     entityType?: string;
     entityId?: string;
   }): Promise<string> {
-    return this.uploadDocument(data.file, data.uploadedBy, {
+    return await this.uploadDocument(data.file, data.uploadedBy, {
       title: data.title,
       description: data.description,
       category: data.category,
@@ -262,6 +262,6 @@ export class DocumentUploadService {
     changeNotes?: string,
     uploadedBy?: string
   ): Promise<string> {
-    return this.uploadDocumentVersion(documentId, file, changeNotes);
+    return await this.uploadDocumentVersion(documentId, file, changeNotes);
   }
 }

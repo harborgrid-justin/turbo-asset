@@ -44,9 +44,9 @@ export interface QueryMetrics {
 class DatabaseManager {
   private static instance: DatabaseManager;
   private prisma: PrismaClient | null = null;
-  private config: DatabaseConnectionConfig;
-  private envConfig = getEnvironmentConfig();
-  private metrics: ConnectionPoolMetrics;
+  private readonly config: DatabaseConnectionConfig;
+  private readonly envConfig = getEnvironmentConfig();
+  private readonly metrics: ConnectionPoolMetrics;
   private queryMetrics: QueryMetrics[] = [];
   private healthCheckInterval?: NodeJS.Timeout;
   private isConnecting = false;
@@ -249,7 +249,7 @@ class DatabaseManager {
   }
 
   private recordQueryMetrics(metric: QueryMetrics): void {
-    if (!this.config.enableMetrics) return;
+    if (!this.config.enableMetrics) {return;}
 
     this.queryMetrics.push(metric);
     this.metrics.totalQueries++;
@@ -349,15 +349,15 @@ class DatabaseManager {
     operations: (prisma: PrismaClient) => Promise<T>,
     operationName: string = 'transaction'
   ): Promise<T> {
-    return this.executeQuery(async (prisma) => {
-      return prisma.$transaction(async (tx) => {
-        return operations(tx as PrismaClient);
+    return await this.executeQuery(async (prisma) => {
+      return await prisma.$transaction(async (tx) => {
+        return await operations(tx as PrismaClient);
       });
     }, operationName);
   }
 
   private isRecoverableError(error: unknown): boolean {
-    if (!(error instanceof Error)) return false;
+    if (!(error instanceof Error)) {return false;}
 
     const recoverableErrors = [
       'ECONNRESET',
@@ -444,11 +444,11 @@ export { DatabaseManager };
 
 // Convenience functions
 export const db = {
-  execute: <T>(operation: (prisma: PrismaClient) => Promise<T>, operationName?: string) =>
-    databaseManager.executeQuery(operation, operationName),
+  execute: async <T>(operation: (prisma: PrismaClient) => Promise<T>, operationName?: string) =>
+    await databaseManager.executeQuery(operation, operationName),
   
-  transaction: <T>(operations: (prisma: PrismaClient) => Promise<T>, operationName?: string) =>
-    databaseManager.executeTransaction(operations, operationName),
+  transaction: async <T>(operations: (prisma: PrismaClient) => Promise<T>, operationName?: string) =>
+    await databaseManager.executeTransaction(operations, operationName),
   
   isHealthy: () => databaseManager.isHealthy(),
   

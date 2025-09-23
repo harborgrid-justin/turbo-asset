@@ -117,7 +117,7 @@ export class RetryUtils {
     maxAttempts: number = 3,
     retryCondition?: (error: Error) => boolean
   ): Promise<T> {
-    return this.retry(operation, {
+    return await this.retry(operation, {
       maxAttempts,
       baseDelay: 0, // Not used with custom backoff
       backoffMultiplier: 1, // Not used with custom backoff
@@ -139,7 +139,7 @@ export class TimeoutUtils {
   /**
    * Add timeout to any promise
    */
-  public static withTimeout<T>(
+  public static async withTimeout<T>(
     promise: Promise<T>,
     options: TimeoutOptions
   ): Promise<T> {
@@ -154,14 +154,14 @@ export class TimeoutUtils {
       }, options.timeoutMs);
     });
 
-    return Promise.race([promise, timeoutPromise]);
+    return await Promise.race([promise, timeoutPromise]);
   }
 
   /**
    * Create a timeout promise that rejects after specified time
    */
-  public static createTimeout(timeoutMs: number, message?: string): Promise<never> {
-    return new Promise<never>((_, reject) => {
+  public static async createTimeout(timeoutMs: number, message?: string): Promise<never> {
+    return await new Promise<never>((_, reject) => {
       setTimeout(() => {
         reject(new EnterpriseError(
           'TIMEOUT_ERROR',
@@ -310,9 +310,9 @@ export class ConcurrencyUtils {
     };
 
     if (config.preserveOrder) {
-      return this.mapWithConcurrencyPreserveOrder(items, mapper, config);
+      return await this.mapWithConcurrencyPreserveOrder(items, mapper, config);
     } else {
-      return this.mapWithConcurrencyUnordered(items, mapper, config);
+      return await this.mapWithConcurrencyUnordered(items, mapper, config);
     }
   }
 
@@ -373,11 +373,11 @@ export class ConcurrencyUtils {
    * Execute multiple promises with a semaphore-like concurrency limit
    */
   public static async semaphore<T>(
-    tasks: readonly (() => Promise<T>)[],
+    tasks: ReadonlyArray<() => Promise<T>>,
     concurrency: number
   ): Promise<T[]> {
     const results: T[] = new Array(tasks.length);
-    const executing: Promise<void>[] = [];
+    const executing: Array<Promise<void>> = [];
 
     for (let i = 0; i < tasks.length; i++) {
       const task = tasks[i];
@@ -404,7 +404,7 @@ export class ConcurrencyUtils {
     config: ConcurrencyOptions
   ): Promise<R[]> {
     const results: R[] = new Array(items.length);
-    const executing: Promise<void>[] = [];
+    const executing: Array<Promise<void>> = [];
     let index = 0;
 
     while (index < items.length || executing.length > 0) {
@@ -448,8 +448,8 @@ export class ConcurrencyUtils {
     config: ConcurrencyOptions
   ): Promise<R[]> {
     const results: R[] = [];
-    const promises = items.map((item, index) => 
-      mapper(item, index).then(result => {
+    const promises = items.map(async (item, index) => 
+      await mapper(item, index).then(result => {
         results.push(result);
         return result;
       })
@@ -489,8 +489,8 @@ export class AsyncUtils {
   /**
    * Create a delay promise
    */
-  public static delay(ms: number): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, ms));
+  public static async delay(ms: number): Promise<void> {
+    await new Promise(resolve => setTimeout(resolve, ms));
   }
 
   /**
@@ -509,10 +509,10 @@ export class AsyncUtils {
     const promise = new Promise<T>((resolve, reject) => {
       executor(
         (value) => {
-          if (!cancelled) resolve(value);
+          if (!cancelled) {resolve(value);}
         },
         (error) => {
-          if (!cancelled) reject(error);
+          if (!cancelled) {reject(error);}
         }
       );
 
@@ -547,7 +547,7 @@ export class AsyncUtils {
     let resolveFunction: ((value: R) => void) | null = null;
     let rejectFunction: ((reason?: unknown) => void) | null = null;
 
-    return (...args: T): Promise<R> => {
+    return async (...args: T): Promise<R> => {
       // Critical fix: Clear existing timeout
       if (timeoutId !== null) {
         clearTimeout(timeoutId);
@@ -578,7 +578,7 @@ export class AsyncUtils {
         }
       }, delayMs);
 
-      return pendingPromise;
+      return await pendingPromise;
     };
   }
 
@@ -599,7 +599,7 @@ export class AsyncUtils {
       // Critical fix: If enough time has passed, execute immediately
       if (now - lastCallTime >= intervalMs) {
         lastCallTime = now;
-        return func(...args);
+        return await func(...args);
       }
 
       // Critical fix: If there's already a pending call, don't create another
@@ -626,14 +626,14 @@ export class AsyncUtils {
         }, delayTime);
       });
 
-      return pendingPromise;
+      return await pendingPromise;
     };
   }
 
   /**
    * Create a promise that resolves when a condition becomes true
    */
-  public static waitFor(
+  public static async waitFor(
     condition: () => boolean | Promise<boolean>,
     options: {
       readonly intervalMs?: number;
@@ -648,13 +648,13 @@ export class AsyncUtils {
       ...options
     };
 
-    return new Promise<void>((resolve, reject) => {
+    await new Promise<void>((resolve, reject) => {
       let timeoutId: NodeJS.Timeout | null = null;
       let intervalId: NodeJS.Timeout | null = null;
 
       const cleanup = () => {
-        if (timeoutId !== null) clearTimeout(timeoutId);
-        if (intervalId !== null) clearInterval(intervalId);
+        if (timeoutId !== null) {clearTimeout(timeoutId);}
+        if (intervalId !== null) {clearInterval(intervalId);}
       };
 
       // Set timeout

@@ -99,7 +99,7 @@ export class ManufacturingIndustryEngine {
 
   private static calculateSupplyChainResilience(data: ManufacturingAssetData): number {
     const leadTimeScore = Math.max(0, 100 - data.supplierData.leadTime);
-    const reliabilityScore = data.supplierData.reliabilityScore;
+    const {reliabilityScore} = data.supplierData;
     const geoRiskScore = Math.max(0, 100 - data.supplierData.geoRisk * 20);
     
     return (leadTimeScore + reliabilityScore + geoRiskScore) / 3;
@@ -405,7 +405,7 @@ export class Fortune100IndustryEngine {
   /**
    * Comprehensive industry-specific analysis dispatcher
    */
-  static analyzeByIndustry(industry: string, data: any): StandardResponse<any> {
+  static analyzeByIndustry(industry: string, data: any): StandardResponse {
     try {
       let result: any;
       
@@ -439,7 +439,7 @@ export class Fortune100IndustryEngine {
         success: false,
         error: {
           code: 'INDUSTRY_ANALYSIS_FAILED',
-          message: `Industry analysis failed: ${error instanceof Error ? (error as Error).message : 'Unknown error'}`
+          message: `Industry analysis failed: ${error instanceof Error ? (error).message : 'Unknown error'}`
         },
         data: null
       };

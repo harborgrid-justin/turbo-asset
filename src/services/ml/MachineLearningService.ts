@@ -23,10 +23,10 @@ import {
  * Supports multiple ML algorithms and frameworks
  */
 export class MachineLearningService extends EventEmitter {
-  private models: Map<string, MLModel> = new Map();
-  private trainingJobs: Map<string, ModelTrainingJob> = new Map();
-  private deployments: Map<string, ModelDeployment> = new Map();
-  private config: MLServiceConfig;
+  private readonly models: Map<string, MLModel> = new Map();
+  private readonly trainingJobs: Map<string, ModelTrainingJob> = new Map();
+  private readonly deployments: Map<string, ModelDeployment> = new Map();
+  private readonly config: MLServiceConfig;
 
   constructor(config: MLServiceConfig) {
     super();
@@ -43,7 +43,7 @@ export class MachineLearningService extends EventEmitter {
     }
 
     // Start cleanup job for old models
-    setInterval(() => this.cleanupOldModels(), 24 * 60 * 60 * 1000); // Daily cleanup
+    setInterval(() => { this.cleanupOldModels(); }, 24 * 60 * 60 * 1000); // Daily cleanup
   }
 
   /**
@@ -654,7 +654,7 @@ export class MachineLearningService extends EventEmitter {
   private calculateConfidence(model: MLModel, input: Record<string, any>): number {
     // Simplified confidence calculation based on model accuracy and input completeness
     const modelAccuracy = model.accuracy || 0.8;
-    const inputCompleteness = Object.keys(input).length / (model.metadata.features?.length || 10);
+    const inputCompleteness = Object.keys(input).length / (model.metadata.features.length || 10);
     return Math.min(0.99, modelAccuracy * 0.7 + inputCompleteness * 0.3 + Math.random() * 0.1);
   }
 
@@ -679,7 +679,7 @@ export class MachineLearningService extends EventEmitter {
     const deployment = this.deployments.get(deploymentId);
     if (!deployment) {return;}
 
-    const monitoring = deployment.monitoring;
+    const {monitoring} = deployment;
     
     monitoring.requestCount++;
     monitoring.averageLatency = (monitoring.averageLatency * (monitoring.requestCount - 1) + processingTime) / monitoring.requestCount;
@@ -797,7 +797,7 @@ export class MachineLearningService extends EventEmitter {
   }
 
   private async simulateDelay(ms: number): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    await new Promise(resolve => setTimeout(resolve, ms));
   }
 }
 

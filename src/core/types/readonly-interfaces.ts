@@ -491,7 +491,7 @@ export type ReadonlyRecord<K extends keyof any, T> = {
  * Utility type for deep readonly transformation
  */
 export type DeepReadonly<T> = {
-  readonly [P in keyof T]: T[P] extends (infer U)[]
+  readonly [P in keyof T]: T[P] extends Array<infer U>
     ? ReadonlyArray<DeepReadonly<U>>
     : T[P] extends Record<any, any>
     ? DeepReadonly<T[P]>

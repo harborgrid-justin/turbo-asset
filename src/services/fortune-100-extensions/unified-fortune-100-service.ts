@@ -76,7 +76,7 @@ export interface Fortune100AnalysisResult {
 
 export class Fortune100BusinessLogicService {
   private static instance: Fortune100BusinessLogicService;
-  private napiIntegrationEnabled: boolean = true;
+  private readonly napiIntegrationEnabled: boolean = true;
 
   static getInstance(): Fortune100BusinessLogicService {
     if (!Fortune100BusinessLogicService.instance) {
@@ -177,7 +177,7 @@ export class Fortune100BusinessLogicService {
         success: false,
         error: {
           code: 'ANALYSIS_FAILED',
-          message: `Analysis failed: ${error instanceof Error ? (error as Error).message : 'Unknown error'}`
+          message: `Analysis failed: ${error instanceof Error ? (error).message : 'Unknown error'}`
         },
         data: undefined
       };
@@ -187,7 +187,7 @@ export class Fortune100BusinessLogicService {
   /**
    * Industry-specific analysis using Fortune 100 engines
    */
-  private async performIndustryAnalysis(request: Fortune100AnalysisRequest): Promise<StandardResponse<any>> {
+  private async performIndustryAnalysis(request: Fortune100AnalysisRequest): Promise<StandardResponse> {
     try {
       // Use Fortune 100 industry-specific engines
       const industryResult = Fortune100IndustryEngine.analyzeByIndustry(request.industry, request.data);
@@ -217,7 +217,7 @@ export class Fortune100BusinessLogicService {
         success: false,
         error: {
           code: 'INDUSTRY_ANALYSIS_FAILED',
-          message: `Industry analysis failed: ${error instanceof Error ? (error as Error).message : 'Unknown error'}`
+          message: `Industry analysis failed: ${error instanceof Error ? (error).message : 'Unknown error'}`
         },
         data: null
       };
@@ -227,7 +227,7 @@ export class Fortune100BusinessLogicService {
   /**
    * Multi-domain regulatory compliance analysis
    */
-  private async performComplianceAnalysis(request: Fortune100AnalysisRequest): Promise<StandardResponse<any>> {
+  private async performComplianceAnalysis(request: Fortune100AnalysisRequest): Promise<StandardResponse> {
     try {
       // Use unified regulatory compliance engine
       const complianceResult = UnifiedRegulatoryComplianceEngine.comprehensiveComplianceAssessment(
@@ -263,7 +263,7 @@ export class Fortune100BusinessLogicService {
         success: false,
         error: {
           code: 'COMPLIANCE_ANALYSIS_FAILED',
-          message: `Compliance analysis failed: ${error instanceof Error ? (error as Error).message : 'Unknown error'}`
+          message: `Compliance analysis failed: ${error instanceof Error ? (error).message : 'Unknown error'}`
         },
         data: null
       };
@@ -273,7 +273,7 @@ export class Fortune100BusinessLogicService {
   /**
    * Advanced financial analytics with Fortune 100 sophistication
    */
-  private async performFinancialAnalysis(request: Fortune100AnalysisRequest): Promise<StandardResponse<any>> {
+  private async performFinancialAnalysis(request: Fortune100AnalysisRequest): Promise<StandardResponse> {
     try {
       const results: any = {};
 
@@ -324,7 +324,7 @@ export class Fortune100BusinessLogicService {
         success: false,
         error: {
           code: 'FINANCIAL_ANALYSIS_FAILED',
-          message: `Financial analysis failed: ${error instanceof Error ? (error as Error).message : 'Unknown error'}`
+          message: `Financial analysis failed: ${error instanceof Error ? (error).message : 'Unknown error'}`
         },
         data: null
       };
@@ -334,7 +334,7 @@ export class Fortune100BusinessLogicService {
   /**
    * Integration with existing production-grade business logic
    */
-  private async integrateExistingBusinessLogic(request: Fortune100AnalysisRequest): Promise<StandardResponse<any>> {
+  private async integrateExistingBusinessLogic(request: Fortune100AnalysisRequest): Promise<StandardResponse> {
     try {
       const results: any = {};
 
@@ -366,7 +366,7 @@ export class Fortune100BusinessLogicService {
         success: false,
         error: {
           code: 'INTEGRATION_FAILED',
-          message: `Integration failed: ${error instanceof Error ? (error as Error).message : 'Unknown error'}`
+          message: `Integration failed: ${error instanceof Error ? (error).message : 'Unknown error'}`
         },
         data: null
       };

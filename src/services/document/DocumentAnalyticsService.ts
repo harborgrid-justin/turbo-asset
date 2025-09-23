@@ -168,7 +168,7 @@ export class DocumentAnalyticsService {
       // Aggregate by user
       const userActivityMap = new Map();
       activities.forEach(activity => {
-        const userId = activity.userId;
+        const {userId} = activity;
         if (!userActivityMap.has(userId)) {
           userActivityMap.set(userId, {
             user: activity.user,

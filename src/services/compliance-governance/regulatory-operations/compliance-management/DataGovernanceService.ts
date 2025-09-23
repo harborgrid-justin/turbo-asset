@@ -56,10 +56,10 @@ export interface MasterDataManagement {
 }
 
 export class DataGovernanceService extends EventEmitter {
-  private dataLineageCache: Map<string, DataLineage> = new Map();
-  private qualityMetricsCache: Map<string, DataQualityMetrics> = new Map();
-  private policiesCache: Map<string, DataGovernancePolicy[]> = new Map();
-  private context?: ComplianceContext;
+  private readonly dataLineageCache: Map<string, DataLineage> = new Map();
+  private readonly qualityMetricsCache: Map<string, DataQualityMetrics> = new Map();
+  private readonly policiesCache: Map<string, DataGovernancePolicy[]> = new Map();
+  private readonly context?: ComplianceContext;
 
   constructor(context?: ComplianceContext) {
     super();

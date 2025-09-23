@@ -70,18 +70,18 @@ export interface ServiceRegistry {
 
 export class EnterpriseContainer extends EventEmitter {
   private static instance: EnterpriseContainer;
-  private serviceRegistry: Map<string, ServiceDefinition> = new Map();
-  private singletonInstances: Map<string, ServiceInstance> = new Map();
-  private requestInstances: Map<string, Map<string, ServiceInstance>> = new Map();
-  private sessionInstances: Map<string, Map<string, ServiceInstance>> = new Map();
-  private dependencyGraph: Map<string, string[]> = new Map();
-  private circularDependencyCache: Set<string> = new Set();
-  private healthCheckIntervals: Map<string, NodeJS.Timeout> = new Map();
-  private configuration: ContainerConfiguration;
+  private readonly serviceRegistry: Map<string, ServiceDefinition> = new Map();
+  private readonly singletonInstances: Map<string, ServiceInstance> = new Map();
+  private readonly requestInstances: Map<string, Map<string, ServiceInstance>> = new Map();
+  private readonly sessionInstances: Map<string, Map<string, ServiceInstance>> = new Map();
+  private readonly dependencyGraph: Map<string, string[]> = new Map();
+  private readonly circularDependencyCache: Set<string> = new Set();
+  private readonly healthCheckIntervals: Map<string, NodeJS.Timeout> = new Map();
+  private readonly configuration: ContainerConfiguration;
   private isShuttingDown: boolean = false;
   
   // Metrics and monitoring
-  private serviceMetrics: Map<string, {
+  private readonly serviceMetrics: Map<string, {
     creationCount: number;
     accessCount: number;
     lastAccessed: Date;
@@ -241,7 +241,7 @@ export class EnterpriseContainer extends EventEmitter {
    */
   public async getByTag<T>(tag: string, context?: { requestId?: string; sessionId?: string }): Promise<T[]> {
     const definitions = Array.from(this.serviceRegistry.values()).filter(def => def.tags.includes(tag));
-    const instances = await Promise.all(definitions.map(def => this.get<T>(def.id, context)));
+    const instances = await Promise.all(definitions.map(async def => await this.get<T>(def.id, context)));
     return instances;
   }
 
@@ -290,8 +290,8 @@ export class EnterpriseContainer extends EventEmitter {
         try {
           const isHealthy = await definition.healthCheck();
           const status = isHealthy ? 'HEALTHY' : 'UNHEALTHY';
-          if (isHealthy) healthyCount++;
-          else unhealthyCount++;
+          if (isHealthy) {healthyCount++;}
+          else {unhealthyCount++;}
 
           services.push({
             id: serviceId,

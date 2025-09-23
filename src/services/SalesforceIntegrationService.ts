@@ -25,12 +25,12 @@ export interface SalesforceQuery {
 }
 
 export class SalesforceIntegrationService {
-  private client: AxiosInstance;
+  private readonly client: AxiosInstance;
   private accessToken: string | null = null;
   private instanceUrl: string | null = null;
   private tokenExpiresAt: Date | null = null;
 
-  constructor(private config: SalesforceConfig) {
+  constructor(private readonly config: SalesforceConfig) {
     this.client = axios.create({
       timeout: 30000,
       headers: {
@@ -406,11 +406,11 @@ export class SalesforceIntegrationService {
         const promises = batch.map(async (operation) => {
           switch (operation.type) {
             case 'CREATE':
-              return this.createRecord(operation.objectType, operation.record);
+              return await this.createRecord(operation.objectType, operation.record);
             case 'UPDATE':
-              return this.updateRecord(operation.objectType, operation.recordId!, operation.record);
+              { await this.updateRecord(operation.objectType, operation.recordId!, operation.record); return; }
             case 'DELETE':
-              return this.deleteRecord(operation.objectType, operation.recordId!);
+              { await this.deleteRecord(operation.objectType, operation.recordId!); return; }
           }
         });
 

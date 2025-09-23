@@ -78,7 +78,7 @@ router.post('/plans', async (req: Request, res: Response): Promise<void> => {
     const validPlanTypes = ['EVACUATION', 'FIRE', 'EARTHQUAKE', 'LOCKDOWN', 'MEDICAL', 'SEVERE_WEATHER'];
     if (!validPlanTypes.includes(planType)) {
       res.status(400).json({
-        error: 'Invalid plan type. Valid values are: ' + validPlanTypes.join(', '),
+        error: `Invalid plan type. Valid values are: ${  validPlanTypes.join(', ')}`,
       });
 
       return;
@@ -106,7 +106,7 @@ router.post('/plans', async (req: Request, res: Response): Promise<void> => {
     logger.error('Failed to create emergency plan', error);
     res.status(500).json({
       error: 'Failed to create emergency plan',
-      message: error instanceof Error ? (error as Error).message : 'Unknown error',
+      message: error instanceof Error ? (error).message : 'Unknown error',
     });
 
     return;
@@ -145,7 +145,7 @@ router.get('/plans/:buildingId', async (req: Request, res: Response): Promise<vo
     logger.error('Failed to get emergency plans', error);
     res.status(500).json({
       error: 'Failed to get emergency plans',
-      message: error instanceof Error ? (error as Error).message : 'Unknown error',
+      message: error instanceof Error ? (error).message : 'Unknown error',
     });
 
     return;
@@ -230,7 +230,7 @@ router.post('/drills', async (req: Request, res: Response): Promise<void> => {
     logger.error('Failed to schedule emergency drill', error);
     res.status(500).json({
       error: 'Failed to schedule emergency drill',
-      message: error instanceof Error ? (error as Error).message : 'Unknown error',
+      message: error instanceof Error ? (error).message : 'Unknown error',
     });
 
     return;
@@ -319,14 +319,14 @@ router.post('/drills/:drillId/results', async (req: Request, res: Response): Pro
     res.json(drill);
   } catch (error: unknown) {
     logger.error('Failed to record drill results', error);
-    if (error instanceof Error && (error as Error).message.includes('not found')) {
-      res.status(404).json({ error: (error as Error).message });
+    if (error instanceof Error && (error).message.includes('not found')) {
+      res.status(404).json({ error: (error).message });
 
       return;
     } else {
       res.status(500).json({
         error: 'Failed to record drill results',
-        message: error instanceof Error ? (error as Error).message : 'Unknown error',
+        message: error instanceof Error ? (error).message : 'Unknown error',
       });
 
       return;
@@ -364,7 +364,7 @@ router.get('/compliance/:organizationId', async (req: Request, res: Response): P
     logger.error('Failed to get compliance dashboard', error);
     res.status(500).json({
       error: 'Failed to get compliance dashboard',
-      message: error instanceof Error ? (error as Error).message : 'Unknown error',
+      message: error instanceof Error ? (error).message : 'Unknown error',
     });
 
     return;
@@ -401,14 +401,14 @@ router.get('/evacuation/:buildingId/report', async (req: Request, res: Response)
     res.json(report);
   } catch (error: unknown) {
     logger.error('Failed to generate evacuation report', error);
-    if (error instanceof Error && (error as Error).message.includes('not found')) {
-      res.status(404).json({ error: (error as Error).message });
+    if (error instanceof Error && (error).message.includes('not found')) {
+      res.status(404).json({ error: (error).message });
 
       return;
     } else {
       res.status(500).json({
         error: 'Failed to generate evacuation report',
-        message: error instanceof Error ? (error as Error).message : 'Unknown error',
+        message: error instanceof Error ? (error).message : 'Unknown error',
       });
 
       return;
@@ -455,7 +455,7 @@ router.get('/procedures/:organizationId', async (req: Request, res: Response): P
     logger.error('Failed to get emergency procedures', error);
     res.status(500).json({
       error: 'Failed to get emergency procedures',
-      message: error instanceof Error ? (error as Error).message : 'Unknown error',
+      message: error instanceof Error ? (error).message : 'Unknown error',
     });
 
     return;
@@ -526,7 +526,7 @@ router.get('/analytics/:organizationId', async (req: Request, res: Response): Pr
     logger.error('Failed to get emergency analytics', error);
     res.status(500).json({
       error: 'Failed to get emergency analytics',
-      message: error instanceof Error ? (error as Error).message : 'Unknown error',
+      message: error instanceof Error ? (error).message : 'Unknown error',
     });
 
     return;

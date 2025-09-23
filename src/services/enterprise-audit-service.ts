@@ -93,12 +93,12 @@ export interface AuditAnalytics {
 export class EnterpriseAuditService extends EventEmitter {
   private static instance: EnterpriseAuditService;
   private auditBuffer: EnhancedAuditTrail[] = [];
-  private bufferSize = 1000;
-  private flushInterval = 5000; // 5 seconds
-  private retentionPolicies: Map<string, number> = new Map();
-  private complianceRules: Map<string, any> = new Map();
-  private encryptionEnabled = true;
-  private digitalSigningEnabled = true;
+  private readonly bufferSize = 1000;
+  private readonly flushInterval = 5000; // 5 seconds
+  private readonly retentionPolicies: Map<string, number> = new Map();
+  private readonly complianceRules: Map<string, any> = new Map();
+  private readonly encryptionEnabled = true;
+  private readonly digitalSigningEnabled = true;
   
   private constructor() {
     super();
@@ -379,11 +379,11 @@ export class EnterpriseAuditService extends EventEmitter {
 
   // Private helper methods
   private calculateSeverity(auditData: Partial<EnhancedAuditTrail>): 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL' {
-    if (auditData.action === 'DELETE' && auditData.entityType === 'User') return 'CRITICAL';
-    if (auditData.action === 'DELETE') return 'HIGH';
-    if (auditData.action === 'UPDATE' && auditData.entityType === 'User') return 'HIGH';
-    if (auditData.action === 'CREATE' && auditData.entityType === 'User') return 'MEDIUM';
-    if (auditData.action === 'EXPORT') return 'MEDIUM';
+    if (auditData.action === 'DELETE' && auditData.entityType === 'User') {return 'CRITICAL';}
+    if (auditData.action === 'DELETE') {return 'HIGH';}
+    if (auditData.action === 'UPDATE' && auditData.entityType === 'User') {return 'HIGH';}
+    if (auditData.action === 'CREATE' && auditData.entityType === 'User') {return 'MEDIUM';}
+    if (auditData.action === 'EXPORT') {return 'MEDIUM';}
     return 'LOW';
   }
 
@@ -415,8 +415,8 @@ export class EnterpriseAuditService extends EventEmitter {
   }
 
   private assessBusinessImpact(auditData: Partial<EnhancedAuditTrail>): 'NONE' | 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL' {
-    if (auditData.action === 'DELETE' && auditData.entityType === 'Asset') return 'HIGH';
-    if (auditData.action === 'DELETE') return 'MEDIUM';
+    if (auditData.action === 'DELETE' && auditData.entityType === 'Asset') {return 'HIGH';}
+    if (auditData.action === 'DELETE') {return 'MEDIUM';}
     return 'LOW';
   }
 
@@ -463,7 +463,7 @@ export class EnterpriseAuditService extends EventEmitter {
   }
 
   private async flushAuditBuffer(): Promise<void> {
-    if (this.auditBuffer.length === 0) return;
+    if (this.auditBuffer.length === 0) {return;}
     
     const bufferCopy = [...this.auditBuffer];
     this.auditBuffer = [];

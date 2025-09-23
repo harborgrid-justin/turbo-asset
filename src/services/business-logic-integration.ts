@@ -65,9 +65,9 @@ export interface ValidationRule {
 
 export class BusinessLogicIntegrationService {
   private static instance: BusinessLogicIntegrationService;
-  private bridges: Map<string, BusinessLogicBridge> = new Map();
+  private readonly bridges: Map<string, BusinessLogicBridge> = new Map();
   private initialized = false;
-  private metrics: ProductionMetrics = {
+  private readonly metrics: ProductionMetrics = {
     totalRequests: 0,
     successfulRequests: 0,
     failedRequests: 0,
@@ -76,7 +76,7 @@ export class BusinessLogicIntegrationService {
     napiSuccessRate: 0,
     fallbackUsageRate: 0
   };
-  private validationRules: Map<string, Map<string, ValidationRule[]>> = new Map();
+  private readonly validationRules: Map<string, Map<string, ValidationRule[]>> = new Map();
   private readonly maxRetries = 3;
   private readonly healthCheckInterval = 60000; // 1 minute
 
@@ -970,8 +970,8 @@ export class BusinessLogicIntegrationService {
     }
   }
 
-  private delay(ms: number): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, ms));
+  private async delay(ms: number): Promise<void> {
+    await new Promise(resolve => setTimeout(resolve, ms));
   }
 
   /**

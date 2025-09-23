@@ -45,13 +45,13 @@ export interface GracefulShutdownConfig {
 
 class ProcessManager extends EventEmitter {
   private static instance: ProcessManager;
-  private startTime: number = Date.now();
+  private readonly startTime: number = Date.now();
   private shutdownTimeout: NodeJS.Timeout | null = null;
   private isShuttingDown = false;
   private healthCheckInterval: NodeJS.Timeout | null = null;
   private gcStats: { collections: number; duration: number } | null = null;
   private config: GracefulShutdownConfig;
-  private shutdownCallbacks: Array<() => Promise<void>> = [];
+  private readonly shutdownCallbacks: Array<() => Promise<void>> = [];
 
   private constructor() {
     super();
@@ -187,7 +187,7 @@ class ProcessManager extends EventEmitter {
   }
 
   private setupGCMonitoring(): void {
-    if (!this.config.enableGCMonitoring) return;
+    if (!this.config.enableGCMonitoring) {return;}
 
     try {
       // Try to enable GC monitoring if perf_hooks is available
@@ -271,7 +271,7 @@ class ProcessManager extends EventEmitter {
   }
 
   private async measureEventLoopLag(): Promise<number> {
-    return new Promise((resolve) => {
+    return await new Promise((resolve) => {
       const start = Date.now();
       setImmediate(() => {
         const lag = Date.now() - start;
@@ -397,7 +397,7 @@ class ProcessManager extends EventEmitter {
    * Trigger manual health check
    */
   public async triggerHealthCheck(): Promise<ProcessHealthStatus> {
-    return this.getProcessHealth();
+    return await this.getProcessHealth();
   }
 
   /**

@@ -291,8 +291,8 @@ export class NLPService extends EventEmitter {
       const chunks = this.chunkArray(tickets, maxConcurrency);
       
       for (const chunk of chunks) {
-        const chunkPromises = chunk.map(ticket =>
-          this.classifyTicket(ticket.ticketId, ticket.content, {
+        const chunkPromises = chunk.map(async ticket =>
+          await this.classifyTicket(ticket.ticketId, ticket.content, {
             subject: ticket.subject,
             userDepartment: ticket.userDepartment,
             language: ticket.language,
@@ -450,7 +450,7 @@ export class NLPService extends EventEmitter {
       for (const entity of entities) {
         if (entityTypes.includes(entity.type) && entity.confidence > 0.5) {
           extractedEntities.push({
-            type: entity.type as any,
+            type: entity.type,
             value: entity.value,
             confidence: entity.confidence,
             startIndex: entity.startIndex || 0,
@@ -517,7 +517,7 @@ export class NLPService extends EventEmitter {
         { includeConfidence: true }
       );
 
-      let summary = prediction.prediction.summary || text.substring(0, maxLength) + '...';
+      let summary = prediction.prediction.summary || `${text.substring(0, maxLength)  }...`;
 
       // Add keywords if requested
       if (includeKeywords) {
@@ -531,7 +531,7 @@ export class NLPService extends EventEmitter {
 
     } catch (error: unknown) {
       logger.error('Failed to summarize text', { error });
-      return text.substring(0, 150) + '...';
+      return `${text.substring(0, 150)  }...`;
     }
   }
 
@@ -610,8 +610,8 @@ export class NLPService extends EventEmitter {
       );
 
       // Use keyword-based fallback if ML prediction confidence is low
-      let category = prediction.prediction.category;
-      let confidence = prediction.confidence;
+      let {category} = prediction.prediction;
+      let {confidence} = prediction;
 
       if (confidence < 0.6) {
         const keywordClassification = this.classifyByKeywords(text);
@@ -650,7 +650,7 @@ export class NLPService extends EventEmitter {
       // Check for urgent keywords that might override ML prediction
       const urgencyIndicators = this.detectUrgencyIndicators(text);
       let level = prediction.prediction.priority_level;
-      let confidence = prediction.confidence;
+      let {confidence} = prediction;
       let reasoning = prediction.prediction.reasoning || 'Based on content analysis';
 
       if (urgencyIndicators.isUrgent && urgencyIndicators.confidence > 0.8) {

@@ -65,19 +65,19 @@ export interface BusinessOperationsDashboard {
 }
 
 export class BusinessOperationsManager extends EventEmitter {
-  private capitalProjectService: CapitalProjectService;
-  private contractLifecycleService: ContractLifecycleService;
-  private vendorBrokerService: VendorBrokerService;
+  private readonly capitalProjectService: CapitalProjectService;
+  private readonly contractLifecycleService: ContractLifecycleService;
+  private readonly vendorBrokerService: VendorBrokerService;
   
   // Placeholder services - would be implemented similarly
-  private leaseManagementService: any;
-  private camReconciliationService: any;
-  private criticalDateService: any;
+  private readonly leaseManagementService: any;
+  private readonly camReconciliationService: any;
+  private readonly criticalDateService: any;
 
-  private cache = new Map<string, any>();
+  private readonly cache = new Map<string, any>();
   private readonly cacheTTL = BUSINESS_OPERATIONS_CONFIG.CACHING.DEFAULT_TTL * 1000;
 
-  constructor(private context: BusinessOperationsContext) {
+  constructor(private readonly context: BusinessOperationsContext) {
     super();
 
     // Initialize sub-services
@@ -339,19 +339,19 @@ export class BusinessOperationsManager extends EventEmitter {
 
   private setupEventHandling(): void {
     // Handle project events
-    this.capitalProjectService.on('projectCreated', (event) => this.handleCrossServiceEvent('project', event));
-    this.capitalProjectService.on('projectUpdated', (event) => this.handleCrossServiceEvent('project', event));
-    this.capitalProjectService.on('statusChanged', (event) => this.handleCrossServiceEvent('project', event));
+    this.capitalProjectService.on('projectCreated', (event) => { this.handleCrossServiceEvent('project', event); });
+    this.capitalProjectService.on('projectUpdated', (event) => { this.handleCrossServiceEvent('project', event); });
+    this.capitalProjectService.on('statusChanged', (event) => { this.handleCrossServiceEvent('project', event); });
 
     // Handle contract events
-    this.contractLifecycleService.on('contractCreated', (event) => this.handleCrossServiceEvent('contract', event));
-    this.contractLifecycleService.on('contractRenewed', (event) => this.handleCrossServiceEvent('contract', event));
-    this.contractLifecycleService.on('contractTerminated', (event) => this.handleCrossServiceEvent('contract', event));
+    this.contractLifecycleService.on('contractCreated', (event) => { this.handleCrossServiceEvent('contract', event); });
+    this.contractLifecycleService.on('contractRenewed', (event) => { this.handleCrossServiceEvent('contract', event); });
+    this.contractLifecycleService.on('contractTerminated', (event) => { this.handleCrossServiceEvent('contract', event); });
 
     // Handle vendor events
-    this.vendorBrokerService.on('vendorCreated', (event) => this.handleCrossServiceEvent('vendor', event));
-    this.vendorBrokerService.on('vendorRated', (event) => this.handleCrossServiceEvent('vendor', event));
-    this.vendorBrokerService.on('brokerDealAdded', (event) => this.handleCrossServiceEvent('broker', event));
+    this.vendorBrokerService.on('vendorCreated', (event) => { this.handleCrossServiceEvent('vendor', event); });
+    this.vendorBrokerService.on('vendorRated', (event) => { this.handleCrossServiceEvent('vendor', event); });
+    this.vendorBrokerService.on('brokerDealAdded', (event) => { this.handleCrossServiceEvent('broker', event); });
   }
 
   private handleCrossServiceEvent(serviceType: string, event: any): void {

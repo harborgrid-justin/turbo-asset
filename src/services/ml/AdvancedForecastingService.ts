@@ -1188,7 +1188,7 @@ export class AdvancedForecastingService extends EventEmitter {
       inflation_rate: 0.03, // 3% assumed inflation
       growth_rate: this.calculateGrowthRate(historicalData),
       seasonality_factor: this.calculateBudgetSeasonality(historicalData),
-      categories: categories
+      categories
     };
   }
 

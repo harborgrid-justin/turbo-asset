@@ -48,7 +48,7 @@ export interface NotificationPreferences {
   categories: {
     [key: string]: {
       enabled: boolean;
-      channels: NotificationChannel['type'][];
+      channels: Array<NotificationChannel['type']>;
       quietHours?: {
         start: string;
         end: string;
@@ -96,13 +96,13 @@ export interface MessageQueueConfig {
 }
 
 export class NotificationService extends EventEmitter {
-  private emailTransporter: any;
-  private socketServer?: SocketIOServer;
-  private notificationQueue: Queue;
-  private emailQueue: Queue;
-  private smsQueue: Queue;
-  private redis: any;
-  private activeConnections: Map<string, any> = new Map();
+  private readonly emailTransporter: any;
+  private readonly socketServer?: SocketIOServer;
+  private readonly notificationQueue: Queue;
+  private readonly emailQueue: Queue;
+  private readonly smsQueue: Queue;
+  private readonly redis: any;
+  private readonly activeConnections: Map<string, any> = new Map();
 
   constructor(config?: {
     email?: any;
@@ -339,7 +339,7 @@ export class NotificationService extends EventEmitter {
       });
 
       if (preferences) {
-        return preferences as any;
+        return preferences;
       }
 
       // Return default preferences
@@ -678,9 +678,9 @@ export class NotificationService extends EventEmitter {
         throw new Error('Template not found');
       }
 
-      let subject = template.subject;
-      let htmlContent = template.htmlContent;
-      let textContent = template.textContent;
+      let {subject} = template;
+      let {htmlContent} = template;
+      let {textContent} = template;
 
       // Simple template variable replacement
       for (const [key, value] of Object.entries(templateData)) {

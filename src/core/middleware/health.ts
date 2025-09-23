@@ -42,8 +42,8 @@ export interface SystemHealth {
  * Health Check Service
  */
 export class HealthCheckService {
-  private prisma: PrismaClient;
-  private startTime: Date;
+  private readonly prisma: PrismaClient;
+  private readonly startTime: Date;
 
   constructor() {
     this.prisma = new PrismaClient();
@@ -427,7 +427,7 @@ export class HealthCheckService {
  * Health check routes handler
  */
 export class HealthController {
-  private healthService: HealthCheckService;
+  private readonly healthService: HealthCheckService;
 
   constructor() {
     this.healthService = new HealthCheckService();

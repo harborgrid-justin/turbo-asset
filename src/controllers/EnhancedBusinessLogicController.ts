@@ -52,7 +52,7 @@ export class EnhancedBusinessLogicController {
         error: {
           code: 'EXECUTION_ERROR',
           message: 'Failed to execute advanced business logic',
-          details: error instanceof Error ? (error as Error).message : 'Unknown error',
+          details: error instanceof Error ? (error).message : 'Unknown error',
         },
       });
 
@@ -163,7 +163,7 @@ export class EnhancedBusinessLogicController {
         error: {
           code: 'CALCULATION_ERROR',
           message: 'Failed to calculate asset depreciation',
-          details: error instanceof Error ? (error as Error).message : 'Unknown error',
+          details: error instanceof Error ? (error).message : 'Unknown error',
         },
       });
 
@@ -216,7 +216,7 @@ export class EnhancedBusinessLogicController {
         error: {
           code: 'CALCULATION_ERROR',
           message: 'Failed to calculate lease accounting',
-          details: error instanceof Error ? (error as Error).message : 'Unknown error',
+          details: error instanceof Error ? (error).message : 'Unknown error',
         },
       });
 
@@ -261,7 +261,7 @@ export class EnhancedBusinessLogicController {
         error: {
           code: 'OPTIMIZATION_ERROR',
           message: 'Failed to optimize space utilization',
-          details: error instanceof Error ? (error as Error).message : 'Unknown error',
+          details: error instanceof Error ? (error).message : 'Unknown error',
         },
       });
 
@@ -306,7 +306,7 @@ export class EnhancedBusinessLogicController {
         error: {
           code: 'OPTIMIZATION_ERROR',
           message: 'Failed to optimize maintenance costs',
-          details: error instanceof Error ? (error as Error).message : 'Unknown error',
+          details: error instanceof Error ? (error).message : 'Unknown error',
         },
       });
 
@@ -352,7 +352,7 @@ export class EnhancedBusinessLogicController {
         error: {
           code: 'CONSOLIDATION_ERROR',
           message: 'Failed to perform financial consolidation',
-          details: error instanceof Error ? (error as Error).message : 'Unknown error',
+          details: error instanceof Error ? (error).message : 'Unknown error',
         },
       });
 
@@ -397,7 +397,7 @@ export class EnhancedBusinessLogicController {
         error: {
           code: 'STANDARDIZATION_ERROR',
           message: 'Failed to standardize asset data',
-          details: error instanceof Error ? (error as Error).message : 'Unknown error',
+          details: error instanceof Error ? (error).message : 'Unknown error',
         },
       });
 
@@ -442,7 +442,7 @@ export class EnhancedBusinessLogicController {
         error: {
           code: 'STANDARDIZATION_ERROR',
           message: 'Failed to standardize space data',
-          details: error instanceof Error ? (error as Error).message : 'Unknown error',
+          details: error instanceof Error ? (error).message : 'Unknown error',
         },
       });
 

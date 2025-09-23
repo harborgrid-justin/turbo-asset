@@ -47,7 +47,7 @@ router.get('/utilization/:organizationId/predictive', async (req: Request, res: 
     logger.error('Failed to get predictive space analytics', error);
     res.status(500).json({
       error: 'Failed to get predictive space analytics',
-      message: error instanceof Error ? (error as Error).message : 'Unknown error',
+      message: error instanceof Error ? (error).message : 'Unknown error',
     });
 
     return;
@@ -139,7 +139,7 @@ router.post('/sensor-data', async (req: Request, res: Response): Promise<void> =
     logger.error('Failed to process sensor data', error);
     res.status(500).json({
       error: 'Failed to process sensor data',
-      message: error instanceof Error ? (error as Error).message : 'Unknown error',
+      message: error instanceof Error ? (error).message : 'Unknown error',
     });
 
     return;
@@ -207,7 +207,7 @@ router.get('/enterprise/:organizationId/insights', async (req: Request, res: Res
     logger.error('Failed to get enterprise insights', error);
     res.status(500).json({
       error: 'Failed to get enterprise insights',
-      message: error instanceof Error ? (error as Error).message : 'Unknown error',
+      message: error instanceof Error ? (error).message : 'Unknown error',
     });
 
     return;
@@ -273,7 +273,7 @@ router.get('/portfolio/:organizationId/executive', async (req: Request, res: Res
     logger.error('Failed to get executive dashboard', error);
     res.status(500).json({
       error: 'Failed to get executive dashboard',
-      message: error instanceof Error ? (error as Error).message : 'Unknown error',
+      message: error instanceof Error ? (error).message : 'Unknown error',
     });
 
     return;
@@ -339,7 +339,7 @@ router.get('/portfolio/:organizationId/advanced', async (req: Request, res: Resp
     logger.error('Failed to get advanced portfolio analytics', error);
     res.status(500).json({
       error: 'Failed to get advanced portfolio analytics',
-      message: error instanceof Error ? (error as Error).message : 'Unknown error',
+      message: error instanceof Error ? (error).message : 'Unknown error',
     });
 
     return;
@@ -376,7 +376,7 @@ router.get('/portfolio/:organizationId/realtime', async (req: Request, res: Resp
     logger.error('Failed to get real-time portfolio monitoring', error);
     res.status(500).json({
       error: 'Failed to get real-time portfolio monitoring',
-      message: error instanceof Error ? (error as Error).message : 'Unknown error',
+      message: error instanceof Error ? (error).message : 'Unknown error',
     });
 
     return;
@@ -424,7 +424,7 @@ router.get('/esg/:organizationId', async (req: Request, res: Response): Promise<
     logger.error('Failed to get ESG reporting', error);
     res.status(500).json({
       error: 'Failed to get ESG reporting',
-      message: error instanceof Error ? (error as Error).message : 'Unknown error',
+      message: error instanceof Error ? (error).message : 'Unknown error',
     });
 
     return;
@@ -543,7 +543,7 @@ router.get('/benchmarking/:organizationId', async (req: Request, res: Response):
     logger.error('Failed to get benchmarking data', error);
     res.status(500).json({
       error: 'Failed to get benchmarking data',
-      message: error instanceof Error ? (error as Error).message : 'Unknown error',
+      message: error instanceof Error ? (error).message : 'Unknown error',
     });
 
     return;
@@ -721,7 +721,7 @@ router.post('/optimization/:organizationId', async (req: Request, res: Response)
     logger.error('Failed to generate optimization recommendations', error);
     res.status(500).json({
       error: 'Failed to generate optimization recommendations',
-      message: error instanceof Error ? (error as Error).message : 'Unknown error',
+      message: error instanceof Error ? (error).message : 'Unknown error',
     });
 
     return;

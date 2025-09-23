@@ -799,8 +799,8 @@ export class CapitalProjectService {
       const remainingBudget = project.currentBudget - spentToDate - commitments;
 
       // Determine project status and phase
-      let status = project.status;
-      let phase = project.phase;
+      let {status} = project;
+      let {phase} = project;
 
       if (overallProgress === 100) {
         status = 'COMPLETED';

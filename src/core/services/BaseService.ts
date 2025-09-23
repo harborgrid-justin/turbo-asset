@@ -283,7 +283,7 @@ export interface ServiceFactory<T extends BaseService> {
  */
 export class ServiceRegistry {
   private static instance: ServiceRegistry;
-  private services: Map<string, BaseService> = new Map();
+  private readonly services: Map<string, BaseService> = new Map();
 
   private constructor() {}
 
@@ -335,7 +335,7 @@ export class ServiceRegistry {
    */
   public async initializeAll(): Promise<void> {
     const services = Array.from(this.services.values());
-    await Promise.all(services.map(service => service.initialize()));
+    await Promise.all(services.map(async service => { await service.initialize(); }));
   }
 
   /**
@@ -343,6 +343,6 @@ export class ServiceRegistry {
    */
   public async shutdownAll(): Promise<void> {
     const services = Array.from(this.services.values());
-    await Promise.all(services.map(service => service.shutdown()));
+    await Promise.all(services.map(async service => { await service.shutdown(); }));
   }
 }

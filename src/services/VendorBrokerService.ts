@@ -702,7 +702,7 @@ export class VendorBrokerService {
           results.push({
             vendorId: update.vendorId,
             status: 'ERROR',
-            error: error instanceof Error ? (error as Error).message : 'Unknown error'
+            error: error instanceof Error ? (error).message : 'Unknown error'
           });
         }
       }
@@ -946,7 +946,7 @@ export class VendorBrokerService {
     };
   }
 
-  private calculateAverage(values: (number | null | undefined)[]): number {
+  private calculateAverage(values: Array<number | null | undefined>): number {
     const validValues = values.filter(v => v != null) as number[];
     return validValues.length > 0 ? 
       Math.round((validValues.reduce((sum, v) => sum + v, 0) / validValues.length) * 100) / 100 : 0;

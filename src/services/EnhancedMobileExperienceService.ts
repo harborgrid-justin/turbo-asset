@@ -59,7 +59,7 @@ export interface NotificationPreferences {
   inspections: boolean;
   approvals: boolean;
   quietHours: TimeRange;
-  deliveryMethods: ('push' | 'sms' | 'email')[];
+  deliveryMethods: Array<'push' | 'sms' | 'email'>;
 }
 
 export interface WorkingHours {
@@ -356,12 +356,12 @@ export interface SyncStrategy {
  * Enhanced Mobile Experience Service that exceeds IBM TRIRIGA mobile capabilities
  */
 export class EnhancedMobileExperienceService extends EventEmitter {
-  private devices = new Map<string, MobileDeviceInfo>();
-  private users = new Map<string, MobileUser>();
-  private workOrders = new Map<string, MobileWorkOrder>();
-  private inspections = new Map<string, MobileInspection>();
-  private syncQueues = new Map<string, any[]>();
-  private offlineStorage = new Map<string, any>();
+  private readonly devices = new Map<string, MobileDeviceInfo>();
+  private readonly users = new Map<string, MobileUser>();
+  private readonly workOrders = new Map<string, MobileWorkOrder>();
+  private readonly inspections = new Map<string, MobileInspection>();
+  private readonly syncQueues = new Map<string, any[]>();
+  private readonly offlineStorage = new Map<string, any>();
   
   constructor() {
     super();

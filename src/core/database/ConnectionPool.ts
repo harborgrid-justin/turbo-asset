@@ -138,7 +138,7 @@ export class EnterpriseConnectionPool {
     logger.info('Initializing connection pool', { config: this.config });
     
     try {
-      const initPromises = Array.from({ length: this.config.min }, () => this.createConnection());
+      const initPromises = Array.from({ length: this.config.min }, async () => await this.createConnection());
       await Promise.all(initPromises);
       
       logger.info('Connection pool initialized successfully', {
@@ -196,7 +196,7 @@ export class EnterpriseConnectionPool {
     }
 
     // Wait for available connection
-    return new Promise((resolve, reject) => {
+    return await new Promise((resolve, reject) => {
       const timeout = setTimeout(() => {
         const index = this.pendingAcquires.findIndex(pending => pending.resolve === resolve);
         if (index > -1) {
@@ -298,8 +298,8 @@ export class EnterpriseConnectionPool {
     }
 
     // Destroy all connections
-    const destroyPromises = Array.from(this.connections, connection => 
-      this.destroyConnection(connection)
+    const destroyPromises = Array.from(this.connections, async connection => 
+      { await this.destroyConnection(connection); }
     );
     
     await Promise.allSettled(destroyPromises);

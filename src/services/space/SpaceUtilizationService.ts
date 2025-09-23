@@ -299,7 +299,7 @@ export class SpaceUtilizationService {
   /**
    * Process sensor data and create utilization records
    */
-  async processSensorData(sensorData: {
+  async processSensorData(sensorData: Array<{
     sensorId: string;
     spaceId: string;
     data: {
@@ -310,7 +310,7 @@ export class SpaceUtilizationService {
       [key: string]: any;
     };
     timestamp: Date;
-  }[]): Promise<void> {
+  }>): Promise<void> {
     try {
       const utilizationRecords: UtilizationRecord[] = [];
 
@@ -567,7 +567,7 @@ export class SpaceUtilizationService {
    * Process real-time sensor data with advanced analytics
    */
   async processRealtimeSensorData(
-    sensorData: {
+    sensorData: Array<{
       sensorId: string;
       spaceId: string;
       sensorType: string;
@@ -575,7 +575,7 @@ export class SpaceUtilizationService {
       unit: string;
       timestamp: Date;
       metadata?: any;
-    }[]
+    }>
   ): Promise<{
     processed: number;
     alerts: any[];

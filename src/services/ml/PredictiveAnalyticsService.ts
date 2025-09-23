@@ -248,7 +248,7 @@ export class PredictiveAnalyticsService extends EventEmitter {
   async forecastCosts(
     organizationId: string,
     options: {
-      categories?: ('MAINTENANCE' | 'ENERGY' | 'LEASE' | 'OPERATIONAL')[];
+      categories?: Array<'MAINTENANCE' | 'ENERGY' | 'LEASE' | 'OPERATIONAL'>;
       forecastHorizon?: number;
       confidenceInterval?: number;
       includeScenarios?: boolean;
@@ -350,7 +350,7 @@ export class PredictiveAnalyticsService extends EventEmitter {
     options: {
       forecastHorizon?: number;
       includeCapacityPlanning?: boolean;
-      scenarios?: ('CONSERVATIVE' | 'MODERATE' | 'AGGRESSIVE')[];
+      scenarios?: Array<'CONSERVATIVE' | 'MODERATE' | 'AGGRESSIVE'>;
     } = {}
   ): Promise<any> {
     try {

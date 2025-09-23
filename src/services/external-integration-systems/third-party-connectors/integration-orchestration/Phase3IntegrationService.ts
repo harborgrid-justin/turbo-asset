@@ -95,12 +95,12 @@ export interface WorkflowExecution {
 }
 
 export class Phase3IntegrationService extends EventEmitter {
-  private integrationRules: Map<string, IntegrationRule> = new Map();
-  private workflowDefinitions: Map<string, WorkflowDefinition> = new Map();
-  private activeWorkflows: Map<string, WorkflowExecution> = new Map();
-  private serviceConnections: Map<string, any> = new Map();
+  private readonly integrationRules: Map<string, IntegrationRule> = new Map();
+  private readonly workflowDefinitions: Map<string, WorkflowDefinition> = new Map();
+  private readonly activeWorkflows: Map<string, WorkflowExecution> = new Map();
+  private readonly serviceConnections: Map<string, any> = new Map();
 
-  constructor(private context?: IntegrationContext) {
+  constructor(private readonly context?: IntegrationContext) {
     super();
     this.setupServiceIntegrations();
     this.loadIntegrationRules();
@@ -200,7 +200,7 @@ export class Phase3IntegrationService extends EventEmitter {
     } catch (error: unknown) {
       logger.error('Failed to create integration rule', {
         ruleName: ruleData.name,
-        error: error instanceof Error ? (error as Error).message : 'Unknown error'
+        error: error instanceof Error ? (error).message : 'Unknown error'
       });
       throw error;
     }
@@ -237,7 +237,7 @@ export class Phase3IntegrationService extends EventEmitter {
     } catch (error: unknown) {
       logger.error('Failed to create workflow', {
         workflowName: workflowData.name,
-        error: error instanceof Error ? (error as Error).message : 'Unknown error'
+        error: error instanceof Error ? (error).message : 'Unknown error'
       });
       throw error;
     }
@@ -286,7 +286,7 @@ export class Phase3IntegrationService extends EventEmitter {
     } catch (error: unknown) {
       logger.error('Failed to execute workflow', {
         workflowId,
-        error: error instanceof Error ? (error as Error).message : 'Unknown error'
+        error: error instanceof Error ? (error).message : 'Unknown error'
       });
       throw error;
     }
@@ -380,7 +380,7 @@ export class Phase3IntegrationService extends EventEmitter {
               break;
           }
         } catch (error: unknown) {
-          errors.push(`Transformation ${rule.type} failed: ${error instanceof Error ? (error as Error).message : 'Unknown error'}`);
+          errors.push(`Transformation ${rule.type} failed: ${error instanceof Error ? (error).message : 'Unknown error'}`);
         }
       }
 
@@ -566,7 +566,7 @@ export class Phase3IntegrationService extends EventEmitter {
         logger.error('Integration rule execution failed', {
           ruleId: rule.id,
           ruleName: rule.name,
-          error: error instanceof Error ? (error as Error).message : 'Unknown error'
+          error: error instanceof Error ? (error).message : 'Unknown error'
         });
       }
     }
@@ -623,7 +623,7 @@ export class Phase3IntegrationService extends EventEmitter {
     } catch (error: unknown) {
       logger.error('Transformation execution failed', {
         language: transformation.language,
-        error: error instanceof Error ? (error as Error).message : 'Unknown error'
+        error: error instanceof Error ? (error).message : 'Unknown error'
       });
       return data;
     }
@@ -688,7 +688,7 @@ export class Phase3IntegrationService extends EventEmitter {
             stepId: step.id,
             timestamp: new Date(),
             status: 'failed',
-            error: error instanceof Error ? (error as Error).message : 'Unknown error'
+            error: error instanceof Error ? (error).message : 'Unknown error'
           });
 
           if (step.errorHandling?.fallbackStep) {
@@ -726,7 +726,7 @@ export class Phase3IntegrationService extends EventEmitter {
       
       logger.error('Workflow execution failed', {
         executionId: execution.executionId,
-        error: error instanceof Error ? (error as Error).message : 'Unknown error'
+        error: error instanceof Error ? (error).message : 'Unknown error'
       });
     } finally {
       this.activeWorkflows.set(execution.executionId, execution);
@@ -891,7 +891,7 @@ export class Phase3IntegrationService extends EventEmitter {
     if (!Array.isArray(data)) {return data;}
     
     const grouped: Record<string, any[]> = {};
-    const groupBy = config.groupBy;
+    const {groupBy} = config;
     
     for (const item of data) {
       const key = item[groupBy] || 'default';

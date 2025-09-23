@@ -824,7 +824,7 @@ export class LeaseManagementService {
     let probability = 70; // Base probability
 
     // Adjust based on tenant credit rating
-    const creditRating = lease.tenant.creditRating;
+    const {creditRating} = lease.tenant;
     if (creditRating === 'AAA' || creditRating === 'AA') {
       probability += 15;
     } else if (creditRating === 'A' || creditRating === 'BBB') {

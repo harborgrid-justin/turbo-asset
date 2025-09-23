@@ -29,7 +29,7 @@ interface APIDocumentationConfig {
 
 class APIDocumentationManager {
   private static instance: APIDocumentationManager;
-  private config = getEnvironmentConfig();
+  private readonly config = getEnvironmentConfig();
   private swaggerSpec: any;
   private documentationConfig: APIDocumentationConfig;
 
@@ -339,7 +339,7 @@ class APIDocumentationManager {
 
     if (schema.required) {
       for (const field of schema.required) {
-        if (!data || data[field] === undefined || data[field] === null) {
+        if (data?.[field] === undefined || data[field] === null) {
           errors.push({
             field,
             message: `${field} is required`,

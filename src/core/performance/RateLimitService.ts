@@ -422,7 +422,7 @@ export class EnterpriseRateLimitService {
    */
   private tierApplies(tier: RateLimitTier, context: RequestContext): boolean {
     // Check user role
-    if (context.userRole && tier.userRoles.includes(context.userRole)) {
+    if ((context.userRole != null) && tier.userRoles.includes(context.userRole)) {
       return true;
     }
     
@@ -601,7 +601,7 @@ export class EnterpriseRateLimitService {
     let tokens = bucketSize; // Start with full bucket
     let lastRefill = now;
     
-    if (state && state.tokensRemaining !== undefined) {
+    if (state?.tokensRemaining !== undefined) {
       tokens = state.tokensRemaining;
       lastRefill = state.lastRequest.getTime();
       

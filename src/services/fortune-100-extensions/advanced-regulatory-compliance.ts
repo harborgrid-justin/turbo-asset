@@ -501,7 +501,7 @@ export class UnifiedRegulatoryComplianceEngine {
   /**
    * Multi-domain regulatory compliance assessment
    */
-  static comprehensiveComplianceAssessment(industry: string, complianceData: any): StandardResponse<any> {
+  static comprehensiveComplianceAssessment(industry: string, complianceData: any): StandardResponse {
     try {
       const results: any = {};
       
@@ -543,7 +543,7 @@ export class UnifiedRegulatoryComplianceEngine {
         success: false,
         error: {
           code: 'COMPLIANCE_ASSESSMENT_FAILED',
-          message: `Compliance assessment failed: ${error instanceof Error ? (error as Error).message : 'Unknown error'}`
+          message: `Compliance assessment failed: ${error instanceof Error ? (error).message : 'Unknown error'}`
         },
         data: null
       };

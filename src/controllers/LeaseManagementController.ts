@@ -95,7 +95,7 @@ router.post('/leases', async (req: Request, res: Response) => {
     logger.error('Failed to create lease', error);
     res.status(500).json({
       error: 'Failed to create lease',
-      message: error instanceof Error ? (error as Error).message : 'Unknown error'
+      message: error instanceof Error ? (error).message : 'Unknown error'
     });
 
     return;
@@ -128,7 +128,7 @@ router.get('/portfolio/summary/:organizationId', async (req: Request, res: Respo
     logger.error('Failed to get portfolio summary', error);
     res.status(500).json({
       error: 'Failed to get portfolio summary',
-      message: error instanceof Error ? (error as Error).message : 'Unknown error'
+      message: error instanceof Error ? (error).message : 'Unknown error'
     });
 
     return;
@@ -190,7 +190,7 @@ router.get('/leases/search', async (req: Request, res: Response) => {
     logger.error('Failed to search leases', error);
     res.status(500).json({
       error: 'Failed to search leases',
-      message: error instanceof Error ? (error as Error).message : 'Unknown error'
+      message: error instanceof Error ? (error).message : 'Unknown error'
     });
 
     return;
@@ -225,7 +225,7 @@ router.get('/metrics/:organizationId', async (req: Request, res: Response) => {
     logger.error('Failed to get lease metrics', error);
     res.status(500).json({
       error: 'Failed to get lease metrics',
-      message: error instanceof Error ? (error as Error).message : 'Unknown error'
+      message: error instanceof Error ? (error).message : 'Unknown error'
     });
 
     return;
@@ -267,7 +267,7 @@ router.get('/renewals/analyze/:organizationId', async (req: Request, res: Respon
     logger.error('Failed to analyze renewal opportunities', error);
     res.status(500).json({
       error: 'Failed to analyze renewal opportunities',
-      message: error instanceof Error ? (error as Error).message : 'Unknown error'
+      message: error instanceof Error ? (error).message : 'Unknown error'
     });
 
     return;
@@ -328,7 +328,7 @@ router.put('/leases/:leaseId', async (req: Request, res: Response) => {
     logger.error('Failed to update lease', error);
     res.status(500).json({
       error: 'Failed to update lease',
-      message: error instanceof Error ? (error as Error).message : 'Unknown error'
+      message: error instanceof Error ? (error).message : 'Unknown error'
     });
 
     return;
@@ -379,7 +379,7 @@ router.post('/reports/:organizationId', async (req: Request, res: Response) => {
     logger.error('Failed to generate lease report', error);
     res.status(500).json({
       error: 'Failed to generate lease report',
-      message: error instanceof Error ? (error as Error).message : 'Unknown error'
+      message: error instanceof Error ? (error).message : 'Unknown error'
     });
 
     return;
@@ -412,7 +412,7 @@ router.get('/leases/:leaseId', async (req: Request, res: Response) => {
     logger.error('Failed to get lease', error);
     res.status(500).json({
       error: 'Failed to get lease',
-      message: error instanceof Error ? (error as Error).message : 'Unknown error'
+      message: error instanceof Error ? (error).message : 'Unknown error'
     });
 
     return;
@@ -445,7 +445,7 @@ router.delete('/leases/:leaseId', async (req: Request, res: Response) => {
     logger.error('Failed to delete lease', error);
     res.status(500).json({
       error: 'Failed to delete lease',
-      message: error instanceof Error ? (error as Error).message : 'Unknown error'
+      message: error instanceof Error ? (error).message : 'Unknown error'
     });
 
     return;
@@ -494,7 +494,7 @@ router.get('/dashboard/:organizationId', async (req: Request, res: Response) => 
     logger.error('Failed to get lease dashboard', error);
     res.status(500).json({
       error: 'Failed to get lease dashboard',
-      message: error instanceof Error ? (error as Error).message : 'Unknown error'
+      message: error instanceof Error ? (error).message : 'Unknown error'
     });
 
     return;

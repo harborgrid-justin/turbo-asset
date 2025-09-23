@@ -207,7 +207,7 @@ class TurboAssetApplication {
   public async start(): Promise<void> {
     await this.initialize();
 
-    const port = config.server.port;
+    const {port} = config.server;
     const host = config.server.host || '0.0.0.0';
 
     this._server.listen(port, host, () => {
@@ -221,8 +221,8 @@ class TurboAssetApplication {
     });
 
     // Setup graceful shutdown handlers
-    process.on('SIGTERM', () => this._gracefulShutdown());
-    process.on('SIGINT', () => this._gracefulShutdown());
+    process.on('SIGTERM', async () => { await this._gracefulShutdown(); });
+    process.on('SIGINT', async () => { await this._gracefulShutdown(); });
   }
 
   /**

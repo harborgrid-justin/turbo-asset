@@ -71,10 +71,10 @@ import enhancedBusinessLogicRoutes from '@/routes/enhanced-business-logic-integr
 import realWorldPhase3Routes from '@/routes/realWorldPhase3Routes';
 
 class TurboAssetServer {
-  private app: express.Application;
-  private server: any;
-  private io: SocketServer;
-  private healthController: HealthController;
+  private readonly app: express.Application;
+  private readonly server: any;
+  private readonly io: SocketServer;
+  private readonly healthController: HealthController;
 
   constructor() {
     this.app = express();
@@ -538,8 +538,8 @@ class TurboAssetServer {
         }
       };
 
-      process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
-      process.on('SIGINT', () => gracefulShutdown('SIGINT'));
+      process.on('SIGTERM', async () => await gracefulShutdown('SIGTERM'));
+      process.on('SIGINT', async () => await gracefulShutdown('SIGINT'));
 
       // Handle unhandled promise rejections
       process.on('unhandledRejection', (reason, promise) => {
@@ -560,7 +560,7 @@ class TurboAssetServer {
   }
 
   async stop(): Promise<void> {
-    return new Promise((resolve) => {
+    await new Promise((resolve) => {
       logger.info('Shutting down server gracefully...');
       
       this.server.close(() => {

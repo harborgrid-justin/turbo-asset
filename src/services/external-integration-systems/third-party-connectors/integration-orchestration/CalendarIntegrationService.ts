@@ -107,12 +107,12 @@ export interface IntegrationContext {
 }
 
 export class CalendarIntegrationService extends EventEmitter {
-  private providers: Map<string, CalendarProvider> = new Map();
-  private calendarsCache: Map<string, Calendar[]> = new Map();
-  private eventsCache: Map<string, CalendarEvent[]> = new Map();
-  private syncOperations: Map<string, SyncResult> = new Map();
+  private readonly providers: Map<string, CalendarProvider> = new Map();
+  private readonly calendarsCache: Map<string, Calendar[]> = new Map();
+  private readonly eventsCache: Map<string, CalendarEvent[]> = new Map();
+  private readonly syncOperations: Map<string, SyncResult> = new Map();
 
-  constructor(private context?: IntegrationContext) {
+  constructor(private readonly context?: IntegrationContext) {
     super();
     this.setupCacheManagement();
     logger.info('Calendar Integration Service initialized', {
@@ -159,7 +159,7 @@ export class CalendarIntegrationService extends EventEmitter {
     } catch (error: unknown) {
       logger.error('Failed to add calendar provider', {
         providerName: provider.name,
-        error: error instanceof Error ? (error as Error).message : 'Unknown error'
+        error: error instanceof Error ? (error).message : 'Unknown error'
       });
       throw error;
     }
@@ -193,7 +193,7 @@ export class CalendarIntegrationService extends EventEmitter {
     } catch (error: unknown) {
       logger.error('Failed to get calendars', {
         providerName,
-        error: error instanceof Error ? (error as Error).message : 'Unknown error'
+        error: error instanceof Error ? (error).message : 'Unknown error'
       });
       throw error;
     }
@@ -234,7 +234,7 @@ export class CalendarIntegrationService extends EventEmitter {
         calendarId,
         startDate,
         endDate,
-        error: error instanceof Error ? (error as Error).message : 'Unknown error'
+        error: error instanceof Error ? (error).message : 'Unknown error'
       });
       throw error;
     }
@@ -272,7 +272,7 @@ export class CalendarIntegrationService extends EventEmitter {
       logger.error('Failed to create calendar event', {
         calendarId,
         eventTitle: event.title,
-        error: error instanceof Error ? (error as Error).message : 'Unknown error'
+        error: error instanceof Error ? (error).message : 'Unknown error'
       });
       throw error;
     }
@@ -310,7 +310,7 @@ export class CalendarIntegrationService extends EventEmitter {
       logger.error('Failed to update calendar event', {
         eventId,
         calendarId,
-        error: error instanceof Error ? (error as Error).message : 'Unknown error'
+        error: error instanceof Error ? (error).message : 'Unknown error'
       });
       throw error;
     }
@@ -342,7 +342,7 @@ export class CalendarIntegrationService extends EventEmitter {
       logger.error('Failed to delete calendar event', {
         eventId,
         calendarId,
-        error: error instanceof Error ? (error as Error).message : 'Unknown error'
+        error: error instanceof Error ? (error).message : 'Unknown error'
       });
       throw error;
     }
@@ -384,7 +384,7 @@ export class CalendarIntegrationService extends EventEmitter {
         emails,
         startTime,
         endTime,
-        error: error instanceof Error ? (error as Error).message : 'Unknown error'
+        error: error instanceof Error ? (error).message : 'Unknown error'
       });
       throw error;
     }
@@ -433,7 +433,7 @@ export class CalendarIntegrationService extends EventEmitter {
 
         } catch (error: unknown) {
           syncResult.errors.push(
-            `Calendar ${calendar.name}: ${error instanceof Error ? (error as Error).message : 'Unknown error'}`
+            `Calendar ${calendar.name}: ${error instanceof Error ? (error).message : 'Unknown error'}`
           );
         }
       }
@@ -456,7 +456,7 @@ export class CalendarIntegrationService extends EventEmitter {
     } catch (error: unknown) {
       syncResult.status = 'failed';
       syncResult.completedAt = new Date();
-      syncResult.errors.push(`Sync failed: ${error instanceof Error ? (error as Error).message : 'Unknown error'}`);
+      syncResult.errors.push(`Sync failed: ${error instanceof Error ? (error).message : 'Unknown error'}`);
 
       logger.error('Calendar synchronization failed', { syncId, error });
     }
@@ -557,13 +557,13 @@ export class CalendarIntegrationService extends EventEmitter {
   private async getCalendarsFromProvider(provider: CalendarProvider): Promise<Calendar[]> {
     switch (provider.type) {
       case 'GOOGLE':
-        return this.getGoogleCalendars(provider);
+        return await this.getGoogleCalendars(provider);
       case 'OUTLOOK':
-        return this.getOutlookCalendars(provider);
+        return await this.getOutlookCalendars(provider);
       case 'CALDAV':
-        return this.getCalDAVCalendars(provider);
+        return await this.getCalDAVCalendars(provider);
       case 'EXCHANGE':
-        return this.getExchangeCalendars(provider);
+        return await this.getExchangeCalendars(provider);
       default:
         return [];
     }

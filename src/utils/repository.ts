@@ -479,7 +479,7 @@ export class AssetRepository extends BaseRepository<AssetEntity> {
    */
   public async findByLocation(locationId: string): Promise<readonly AssetEntity[]> {
     // Critical fix: Add proper type safety and validation
-    if (!locationId?.trim()) {
+    if (!locationId.trim()) {
       throw new EnterpriseError(
         'INVALID_LOCATION_ID',
         'Location ID is required',
@@ -492,7 +492,7 @@ export class AssetRepository extends BaseRepository<AssetEntity> {
       WHERE location_id = $1 AND deleted_at IS NULL 
       ORDER BY name ASC
     `;
-    return this.executeQuery<AssetEntity>(query, [locationId.trim()]);
+    return await this.executeQuery<AssetEntity>(query, [locationId.trim()]);
   }
 
   /**
@@ -500,7 +500,7 @@ export class AssetRepository extends BaseRepository<AssetEntity> {
    */
   public async findByStatus(status: string): Promise<readonly AssetEntity[]> {
     // Critical fix: Add validation and type safety
-    if (!status?.trim()) {
+    if (!status.trim()) {
       throw new EnterpriseError(
         'INVALID_STATUS',
         'Status is required',
@@ -513,7 +513,7 @@ export class AssetRepository extends BaseRepository<AssetEntity> {
       WHERE status = $1 AND deleted_at IS NULL 
       ORDER BY updated_at DESC
     `;
-    return this.executeQuery<AssetEntity>(query, [status.trim()]);
+    return await this.executeQuery<AssetEntity>(query, [status.trim()]);
   }
 }
 
@@ -535,7 +535,7 @@ export class WorkOrderRepository extends BaseRepository<WorkOrderEntity> {
    */
   public async findByAsset(assetId: string): Promise<readonly WorkOrderEntity[]> {
     // Critical fix: Add validation and type safety
-    if (!assetId?.trim()) {
+    if (!assetId.trim()) {
       throw new EnterpriseError(
         'INVALID_ASSET_ID',
         'Asset ID is required',
@@ -549,7 +549,7 @@ export class WorkOrderRepository extends BaseRepository<WorkOrderEntity> {
       ORDER BY created_at DESC 
       LIMIT 100
     `;
-    return this.executeQuery<WorkOrderEntity>(query, [assetId.trim()]);
+    return await this.executeQuery<WorkOrderEntity>(query, [assetId.trim()]);
   }
 
   /**
@@ -563,6 +563,6 @@ export class WorkOrderRepository extends BaseRepository<WorkOrderEntity> {
       ORDER BY priority DESC, created_at ASC 
       LIMIT 200
     `;
-    return this.executeQuery<WorkOrderEntity>(query);
+    return await this.executeQuery<WorkOrderEntity>(query);
   }
 }
