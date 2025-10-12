@@ -213,9 +213,9 @@ export function createModelAdapter(tableName: string) {
         const results = await sequelize.query(sql, {
           replacements,
           type: QueryTypes.UPDATE,
-        });
+        }) as any[];
         
-        return Array.isArray(results[0]) && results[0].length > 0 ? results[0][0] : null;
+        return Array.isArray(results) && results.length > 0 && Array.isArray(results[0]) && results[0].length > 0 ? results[0][0] : null;
       } catch (error) {
         logger.error(`Error in update for ${tableName}:`, error);
         throw error;
@@ -314,9 +314,10 @@ export function createModelAdapter(tableName: string) {
         const result = await sequelize.query(sql, {
           replacements,
           type: QueryTypes.DELETE,
-        }) as [any, number];
+        }) as any;
         
-        return { count: result[1] || 0 };
+        // For DELETE queries, Sequelize returns [undefined, count] or similar
+        return { count: Array.isArray(result) && result[1] !== undefined ? result[1] : 0 };
       } catch (error) {
         logger.error(`Error in deleteMany for ${tableName}:`, error);
         throw error;
@@ -388,11 +389,16 @@ export function createModelAdapter(tableName: string) {
       try {
         const { data } = options;
         
-        if (data.length === 0) {
+        if (!data || data.length === 0) {
           return { count: 0 };
         }
         
-        const columns = Object.keys(data[0]);
+        const firstRecord = data[0];
+        if (!firstRecord) {
+          return { count: 0 };
+        }
+        
+        const columns = Object.keys(firstRecord);
         const values: any[] = [];
         
         const valuePlaceholders = data.map(record => {
