@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { PrismaClient } from '@prisma/client';
+import { Sequelize } from 'sequelize';
 import { logger } from '@/config/logger';
 import * as os from 'os';
 import * as fs from 'fs';
@@ -42,11 +42,17 @@ export interface SystemHealth {
  * Health Check Service
  */
 export class HealthCheckService {
-  private readonly prisma: PrismaClient;
+  private readonly sequelize: Sequelize;
   private readonly startTime: Date;
 
   constructor() {
-    this.prisma = new PrismaClient();
+    this.sequelize = new Sequelize(
+      process.env.DATABASE_URL || 'postgresql://localhost:5432/turbo_asset',
+      {
+        dialect: 'postgres',
+        logging: false,
+      }
+    );
     this.startTime = new Date();
   }
 
@@ -57,7 +63,7 @@ export class HealthCheckService {
     const start = Date.now();
     
     try {
-      await this.prisma.$queryRaw`SELECT 1`;
+      await this.sequelize.query('SELECT 1');
       
       return {
         name: 'database',
@@ -401,7 +407,7 @@ export class HealthCheckService {
   async readinessCheck(): Promise<boolean> {
     try {
       // Check if database is accessible
-      await this.prisma.$queryRaw`SELECT 1`;
+      await this.sequelize.query('SELECT 1');
       return true;
     } catch (error: unknown) {
       logger.error('Readiness check failed', error);

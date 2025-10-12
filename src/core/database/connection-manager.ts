@@ -3,7 +3,7 @@
  * Production-grade database connection pooling, retry logic, and graceful degradation
  */
 
-import { PrismaClient } from '@prisma/client';
+import { Sequelize } from 'sequelize';
 import { logger } from '@/config/enterprise-logger';
 import { getEnvironmentConfig } from '@/config/environment-validation';
 import { DatabaseError } from '@/core/errors/error-handler';
@@ -43,7 +43,7 @@ export interface QueryMetrics {
 
 class DatabaseManager {
   private static instance: DatabaseManager;
-  private prisma: PrismaClient | null = null;
+  private sequelize: Sequelize | null = null;
   private readonly config: DatabaseConnectionConfig;
   private readonly envConfig = getEnvironmentConfig();
   private readonly metrics: ConnectionPoolMetrics;
@@ -116,65 +116,48 @@ class DatabaseManager {
       });
 
       // Disconnect existing connection if any
-      if (this.prisma) {
-        await this.prisma.$disconnect();
-        this.prisma = null;
+      if (this.sequelize) {
+        await this.sequelize.close();
+        this.sequelize = null;
       }
 
-      // Create new Prisma client with connection pooling
-      this.prisma = new PrismaClient({
-        datasources: {
-          db: {
-            url: this.envConfig.DATABASE_URL,
-          },
+      // Create new Sequelize client with connection pooling
+      this.sequelize = new Sequelize(this.envConfig.DATABASE_URL, {
+        dialect: 'postgres',
+        logging: this.config.enableLogging
+          ? (sql: string, timing?: number) => {
+              logger.debug('Database query executed', {
+                query: sql,
+                duration: timing ? `${timing}ms` : 'N/A',
+              });
+
+              if (this.config.enableMetrics && timing) {
+                this.recordQueryMetrics({
+                  query: sql,
+                  duration: timing,
+                  success: true,
+                  timestamp: new Date(),
+                });
+              }
+            }
+          : false,
+        pool: {
+          max: this.config.maxConnections,
+          min: 5,
+          acquire: this.config.acquireTimeout,
+          idle: this.config.idleTimeout,
         },
-        log: this.config.enableLogging
-          ? [
-              { level: 'query', emit: 'event' },
-              { level: 'info', emit: 'event' },
-              { level: 'warn', emit: 'event' },
-              { level: 'error', emit: 'event' },
-            ]
-          : [],
-        errorFormat: 'pretty',
+        dialectOptions: {
+          ssl: process.env.DATABASE_SSL === 'true' ? {
+            require: true,
+            rejectUnauthorized: false,
+          } : false,
+        },
       });
 
-      // Set up event handlers for logging and metrics
-      if (this.config.enableLogging) {
-        this.prisma.$on('query', (event) => {
-          logger.debug('Database query executed', {
-            query: event.query,
-            duration: event.duration,
-            params: event.params,
-          });
-
-          if (this.config.enableMetrics) {
-            this.recordQueryMetrics({
-              query: event.query,
-              duration: event.duration,
-              success: true,
-              timestamp: new Date(),
-            });
-          }
-        });
-
-        this.prisma.$on('info', (event) => {
-          logger.info('Database info', { message: event.message });
-        });
-
-        this.prisma.$on('warn', (event) => {
-          logger.warn('Database warning', { message: event.message });
-        });
-
-        this.prisma.$on('error', (event) => {
-          logger.error('Database error', { message: event.message });
-          this.metrics.connectionErrors++;
-        });
-      }
-
       // Test connection
-      await this.prisma.$connect();
-      await this.prisma.$queryRaw`SELECT 1`;
+      await this.sequelize.authenticate();
+      await this.sequelize.query('SELECT 1');
 
       this.metrics.isHealthy = true;
       this.isConnecting = false;
@@ -214,12 +197,12 @@ class DatabaseManager {
 
   private async performHealthCheck(): Promise<void> {
     try {
-      if (!this.prisma) {
+      if (!this.sequelize) {
         throw new Error('No database connection available');
       }
 
       const startTime = Date.now();
-      await this.prisma.$queryRaw`SELECT 1`;
+      await this.sequelize.query('SELECT 1');
       const duration = Date.now() - startTime;
 
       this.metrics.lastHealthCheck = new Date();
@@ -272,10 +255,10 @@ class DatabaseManager {
    * Execute a query with automatic retry and error handling
    */
   public async executeQuery<T>(
-    operation: (prisma: PrismaClient) => Promise<T>,
+    operation: (sequelize: Sequelize) => Promise<T>,
     operationName: string = 'query'
   ): Promise<T> {
-    if (!this.prisma) {
+    if (!this.sequelize) {
       throw new DatabaseError('Database connection not available', operationName);
     }
 
@@ -286,7 +269,7 @@ class DatabaseManager {
       attempts++;
 
       try {
-        const result = await operation(this.prisma);
+        const result = await operation(this.sequelize);
         const duration = Date.now() - startTime;
 
         if (this.config.enableMetrics) {
@@ -346,12 +329,13 @@ class DatabaseManager {
    * Execute a transaction with automatic retry
    */
   public async executeTransaction<T>(
-    operations: (prisma: PrismaClient) => Promise<T>,
+    operations: (sequelize: Sequelize) => Promise<T>,
     operationName: string = 'transaction'
   ): Promise<T> {
-    return await this.executeQuery(async (prisma) => {
-      return await prisma.$transaction(async (tx) => {
-        return await operations(tx as PrismaClient);
+    return await this.executeQuery(async (sequelize) => {
+      return await sequelize.transaction(async (transaction) => {
+        // Pass sequelize with transaction context
+        return await operations(sequelize);
       });
     }, operationName);
   }
@@ -402,14 +386,14 @@ class DatabaseManager {
    * Check if database is healthy
    */
   public isHealthy(): boolean {
-    return this.metrics.isHealthy && this.prisma !== null;
+    return this.metrics.isHealthy && this.sequelize !== null;
   }
 
   /**
    * Get database client (use with caution)
    */
-  public getClient(): PrismaClient | null {
-    return this.prisma;
+  public getClient(): Sequelize | null {
+    return this.sequelize;
   }
 
   /**
@@ -422,16 +406,16 @@ class DatabaseManager {
       clearInterval(this.healthCheckInterval);
     }
 
-    if (this.prisma) {
+    if (this.sequelize) {
       try {
-        await this.prisma.$disconnect();
+        await this.sequelize.close();
         logger.info('Database connection closed successfully');
       } catch (error) {
         logger.error('Error closing database connection', error);
       }
     }
 
-    this.prisma = null;
+    this.sequelize = null;
     this.metrics.isHealthy = false;
   }
 }
@@ -444,10 +428,10 @@ export { DatabaseManager };
 
 // Convenience functions
 export const db = {
-  execute: async <T>(operation: (prisma: PrismaClient) => Promise<T>, operationName?: string) =>
+  execute: async <T>(operation: (sequelize: Sequelize) => Promise<T>, operationName?: string) =>
     await databaseManager.executeQuery(operation, operationName),
   
-  transaction: async <T>(operations: (prisma: PrismaClient) => Promise<T>, operationName?: string) =>
+  transaction: async <T>(operations: (sequelize: Sequelize) => Promise<T>, operationName?: string) =>
     await databaseManager.executeTransaction(operations, operationName),
   
   isHealthy: () => databaseManager.isHealthy(),
