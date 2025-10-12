@@ -42,7 +42,7 @@ export * from './config';
 export * from './middleware';
 
 // Re-export commonly used core functionality
-export { prisma } from '../config/database';
+export { sequelize, prisma } from '../config/database';
 export { config } from '../config';
 
 // Enterprise patterns for dependency injection

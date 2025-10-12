@@ -237,12 +237,18 @@ export class HealthController {
       timeout: 10000,
       async check(): Promise<CheckResult> {
         try {
-          const { PrismaClient } = await import('@prisma/client');
-          const prisma = new PrismaClient();
+          const { Sequelize } = await import('sequelize');
+          const sequelize = new Sequelize(
+            process.env.DATABASE_URL || 'postgresql://localhost:5432/turbo_asset',
+            {
+              dialect: 'postgres',
+              logging: false,
+            }
+          );
           
           const startTime = Date.now();
-          await prisma.$queryRaw`SELECT 1`;
-          await prisma.$disconnect();
+          await sequelize.query('SELECT 1');
+          await sequelize.close();
           
           return {
             status: 'pass',

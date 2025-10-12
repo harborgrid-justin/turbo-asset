@@ -1,43 +1,44 @@
-import { PrismaClient } from '@prisma/client';
+import { Sequelize } from 'sequelize';
 import { logger } from './logger';
 
 declare global {
-  var __prisma: PrismaClient | undefined;
+  var __sequelize: Sequelize | undefined;
 }
 
-// Prevent multiple instances of Prisma Client in development
-export const prisma = globalThis.__prisma || new PrismaClient({
-  log: [
-    { level: 'query', emit: 'event' },
-    { level: 'error', emit: 'event' },
-    { level: 'info', emit: 'event' },
-    { level: 'warn', emit: 'event' },
-  ],
-});
+// Prevent multiple instances of Sequelize in development
+export const sequelize = globalThis.__sequelize || new Sequelize(
+  process.env.DATABASE_URL || 'postgresql://localhost:5432/turbo_asset',
+  {
+    dialect: 'postgres',
+    logging: process.env.NODE_ENV === 'development' 
+      ? (sql: string, timing?: number) => {
+          logger.debug('Database Query', {
+            query: sql,
+            duration: timing ? `${timing}ms` : 'N/A',
+          });
+        }
+      : false,
+    pool: {
+      max: 20,
+      min: 5,
+      acquire: 60000,
+      idle: 10000,
+    },
+    dialectOptions: {
+      ssl: process.env.DATABASE_SSL === 'true' ? {
+        require: true,
+        rejectUnauthorized: false,
+      } : false,
+    },
+  }
+);
 
-// Database event logging - disabled due to TypeScript issues
-// TODO: Fix Prisma event listener types in future update
-/*
+// Database event logging
 if (process.env.NODE_ENV === 'development') {
-  prisma.$on('query', (e: any) => {
-    logger.debug('Database Query', {
-      query: e.query,
-      params: e.params,
-      duration: `${e.duration}ms`,
-    });
-  });
+  globalThis.__sequelize = sequelize;
 }
 
-// Log database errors
-if (process.env.NODE_ENV === 'development') {
-  prisma.$on('error', (e: any) => {
-    logger.error('Database Error', e);
-  });
-}
-*/
+// Keep backward compatibility alias
+export const prisma = sequelize;
 
-if (process.env.NODE_ENV === 'development') {
-  globalThis.__prisma = prisma;
-}
-
-export default prisma;
+export default sequelize;
