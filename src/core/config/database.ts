@@ -38,7 +38,17 @@ if (process.env.NODE_ENV === 'development') {
   globalThis.__sequelize = sequelize;
 }
 
+// Import the Prisma-Sequelize adapter for backward compatibility
+// This allows existing Prisma code to work with minimal changes
+let prismaAdapter: any;
+try {
+  prismaAdapter = require('../../database/prisma-sequelize-adapter').default;
+} catch (error) {
+  // If adapter is not available, use sequelize directly
+  prismaAdapter = sequelize;
+}
+
 // Keep backward compatibility alias
-export const prisma = sequelize;
+export const prisma = prismaAdapter;
 
 export default sequelize;
