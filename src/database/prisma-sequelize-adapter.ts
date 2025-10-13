@@ -213,9 +213,9 @@ export function createModelAdapter(tableName: string) {
         const results = await sequelize.query(sql, {
           replacements,
           type: QueryTypes.UPDATE,
-        });
+        }) as any[];
         
-        return Array.isArray(results[0]) && results[0].length > 0 ? results[0][0] : null;
+        return Array.isArray(results) && results.length > 0 && Array.isArray(results[0]) && results[0].length > 0 ? results[0][0] : null;
       } catch (error) {
         logger.error(`Error in update for ${tableName}:`, error);
         throw error;
@@ -314,9 +314,10 @@ export function createModelAdapter(tableName: string) {
         const result = await sequelize.query(sql, {
           replacements,
           type: QueryTypes.DELETE,
-        }) as [any, number];
+        }) as any;
         
-        return { count: result[1] || 0 };
+        // For DELETE queries, Sequelize returns [undefined, count] or similar
+        return { count: Array.isArray(result) && result[1] !== undefined ? result[1] : 0 };
       } catch (error) {
         logger.error(`Error in deleteMany for ${tableName}:`, error);
         throw error;
@@ -350,6 +351,286 @@ export function createModelAdapter(tableName: string) {
         return results[0]?.count ? parseInt(results[0].count, 10) : 0;
       } catch (error) {
         logger.error(`Error in count for ${tableName}:`, error);
+        throw error;
+      }
+    },
+
+    /**
+     * Upsert - Insert or update a record (similar to prisma.model.upsert)
+     */
+    async upsert(options: { 
+      where: WhereClause; 
+      create: Record<string, any>; 
+      update: Record<string, any> 
+    }): Promise<any> {
+      try {
+        const { where, create, update } = options;
+        
+        // Try to find existing record
+        const existing = await this.findFirst({ where });
+        
+        if (existing) {
+          // Update existing record
+          return await this.update({ where, data: update });
+        } else {
+          // Create new record
+          return await this.create({ data: create });
+        }
+      } catch (error) {
+        logger.error(`Error in upsert for ${tableName}:`, error);
+        throw error;
+      }
+    },
+
+    /**
+     * Create many records (similar to prisma.model.createMany)
+     */
+    async createMany(options: { data: Record<string, any>[] }): Promise<{ count: number }> {
+      try {
+        const { data } = options;
+        
+        if (!data || data.length === 0) {
+          return { count: 0 };
+        }
+        
+        const firstRecord = data[0];
+        if (!firstRecord) {
+          return { count: 0 };
+        }
+        
+        const columns = Object.keys(firstRecord);
+        const values: any[] = [];
+        
+        const valuePlaceholders = data.map(record => {
+          const recordValues = columns.map(col => record[col]);
+          values.push(...recordValues);
+          return `(${columns.map(() => '?').join(', ')})`;
+        }).join(', ');
+        
+        const sql = `
+          INSERT INTO "${tableName}" (${columns.map(c => `"${c}"`).join(', ')})
+          VALUES ${valuePlaceholders}
+        `;
+        
+        const result = await sequelize.query(sql, {
+          replacements: values,
+          type: QueryTypes.INSERT,
+        }) as [any, number];
+        
+        return { count: data.length };
+      } catch (error) {
+        logger.error(`Error in createMany for ${tableName}:`, error);
+        throw error;
+      }
+    },
+
+    /**
+     * Aggregate operations (similar to prisma.model.aggregate)
+     */
+    async aggregate(options: {
+      where?: WhereClause;
+      _count?: boolean | { [key: string]: boolean };
+      _sum?: { [key: string]: boolean };
+      _avg?: { [key: string]: boolean };
+      _min?: { [key: string]: boolean };
+      _max?: { [key: string]: boolean };
+    } = {}): Promise<any> {
+      try {
+        const { where = {}, _count, _sum, _avg, _min, _max } = options;
+        
+        const aggregations: string[] = [];
+        
+        // Handle _count
+        if (_count) {
+          if (typeof _count === 'boolean' && _count) {
+            aggregations.push('COUNT(*) as _count');
+          } else if (typeof _count === 'object') {
+            Object.entries(_count).forEach(([field, include]) => {
+              if (include) {
+                aggregations.push(`COUNT("${field}") as _count_${field}`);
+              }
+            });
+          }
+        }
+        
+        // Handle _sum
+        if (_sum && typeof _sum === 'object') {
+          Object.entries(_sum).forEach(([field, include]) => {
+            if (include) {
+              aggregations.push(`SUM("${field}") as _sum_${field}`);
+            }
+          });
+        }
+        
+        // Handle _avg
+        if (_avg && typeof _avg === 'object') {
+          Object.entries(_avg).forEach(([field, include]) => {
+            if (include) {
+              aggregations.push(`AVG("${field}") as _avg_${field}`);
+            }
+          });
+        }
+        
+        // Handle _min
+        if (_min && typeof _min === 'object') {
+          Object.entries(_min).forEach(([field, include]) => {
+            if (include) {
+              aggregations.push(`MIN("${field}") as _min_${field}`);
+            }
+          });
+        }
+        
+        // Handle _max
+        if (_max && typeof _max === 'object') {
+          Object.entries(_max).forEach(([field, include]) => {
+            if (include) {
+              aggregations.push(`MAX("${field}") as _max_${field}`);
+            }
+          });
+        }
+        
+        if (aggregations.length === 0) {
+          aggregations.push('COUNT(*) as _count');
+        }
+        
+        const whereConditions: string[] = [];
+        const replacements: any[] = [];
+        
+        Object.entries(where).forEach(([key, value]) => {
+          whereConditions.push(`"${key}" = ?`);
+          replacements.push(value);
+        });
+        
+        const sql = `
+          SELECT ${aggregations.join(', ')}
+          FROM "${tableName}"
+          ${whereConditions.length > 0 ? 'WHERE ' + whereConditions.join(' AND ') : ''}
+        `;
+        
+        const results = await sequelize.query(sql, {
+          replacements,
+          type: QueryTypes.SELECT,
+        }) as any[];
+        
+        return results[0] || {};
+      } catch (error) {
+        logger.error(`Error in aggregate for ${tableName}:`, error);
+        throw error;
+      }
+    },
+
+    /**
+     * Group by operations (similar to prisma.model.groupBy)
+     */
+    async groupBy(options: {
+      by: string | string[];
+      where?: WhereClause;
+      _count?: boolean | { [key: string]: boolean };
+      _sum?: { [key: string]: boolean };
+      _avg?: { [key: string]: boolean };
+      _min?: { [key: string]: boolean };
+      _max?: { [key: string]: boolean };
+      orderBy?: Record<string, 'asc' | 'desc'>;
+      take?: number;
+      skip?: number;
+    }): Promise<any[]> {
+      try {
+        const { by, where = {}, _count, _sum, _avg, _min, _max, orderBy, take, skip } = options;
+        
+        const groupByFields = Array.isArray(by) ? by : [by];
+        const selectFields = groupByFields.map(f => `"${f}"`).join(', ');
+        const aggregations: string[] = [];
+        
+        // Handle _count
+        if (_count) {
+          if (typeof _count === 'boolean' && _count) {
+            aggregations.push('COUNT(*) as _count');
+          } else if (typeof _count === 'object') {
+            Object.entries(_count).forEach(([field, include]) => {
+              if (include) {
+                aggregations.push(`COUNT("${field}") as _count_${field}`);
+              }
+            });
+          }
+        }
+        
+        // Handle _sum
+        if (_sum && typeof _sum === 'object') {
+          Object.entries(_sum).forEach(([field, include]) => {
+            if (include) {
+              aggregations.push(`SUM("${field}") as _sum_${field}`);
+            }
+          });
+        }
+        
+        // Handle _avg
+        if (_avg && typeof _avg === 'object') {
+          Object.entries(_avg).forEach(([field, include]) => {
+            if (include) {
+              aggregations.push(`AVG("${field}") as _avg_${field}`);
+            }
+          });
+        }
+        
+        // Handle _min
+        if (_min && typeof _min === 'object') {
+          Object.entries(_min).forEach(([field, include]) => {
+            if (include) {
+              aggregations.push(`MIN("${field}") as _min_${field}`);
+            }
+          });
+        }
+        
+        // Handle _max
+        if (_max && typeof _max === 'object') {
+          Object.entries(_max).forEach(([field, include]) => {
+            if (include) {
+              aggregations.push(`MAX("${field}") as _max_${field}`);
+            }
+          });
+        }
+        
+        const whereConditions: string[] = [];
+        const replacements: any[] = [];
+        
+        Object.entries(where).forEach(([key, value]) => {
+          whereConditions.push(`"${key}" = ?`);
+          replacements.push(value);
+        });
+        
+        let sql = `
+          SELECT ${selectFields}${aggregations.length > 0 ? ', ' + aggregations.join(', ') : ''}
+          FROM "${tableName}"
+          ${whereConditions.length > 0 ? 'WHERE ' + whereConditions.join(' AND ') : ''}
+          GROUP BY ${selectFields}
+        `;
+        
+        // Build ORDER BY clause
+        if (orderBy) {
+          const orderClauses = Object.entries(orderBy)
+            .map(([key, direction]) => `"${key}" ${direction.toUpperCase()}`)
+            .join(', ');
+          sql += ` ORDER BY ${orderClauses}`;
+        }
+        
+        // Add pagination
+        if (take) {
+          sql += ` LIMIT ?`;
+          replacements.push(take);
+        }
+        if (skip) {
+          sql += ` OFFSET ?`;
+          replacements.push(skip);
+        }
+        
+        const results = await sequelize.query(sql, {
+          replacements,
+          type: QueryTypes.SELECT,
+        });
+        
+        return results;
+      } catch (error) {
+        logger.error(`Error in groupBy for ${tableName}:`, error);
         throw error;
       }
     },
@@ -404,6 +685,69 @@ export const prismaAdapter = {
   reportSchedule: createModelAdapter('report_schedules'),
   aPIQuota: createModelAdapter('api_quotas'),
   aPIUsage: createModelAdapter('api_usage'),
+  
+  // Extended models - Asset Management
+  maintenanceRecord: createModelAdapter('maintenance_records'),
+  assetDepreciation: createModelAdapter('asset_depreciations'),
+  assetConditionRecord: createModelAdapter('asset_condition_records'),
+  preventiveMaintenance: createModelAdapter('preventive_maintenances'),
+  
+  // Extended models - Inventory
+  inventoryItem: createModelAdapter('inventory_items'),
+  inventoryTransaction: createModelAdapter('inventory_transactions'),
+  reorderAlert: createModelAdapter('reorder_alerts'),
+  
+  // Extended models - Energy & Sustainability
+  energyMeter: createModelAdapter('energy_meters'),
+  energyReading: createModelAdapter('energy_readings'),
+  sustainabilityMetric: createModelAdapter('sustainability_metrics'),
+  
+  // Extended models - Capital Projects
+  capitalProject: createModelAdapter('capital_projects'),
+  projectTask: createModelAdapter('project_tasks'),
+  projectBudget: createModelAdapter('project_budgets'),
+  
+  // Extended models - IoT
+  ioTDevice: createModelAdapter('iot_devices'),
+  ioTSensorReading: createModelAdapter('iot_sensor_readings'),
+  conditionMonitoring: createModelAdapter('condition_monitorings'),
+  
+  // Extended models - Move Management
+  moveVendor: createModelAdapter('move_vendors'),
+  moveCost: createModelAdapter('move_costs'),
+  
+  // Extended models - Chargeback
+  chargebackAllocation: createModelAdapter('chargeback_allocations'),
+  
+  // Extended models - Space
+  spaceTemplate: createModelAdapter('space_templates'),
+  
+  // Extended models - Documents
+  documentPermission: createModelAdapter('document_permissions'),
+  
+  // Extended models - System
+  systemConfig: createModelAdapter('system_configs'),
+  integrationRecord: createModelAdapter('integration_records'),
+  
+  // Extended models - SLA
+  serviceLevelAgreement: createModelAdapter('service_level_agreements'),
+  sLAPerformanceReport: createModelAdapter('sla_performance_reports'),
+  
+  // Extended models - Enterprise Integration
+  enterpriseIntegration: createModelAdapter('enterprise_integrations'),
+  integrationFlow: createModelAdapter('integration_flows'),
+  
+  // Extended models - Data Warehouse & BI
+  dataWarehouse: createModelAdapter('data_warehouses'),
+  eTLProcess: createModelAdapter('etl_processes'),
+  
+  // Extended models - Governance
+  dataGovernanceRule: createModelAdapter('data_governance_rules'),
+  masterDataRecord: createModelAdapter('master_data_records'),
+  
+  // Extended models - White Label
+  whiteLabelConfig: createModelAdapter('white_label_configs'),
+  subsidiaryBranding: createModelAdapter('subsidiary_brandings'),
 
   /**
    * Execute raw query (similar to prisma.$queryRaw)

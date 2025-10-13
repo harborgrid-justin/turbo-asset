@@ -1,7 +1,5 @@
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '../config/database';
 import { logger } from '@/config/logger';
-
-const prisma = new PrismaClient();
 
 export interface IoTDeviceData {
   deviceId?: string;
