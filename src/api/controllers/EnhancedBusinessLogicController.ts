@@ -5,7 +5,7 @@
 
 import { Request, Response } from 'express';
 import { logger } from '@/config/logger';
-import { ErrorHandler } from '@/utils/error-handling';
+import { ErrorHandler } from '../../utils/error-handling';
 import {
   ProductionGradeAnalyticsService,
   ProductionGradeHelpService,

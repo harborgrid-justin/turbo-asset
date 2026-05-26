@@ -1,6 +1,6 @@
-import { prisma } from '../config/database';
+import { prisma } from '@/config/database';
 import { logger } from '@/config/logger';
-import { config } from '../config';
+import { config } from '@/config';
 import fs from 'fs/promises';
 import path from 'path';
 import crypto from 'crypto';

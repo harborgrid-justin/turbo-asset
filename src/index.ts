@@ -71,7 +71,7 @@ import { BusinessLogicIntegrationController } from '@/controllers/BusinessLogicI
 import enhancedBusinessLogicRoutes from '@/routes/enhanced-business-logic-integration';
 
 // Real-World Phase 3 Business Logic Routes
-import realWorldPhase3Routes from '@/routes/realWorldPhase3Routes';
+import realWorldPhase3Routes from './routes/realWorldPhase3Routes';
 
 /**
  * Resolve the CORS allow-list. Never returns a credentialed wildcard ('*' with

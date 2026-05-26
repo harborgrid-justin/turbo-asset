@@ -1,6 +1,6 @@
 import i18next from 'i18next';
 import Backend from 'i18next-fs-backend';
-import { config } from '../config';
+import { config } from '@/config';
 import { logger } from '@/config/logger';
 import path from 'path';
 

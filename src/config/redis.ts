@@ -1,8 +1,8 @@
-import Redis from 'redis';
+import { createClient } from 'redis';
 import { config } from './index';
 import { logger } from './logger';
 
-export const redis = Redis.createClient({
+export const redis = createClient({
   url: config.redis.url,
 });
 

@@ -1,4 +1,4 @@
-import { prisma } from '../config/database';
+import { prisma } from '@/config/database';
 import { logger } from '@/config/logger';
 import { EventEmitter } from 'events';
 import { SpaceUtilizationService } from './SpaceUtilizationService';
