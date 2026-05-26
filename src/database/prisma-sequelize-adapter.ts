@@ -646,6 +646,7 @@ export const prismaAdapter = {
   user: createModelAdapter('users'),
   organization: createModelAdapter('organizations'),
   department: createModelAdapter('departments'),
+  apiKey: createModelAdapter('api_keys'),
   property: createModelAdapter('properties'),
   building: createModelAdapter('buildings'),
   floor: createModelAdapter('floors'),

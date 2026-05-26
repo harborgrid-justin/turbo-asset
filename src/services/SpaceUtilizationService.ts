@@ -233,9 +233,17 @@ export class SpaceUtilizationService {
         whereClause.spaceId = { in: spaceIds };
       }
 
-      // Get latest occupancy record for each space
-      const latestRecords = await prisma.$queryRaw`
-        SELECT DISTINCT ON (space_id) 
+      // Get latest occupancy record for each space.
+      // Values are passed as bound parameters (?) — never interpolated — to
+      // avoid SQL injection. The only inlined fragment is a constant clause.
+      const filterSpaceIds = spaceIds && spaceIds.length > 0 ? spaceIds : null;
+      // Build one placeholder per id so each value is bound individually (the
+      // adapter does not reliably expand an array into a single `?`).
+      const spaceIdPlaceholders = filterSpaceIds
+        ? filterSpaceIds.map(() => '?').join(', ')
+        : '';
+      const latestRecordsSql = `
+        SELECT DISTINCT ON (space_id)
           space_id,
           value,
           unit,
@@ -243,20 +251,23 @@ export class SpaceUtilizationService {
           record_date,
           sensor_id,
           metadata
-        FROM space_utilization 
+        FROM space_utilization
         WHERE space_id IN (
           SELECT s.id FROM spaces s
           JOIN floors f ON s.floor_id = f.id
           JOIN buildings b ON f.building_id = b.id
           JOIN properties p ON b.property_id = p.id
-          WHERE p.organization_id = ${organizationId}
+          WHERE p.organization_id = ?
           AND s.is_active = true
-          ${spaceIds && spaceIds.length > 0 ? `AND s.id = ANY(${spaceIds})` : ''}
+          ${filterSpaceIds ? `AND s.id IN (${spaceIdPlaceholders})` : ''}
         )
         AND utilization_type = 'OCCUPANCY'
         AND record_date >= NOW() - INTERVAL '24 hours'
         ORDER BY space_id, record_date DESC
       `;
+      const latestRecords = filterSpaceIds
+        ? await prisma.$queryRaw(latestRecordsSql, organizationId, ...filterSpaceIds)
+        : await prisma.$queryRaw(latestRecordsSql, organizationId);
 
       // Enrich with space information
       const enrichedData = await Promise.all(
@@ -509,9 +520,10 @@ export class SpaceUtilizationService {
     riskAssessment: any;
   }> {
     try {
-      // Get historical data for ML analysis
-      const historicalData = await prisma.$queryRaw`
-        SELECT 
+      // Get historical data for ML analysis (organizationId is a bound parameter).
+      const historicalData = await prisma.$queryRaw(
+        `
+        SELECT
           s.id,
           s.name,
           s.type,
@@ -526,12 +538,14 @@ export class SpaceUtilizationService {
         JOIN floors f ON s.floor_id = f.id
         JOIN buildings b ON f.building_id = b.id
         JOIN properties p ON b.property_id = p.id
-        WHERE p.organization_id = ${organizationId}
+        WHERE p.organization_id = ?
         AND su.record_date >= NOW() - INTERVAL '1 year'
         AND su.utilization_type = 'UTILIZATION'
         GROUP BY s.id, s.name, s.type, s.capacity, s.area, DATE_TRUNC('day', su.record_date)
         ORDER BY s.id, date DESC
-      `;
+      `,
+        organizationId
+      );
 
       // Calculate growth trends and predictions
       const predictions = this.calculateGrowthPredictions(historicalData, timeHorizon);

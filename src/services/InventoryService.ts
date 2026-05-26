@@ -461,12 +461,13 @@ export class InventoryService {
         }),
 
         // Low stock items
-        prisma.$queryRaw`
-          SELECT COUNT(*) as count 
-          FROM inventory_items 
-          WHERE organization_id = ${organizationId} 
-          AND quantity_on_hand <= reorder_point
-        `,
+        prisma.$queryRaw(
+          `SELECT COUNT(*) as count
+           FROM inventory_items
+           WHERE organization_id = ?
+           AND quantity_on_hand <= reorder_point`,
+          organizationId
+        ),
 
         // Out of stock items
         prisma.inventoryItem.count({
@@ -474,12 +475,13 @@ export class InventoryService {
         }),
 
         // Over stocked items
-        prisma.$queryRaw`
-          SELECT COUNT(*) as count 
-          FROM inventory_items 
-          WHERE organization_id = ${organizationId} 
-          AND quantity_on_hand > maximum_stock
-        `,
+        prisma.$queryRaw(
+          `SELECT COUNT(*) as count
+           FROM inventory_items
+           WHERE organization_id = ?
+           AND quantity_on_hand > maximum_stock`,
+          organizationId
+        ),
 
         // Reorder alerts
         prisma.reorderAlert.groupBy({
@@ -629,22 +631,26 @@ export class InventoryService {
         where.autoReorder = true;
       }
 
-      // Get items that need reordering or are below reorder point
-      const items = await prisma.$queryRaw<any[]>`
-        SELECT i.*, 
-          CASE 
+      // Get items that need reordering or are below reorder point.
+      // organizationId is bound (?); the auto-reorder clause is a constant.
+      const items = await prisma.$queryRaw(
+        `
+        SELECT i.*,
+          CASE
             WHEN i.quantity_on_hand <= 0 THEN 'HIGH'
             WHEN i.quantity_on_hand <= i.minimum_stock THEN 'HIGH'
             WHEN i.quantity_on_hand <= i.reorder_point THEN 'MEDIUM'
             ELSE 'LOW'
           END as priority
         FROM inventory_items i
-        WHERE i.organization_id = ${organizationId}
+        WHERE i.organization_id = ?
         AND i.status = 'ACTIVE'
         AND i.quantity_on_hand <= i.reorder_point
         ${includeAutoReorderOnly ? 'AND i.auto_reorder = true' : ''}
         ORDER BY priority, i.quantity_on_hand
-      `;
+      `,
+        organizationId
+      );
 
       const recommendations: ReorderRecommendation[] = [];
 

@@ -5,6 +5,7 @@ import { createServer } from 'http';
 import { Server as SocketServer } from 'socket.io';
 import { config } from '@/config';
 import { logger } from '@/config/logger';
+import { validateEnvironment } from '@/config/environment-validation';
 import { connectRedis } from '@/config/redis';
 import { InternationalizationService } from '@/services/InternationalizationService';
 import { napiRegistry } from '@/services/napi-integration';
@@ -30,6 +31,8 @@ import {
 } from '@/middleware';
 
 // Import routes
+import authRoutes from '@/controllers/AuthController';
+import inventoryRoutes from '@/controllers/InventoryController';
 import propertyRoutes from '@/controllers/PropertyController';
 import assetRoutes from '@/controllers/AssetController';
 import workflowRoutes from '@/controllers/WorkflowController';
@@ -70,6 +73,28 @@ import enhancedBusinessLogicRoutes from '@/routes/enhanced-business-logic-integr
 // Real-World Phase 3 Business Logic Routes
 import realWorldPhase3Routes from '@/routes/realWorldPhase3Routes';
 
+/**
+ * Resolve the CORS allow-list. Never returns a credentialed wildcard ('*' with
+ * credentials is both insecure and rejected by browsers). Production must supply
+ * ALLOWED_ORIGINS/CORS_ORIGIN or cross-origin access is denied (fail closed);
+ * non-production defaults to local dev origins only.
+ */
+const resolveCorsOrigins = (): string[] | false => {
+  const raw = process.env.ALLOWED_ORIGINS ?? process.env.CORS_ORIGIN;
+  if (raw && raw.trim().length > 0) {
+    return raw
+      .split(',')
+      .map((origin) => origin.trim())
+      .filter((origin) => origin.length > 0);
+  }
+  if ((process.env.NODE_ENV || 'development') === 'production') {
+    return false;
+  }
+  return ['http://localhost:3000', 'http://localhost:3001', 'http://127.0.0.1:3000'];
+};
+
+const allowedCorsOrigins = resolveCorsOrigins();
+
 class TurboAssetServer {
   private readonly app: express.Application;
   private readonly server: any;
@@ -81,8 +106,9 @@ class TurboAssetServer {
     this.server = createServer(this.app);
     this.io = new SocketServer(this.server, {
       cors: {
-        origin: '*',
-        methods: ['GET', 'POST']
+        origin: allowedCorsOrigins,
+        methods: ['GET', 'POST'],
+        credentials: true,
       }
     });
     this.healthController = new HealthController();
@@ -117,7 +143,7 @@ class TurboAssetServer {
     }));
 
     this.app.use(cors({
-      origin: process.env.ALLOWED_ORIGINS?.split(',') || '*',
+      origin: allowedCorsOrigins,
       credentials: true,
       methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
       allowedHeaders: ['Content-Type', 'Authorization', 'X-API-Key', 'X-API-Version'],
@@ -197,11 +223,14 @@ class TurboAssetServer {
   private setupRoutes(): void {
     const apiRouter = express.Router();
 
+    // Public auth routes (login/refresh) — rate-limited, no auth required.
+    apiRouter.use('/auth', authRateLimit.middleware(), authRoutes);
+
     // Apply authentication to all API routes (except health checks)
     apiRouter.use(optionalAuth);
 
     // Mount API routes with specific rate limits and permissions
-    
+
     // Core routes
     apiRouter.use('/properties', requireOrganizationAccess, requirePermissions(['properties:read']), propertyRoutes);
     apiRouter.use('/assets', requireOrganizationAccess, requirePermissions(['assets:read']), assetRoutes);
@@ -227,25 +256,18 @@ class TurboAssetServer {
     apiRouter.use('/maintenance', requireOrganizationAccess, requirePermissions(['maintenance:read']), MaintenanceController);
     apiRouter.use('/work-orders', requireOrganizationAccess, requirePermissions(['work-orders:read']), WorkOrderController);
     
-    // Additional Phase 5 routes (placeholders)
-    apiRouter.get('/preventive-maintenance', requireOrganizationAccess, requirePermissions(['maintenance:read']), (req, res) => {
-      res.json({ message: 'Preventive Maintenance API - coming soon' });
-    });
-    apiRouter.get('/asset-lifecycle', requireOrganizationAccess, requirePermissions(['assets:read']), (req, res) => {
-      res.json({ message: 'Asset Lifecycle API - coming soon' });
-    });
-    apiRouter.get('/inventory', requireOrganizationAccess, requirePermissions(['inventory:read']), (req, res) => {
-      res.json({ message: 'Inventory API - coming soon' });
-    });
-    apiRouter.get('/energy-management', requireOrganizationAccess, requirePermissions(['energy:read']), (req, res) => {
-      res.json({ message: 'Energy Management API - coming soon' });
-    });
-    apiRouter.get('/capital-projects', requireOrganizationAccess, requirePermissions(['projects:read']), (req, res) => {
-      res.json({ message: 'Capital Projects API - coming soon' });
-    });
-    apiRouter.get('/iot-devices', requireOrganizationAccess, requirePermissions(['iot:read']), (req, res) => {
-      res.json({ message: 'IoT Devices API - coming soon' });
-    });
+    // Inventory management (backed by InventoryService)
+    apiRouter.use('/inventory', requireOrganizationAccess, requirePermissions(['inventory:read']), inventoryRoutes);
+
+    // Not-yet-implemented domains: respond 501 (honest) rather than a 200 stub.
+    const notImplemented = (name: string) => (_req: express.Request, res: express.Response): void => {
+      res.status(501).json({ error: `${name} API is not implemented yet` });
+    };
+    apiRouter.get('/preventive-maintenance', requireOrganizationAccess, requirePermissions(['maintenance:read']), notImplemented('Preventive Maintenance'));
+    apiRouter.get('/asset-lifecycle', requireOrganizationAccess, requirePermissions(['assets:read']), notImplemented('Asset Lifecycle'));
+    apiRouter.get('/energy-management', requireOrganizationAccess, requirePermissions(['energy:read']), notImplemented('Energy Management'));
+    apiRouter.get('/capital-projects', requireOrganizationAccess, requirePermissions(['projects:read']), notImplemented('Capital Projects'));
+    apiRouter.get('/iot-devices', requireOrganizationAccess, requirePermissions(['iot:read']), notImplemented('IoT Devices'));
 
     // Phase 6: Enterprise Integrations & Reporting routes
     // Route validation patterns for phase6 script: '/enterprise-integrations', '/data-warehouse', '/business-intelligence', '/reporting', '/data-governance', '/api-management', '/white-label'
@@ -466,6 +488,12 @@ class TurboAssetServer {
 
   async start(): Promise<void> {
     try {
+      // Validate environment configuration before anything else: fail fast on
+      // missing or unsafe config (weak/absent JWT secret, missing DATABASE_URL,
+      // wildcard CORS in production, etc.) instead of silently using defaults.
+      const env = validateEnvironment();
+      logger.info(`✅ Environment validated (NODE_ENV=${env.NODE_ENV})`);
+
       // Initialize enterprise system first
       logger.info('🚀 Initializing Enterprise System...');
       const { enterpriseSystem } = await import('@/utils');

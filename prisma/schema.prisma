@@ -59,6 +59,27 @@ enum UserRole {
   READONLY
 }
 
+// API keys for programmatic (machine-to-machine) access. The raw key is never
+// stored; only a SHA-256 hash is persisted and compared at request time.
+model ApiKey {
+  id             String    @id @default(uuid())
+  name           String
+  keyHash        String    @unique
+  keyPrefix      String?
+  permissions    Json      @default("[]")
+  organizationId String
+  userId         String?
+  isActive       Boolean   @default(true)
+  expiresAt      DateTime?
+  lastUsedAt     DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  @@index([keyHash])
+  @@index([organizationId])
+  @@map("api_keys")
+}
+
 // Organizations and Departments
 model Organization {
   id            String  @id @default(uuid())
