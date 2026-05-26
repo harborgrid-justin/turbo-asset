@@ -61,7 +61,7 @@ locales/                  # i18n resources (20+ languages)
 prisma/                   # Legacy schema — being phased out (see §6)
 docs/                     # Architecture + per-module API docs (napi-rs/)
 .development/             # Test config, scripts, cypress, validation, dev-only docs
-.claude/                  # Claude Code config: agents/ + settings.json
+.claude/                  # Claude Code config: agents/ + skills/ + settings.json
 ```
 
 **Path aliases** (from `tsconfig.json`) — always prefer these over deep relative paths:
@@ -205,6 +205,16 @@ Use the right specialist instead of doing everything inline. Each lives in
 
 To add or edit agents, follow https://docs.claude.com/en/docs/claude-code/sub-agents
 (markdown + YAML frontmatter: `name`, `description`, optional `tools`/`model`).
+
+### Skills (`.claude/skills/`)
+
+Skills are repeatable **workflows** Claude runs in the main thread (invoke with
+`/<skill-name>`), as opposed to agents, which are delegated workers. See
+https://docs.claude.com/en/docs/claude-code/skills.
+
+| Skill | Use it for |
+|-------|-----------|
+| **pr-readiness** | Pre-PR gate: runs the quality gate + relevant tests, pulls in the security-reviewer and docs-curator agents, and returns a go/no-go punch list. Run it before opening any PR. |
 
 ---
 
