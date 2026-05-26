@@ -515,13 +515,16 @@ export class CalendarIntegrationService {
     userId: string,
     provider?: 'OUTLOOK' | 'GOOGLE'
   ): Promise<UserCalendarAuth[]> {
-    const result = await prisma.$queryRaw`
+    const authSql = `
       SELECT user_id, provider, access_token, refresh_token, expires_at, email
       FROM user_calendar_auth
-      WHERE user_id = ${userId}
-      ${provider ? `AND provider = ${provider}` : ''}
+      WHERE user_id = ?
+      ${provider ? 'AND provider = ?' : ''}
       AND expires_at > NOW()
     `;
+    const result = provider
+      ? await prisma.$queryRaw(authSql, userId, provider)
+      : await prisma.$queryRaw(authSql, userId);
 
     return result.map((row: any) => ({
       userId: row.user_id,

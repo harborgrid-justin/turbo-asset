@@ -71,6 +71,28 @@ import enhancedBusinessLogicRoutes from '@/routes/enhanced-business-logic-integr
 // Real-World Phase 3 Business Logic Routes
 import realWorldPhase3Routes from '@/routes/realWorldPhase3Routes';
 
+/**
+ * Resolve the CORS allow-list. Never returns a credentialed wildcard ('*' with
+ * credentials is both insecure and rejected by browsers). Production must supply
+ * ALLOWED_ORIGINS/CORS_ORIGIN or cross-origin access is denied (fail closed);
+ * non-production defaults to local dev origins only.
+ */
+const resolveCorsOrigins = (): string[] | false => {
+  const raw = process.env.ALLOWED_ORIGINS ?? process.env.CORS_ORIGIN;
+  if (raw && raw.trim().length > 0) {
+    return raw
+      .split(',')
+      .map((origin) => origin.trim())
+      .filter((origin) => origin.length > 0);
+  }
+  if ((process.env.NODE_ENV || 'development') === 'production') {
+    return false;
+  }
+  return ['http://localhost:3000', 'http://localhost:3001', 'http://127.0.0.1:3000'];
+};
+
+const allowedCorsOrigins = resolveCorsOrigins();
+
 class TurboAssetServer {
   private readonly app: express.Application;
   private readonly server: any;
@@ -82,8 +104,9 @@ class TurboAssetServer {
     this.server = createServer(this.app);
     this.io = new SocketServer(this.server, {
       cors: {
-        origin: '*',
-        methods: ['GET', 'POST']
+        origin: allowedCorsOrigins,
+        methods: ['GET', 'POST'],
+        credentials: true,
       }
     });
     this.healthController = new HealthController();
@@ -118,7 +141,7 @@ class TurboAssetServer {
     }));
 
     this.app.use(cors({
-      origin: process.env.ALLOWED_ORIGINS?.split(',') || '*',
+      origin: allowedCorsOrigins,
       credentials: true,
       methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
       allowedHeaders: ['Content-Type', 'Authorization', 'X-API-Key', 'X-API-Version'],

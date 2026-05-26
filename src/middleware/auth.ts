@@ -1,9 +1,54 @@
 import { Request, Response, NextFunction } from 'express';
+import crypto from 'crypto';
 import jwt from 'jsonwebtoken';
 import { config } from '../config';
+import { prisma } from '../config/database';
 import { AuthenticationError, AuthorizationError } from './errorHandler';
 import { logger } from '@/config/logger';
 import { UserPayload } from '../types/express';
+
+/** SHA-256 hex digest of a raw API key. Keys are only ever stored hashed. */
+const hashApiKey = (key: string): string =>
+  crypto.createHash('sha256').update(key).digest('hex');
+
+/** Normalize a stored permissions value (JSON array, JSON string, or CSV) to string[]. */
+const parsePermissions = (value: unknown): string[] => {
+  if (Array.isArray(value)) {
+    return value.map((item) => String(item));
+  }
+  if (typeof value === 'string' && value.trim().length > 0) {
+    try {
+      const parsed = JSON.parse(value);
+      if (Array.isArray(parsed)) {
+        return parsed.map((item) => String(item));
+      }
+    } catch {
+      return value
+        .split(',')
+        .map((item) => item.trim())
+        .filter((item) => item.length > 0);
+    }
+  }
+  return [];
+};
+
+/**
+ * Enabled feature set from the ENABLED_FEATURES env var (comma-separated).
+ * Returns null when unset, meaning "not configured" (features default to on so
+ * an operator must opt in to gating rather than have it silently block).
+ */
+const getEnabledFeatures = (): Set<string> | null => {
+  const raw = process.env.ENABLED_FEATURES;
+  if (raw === undefined) {
+    return null;
+  }
+  return new Set(
+    raw
+      .split(',')
+      .map((feature) => feature.trim())
+      .filter((feature) => feature.length > 0)
+  );
+};
 
 /**
  * JWT Authentication middleware
@@ -49,36 +94,52 @@ export const authenticateJWT = (req: Request, res: Response, next: NextFunction)
 /**
  * API Key authentication middleware
  */
-export const authenticateAPIKey = (req: Request, res: Response, next: NextFunction): void => {
+export const authenticateAPIKey = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
   try {
     const apiKey = req.headers['x-api-key'] as string;
-    
+
     if (!apiKey) {
       throw new AuthenticationError('API key required');
     }
 
-    // TODO: Implement actual API key validation with database lookup
-    // This is a placeholder implementation
-    const mockAPIKey = {
-      id: 'mock-api-key',
-      organizationId: req.params.organizationId || 'unknown',
-      permissions: ['read', 'write'], // This should come from database
-      rateLimit: {
-        windowMs: 60 * 60 * 1000, // 1 hour
-        max: 1000, // 1000 requests per hour
-      },
+    // Look the key up by its hash; the raw key is never stored.
+    const record = await prisma.apiKey.findFirst({
+      where: { keyHash: hashApiKey(apiKey), isActive: true },
+    });
+
+    if (!record) {
+      throw new AuthenticationError('Invalid API key');
+    }
+
+    if (record.expiresAt && new Date(record.expiresAt).getTime() < Date.now()) {
+      throw new AuthenticationError('API key has expired');
+    }
+
+    req.apiKey = {
+      id: record.id,
+      organizationId: record.organizationId,
+      permissions: parsePermissions(record.permissions),
     };
 
-    req.apiKey = mockAPIKey;
-    
     logger.debug('API Key authentication successful', {
-      apiKeyId: mockAPIKey.id,
-      organizationId: mockAPIKey.organizationId,
+      apiKeyId: record.id,
+      organizationId: record.organizationId,
     });
-    
+
     next();
   } catch (error: unknown) {
-    next(error);
+    // Fail closed: a known auth error or any unexpected failure (including an
+    // unavailable key store) denies access rather than granting it.
+    if (error instanceof AuthenticationError) {
+      next(error);
+    } else {
+      logger.error('API key validation error', { error });
+      next(new AuthenticationError('API key validation failed'));
+    }
   }
 };
 
@@ -228,32 +289,55 @@ export const requireOrganizationAccess = (req: Request, res: Response, next: Nex
 /**
  * Resource ownership middleware
  */
-export const requireResourceOwnership = (resourceIdParam: string = 'id') => {
+export const requireResourceOwnership = (
+  modelName: string,
+  resourceIdParam: string = 'id'
+) => {
   return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const resourceId = req.params[resourceIdParam];
       const userId = req.user?.id;
-      
+      const userOrgId = req.user?.organizationId;
+      const roles = req.user?.roles ?? [];
+
       if (!resourceId) {
         throw new AuthorizationError(`Resource ID (${resourceIdParam}) required in URL`);
       }
-      
+
       if (!userId) {
         throw new AuthenticationError('User ID not found in token');
       }
 
-      // TODO: Implement actual resource ownership check with database
-      // This is a placeholder implementation
-      const isOwner = true; // Mock ownership check
-      
-      if (!isOwner && !req.user?.roles.includes('super_admin')) {
+      const isAdmin = roles.includes('super_admin') || roles.includes('admin');
+
+      const model = (prisma as Record<string, any>)[modelName];
+      if (!model || typeof model.findUnique !== 'function') {
+        throw new AuthorizationError(`Unknown resource type: ${modelName}`);
+      }
+
+      const record = await model.findUnique({ where: { id: resourceId } });
+      if (!record) {
+        throw new AuthorizationError('Resource not found');
+      }
+
+      // Multi-tenant boundary: the record must belong to the caller's org.
+      const crossesTenant =
+        record.organizationId && userOrgId && record.organizationId !== userOrgId;
+
+      // Ownership: when the record exposes an owner field, non-admins must match it.
+      const ownerId =
+        record.createdById ?? record.createdBy ?? record.ownerId ?? record.userId;
+      const ownsResource = ownerId === undefined || ownerId === userId;
+
+      if (!isAdmin && (crossesTenant || !ownsResource)) {
         logger.warn('Resource ownership denied', {
           userId,
+          organizationId: userOrgId,
+          modelName,
           resourceId,
-          resourceIdParam,
           path: req.path,
         });
-        
+
         throw new AuthorizationError('Access denied to this resource');
       }
 
@@ -302,10 +386,10 @@ export const requireTier = (minimumTier: 'free' | 'premium' | 'enterprise') => {
 export const requireFeature = (featureName: string) => {
   return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      // TODO: Implement actual feature flag checking
-      // This is a placeholder implementation
-      const hasFeature = true; // Mock feature check
-      
+      const enabledFeatures = getEnabledFeatures();
+      // Unset env => not configured => allow; otherwise gate on membership.
+      const hasFeature = enabledFeatures === null || enabledFeatures.has(featureName);
+
       if (!hasFeature) {
         logger.warn('Feature access denied', {
           userId: req.user?.id,
