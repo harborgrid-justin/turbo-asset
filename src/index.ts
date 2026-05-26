@@ -32,6 +32,7 @@ import {
 
 // Import routes
 import authRoutes from '@/controllers/AuthController';
+import inventoryRoutes from '@/controllers/InventoryController';
 import propertyRoutes from '@/controllers/PropertyController';
 import assetRoutes from '@/controllers/AssetController';
 import workflowRoutes from '@/controllers/WorkflowController';
@@ -255,25 +256,18 @@ class TurboAssetServer {
     apiRouter.use('/maintenance', requireOrganizationAccess, requirePermissions(['maintenance:read']), MaintenanceController);
     apiRouter.use('/work-orders', requireOrganizationAccess, requirePermissions(['work-orders:read']), WorkOrderController);
     
-    // Additional Phase 5 routes (placeholders)
-    apiRouter.get('/preventive-maintenance', requireOrganizationAccess, requirePermissions(['maintenance:read']), (req, res) => {
-      res.json({ message: 'Preventive Maintenance API - coming soon' });
-    });
-    apiRouter.get('/asset-lifecycle', requireOrganizationAccess, requirePermissions(['assets:read']), (req, res) => {
-      res.json({ message: 'Asset Lifecycle API - coming soon' });
-    });
-    apiRouter.get('/inventory', requireOrganizationAccess, requirePermissions(['inventory:read']), (req, res) => {
-      res.json({ message: 'Inventory API - coming soon' });
-    });
-    apiRouter.get('/energy-management', requireOrganizationAccess, requirePermissions(['energy:read']), (req, res) => {
-      res.json({ message: 'Energy Management API - coming soon' });
-    });
-    apiRouter.get('/capital-projects', requireOrganizationAccess, requirePermissions(['projects:read']), (req, res) => {
-      res.json({ message: 'Capital Projects API - coming soon' });
-    });
-    apiRouter.get('/iot-devices', requireOrganizationAccess, requirePermissions(['iot:read']), (req, res) => {
-      res.json({ message: 'IoT Devices API - coming soon' });
-    });
+    // Inventory management (backed by InventoryService)
+    apiRouter.use('/inventory', requireOrganizationAccess, requirePermissions(['inventory:read']), inventoryRoutes);
+
+    // Not-yet-implemented domains: respond 501 (honest) rather than a 200 stub.
+    const notImplemented = (name: string) => (_req: express.Request, res: express.Response): void => {
+      res.status(501).json({ error: `${name} API is not implemented yet` });
+    };
+    apiRouter.get('/preventive-maintenance', requireOrganizationAccess, requirePermissions(['maintenance:read']), notImplemented('Preventive Maintenance'));
+    apiRouter.get('/asset-lifecycle', requireOrganizationAccess, requirePermissions(['assets:read']), notImplemented('Asset Lifecycle'));
+    apiRouter.get('/energy-management', requireOrganizationAccess, requirePermissions(['energy:read']), notImplemented('Energy Management'));
+    apiRouter.get('/capital-projects', requireOrganizationAccess, requirePermissions(['projects:read']), notImplemented('Capital Projects'));
+    apiRouter.get('/iot-devices', requireOrganizationAccess, requirePermissions(['iot:read']), notImplemented('IoT Devices'));
 
     // Phase 6: Enterprise Integrations & Reporting routes
     // Route validation patterns for phase6 script: '/enterprise-integrations', '/data-warehouse', '/business-intelligence', '/reporting', '/data-governance', '/api-management', '/white-label'
