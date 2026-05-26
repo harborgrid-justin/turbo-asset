@@ -4,7 +4,7 @@
  */
 
 import { Router } from 'express';
-import { RealWorldPhase3Controller } from '@/controllers/RealWorldPhase3Controller';
+import { RealWorldPhase3Controller } from '../controllers/RealWorldPhase3Controller';
 
 const router = Router();
 const controller = new RealWorldPhase3Controller();

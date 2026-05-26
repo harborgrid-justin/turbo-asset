@@ -6,7 +6,7 @@
 
 import { Request, Response } from 'express';
 import EnterpriseBusinessLogicService from '../services/enterprise-business-logic-48-features';
-import { logger } from '../config/logger';
+import { logger } from '@/config/logger';
 
 export class EnterpriseBusinessLogicAPIController {
   private static instance: EnterpriseBusinessLogicAPIController;

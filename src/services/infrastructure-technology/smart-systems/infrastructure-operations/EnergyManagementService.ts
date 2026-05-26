@@ -8,8 +8,8 @@
  */
 
 import { EventEmitter } from 'events';
-import { prisma } from '../../../config/database';
-import { logger } from '../../../config/logger';
+import { prisma } from '@/config/database';
+import { logger } from '@/config/logger';
 import { 
   EnergyMeter, 
   EnergyReading, 
