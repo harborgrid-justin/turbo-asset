@@ -5,6 +5,7 @@ import { createServer } from 'http';
 import { Server as SocketServer } from 'socket.io';
 import { config } from '@/config';
 import { logger } from '@/config/logger';
+import { validateEnvironment } from '@/config/environment-validation';
 import { connectRedis } from '@/config/redis';
 import { InternationalizationService } from '@/services/InternationalizationService';
 import { napiRegistry } from '@/services/napi-integration';
@@ -466,6 +467,12 @@ class TurboAssetServer {
 
   async start(): Promise<void> {
     try {
+      // Validate environment configuration before anything else: fail fast on
+      // missing or unsafe config (weak/absent JWT secret, missing DATABASE_URL,
+      // wildcard CORS in production, etc.) instead of silently using defaults.
+      const env = validateEnvironment();
+      logger.info(`✅ Environment validated (NODE_ENV=${env.NODE_ENV})`);
+
       // Initialize enterprise system first
       logger.info('🚀 Initializing Enterprise System...');
       const { enterpriseSystem } = await import('@/utils');

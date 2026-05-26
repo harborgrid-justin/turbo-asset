@@ -1,30 +1,52 @@
 import dotenv from 'dotenv';
+import crypto from 'crypto';
 
 // Load environment variables
 dotenv.config();
 
+const nodeEnv = process.env.NODE_ENV || 'development';
+
+/**
+ * Resolve the JWT signing secret without ever falling back to a known public
+ * default. Production must supply JWT_SECRET (fail fast); non-production uses an
+ * ephemeral per-process random secret so local tokens still work but are never
+ * a guessable shared value.
+ */
+function resolveJwtSecret(): string {
+  const secret = process.env.JWT_SECRET;
+  if (secret) {
+    return secret;
+  }
+  if (nodeEnv === 'production') {
+    throw new Error('JWT_SECRET environment variable is required in production');
+  }
+  return crypto.randomBytes(48).toString('hex');
+}
+
+const jwtSecret = resolveJwtSecret();
+
 export const config = {
   server: {
     port: parseInt(process.env.PORT || '3000'),
-    env: process.env.NODE_ENV || 'development',
+    env: nodeEnv,
   },
-  
+
   database: {
     url: process.env.DATABASE_URL || '',
   },
-  
+
   redis: {
     url: process.env.REDIS_URL || 'redis://localhost:6379',
   },
-  
+
   security: {
-    jwtSecret: process.env.JWT_SECRET || 'your-jwt-secret-key',
+    jwtSecret,
     jwtExpiresIn: process.env.JWT_EXPIRES_IN || '24h',
     bcryptRounds: parseInt(process.env.BCRYPT_ROUNDS || '12'),
   },
 
   auth: {
-    jwtSecret: process.env.JWT_SECRET || 'your-jwt-secret-key',
+    jwtSecret,
     jwtExpiresIn: process.env.JWT_EXPIRES_IN || '24h',
   },
   

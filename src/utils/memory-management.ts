@@ -729,17 +729,14 @@ process.on('exit', () => {
 });
 
 process.on('SIGINT', async () => {
+  logger.info('Received SIGINT, cleaning up resources...');
   try {
     await resourceManager.cleanupAll();
     process.exit(0);
   } catch (error) {
-    console.error('Error during SIGINT cleanup:', error);
+    logger.error('Error during SIGINT cleanup:', error);
     process.exit(1);
   }
-});
-  logger.info('Received SIGINT, cleaning up resources...');
-  await resourceManager.cleanupAll();
-  process.exit(0);
 });
 
 process.on('SIGTERM', async () => {
