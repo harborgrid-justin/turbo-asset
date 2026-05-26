@@ -236,7 +236,12 @@ export class SpaceUtilizationService {
       // Get latest occupancy record for each space.
       // Values are passed as bound parameters (?) — never interpolated — to
       // avoid SQL injection. The only inlined fragment is a constant clause.
-      const useSpaceFilter = Boolean(spaceIds && spaceIds.length > 0);
+      const filterSpaceIds = spaceIds && spaceIds.length > 0 ? spaceIds : null;
+      // Build one placeholder per id so each value is bound individually (the
+      // adapter does not reliably expand an array into a single `?`).
+      const spaceIdPlaceholders = filterSpaceIds
+        ? filterSpaceIds.map(() => '?').join(', ')
+        : '';
       const latestRecordsSql = `
         SELECT DISTINCT ON (space_id)
           space_id,
@@ -254,14 +259,14 @@ export class SpaceUtilizationService {
           JOIN properties p ON b.property_id = p.id
           WHERE p.organization_id = ?
           AND s.is_active = true
-          ${useSpaceFilter ? 'AND s.id IN (?)' : ''}
+          ${filterSpaceIds ? `AND s.id IN (${spaceIdPlaceholders})` : ''}
         )
         AND utilization_type = 'OCCUPANCY'
         AND record_date >= NOW() - INTERVAL '24 hours'
         ORDER BY space_id, record_date DESC
       `;
-      const latestRecords = useSpaceFilter
-        ? await prisma.$queryRaw(latestRecordsSql, organizationId, spaceIds)
+      const latestRecords = filterSpaceIds
+        ? await prisma.$queryRaw(latestRecordsSql, organizationId, ...filterSpaceIds)
         : await prisma.$queryRaw(latestRecordsSql, organizationId);
 
       // Enrich with space information

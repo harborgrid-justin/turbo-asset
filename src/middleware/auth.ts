@@ -39,7 +39,7 @@ const parsePermissions = (value: unknown): string[] => {
  */
 const getEnabledFeatures = (): Set<string> | null => {
   const raw = process.env.ENABLED_FEATURES;
-  if (raw === undefined) {
+  if (!raw || raw.trim().length === 0) {
     return null;
   }
   return new Set(
@@ -308,7 +308,10 @@ export const requireResourceOwnership = (
         throw new AuthenticationError('User ID not found in token');
       }
 
-      const isAdmin = roles.includes('super_admin') || roles.includes('admin');
+      // Only super_admin may cross the organization boundary; a tenant-scoped
+      // admin may bypass per-record ownership but stays within its own org.
+      const isSuperAdmin = roles.includes('super_admin');
+      const isAdmin = isSuperAdmin || roles.includes('admin');
 
       const model = (prisma as Record<string, any>)[modelName];
       if (!model || typeof model.findUnique !== 'function') {
@@ -320,25 +323,32 @@ export const requireResourceOwnership = (
         throw new AuthorizationError('Resource not found');
       }
 
-      // Multi-tenant boundary: the record must belong to the caller's org.
-      const crossesTenant =
-        record.organizationId && userOrgId && record.organizationId !== userOrgId;
-
-      // Ownership: when the record exposes an owner field, non-admins must match it.
-      const ownerId =
-        record.createdById ?? record.createdBy ?? record.ownerId ?? record.userId;
-      const ownsResource = ownerId === undefined || ownerId === userId;
-
-      if (!isAdmin && (crossesTenant || !ownsResource)) {
-        logger.warn('Resource ownership denied', {
+      const denyAccess = (reason: string): never => {
+        logger.warn('Resource access denied', {
+          reason,
           userId,
           organizationId: userOrgId,
           modelName,
           resourceId,
           path: req.path,
         });
-
         throw new AuthorizationError('Access denied to this resource');
+      };
+
+      // Multi-tenant boundary (fail closed): an org-scoped record must match the
+      // caller's org. A caller lacking org context cannot reach another org's data.
+      const recordOrgId = record.organizationId;
+      if (recordOrgId && recordOrgId !== userOrgId && !isSuperAdmin) {
+        denyAccess('cross-tenant');
+      }
+
+      // Ownership: when the record exposes an owner field, non-admins must match
+      // it. Org-scoped records without a personal owner rely on the tenant check.
+      const ownerId =
+        record.createdById ?? record.createdBy ?? record.ownerId ?? record.userId;
+      const ownsResource = ownerId === undefined || ownerId === userId;
+      if (!ownsResource && !isAdmin) {
+        denyAccess('ownership');
       }
 
       next();
