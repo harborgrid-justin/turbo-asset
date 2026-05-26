@@ -31,6 +31,7 @@ import {
 } from '@/middleware';
 
 // Import routes
+import authRoutes from '@/controllers/AuthController';
 import propertyRoutes from '@/controllers/PropertyController';
 import assetRoutes from '@/controllers/AssetController';
 import workflowRoutes from '@/controllers/WorkflowController';
@@ -221,11 +222,14 @@ class TurboAssetServer {
   private setupRoutes(): void {
     const apiRouter = express.Router();
 
+    // Public auth routes (login/refresh) — rate-limited, no auth required.
+    apiRouter.use('/auth', authRateLimit.middleware(), authRoutes);
+
     // Apply authentication to all API routes (except health checks)
     apiRouter.use(optionalAuth);
 
     // Mount API routes with specific rate limits and permissions
-    
+
     // Core routes
     apiRouter.use('/properties', requireOrganizationAccess, requirePermissions(['properties:read']), propertyRoutes);
     apiRouter.use('/assets', requireOrganizationAccess, requirePermissions(['assets:read']), assetRoutes);
