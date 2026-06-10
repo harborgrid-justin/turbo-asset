@@ -1,238 +1,183 @@
 # CLAUDE.md — Turbo Asset LLM Operating Guide
 
-Authoritative guidance for Claude (and other AI coding assistants) working in this
-repository. Claude Code loads this file automatically as project memory, so keep it
-**accurate, concise, and high-signal**. Every token here is sent on each request —
-treat it like production config, not a wiki.
+<!-- Maintainers: block-level HTML comments are stripped before this file enters
+     Claude's context, so notes like this one cost zero tokens. Keep this file under
+     ~200 lines (Anthropic's adherence guidance); put area-specific detail in
+     .claude/rules/ and hard guarantees in .claude/settings.json hooks. -->
 
-> **Source of truth for tooling.** This guide follows Anthropic's published practices.
-> When in doubt, defer to the official docs:
-> - Claude Code overview — https://docs.claude.com/en/docs/claude-code/overview
-> - Memory & `CLAUDE.md` — https://docs.claude.com/en/docs/claude-code/memory
-> - Subagents — https://docs.claude.com/en/docs/claude-code/sub-agents
-> - Settings & permissions — https://docs.claude.com/en/docs/claude-code/settings
-> - Slash commands — https://docs.claude.com/en/docs/claude-code/slash-commands
-> - Prompt engineering — https://docs.claude.com/en/docs/build-with-claude/prompt-engineering/overview
-> - Claude Code best practices — https://www.anthropic.com/engineering/claude-code-best-practices
+Project memory for Claude Code, loaded on **every** request — treat each line like
+production config. Guidance is layered for token efficiency:
 
----
+1. **This file** — always-loaded core facts and rules (kept lean on purpose).
+2. **`.claude/rules/*.md`** — path-scoped conventions (data layer, security, frontend,
+   testing, NAPI packages) that load **only** when you work on matching files.
+3. **Hooks in `.claude/settings.json`** — *enforced* safeguards (`--no-verify`,
+   force-push, `.env`/`.backup` writes, `prisma migrate`). A denied tool call means a
+   guard fired: read the reason and change approach — never try to route around it.
+
+> Tooling source of truth: https://code.claude.com/docs (memory, sub-agents, hooks,
+> settings, skills). Defer to the official docs when in doubt.
 
 ## 1. What this repository is
 
-**Turbo Asset** is an enterprise Integrated Workplace Management System (IWMS) —
-a modern alternative to IBM Tririga for real estate, facilities, asset, lease, and
-workflow management.
+**Turbo Asset** is an enterprise Integrated Workplace Management System (IWMS) — a
+modern IBM Tririga alternative for real estate, facilities, asset, lease, and workflow
+management.
 
 | Aspect | Detail |
 |--------|--------|
 | Language | TypeScript 5.3+ (strict), Node.js ≥ 18 |
 | Backend | Express 4 + Apollo GraphQL (REST + GraphQL) |
 | Database | PostgreSQL via **Sequelize** (migrating off Prisma — see §6) |
-| Real-time | Socket.IO + Redis |
-| Queues | Bull + Redis |
+| Real-time / queues | Socket.IO + Redis · Bull + Redis |
 | Validation | Zod / Joi |
 | Native modules | 42 NAPI-RS workspace packages under `packages/*` |
-| Frontend | Separate Next.js 15 app in `frontend/` (App Router, Tailwind, React 19) |
+| Frontend | Separate Next.js 15 app in `frontend/` (App Router, React 19, Tailwind) |
 | Tests | Jest + Supertest (unit/integration), Cypress (e2e) |
 | Tooling | ESLint + Prettier, Husky + lint-staged, TypeDoc, Swagger |
 
----
-
-## 2. Repository map (where things live)
+## 2. Repository map
 
 ```
 src/                      # Main backend application
-├── api/                  # HTTP surface: controllers, routes, graphql
-│   ├── controllers/
-│   └── routes/
-├── core/                 # Cross-cutting platform: auth, cache, database,
-│                         #   errors, events, middleware, monitoring,
-│                         #   resilience, security, validation
-├── services/             # Domain business logic, grouped by domain
-│                         #   (asset, finance, space, workflow, portfolio…)
-├── shared/               # types / interfaces / constants (import via @/ aliases)
+├── api/                  # controllers/ + routes/ (HTTP surface)
+├── core/                 # Cross-cutting: auth, cache, database, errors, events,
+│                         #   middleware, monitoring, resilience, security, validation
+├── services/             # Domain business logic (asset, finance, space, workflow…)
+├── shared/               # types / interfaces / constants
 ├── graphql/              # Schema + resolvers
-├── config/  constants/  utils/  middleware/  database/
-└── index.ts              # App entry (run with `npm run dev`)
-
-packages/                 # 42 NAPI-RS native service packages (npm workspaces)
-frontend/                 # Next.js 15 web client (own package.json + lint)
+├── config/ constants/ utils/ middleware/ database/
+└── index.ts              # App entry (`npm run dev`)
+packages/                 # 42 NAPI-RS native packages (npm workspaces)
+frontend/                 # Next.js 15 client (own package.json + lint)
 locales/                  # i18n resources (20+ languages)
-prisma/                   # Legacy schema — being phased out (see §6)
+prisma/                   # Legacy schema — being phased out (§6)
 docs/                     # Architecture + per-module API docs (napi-rs/)
-.development/             # Test config, scripts, cypress, validation, dev-only docs
-.claude/                  # Claude Code config: agents/ + skills/ + settings.json
+.development/             # Jest config, scripts, cypress, dev-only docs
+.claude/                  # agents/ + skills/ + rules/ + hooks/ + settings.json
 ```
 
-**Path aliases** (from `tsconfig.json`) — always prefer these over deep relative paths:
+**Path aliases** (`tsconfig.json`) — always prefer over deep relative imports:
+`@/* → src/*`, `@/types|interfaces|constants/* → src/shared/…`, `@/services/*`,
+`@/controllers/* → src/api/controllers/*`, `@/routes/* → src/api/routes/*`,
+`@/middleware|utils|config|database/* → src/core/…`.
 
-```
-@/*            → src/*
-@/types/*      → src/shared/types/*
-@/interfaces/* → src/shared/interfaces/*
-@/constants/*  → src/shared/constants/*
-@/services/*   → src/services/*
-@/controllers/*→ src/api/controllers/*
-@/routes/*     → src/api/routes/*
-@/middleware/* → src/core/middleware/*
-@/utils/*      → src/core/utils/*
-@/config/*     → src/core/config/*
-@/database/*   → src/core/database/*
-```
-
----
-
-## 3. Essential commands
-
-Run from the repo root unless noted. The frontend has its own scripts (`cd frontend`).
+## 3. Essential commands (repo root; frontend has its own)
 
 | Task | Command |
 |------|---------|
-| Dev server (hot reload) | `npm run dev` |
-| Production build | `npm run build` (runs `clean` + `tsc`) |
-| Type-check only | `npm run type-check` |
-| Lint | `npm run lint` · fix: `npm run lint:fix` |
-| Format | `npm run format` · check: `npm run format:check` |
+| Dev server | `npm run dev` |
+| Build | `npm run build` · type-check only: `npm run type-check` |
+| Lint / format | `npm run lint` · `npm run lint:fix` · `npm run format` |
 | **Quality gate (all 3)** | `npm run quality` |
-| Unit/integration tests | `npm test` (Jest, config `.development/jest.config.js`) |
-| Watch tests | `npm run test:watch` |
-| Coverage | `npm run test:coverage` |
-| E2E (Cypress) | `npm run e2e` / `npm run cypress:open` |
-| Build all NAPI packages | `npm run build:napi` |
-| NAPI health check | `npm run napi:health` |
-| Frontend dev | `cd frontend && npm run dev` |
+| Tests | `npm test` · targeted: `npm test -- <path>` · coverage: `npm run test:coverage` |
+| E2E | `npm run e2e` / `npm run cypress:open` |
+| NAPI | `npm run build:napi` · `npm run napi:health` |
+| Frontend | `cd frontend && npm run dev` / `npm run lint` |
 
-**Before declaring work done, run `npm run quality` and the relevant tests.** The
-pre-commit hook (Husky + lint-staged) runs `eslint --fix` + `prettier` on staged
-`*.ts/tsx` and Prettier on `*.json/md`, so don't fight it — let it format.
+**Before declaring work done:** `npm run quality` + the narrowest relevant tests. The
+pre-commit hook (Husky + lint-staged) auto-formats staged files — let it.
 
----
+## 4. Core conventions (always apply)
 
-## 4. Coding conventions
+- **Strict TypeScript** (`strict`, `noUncheckedIndexedAccess`,
+  `exactOptionalPropertyTypes`, `noEmitOnError`): no `any`, no `@ts-ignore`.
+- Controllers thin; business logic in `src/services/*`; cross-cutting in `src/core/*`.
+- Validate at boundaries (Zod/Joi); errors via `src/core/errors`; logging via Winston
+  (`src/core/monitoring`) — never `console.log` in committed code.
+- **No new top-level markdown** unless asked — summaries belong in PR descriptions.
+- Comments only where the *why* is non-obvious.
+- `*.backup` directories are excluded from the build — never edit or import them
+  (hook-enforced).
 
-- **Strict TypeScript.** `tsconfig.json` enables `strict`, `noUncheckedIndexedAccess`,
-  `exactOptionalPropertyTypes`, `noImplicitOverride`, and `noEmitOnError`. Write code
-  that compiles clean — do not paper over types with `any` or `@ts-ignore`.
-- **Imports:** use `@/` path aliases, not `../../../`.
-- **Services are the home for business logic.** Controllers stay thin (parse → validate
-  → delegate → respond). Cross-cutting concerns live in `src/core/*`.
-- **Validation at boundaries** with Zod/Joi; trust internal calls.
-- **Errors:** use the shared error types in `src/core/errors`, not ad-hoc `throw new Error`.
-- **No new top-level docs** unless asked. Summary/analysis markdown belongs in PR
-  descriptions, not the repo root (the root is already crowded — don't add to it).
-- **Comments:** only when the *why* is non-obvious. No "what" narration.
-- **`.backup` directories** (e.g. `src/services/*.backup`) are excluded from the build —
-  never edit them and never import from them.
+Area detail (data layer, security, frontend, testing, packages) loads automatically
+from `.claude/rules/` when you touch matching files — don't re-derive it.
 
----
+## 5. Workflow rules (the ⛔ ones are hook-enforced)
 
-## 5. Workflow rules
-
-- **Branch:** develop on the assigned feature branch; never push to `master` without
-  explicit permission.
-- **Commits:** small, descriptive, present-tense. Don't commit unless asked. Never use
-  `--no-verify` to skip hooks — fix the underlying lint/type error instead.
+- **Branch:** develop on the assigned feature branch; pushing to `master`/`main`
+  prompts for explicit permission. ⛔
+- **Commits:** small, descriptive, present-tense. Don't commit unless asked.
+  `--no-verify` is blocked — fix the underlying error. ⛔
+- **Force-push** is blocked; `rm -rf`, `git reset --hard`, branch deletion prompt for
+  confirmation. ⛔
 - **PRs:** only open one when explicitly requested.
-- **Secrets:** never commit `.env`, keys, or credentials. `.env.example` documents the
-  shape; real values stay local.
-- **Risky/irreversible actions** (deleting branches, force-push, dropping tables,
-  `rm -rf`) require explicit confirmation first.
+- **Secrets:** `.env`/key writes and reads are blocked; `.env.example` documents the
+  shape. ⛔
+- **Irreversible actions** beyond the guards above still require explicit confirmation.
 
----
+## 6. Critical gotcha: Prisma → Sequelize migration
 
-## 6. Critical gotcha: Prisma → Sequelize migration in progress
+The repo is **mid-migration from Prisma to Sequelize**. New persistence code is
+Sequelize / `sequelize-typescript`; `prisma/` and `@prisma/client` are legacy with a
+compatibility adapter; `prisma migrate` is not wired up (hook-blocked). Full rules load
+from `.claude/rules/data-layer.md` when you touch data files; read
+`SEQUELIZE_MIGRATION_GUIDE.md` before any data-layer work. Trust this file and the
+guides over the README, which still mentions Prisma.
 
-The repo is **mid-migration from Prisma to Sequelize**. This matters for almost any
-data-layer task:
+## 7. Token & context efficiency
 
-- **Sequelize is the target.** New persistence code uses Sequelize / `sequelize-typescript`.
-- A **Prisma-compatibility adapter** exists so legacy call sites keep working during the
-  transition — see `SEQUELIZE_MIGRATION_GUIDE.md` and `SEQUELIZE_ADAPTER_ENHANCEMENTS.md`.
-- `npm run db:migrate` is intentionally a no-op pointer; migrations are managed
-  separately per the guide. Don't assume `prisma migrate` is wired up.
-- `prisma/` and `@prisma/client` are **legacy**. The README still references Prisma in
-  places — trust this file and the migration guides over the README for the data layer.
+Context is the scarce resource — spend it deliberately.
 
-When touching the database, read the migration guide first and follow the Sequelize
-path unless explicitly told otherwise.
+**Delegate to keep the main window clean**
+- Open-ended exploration ("where/how is X done?") → **codebase-explorer** agent. Long
+  or noisy test runs → **test-runner**. Security passes on diffs → **security-reviewer**.
+  Subagents burn their own context and return a tight summary.
+- Launch independent subagents **in parallel in one message**; don't redo their work
+  yourself afterward.
 
----
+**Search and read surgically**
+- Known symbol/string → targeted `grep`/`rg`, then read **scoped line ranges**. Never
+  read whole files to find one function; never re-read a file you just edited.
+- Pipe noisy command output through `head`/`tail`/`grep -c` — raw logs never enter
+  the main context.
 
-## 7. Token efficiency — maximize signal, minimize waste
+**Batch and parallelize**
+- Fire independent tool calls in a single message (read 3 files at once; `git status` +
+  `git diff` together). Batch related edits; avoid round-trips.
 
-Context is the scarce resource. Spend it deliberately. (See Anthropic's best-practices
-guide linked above.)
+**Right model for the job**
+- Mechanical search → Haiku-class agents. Implementation → Sonnet. Deep cross-system
+  reasoning → Opus. Match cost to difficulty.
 
-**Searching & reading**
-- For broad/open-ended exploration ("where is X handled across the codebase?"), delegate
-  to the **`codebase-explorer`** subagent (§8). It burns its own context and returns a
-  tight summary, keeping your main window clean.
-- For a known symbol or string, use a **targeted `grep`/`rg`** — don't read whole files
-  to find one function.
-- Read **scoped line ranges**, not entire files, once you know the location.
-- Never re-read a file you just edited — the edit already confirmed its new state.
-- Don't dump large command output into context. Pipe through `head`, `grep`, or `wc`.
-
-**Parallelism & batching**
-- Fire independent tool calls **in a single message** (parallel) — e.g. read three files
-  at once, or run `git status` + `git diff` together.
-- Batch related edits; avoid round-trips.
-
-**Right tool / right model**
-- Cheap, mechanical search → Haiku-class subagents. Implementation → Sonnet.
-  Deep cross-system reasoning → Opus. Match cost to difficulty.
-- Lean on subagents to **parallelize independent work** and to **firewall noisy output**
-  (test logs, large greps) away from the main thread.
+**Durability across compaction**
+- Long sessions get compacted; conversation content can drop, while this file is
+  re-injected. Decisions that must survive (conventions, commands, gotchas) belong in
+  CLAUDE.md or `.claude/rules/` — propose the edit instead of repeating yourself.
 
 **Don't waste effort**
-- No speculative refactors, abstractions, or "while I'm here" cleanups beyond the task.
-- Re-use prior findings instead of re-deriving them.
+- No speculative refactors or "while I'm here" cleanups. Re-use prior findings instead
+  of re-deriving them.
 
----
+## 8. Delegation roster (`.claude/agents/`, `.claude/skills/`)
 
-## 8. Subagent roster (`.claude/agents/`)
-
-Use the right specialist instead of doing everything inline. Each lives in
-`.claude/agents/` with a scoped tool set. Invoke proactively when the task matches.
+Use the matching specialist proactively instead of doing everything inline. Each agent
+has a scoped toolset, model, and turn budget; explorer and security-reviewer keep
+persistent memory across sessions, so their recall improves over time.
 
 | Agent | Use it for |
 |-------|-----------|
-| **codebase-explorer** | Read-only search/navigation across `src/` and `packages/`. First stop for "where / how is X done?" Returns a concise map, not raw dumps. |
-| **service-architect** | Designing or scaffolding a new domain service or NAPI package that follows the controller→service→core layering and path-alias conventions. |
-| **test-runner** | Running Jest/Cypress, triaging failures, and reporting a fix-list. Keeps verbose test output out of the main context. |
-| **security-reviewer** | Reviewing a diff for OWASP issues, secret leakage, authZ gaps, and injection risks before commit. |
-| **docs-curator** | Keeping `CLAUDE.md`, `docs/`, and module docs accurate after code changes; flags drift. |
-
-To add or edit agents, follow https://docs.claude.com/en/docs/claude-code/sub-agents
-(markdown + YAML frontmatter: `name`, `description`, optional `tools`/`model`).
-
-### Skills (`.claude/skills/`)
-
-Skills are repeatable **workflows** Claude runs in the main thread (invoke with
-`/<skill-name>`), as opposed to agents, which are delegated workers. See
-https://docs.claude.com/en/docs/claude-code/skills.
+| **codebase-explorer** (Haiku) | Read-only search/navigation. First stop for "where/how is X done?" |
+| **service-architect** (Sonnet) | Scaffolding services/packages that follow the layering + aliases. |
+| **test-runner** (Sonnet) | Running Jest/Cypress, triaging failures; keeps logs out of main context. |
+| **security-reviewer** (Sonnet) | OWASP/tenancy/secrets review of a diff before commit. |
+| **docs-curator** (Sonnet) | Keeping CLAUDE.md, rules, and docs/ accurate after changes. |
 
 | Skill | Use it for |
 |-------|-----------|
-| **pr-readiness** | Pre-PR gate: runs the quality gate + relevant tests, pulls in the security-reviewer and docs-curator agents, and returns a go/no-go punch list. Run it before opening any PR. |
+| **/pr-readiness** | Pre-PR gate: quality gate + tests + parallel security/docs passes → go/no-go punch list. Run before any PR. |
 
----
+To add or edit agents/skills, follow https://code.claude.com/docs/en/sub-agents
+(frontmatter: `name`, `description`, plus `tools`, `model`, `maxTurns`, `memory`).
 
-## 9. Security & enterprise expectations
+## 9. Security baseline
 
-- Treat all external input (HTTP, GraphQL, file upload, integration payloads) as
-  untrusted. Validate and sanitize at the edge.
-- Enforce authZ in services, not just routes; respect `organizationId` tenancy on
-  `BaseEntity` records.
-- Use parameterized queries / ORM methods — never string-concatenate SQL.
-- Keep dependencies current; flag, don't silently downgrade, packages.
-- Log via Winston (`src/core/monitoring`), never `console.log` in committed code.
-- This is multi-tenant enterprise software — assume every record is scoped to an org and
-  every action is audited (`src/core/audit`).
+Multi-tenant enterprise software: every record is org-scoped (`organizationId` on
+`BaseEntity`), every action audited (`src/core/audit`). External input is untrusted —
+validate at the edge; enforce authZ in services, not just routes; parameterized queries
+only. Full requirements load from `.claude/rules/security.md` on matching files.
 
----
+## 10. When unsure
 
-## 10. When you're unsure
-
-Ask a focused question rather than guessing on anything ambiguous, irreversible, or
+Ask one focused question rather than guessing on anything ambiguous, irreversible, or
 architecturally significant. A 10-second clarification beats a wrong 10-minute build.
